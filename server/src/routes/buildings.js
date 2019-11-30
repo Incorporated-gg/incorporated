@@ -30,6 +30,7 @@ module.exports = app => {
     }
     const buildingID = req.body.building_id
     const count = 1 // TODO: Use req.body.count
+    if (count > 1) throw new Error('Not implemented yet')
 
     if (!buildingsUtils.buildingsList.find(b => b.id === buildingID)) {
       res.status(400).send({ error: 'Invalid building_id' })
@@ -63,7 +64,6 @@ module.exports = app => {
       ])
     }
 
-    if (count > 1) throw new Error('Not implemented yet')
 
     res.send({
       success: true,

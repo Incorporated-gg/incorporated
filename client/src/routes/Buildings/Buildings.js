@@ -55,8 +55,8 @@ function Building({ building, count, buy }) {
     <div>
       <span>{building.name}: </span>
       <span>{count}. </span>
-      <span>Coste: {coste}. </span>
-      <button onClick={buy}>Comprar</button>
+      <span>Precio: {coste}. </span>
+      <button onClick={buy}>Construir</button>
     </div>
   )
 }
