@@ -3,9 +3,14 @@ import api from '../../lib/api'
 import buildingsUtils from 'shared-lib/buildingsUtils'
 import PropTypes from 'prop-types'
 
+let lastBuildingsData = null
 export default function Buildings() {
-  const [buildings, setBuildings] = useState(null)
+  const [buildings, setBuildings] = useState(lastBuildingsData)
   const [error, setError] = useState(false)
+
+  useEffect(() => {
+    lastBuildingsData = buildings
+  }, [buildings])
 
   useEffect(() => {
     api
