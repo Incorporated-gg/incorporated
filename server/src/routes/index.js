@@ -1,5 +1,5 @@
 module.exports.setupRoutes = app => {
-  app.get('/', function (req, res) {
-    res.send('Hello World!')
-  })
+  require('./login')(app)
+  require('./register')(app)
+  require('./my_data')(app)
 }
