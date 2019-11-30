@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon index.js",
+    "migrate": "node node_modules/db-migrate/bin/db-migrate up --config migrations/database.json",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -18,6 +19,8 @@
     "mysql2": "^2.0.1"
   },
   "devDependencies": {
+    "db-migrate": "^0.11.6",
+    "db-migrate-mysql": "^1.1.10",
     "nodemon": "^2.0.1"
   }
 }

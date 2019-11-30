@@ -1,0 +1,11 @@
+{
+  "defaultEnv": "prod",
+  "prod": {
+    "driver": "mysql",
+    "multipleStatements": true,
+    "host": {"ENV": "DB_HOST"},
+    "user": {"ENV": "DB_USER"},
+    "password": {"ENV": "DB_PASS"},
+    "database": {"ENV": "DB_DATABASE"}
+  }
+}
