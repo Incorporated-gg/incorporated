@@ -5,7 +5,6 @@ const bcrypt = require('bcryptjs')
 const emailRegexp = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
 const alphanumericRegexp = /^[a-z0-9]+$/i
 const initialMoney = 450000
-const initialUpdateDate = Math.floor(Date.now() / 1000)
 
 module.exports = app => {
   app.post('/v1/register', async function(req, res) {
@@ -18,6 +17,7 @@ module.exports = app => {
     const saltRounds = 10
     const encryptedPassword = await bcrypt.hash(req.body.password, saltRounds)
     const email = req.body.email
+    const initialUpdateDate = Math.floor(Date.now() / 1000)
 
     const isValidEmail = typeof email === 'string' && emailRegexp.test(email)
     if (!isValidEmail) {
