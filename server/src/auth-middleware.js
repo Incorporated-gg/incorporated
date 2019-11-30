@@ -1,4 +1,5 @@
 const mysql = require('./lib/mysql')
+const buildingsUtils = require('./lib/buildingsUtils')
 
 module.exports = app => {
   app.use(async (req, res, next) => {
@@ -8,7 +9,26 @@ module.exports = app => {
       const sessionID = req.headers.authorization.replace('Basic ', '')
       const [[sessionData]] = await mysql.query('SELECT user_id FROM sessions WHERE id=?', [sessionID])
       if (sessionData) {
-        ;[[req.userData]] = await mysql.query('SELECT id, username, email FROM users WHERE id=?', [sessionData.user_id])
+        ;[
+          [req.userData],
+        ] = await mysql.query('SELECT id, username, email, money, last_money_update FROM users WHERE id=?', [
+          sessionData.user_id,
+        ])
+
+        // Update money
+        req.userData.income_per_second = await getUserIncomePerSecond(req.userData.id)
+        const tsNow = Math.floor(Date.now() / 1000)
+        const moneyUpdateElapsedS = tsNow - req.userData.last_money_update
+        if (moneyUpdateElapsedS > 1) {
+          const moneyAdded = req.userData.income_per_second * moneyUpdateElapsedS
+          await mysql.query('UPDATE users SET money=money+?, last_money_update=? WHERE id=?', [
+            moneyAdded,
+            tsNow,
+            req.userData.id,
+          ])
+          req.userData.money += moneyAdded
+        }
+        req.userData.money = Math.round(req.userData.money)
       }
       if (!req.userData) {
         res.status(400).send({ error: 'Sesión caducada', error_code: 'invalid_session_id' })
@@ -18,4 +38,33 @@ module.exports = app => {
 
     next()
   })
+
+  function modifyResponseBody(req, res, next) {
+    var oldSend = res.send
+
+    res.send = function() {
+      if (req.userData && typeof arguments[0] === 'object') {
+        // Modify response to include extra data for logged in users
+        const extraData = {
+          money: req.userData.money,
+          income_per_second: req.userData.income_per_second,
+        }
+        arguments[0]._extra = extraData
+      }
+      oldSend.apply(res, arguments)
+    }
+    next()
+  }
+
+  app.use(modifyResponseBody)
+}
+
+async function getUserIncomePerSecond(userID) {
+  const [buildingsRaw] = await mysql.query('SELECT id, quantity FROM buildings WHERE user_id=?', [userID])
+  const optimizeResearchLevel = 1
+
+  return buildingsRaw.reduce(
+    (prev, curr) => prev + buildingsUtils.calcBuildingIncomePerSecond(curr.id, curr.quantity, optimizeResearchLevel),
+    0
+  )
 }

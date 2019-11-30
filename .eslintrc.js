@@ -9,8 +9,8 @@ module.exports = {
   },
   extends: ["standard", "prettier"],
   plugins: [
-    "react-hooks",
-    "prettier"
+    "prettier",
+    "react-hooks"
   ],
   rules: {
     "prettier/prettier": "error",

@@ -34,13 +34,9 @@ require('./auth-middleware')(app)
 setupRoutes(app)
 
 // Errors middleware
-app.use(logErrors)
 app.use(errorHandler)
-function logErrors(err, req, res, next) {
-  console.error(err.stack)
-  next(err)
-}
 function errorHandler(err, req, res, next) {
+  console.error(err.stack)
   res.status(500).send({ error: 'Error 500: Algo salió mal' })
 }
 

@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt')
 
 const emailRegexp = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
 const alphanumericRegexp = /^[a-z0-9]+$/i
+const initialMoney = 450000
 
 module.exports = app => {
   app.post('/v1/register', async function(req, res) {
@@ -32,10 +33,11 @@ module.exports = app => {
 
     let insertId
     try {
-      ;[{ insertId }] = await mysql.query('INSERT INTO users (username, password, email) VALUES (?, ?, ?)', [
+      ;[{ insertId }] = await mysql.query('INSERT INTO users (username, password, email, money) VALUES (?, ?, ?, ?)', [
         username,
         encryptedPassword,
         email,
+        initialMoney,
       ])
     } catch (e) {
       if (e.code === 'ER_DUP_ENTRY') {

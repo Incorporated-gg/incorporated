@@ -1,4 +1,4 @@
-import { sessionID, logout } from './user'
+import { updateUserData, sessionID, logout } from './user'
 
 const API_URL = 'http://localhost:3001'
 
@@ -37,6 +37,9 @@ async function parseApiResponse(res) {
 
   if (jsonResponse.error_code === 'invalid_session_id') {
     logout()
+  }
+  if (jsonResponse._extra) {
+    updateUserData(jsonResponse._extra)
   }
 
   if (!res.ok) throw new Error(jsonResponse.error || JSON.stringify(jsonResponse))
