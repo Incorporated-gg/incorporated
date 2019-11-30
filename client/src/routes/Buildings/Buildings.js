@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import api from '../../lib/api'
-import buildingsUtils from '../../lib/buildingsUtils'
+import buildingsUtils from 'shared-lib/buildingsUtils'
 import PropTypes from 'prop-types'
 
 export default function Buildings() {

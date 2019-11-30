@@ -1,5 +1,5 @@
 const mysql = require('./lib/mysql')
-const buildingsUtils = require('./lib/buildingsUtils')
+const buildingsUtils = require('shared-lib/buildingsUtils')
 
 module.exports = app => {
   app.use(async (req, res, next) => {

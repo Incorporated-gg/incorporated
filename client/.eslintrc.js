@@ -1,6 +1,25 @@
 module.exports = {
-  extends: ["plugin:react/recommended"],
+  "env": {
+    es6: true,
+    browser: true
+  },
+  "parserOptions": {
+    "ecmaVersion": 2017,
+    'sourceType': 'module',
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
+  extends: ["plugin:react/recommended", "standard", "prettier"],
+  plugins: [
+    "prettier",
+    "react-hooks"
+  ],
   rules: {
-    "camelcase": 2
+    "prettier/prettier": "error",
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn",
+    "no-shadow": "warn",
+    "no-return-await": "off"
   }
 };
