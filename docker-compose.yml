@@ -1,0 +1,50 @@
+version: '3'
+
+services:
+
+  client:
+    build: ./client
+    networks:
+      - default
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    depends_on:
+      - db
+    volumes:
+      - ./client:/usr/src/client:rw
+      - /usr/src/client/node_modules
+    ports:
+      - 3000:3000
+
+  server:
+    build: ./server
+    networks:
+      - backend
+    environment:
+      - DB_DATABASE
+      - DB_USER
+      - DB_PASS
+      - DB_HOST
+    depends_on:
+      - db
+    command: ./wait-for db:3306 -- npx nodemon -L index.js
+    volumes:
+      - ./server:/usr/src/server:rw
+    ports:
+      - 3001:3001
+  
+  db:
+    image: mysql:5.7
+    networks:
+      - backend
+    environment:
+      - MYSQL_DATABASE=${DB_DATABASE}
+      - MYSQL_ROOT_PASSWORD=${DB_PASS}
+    ports:
+      - 3307:3306 # remove in prod
+    volumes:
+      - ./mysql-data:/var/lib/mysql
+
+networks:
+  default:
+  backend:

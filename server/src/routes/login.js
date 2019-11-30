@@ -1,6 +1,6 @@
 const mysql = require('../lib/mysql')
 const sessions = require('../lib/db/sessions')
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcryptjs')
 
 module.exports = app => {
   app.post('/v1/login', async function(req, res) {

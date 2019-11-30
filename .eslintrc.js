@@ -18,6 +18,7 @@ module.exports = {
     "react-hooks/exhaustive-deps": "warn",
     "no-shadow": "warn",
     "no-return-await": "off",
-    "camelcase": 2
+    "camelcase": 2,
+    "space-before-function-paren": ["error", "never"]
   }
 };
