@@ -1,5 +1,6 @@
 const mysql = require('../mysql')
 const users = require('./users')
+const { RESEARCHS_LIST, RESOURCES_LIST } = require('shared-lib/allianceUtils')
 
 module.exports.getUserAllianceID = getUserAllianceID
 async function getUserAllianceID(userID) {
@@ -20,16 +21,6 @@ async function getUserRank(userID) {
     is_admin: allianceMember.is_admin,
   }
 }
-
-const RESEARCHS_LIST = [
-  { id: 1, name: 'Negocios cuestionables', basePrice: 200000, priceIncreasePerLevel: 200000 },
-  { id: 2, name: 'Banco', basePrice: 500000, priceIncreasePerLevel: 500000 },
-  { id: 3, name: 'Academia de guardias', basePrice: 100000, priceIncreasePerLevel: 100000 },
-  { id: 4, name: 'Barracones de guardias', basePrice: 200000, priceIncreasePerLevel: 200000 },
-  { id: 5, name: 'Academia de saboteadores', basePrice: 100000, priceIncreasePerLevel: 100000 },
-  { id: 6, name: 'Barracones de saboteadores', basePrice: 200000, priceIncreasePerLevel: 200000 },
-]
-const RESOURCES_LIST = ['money', 'guards', 'sabots']
 
 module.exports.getResearchPrice = getResearchPrice
 function getResearchPrice(researchID, level) {

@@ -9,7 +9,7 @@ const initialMoney = 450000
 module.exports = app => {
   app.post('/v1/register', async function(req, res) {
     if (!req.body.password || !req.body.username || !req.body.email) {
-      res.status(400).send({ error: 'Faltan datos' })
+      res.status(400).json({ error: 'Faltan datos' })
       return
     }
 
@@ -42,7 +42,7 @@ module.exports = app => {
       )
     } catch (e) {
       if (e.code === 'ER_DUP_ENTRY') {
-        res.status(400).send({ error: 'Este usuario o email ya existen' })
+        res.status(400).json({ error: 'Este usuario o email ya existen' })
         return
       }
       throw e
@@ -50,6 +50,6 @@ module.exports = app => {
 
     const sessionID = await sessions.generateSession(insertId)
 
-    res.send({ new_user_id: insertId, session_id: sessionID, success: true })
+    res.json({ new_user_id: insertId, session_id: sessionID, success: true })
   })
 }

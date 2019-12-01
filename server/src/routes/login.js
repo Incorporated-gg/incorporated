@@ -5,7 +5,7 @@ const bcrypt = require('bcryptjs')
 module.exports = app => {
   app.post('/v1/login', async function(req, res) {
     if (!req.body.password || !req.body.username) {
-      res.status(400).send({ error: 'Faltan datos' })
+      res.status(400).json({ error: 'Faltan datos' })
       return
     }
 
@@ -14,16 +14,16 @@ module.exports = app => {
 
     const [[user]] = await mysql.query('SELECT id, password FROM users WHERE username=? LIMIT 1', [username])
     if (!user) {
-      res.send({ success: false })
+      res.json({ success: false })
       return
     }
     const encryptedPass = user.password
     if (!(await bcrypt.compare(password, encryptedPass))) {
-      res.send({ success: false })
+      res.json({ success: false })
       return
     }
 
     const sessionID = await sessions.generateSession(user.id)
-    res.send({ session_id: sessionID, success: true })
+    res.json({ session_id: sessionID, success: true })
   })
 }

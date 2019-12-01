@@ -35,7 +35,7 @@ module.exports = app => {
         await updateMoney(req)
       }
       if (!req.userData) {
-        res.status(400).send({ error: 'Sesión caducada', error_code: 'invalid_session_id' })
+        res.status(400).json({ error: 'Sesión caducada', error_code: 'invalid_session_id' })
         return
       }
     }
@@ -44,10 +44,10 @@ module.exports = app => {
   }
 
   function modifyResponseBody(req, res, next) {
-    var oldSend = res.send
+    var oldJson = res.json
 
-    res.send = function() {
-      if (req.userData && typeof arguments[0] === 'object') {
+    res.json = function() {
+      if (req.userData) {
         // Modify response to include extra data for logged in users
         const extraData = {
           money: req.userData.money,
@@ -55,7 +55,7 @@ module.exports = app => {
         }
         arguments[0]._extra = extraData
       }
-      oldSend.apply(res, arguments)
+      oldJson.apply(res, arguments)
     }
     next()
   }

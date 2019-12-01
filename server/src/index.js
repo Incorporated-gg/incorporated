@@ -34,16 +34,16 @@ require('./auth-middleware')(app)
 // Our routes
 setupRoutes(app)
 
-// Setup crons
-setupCrons()
-
 // Errors middleware
 app.use(errorHandler)
 function errorHandler(err, req, res, next) {
   console.error(err.stack)
-  res.status(500).send({ error: 'Error 500: Algo salió mal' })
+  res.status(500).json({ error: 'Error 500: Algo salió mal' })
 }
 
-app.listen(3001, function() {
+app.listen(3001, () => {
   console.log('Server listening on port 3001!')
 })
+
+// Setup crons
+setupCrons()

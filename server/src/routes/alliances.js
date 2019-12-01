@@ -1,7 +1,7 @@
 const mysql = require('../lib/mysql')
 const alliances = require('../lib/db/alliances')
+const { CREATE_ALLIANCE_PRICE } = require('shared-lib/allianceUtils')
 
-const CREATE_ALLIANCE_PRICE = 5000
 const alphanumericRegexp = /^[a-z0-9]+$/i
 
 module.exports = app => {
@@ -32,7 +32,7 @@ module.exports = app => {
     }
 
     const researchID = req.body.research_id
-    const amount = req.body.amount
+    const amount = parseInt(req.body.amount)
     if (req.userData.money < amount) {
       res.status(401).json({ error: 'No tienes suficiente dinero' })
       return
@@ -75,13 +75,76 @@ module.exports = app => {
     })
   })
 
+  app.post('/v1/alliance_resources', async function(req, res) {
+    if (!req.userData) {
+      res.status(401).json({ error: 'Necesitas estar conectado', error_code: 'not_logged_in' })
+      return
+    }
+    if (!req.body.amount || !req.body.resource_id) {
+      res.status(400).json({ error: 'Faltan datos' })
+      return
+    }
+    const alliance = await alliances.getPrivateData(await alliances.getUserAllianceID(req.userData.id))
+    if (!alliance) {
+      res.status(401).json({ error: 'No tienes una alianza' })
+      return
+    }
+
+    const resourceID = req.body.resource_id
+    const amount = parseInt(req.body.amount)
+    let [
+      [resourceAmount],
+    ] = await mysql.query('SELECT quantity FROM alliances_resources WHERE alliance_id=? AND resource_id=?', [
+      alliance.id,
+      resourceID,
+    ])
+    if (!resourceAmount) {
+      // TEMP: Insert resource row. This will be done in another place eventually, not sure if in cron or where
+      await mysql.query('INSERT INTO alliances_resources (quantity, alliance_id, resource_id) VALUES (?, ?, ?)', [
+        0,
+        alliance.id,
+        resourceID,
+      ])
+    }
+    resourceAmount = resourceAmount ? resourceAmount.quantity : 0
+    if (amount < 0 && resourceAmount < -amount) {
+      res.status(401).json({ error: 'No hay suficientes recursos' })
+      return
+    }
+
+    // Make sure the user has enough resources/space for them
+    switch (resourceID) {
+      case 'money':
+        // TODO: Make sure it doesn't exceed bank cap
+        if (amount > 0 && req.userData.money < amount) {
+          res.status(401).json({ error: 'No tienes suficiente dinero' })
+          return
+        }
+        await mysql.query('UPDATE users SET money=money-? WHERE id=?', [amount, req.userData.id])
+
+        break
+      default:
+        res.status(500).json({ error: 'No implementado' })
+        return
+    }
+
+    await mysql.query('UPDATE alliances_resources SET quantity=quantity+? WHERE alliance_id=? AND resource_id=?', [
+      amount,
+      alliance.id,
+      resourceID,
+    ])
+    res.json({
+      success: true,
+    })
+  })
+
   app.post('/v1/create_alliance', async function(req, res) {
     if (!req.userData) {
       res.status(401).json({ error: 'Necesitas estar conectado', error_code: 'not_logged_in' })
       return
     }
     if (!req.body.short_name || !req.body.long_name || !req.body.description) {
-      res.status(400).send({ error: 'Faltan datos' })
+      res.status(400).json({ error: 'Faltan datos' })
       return
     }
 
@@ -91,7 +154,10 @@ module.exports = app => {
     const allianceCreatedAt = Math.floor(Date.now() / 1000)
 
     const isValidLongName =
-      typeof longName === 'string' && longName.length >= 4 && longName.length <= 20 && alphanumericRegexp.test(longName)
+      typeof longName === 'string' &&
+      longName.length >= 4 &&
+      longName.length <= 20 &&
+      alphanumericRegexp.test(longName.replace(/ /g, '')) // Test for alphanumeric but allow spaces
     if (!isValidLongName) {
       res.status(400).json({ error: 'Nombre inválido' })
       return

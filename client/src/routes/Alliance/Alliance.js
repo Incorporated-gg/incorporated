@@ -1,8 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import api from '../../lib/api'
-import CreateAlliance from './CreateAlliance'
 import PropTypes from 'prop-types'
-import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom'
+import { Switch, Route, Link } from 'react-router-dom'
+import Username from '../../components/Username'
+import CreateAlliance from './CreateAlliance'
+import AllianceResearch from './Research'
+import AllianceResources from './Resources'
 
 let lastAllianceData = null
 export default function Alliance() {
@@ -14,6 +17,7 @@ export default function Alliance() {
   }, [alliance])
 
   const reloadAllianceData = useCallback(() => {
+    setAlliance(null)
     api
       .get('/v1/alliance')
       .then(res => {
@@ -32,15 +36,16 @@ export default function Alliance() {
       {error && <h4>{error}</h4>}
       {alliance === null && <span>Cargando</span>}
       {alliance === false && <CreateAlliance reloadAllianceData={reloadAllianceData} />}
-      {alliance && <AllianceRouter alliance={alliance} />}
+      {alliance && <AllianceRouter reloadAllianceData={reloadAllianceData} alliance={alliance} />}
     </div>
   )
 }
 
 AllianceRouter.propTypes = {
   alliance: PropTypes.object.isRequired,
+  reloadAllianceData: PropTypes.func.isRequired,
 }
-function AllianceRouter({ alliance }) {
+function AllianceRouter({ alliance, reloadAllianceData }) {
   return (
     <div>
       <nav>
@@ -62,13 +67,13 @@ function AllianceRouter({ alliance }) {
 
       <Switch>
         <Route path="/alliance/resources">
-          <AllianceResources alliance={alliance} />
+          <AllianceResources alliance={alliance} reloadAllianceData={reloadAllianceData} />
         </Route>
         <Route path="/alliance/research">
-          <AllianceResearch alliance={alliance} />
+          <AllianceResearch alliance={alliance} reloadAllianceData={reloadAllianceData} />
         </Route>
         <Route path="/alliance/admin">
-          <AllianceAdmin alliance={alliance} />
+          <AllianceAdmin alliance={alliance} reloadAllianceData={reloadAllianceData} />
         </Route>
         <Route path="/alliance">
           <AllianceHome alliance={alliance} />
@@ -78,37 +83,25 @@ function AllianceRouter({ alliance }) {
   )
 }
 
-AllianceResources.propTypes = {
-  alliance: PropTypes.object.isRequired,
-}
-function AllianceResources({ alliance }) {
-  return (
-    <div>
-      <h2>Resources</h2>
-      <pre>{JSON.stringify(alliance.resources, null, 2)}</pre>
-    </div>
-  )
-}
-
-AllianceResearch.propTypes = {
-  alliance: PropTypes.object.isRequired,
-}
-function AllianceResearch({ alliance }) {
-  return (
-    <div>
-      <h2>Research</h2>
-      <pre>{JSON.stringify(alliance.researchs, null, 2)}</pre>
-    </div>
-  )
-}
-
 AllianceAdmin.propTypes = {
   alliance: PropTypes.object.isRequired,
+  reloadAllianceData: PropTypes.func.isRequired,
 }
-function AllianceAdmin({ alliance }) {
+function AllianceAdmin({ alliance, reloadAllianceData }) {
+  const deleteAlliance = () => {
+    api
+      .post('/v1/delete_alliance')
+      .then(() => {
+        reloadAllianceData()
+      })
+      .catch(err => {
+        alert(err.message)
+      })
+  }
   return (
     <div>
       <h2>Admin</h2>
+      <button onClick={deleteAlliance}>Borrar alianza</button>
       <pre>{JSON.stringify(alliance, null, 2)}</pre>
     </div>
   )
@@ -145,18 +138,20 @@ function AllianceHome({ alliance }) {
           <th>Posición en ranking</th>
           <th>Nombre de usuario</th>
           <th>Rango</th>
-          <th>Ingresos</th>
+          <th>Ingresos por día</th>
         </tr>
         {alliance.members.map(member => {
           return (
             <tr key={member.user.id}>
               <td>{member.user.rank_position}</td>
-              <td>{member.user.username}</td>
+              <td>
+                <Username user={member.user} />
+              </td>
               <td>
                 {member.rank_name}
                 {member.is_admin ? ' (P)' : ''}
               </td>
-              <td>{member.user.income}€/día</td>
+              <td>{member.user.income}€</td>
             </tr>
           )
         })}

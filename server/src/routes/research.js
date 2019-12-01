@@ -4,7 +4,7 @@ const researchUtils = require('shared-lib/researchUtils')
 module.exports = app => {
   app.get('/v1/research', async function(req, res) {
     if (!req.userData) {
-      res.status(401).send({ error: 'Necesitas estar conectado', error_code: 'not_logged_in' })
+      res.status(401).json({ error: 'Necesitas estar conectado', error_code: 'not_logged_in' })
       return
     }
 
@@ -14,18 +14,18 @@ module.exports = app => {
     const [researchsRaw] = await mysql.query('SELECT id, level FROM research WHERE user_id=?', [req.userData.id])
     if (researchsRaw) researchsRaw.forEach(research => (researchs[research.id] = research.level))
 
-    res.send({
+    res.json({
       researchs,
     })
   })
 
   app.post('/v1/buy_research', async function(req, res) {
     if (!req.userData) {
-      res.status(401).send({ error: 'Necesitas estar conectado', error_code: 'not_logged_in' })
+      res.status(401).json({ error: 'Necesitas estar conectado', error_code: 'not_logged_in' })
       return
     }
     if (!req.body.research_id || !req.body.count) {
-      res.status(400).send({ error: 'Faltan datos' })
+      res.status(400).json({ error: 'Faltan datos' })
       return
     }
     const researchID = req.body.research_id
@@ -33,7 +33,7 @@ module.exports = app => {
     if (count > 1) throw new Error('Not implemented yet')
 
     if (!researchUtils.researchList.find(b => b.id === researchID)) {
-      res.status(400).send({ error: 'Invalid research_id' })
+      res.status(400).json({ error: 'Invalid research_id' })
       return
     }
 
@@ -43,7 +43,7 @@ module.exports = app => {
     ])
     const price = researchUtils.calcResearchPrice(researchID, research ? research.level : 0)
     if (price > req.userData.money) {
-      res.status(400).send({ error: 'No tienes suficiente dinero' })
+      res.status(400).json({ error: 'No tienes suficiente dinero' })
       return
     }
 
@@ -56,7 +56,7 @@ module.exports = app => {
       await mysql.query('UPDATE research SET level=level+? WHERE user_id=? and id=?', [1, req.userData.id, researchID])
     }
 
-    res.send({
+    res.json({
       success: true,
     })
   })

@@ -4,7 +4,7 @@ const buildingsUtils = require('shared-lib/buildingsUtils')
 module.exports = app => {
   app.get('/v1/buildings', async function(req, res) {
     if (!req.userData) {
-      res.status(401).send({ error: 'Necesitas estar conectado', error_code: 'not_logged_in' })
+      res.status(401).json({ error: 'Necesitas estar conectado', error_code: 'not_logged_in' })
       return
     }
 
@@ -14,18 +14,18 @@ module.exports = app => {
     const [buildingsRaw] = await mysql.query('SELECT id, quantity FROM buildings WHERE user_id=?', [req.userData.id])
     if (buildingsRaw) buildingsRaw.forEach(building => (buildings[building.id] = building.quantity))
 
-    res.send({
+    res.json({
       buildings,
     })
   })
 
   app.post('/v1/buy_buildings', async function(req, res) {
     if (!req.userData) {
-      res.status(401).send({ error: 'Necesitas estar conectado', error_code: 'not_logged_in' })
+      res.status(401).json({ error: 'Necesitas estar conectado', error_code: 'not_logged_in' })
       return
     }
     if (!req.body.building_id || !req.body.count) {
-      res.status(400).send({ error: 'Faltan datos' })
+      res.status(400).json({ error: 'Faltan datos' })
       return
     }
     const buildingID = req.body.building_id
@@ -33,7 +33,7 @@ module.exports = app => {
     if (count > 1) throw new Error('Not implemented yet')
 
     if (!buildingsUtils.buildingsList.find(b => b.id === buildingID)) {
-      res.status(400).send({ error: 'Invalid building_id' })
+      res.status(400).json({ error: 'Invalid building_id' })
       return
     }
 
@@ -43,7 +43,7 @@ module.exports = app => {
     ])
     const price = buildingsUtils.calcBuildingPrice(buildingID, building ? building.quantity : 0)
     if (price > req.userData.money) {
-      res.status(400).send({ error: 'No tienes suficiente dinero' })
+      res.status(400).json({ error: 'No tienes suficiente dinero' })
       return
     }
 
@@ -64,7 +64,7 @@ module.exports = app => {
       ])
     }
 
-    res.send({
+    res.json({
       success: true,
     })
   })
