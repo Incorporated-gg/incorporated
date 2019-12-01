@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import api from '../../lib/api'
+import { calcResourceMax } from 'shared-lib/allianceUtils'
 import PropTypes from 'prop-types'
 
 AllianceResources.propTypes = {
@@ -14,6 +15,7 @@ export default function AllianceResources({ alliance, reloadAllianceData }) {
         return (
           <SingleResources
             key={resourcesData.id}
+            researchs={alliance.researchs}
             resourcesData={resourcesData}
             reloadAllianceData={reloadAllianceData}
           />
@@ -25,10 +27,12 @@ export default function AllianceResources({ alliance, reloadAllianceData }) {
 
 SingleResources.propTypes = {
   resourcesData: PropTypes.object.isRequired,
+  researchs: PropTypes.object.isRequired,
   reloadAllianceData: PropTypes.func.isRequired,
 }
-function SingleResources({ resourcesData, reloadAllianceData }) {
+function SingleResources({ resourcesData, reloadAllianceData, researchs }) {
   const [amount, setAmount] = useState(0)
+  const max = calcResourceMax(resourcesData.id, researchs)
 
   const doResources = extracting => e => {
     e.preventDefault()
@@ -44,8 +48,9 @@ function SingleResources({ resourcesData, reloadAllianceData }) {
 
   return (
     <div>
-      <p>{resourcesData.id}</p>
-      <p>Quantity: {resourcesData.quantity}</p>
+      <p>
+        <b>{resourcesData.id}:</b> {Math.floor(resourcesData.quantity)} / {max}
+      </p>
       <form>
         <input type="number" value={amount} onChange={e => setAmount(e.target.value)} />
         <button onClick={doResources(true)}>Sacar</button>

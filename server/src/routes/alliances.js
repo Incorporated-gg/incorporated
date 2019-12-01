@@ -33,6 +33,10 @@ module.exports = app => {
 
     const researchID = req.body.research_id
     const amount = parseInt(req.body.amount)
+    if (Number.isNaN(amount) || amount <= 0) {
+      res.status(400).json({ error: 'Cantidad incorrecta' })
+      return
+    }
     if (req.userData.money < amount) {
       res.status(401).json({ error: 'No tienes suficiente dinero' })
       return
@@ -44,7 +48,7 @@ module.exports = app => {
     let newProgressMoney = research.progress_money + amount
     let newLevel = research.level
     let newPrice = research.price
-    while (newProgressMoney > newPrice) {
+    while (newProgressMoney >= newPrice) {
       newLevel++
       newProgressMoney -= newPrice
       newPrice = alliances.getResearchPrice(researchID, newLevel)
@@ -98,14 +102,6 @@ module.exports = app => {
       alliance.id,
       resourceID,
     ])
-    if (!resourceAmount) {
-      // TEMP: Insert resource row. This will be done in another place eventually, not sure if in cron or where
-      await mysql.query('INSERT INTO alliances_resources (quantity, alliance_id, resource_id) VALUES (?, ?, ?)', [
-        0,
-        alliance.id,
-        resourceID,
-      ])
-    }
     resourceAmount = resourceAmount ? resourceAmount.quantity : 0
     if (amount < 0 && resourceAmount < -amount) {
       res.status(401).json({ error: 'No hay suficientes recursos' })

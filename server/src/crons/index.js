@@ -10,7 +10,10 @@ module.exports = () => {
   // Require all routes available in this directory
   files.forEach(file => {
     const cron = require(`./${file}`)
-    cron.run()
+    cron.run().catch(err => {
+      err.message = `[CRON] [${file}]: ` + err.message
+      console.error(err)
+    })
     setInterval(() => cron.run(), cron.frequencyMs)
   })
 }

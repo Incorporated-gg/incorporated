@@ -13,3 +13,27 @@ module.exports.RESEARCHS_LIST = RESEARCHS_LIST
 
 const RESOURCES_LIST = ['money', 'guards', 'sabots']
 module.exports.RESOURCES_LIST = RESOURCES_LIST
+
+const maxResourcesPerLevel = {
+  money: 500000,
+  guards: 2000,
+  sabots: 2000,
+}
+function calcResourceMax(resourceID, researchs) {
+  const researchID = resourceID === 'money' ? 2 : resourceID === 'guards' ? 4 : resourceID === 'sabots' ? 6 : null
+  const researchLevel = researchs[researchID].level
+  return maxResourcesPerLevel[resourceID] * (1 + researchLevel)
+}
+module.exports.calcResourceMax = calcResourceMax
+
+const genResourcesPerLevel = {
+  money: 100000,
+  guards: 100,
+  sabots: 50,
+}
+function calcResourceGeneration(resourceID, researchs) {
+  const researchID = resourceID === 'money' ? 1 : resourceID === 'guards' ? 3 : resourceID === 'sabots' ? 5 : null
+  const researchLevel = researchs[researchID].level
+  return genResourcesPerLevel[resourceID] * (1 + researchLevel)
+}
+module.exports.calcResourceGeneration = calcResourceGeneration
