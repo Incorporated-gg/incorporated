@@ -1,6 +1,7 @@
 const express = require('express')
 const app = express()
 const { setupRoutes } = require('./routes')
+const setupCrons = require('./crons')
 
 require('./express-async-errors-patch')
 app.disable('x-powered-by')
@@ -32,6 +33,9 @@ require('./auth-middleware')(app)
 
 // Our routes
 setupRoutes(app)
+
+// Setup crons
+setupCrons()
 
 // Errors middleware
 app.use(errorHandler)

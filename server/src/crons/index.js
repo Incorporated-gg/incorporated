@@ -1,6 +1,6 @@
 const fs = require('fs')
 
-module.exports.setupRoutes = app => {
+module.exports = () => {
 
   const files = fs.readdirSync(__dirname).filter(f => f !== 'index.js')
 
@@ -10,7 +10,9 @@ module.exports.setupRoutes = app => {
 
   // Require all routes available in this directory
   files.forEach(file => {
-    require(`./${file}`)(app)
+    const cron = require(`./${file}`)
+    cron.run()
+    setInterval(() => cron.run(), cron.frequencyMs)
   })
 
 }

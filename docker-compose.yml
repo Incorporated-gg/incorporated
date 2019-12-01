@@ -12,7 +12,7 @@ services:
       - db
     volumes:
       - ./client:/usr/src/client:rw
-      - /usr/src/client/node_modules
+      - ./shared-lib:/usr/src/shared-lib
     ports:
       - 3000:3000
 
@@ -30,6 +30,7 @@ services:
     command: ./wait-for db:3306 -- npx nodemon -L index.js
     volumes:
       - ./server:/usr/src/server:rw
+      - ./shared-lib:/usr/src/shared-lib
     ports:
       - 3001:3001
   

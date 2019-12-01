@@ -4,6 +4,7 @@ import Home from './routes/Home/Home'
 import Buildings from './routes/Buildings/Buildings'
 import Research from './routes/Research/Research'
 import MoneyDisplay from './components/MoneyDisplay'
+import Ranking from './routes/Ranking/Ranking'
 
 function RouterLoggedIn() {
   return (
@@ -21,6 +22,9 @@ function RouterLoggedIn() {
             <li>
               <Link to="/research">Investigaciones</Link>
             </li>
+            <li>
+              <Link to="/ranking">Ranking</Link>
+            </li>
           </ul>
         </nav>
 
@@ -30,6 +34,9 @@ function RouterLoggedIn() {
           </Route>
           <Route path="/research">
             <Research />
+          </Route>
+          <Route path="/ranking">
+            <Ranking />
           </Route>
           <Route path="/">
             <Home />

@@ -21,14 +21,14 @@ module.exports = app => {
 
     const isValidEmail = typeof email === 'string' && emailRegexp.test(email)
     if (!isValidEmail) {
-      res.status(400).send({ error: 'Email inválido' })
+      res.status(400).json({ error: 'Email inválido' })
       return
     }
 
     const isValidUsername =
       typeof username === 'string' && username.length >= 4 && username.length <= 20 && alphanumericRegexp.test(username)
     if (!isValidUsername) {
-      res.status(400).send({ error: 'Username inválido' })
+      res.status(400).json({ error: 'Username inválido' })
       return
     }
 

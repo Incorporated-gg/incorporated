@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon index.js",
-    "migrate": "node node_modules/db-migrate/bin/db-migrate up --config migrations/database.json",
+    "migrate": "npx db-migrate up --config migrations/database.json",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

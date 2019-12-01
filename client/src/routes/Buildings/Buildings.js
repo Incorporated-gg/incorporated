@@ -25,8 +25,8 @@ export default function Buildings() {
     const oldCount = buildings[buildingID]
     const updateBuildingN = newN => setBuildings(Object.assign({}, buildings, { [buildingID]: newN }))
     try {
-      updateBuildingN(oldCount + 1)
       await api.post('/v1/buy_buildings', { building_id: buildingID, count: 1 })
+      updateBuildingN(oldCount + 1)
     } catch (e) {
       updateBuildingN(oldCount)
       alert(e.message)
