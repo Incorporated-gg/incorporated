@@ -1,6 +1,6 @@
 const mysql = require('../lib/mysql')
 const frequencyMs = 15 * 1000 // Every 15s for dev purposes
-const { calcBuildingIncomePerDay } = require('shared-lib/buildingsUtils')
+const { getUserDailyIncome } = require('../lib/db/users')
 
 const setUserIncome = async (userID, userIncome, rank) => {
   const [[rowExists]] = await mysql.query('SELECT 1 FROM ranking WHERE user_id = ?', [userID])
@@ -24,27 +24,7 @@ const run = async () => {
   const parsedUsers = await Promise.all(
     users.map(async user => {
       // Fetch the user's buildings
-      const optimizeLvlPromise = mysql.query('SELECT level FROM research WHERE user_id=? AND id=5', [user.id])
-      const userBuildingsPromise = mysql.query(
-        `SELECT buildings.id, buildings.quantity FROM buildings
-      LEFT OUTER JOIN users ON users.id = buildings.user_id
-      WHERE users.id = ?`,
-        [user.id]
-      )
-      const [[[optimizeLvlQuery]], [userBuildings]] = await Promise.all([optimizeLvlPromise, userBuildingsPromise])
-      const optimizeLevel = optimizeLvlQuery ? optimizeLvlQuery.level : 0
-
-      let userTotalIncome
-      if (userBuildings.length) {
-        // Calculate the total income
-        userTotalIncome = userBuildings
-          .map(({ id: buildingId, quantity }) => {
-            return calcBuildingIncomePerDay(buildingId, quantity, optimizeLevel)
-          })
-          .reduce((buildingIncome, curValue) => {
-            return buildingIncome + curValue
-          })
-      } else userTotalIncome = 0
+      const userTotalIncome = await getUserDailyIncome(user.id)
 
       return {
         id: user.id,

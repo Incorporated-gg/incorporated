@@ -1,19 +1,26 @@
 import React, { useState, useEffect } from 'react'
 import { userData } from '../lib/user'
+import { calcUserMaxMoney } from 'shared-lib/researchUtils'
 
 export default function MoneyDisplay() {
-  const [formattedMoney, setFormattedMoney] = useState()
+  const [, rerender] = useState()
   useEffect(() => {
     function updateMoney() {
-      setFormattedMoney(Math.round(userData.money).toLocaleString())
+      rerender({})
     }
     const interval = setInterval(updateMoney, 1000 / 10) // 10fps
     return () => clearInterval(interval)
   }, [])
 
+  const maxMoney = calcUserMaxMoney(userData.researchs)
+
+  if (!userData) return null
+
   return (
     <div>
-      <b>Dinero: {formattedMoney}€</b>
+      <b>
+        Dinero: {Math.floor(userData.money).toLocaleString()}€ / {maxMoney.toLocaleString()}€
+      </b>
     </div>
   )
 }

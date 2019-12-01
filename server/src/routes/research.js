@@ -1,5 +1,5 @@
 const mysql = require('../lib/mysql')
-const researchUtils = require('shared-lib/researchUtils')
+const { researchList, calcResearchPrice } = require('shared-lib/researchUtils')
 
 module.exports = app => {
   app.get('/v1/research', async function(req, res) {
@@ -8,14 +8,8 @@ module.exports = app => {
       return
     }
 
-    const researchs = {}
-    researchUtils.researchList.forEach(research => (researchs[research.id] = 0))
-
-    const [researchsRaw] = await mysql.query('SELECT id, level FROM research WHERE user_id=?', [req.userData.id])
-    if (researchsRaw) researchsRaw.forEach(research => (researchs[research.id] = research.level))
-
     res.json({
-      researchs,
+      researchs: req.userData.researchs,
     })
   })
 
@@ -32,7 +26,7 @@ module.exports = app => {
     const count = 1 // TODO: Use req.body.count
     if (count > 1) throw new Error('Not implemented yet')
 
-    if (!researchUtils.researchList.find(b => b.id === researchID)) {
+    if (!researchList.find(b => b.id === researchID)) {
       res.status(400).json({ error: 'Invalid research_id' })
       return
     }
@@ -41,7 +35,7 @@ module.exports = app => {
       req.userData.id,
       researchID,
     ])
-    const price = researchUtils.calcResearchPrice(researchID, research ? research.level : 0)
+    const price = calcResearchPrice(researchID, research ? research.level : 0)
     if (price > req.userData.money) {
       res.status(400).json({ error: 'No tienes suficiente dinero' })
       return

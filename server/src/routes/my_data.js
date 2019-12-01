@@ -12,6 +12,7 @@ module.exports = app => {
         email: req.userData.email,
         money: req.userData.money,
         income_per_second: req.userData.income_per_second,
+        researchs: req.userData.researchs,
       },
     })
   })

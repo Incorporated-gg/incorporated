@@ -18,21 +18,15 @@ const buildingsList = [
 ]
 module.exports.buildingsList = buildingsList
 
+module.exports.calcBuildingPrice = calcBuildingPrice
 function calcBuildingPrice (buildingID, currentAmount) {
   return (
     basePrice[buildingID] + increasePrice[buildingID] * Math.floor(currentAmount / amountForPriceIncrease[buildingID])
   )
 }
-module.exports.calcBuildingPrice = calcBuildingPrice
 
-function calcBuildingIncomePerDay (buildingID, currentAmount, optimizeResearchLevel) {
+module.exports.calcBuildingDailyIncome = calcBuildingDailyIncome
+function calcBuildingDailyIncome (buildingID, currentAmount, optimizeResearchLevel) {
   const incomePerDay = baseIncome[buildingID] * currentAmount + optimizeResearchSum[buildingID] * optimizeResearchLevel
   return incomePerDay
 }
-
-function calcBuildingIncomePerSecond (buildingID, currentAmount, optimizeResearchLevel) {
-  return calcBuildingIncomePerDay(buildingID, currentAmount, optimizeResearchLevel) / 60 / 60 / 24
-}
-
-module.exports.calcBuildingIncomePerSecond = calcBuildingIncomePerSecond
-module.exports.calcBuildingIncomePerDay = calcBuildingIncomePerDay

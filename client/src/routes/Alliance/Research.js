@@ -42,10 +42,12 @@ function SingleResearch({ researchData, reloadAllianceData }) {
 
   return (
     <div>
-      <p>{research.name}</p>
-      <p>Level: {researchData.level}</p>
-      <p>Price: {researchData.price}</p>
-      <p>Progress: {researchData.progress_money}</p>
+      <p>
+        {research.name} <b>(Lvl {researchData.level})</b>
+      </p>
+      <p>
+        {researchData.progress_money.toLocaleString()} / {researchData.price.toLocaleString()}
+      </p>
       <form>
         <input type="number" value={amount} onChange={e => setAmount(e.target.value)} />
         <button onClick={doResearch}>Aportar</button>

@@ -49,7 +49,7 @@ function SingleResources({ resourcesData, reloadAllianceData, researchs }) {
   return (
     <div>
       <p>
-        <b>{resourcesData.id}:</b> {Math.floor(resourcesData.quantity)} / {max}
+        <b>{resourcesData.id}:</b> {Math.floor(resourcesData.quantity).toLocaleString()} / {max.toLocaleString()}
       </p>
       <form>
         <input type="number" value={amount} onChange={e => setAmount(e.target.value)} />

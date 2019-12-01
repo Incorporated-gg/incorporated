@@ -16,3 +16,8 @@ function calcResearchPrice(researchID, currentLevel) {
   )
 }
 module.exports.calcResearchPrice = calcResearchPrice
+
+function calcUserMaxMoney(researchs) {
+  return Math.floor(100000 * Math.pow(1.5, (researchs[4] - 1)))
+}
+module.exports.calcUserMaxMoney = calcUserMaxMoney

@@ -1,6 +1,7 @@
 import asyncStorage from './asyncStorage'
 import api from './api'
 import { reloadApp } from '../App'
+import { calcUserMaxMoney } from 'shared-lib/researchUtils'
 
 export let sessionID = null
 export let userData = null
@@ -38,5 +39,7 @@ function updateMoney() {
   if (!userData || Number.isNaN(deltaMs) || typeof userData.money !== 'number') return
   const incomePerSecond = userData.income_per_second
   userData.money += (incomePerSecond / 1000) * deltaMs
+  const maxMoney = calcUserMaxMoney(userData.researchs)
+  if (userData.money > maxMoney) userData.money = maxMoney
 }
 setInterval(updateMoney, 1000)
