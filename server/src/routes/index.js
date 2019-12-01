@@ -1,7 +1,6 @@
 const fs = require('fs')
 
 module.exports.setupRoutes = app => {
-
   const files = fs.readdirSync(__dirname).filter(f => f !== 'index.js')
 
   if (!files.length) {
@@ -12,5 +11,4 @@ module.exports.setupRoutes = app => {
   files.forEach(file => {
     require(`./${file}`)(app)
   })
-
 }

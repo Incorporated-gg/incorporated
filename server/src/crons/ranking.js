@@ -30,19 +30,21 @@ const run = async () => {
   const [users] = await mysql.query('SELECT id FROM users')
   users.forEach(async user => {
     // Fetch the user's buildings
-    const [
-      userBuildings,
-    ] = await mysql.query(
-      'SELECT buildings.id, buildings.quantity, research.level AS optimizeLevel FROM buildings LEFT OUTER JOIN users ON users.id = buildings.user_id LEFT OUTER JOIN research ON users.id = research.user_id WHERE users.id = ?',
+    const optimizeLvlPromise = mysql.query('SELECT level FROM research WHERE user_id=? AND id=5', [user.id])
+    const userBuildingsPromise = mysql.query(
+      `SELECT buildings.id, buildings.quantity FROM buildings
+      LEFT OUTER JOIN users ON users.id = buildings.user_id
+      WHERE users.id = ?`,
       [user.id]
     )
+    const [[[optimizeLvlQuery]], [userBuildings]] = await Promise.all([optimizeLvlPromise, userBuildingsPromise])
+    const optimizeLevel = optimizeLvlQuery ? optimizeLvlQuery.level : 0
 
     let userTotalIncome
     if (userBuildings.length) {
       // Calculate the total income
       userTotalIncome = userBuildings
-        .map(({ id: buildingId, quantity, optimizeLevel }) => {
-          if (!optimizeLevel) optimizeLevel = 0
+        .map(({ id: buildingId, quantity }) => {
           return calcBuildingIncomePerDay(buildingId, quantity, optimizeLevel)
         })
         .reduce((buildingIncome, curValue) => {

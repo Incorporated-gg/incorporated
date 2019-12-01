@@ -57,13 +57,12 @@ module.exports = app => {
         1,
       ])
     } else {
-      await mysql.query('UPDATE buildings SET quantity=quantity+1 WHERE user_id=? and id=?', [
+      await mysql.query('UPDATE buildings SET quantity=quantity+? WHERE user_id=? and id=?', [
+        1,
         req.userData.id,
         buildingID,
-        1,
       ])
     }
-
 
     res.send({
       success: true,

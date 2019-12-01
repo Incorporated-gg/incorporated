@@ -2,7 +2,23 @@ const mysql = require('./lib/mysql')
 const buildingsUtils = require('shared-lib/buildingsUtils')
 
 module.exports = app => {
-  app.use(async (req, res, next) => {
+  async function updateMoney(req) {
+    req.userData.income_per_second = await getUserIncomePerSecond(req.userData.id)
+    const tsNow = Math.floor(Date.now() / 1000)
+    const moneyUpdateElapsedS = tsNow - req.userData.last_money_update
+    if (moneyUpdateElapsedS > 1) {
+      const moneyAdded = req.userData.income_per_second * moneyUpdateElapsedS
+      await mysql.query('UPDATE users SET money=money+?, last_money_update=? WHERE id=?', [
+        moneyAdded,
+        tsNow,
+        req.userData.id,
+      ])
+      req.userData.money += moneyAdded
+    }
+    req.userData.money = Math.round(req.userData.money)
+  }
+
+  async function authMiddleware(req, res, next) {
     req.userData = null
 
     if (req.headers.authorization && req.headers.authorization.startsWith('Basic ')) {
@@ -16,19 +32,7 @@ module.exports = app => {
         ])
 
         // Update money
-        req.userData.income_per_second = await getUserIncomePerSecond(req.userData.id)
-        const tsNow = Math.floor(Date.now() / 1000)
-        const moneyUpdateElapsedS = tsNow - req.userData.last_money_update
-        if (moneyUpdateElapsedS > 1) {
-          const moneyAdded = req.userData.income_per_second * moneyUpdateElapsedS
-          await mysql.query('UPDATE users SET money=money+?, last_money_update=? WHERE id=?', [
-            moneyAdded,
-            tsNow,
-            req.userData.id,
-          ])
-          req.userData.money += moneyAdded
-        }
-        req.userData.money = Math.round(req.userData.money)
+        await updateMoney(req)
       }
       if (!req.userData) {
         res.status(400).send({ error: 'Sesión caducada', error_code: 'invalid_session_id' })
@@ -37,7 +41,7 @@ module.exports = app => {
     }
 
     next()
-  })
+  }
 
   function modifyResponseBody(req, res, next) {
     var oldSend = res.send
@@ -56,12 +60,14 @@ module.exports = app => {
     next()
   }
 
+  app.use(authMiddleware)
   app.use(modifyResponseBody)
 }
 
 async function getUserIncomePerSecond(userID) {
   const [buildingsRaw] = await mysql.query('SELECT id, quantity FROM buildings WHERE user_id=?', [userID])
-  const optimizeResearchLevel = 1
+  let [[optimizeResearchLevel]] = await mysql.query('SELECT level FROM research WHERE user_id=? AND id=5', [userID])
+  optimizeResearchLevel = optimizeResearchLevel ? optimizeResearchLevel.level : 0
 
   return buildingsRaw.reduce(
     (prev, curr) => prev + buildingsUtils.calcBuildingIncomePerSecond(curr.id, curr.quantity, optimizeResearchLevel),

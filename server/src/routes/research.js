@@ -51,19 +51,10 @@ module.exports = app => {
     await mysql.query('UPDATE users SET money=money-? WHERE id=?', [price, req.userData.id])
 
     if (!research) {
-      await mysql.query('INSERT INTO research (user_id, id, level) VALUES (?, ?, ?)', [
-        req.userData.id,
-        researchID,
-        1,
-      ])
+      await mysql.query('INSERT INTO research (user_id, id, level) VALUES (?, ?, ?)', [req.userData.id, researchID, 1])
     } else {
-      await mysql.query('UPDATE research SET level=level+1 WHERE user_id=? and id=?', [
-        req.userData.id,
-        researchID,
-        1,
-      ])
+      await mysql.query('UPDATE research SET level=level+? WHERE user_id=? and id=?', [1, req.userData.id, researchID])
     }
-
 
     res.send({
       success: true,
