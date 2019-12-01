@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import api from '../../lib/api'
 
-export default function Ranking() {
+export default function Ranking () {
   const [ranking, setRanking] = useState([])
   const [error, setError] = useState(false)
 
@@ -19,9 +19,13 @@ export default function Ranking() {
       <h2>Ranking</h2>
       {error && <h4>{error}</h4>}
       <ol>
-        {ranking.length ? ranking.map(p => (
-          <li>{p.username} - {p.income}</li>
-        )) : 'No users found'}
+        {ranking.length
+          ? ranking.map(p => (
+              <li key={p.id}>
+                {p.username} - {p.income}
+              </li>
+            ))
+          : 'No users found'}
       </ol>
     </div>
   )

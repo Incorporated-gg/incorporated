@@ -1,7 +1,6 @@
 const fs = require('fs')
 
 module.exports = () => {
-
   const files = fs.readdirSync(__dirname).filter(f => f !== 'index.js')
 
   if (!files.length) {
@@ -14,5 +13,4 @@ module.exports = () => {
     cron.run()
     setInterval(() => cron.run(), cron.frequencyMs)
   })
-
 }
