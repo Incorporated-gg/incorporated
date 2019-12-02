@@ -25,12 +25,17 @@ button {
   padding: 0.25em 0.75em;
 }
 
-input {
-  width: 6em;
+input, textarea {
   border: 1px solid rgba(0, 0, 0, 0.4);
   background-color: rgba(255, 255, 255, 0.5);
   border-radius: 0.3em;
   padding: 0.2em;
+}
+input {
+  width: 6em;
+}
+textarea {
+  width: auto;
 }
 
 table {

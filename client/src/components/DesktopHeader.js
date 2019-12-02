@@ -31,6 +31,9 @@ export default function DesktopHeader() {
         <li>
           <NavLink to="/alliance">Alianza</NavLink>
         </li>
+        <li>
+          <NavLink to="/messages">Mensajes</NavLink>
+        </li>
       </ul>
     </nav>
   )

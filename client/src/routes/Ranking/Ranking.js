@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import api from '../../lib/api'
 import Username from '../../components/Username'
+import { Link } from 'react-router-dom'
 
 export default function Ranking() {
   const [ranking, setRanking] = useState([])
@@ -25,17 +26,21 @@ export default function Ranking() {
             <th>Rank</th>
             <th>Nombre de usuario</th>
             <th>Ingresos / día</th>
+            <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
           {ranking.length ? (
-            ranking.map(p => (
-              <tr key={p.id}>
-                <td>{p.rank_position.toLocaleString()}</td>
+            ranking.map(user => (
+              <tr key={user.id}>
+                <td>{user.rank_position.toLocaleString()}</td>
                 <td>
-                  <Username user={p} />
+                  <Username user={user} />
                 </td>
-                <td>{p.income.toLocaleString()}€</td>
+                <td>{user.income.toLocaleString()}€</td>
+                <td>
+                  <Link to={`/messages/new/${user.username}`}>Enviar mensaje</Link>
+                </td>
               </tr>
             ))
           ) : (

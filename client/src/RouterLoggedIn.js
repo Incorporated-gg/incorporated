@@ -6,6 +6,7 @@ import Research from './routes/Research/Research'
 import Ranking from './routes/Ranking/Ranking'
 import Alliance from './routes/Alliance/Alliance'
 import Personnel from './routes/Personnel/Personnel'
+import Messages from './routes/Messages/Messages'
 import DesktopHeader from './components/DesktopHeader'
 import './RouterLoggedIn.scss'
 
@@ -30,6 +31,9 @@ function RouterLoggedIn() {
             </Route>
             <Route path="/personnel">
               <Personnel />
+            </Route>
+            <Route path="/messages">
+              <Messages />
             </Route>
             <Route path="/">
               <Home />

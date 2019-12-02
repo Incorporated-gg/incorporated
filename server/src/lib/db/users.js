@@ -24,6 +24,11 @@ module.exports.getData = async userID => {
   }
 }
 
+module.exports.getIDFromUsername = async username => {
+  const [[userData]] = await mysql.query('SELECT id FROM users WHERE username=?', [username])
+  return userData ? userData.id : false
+}
+
 module.exports.getUserDailyIncome = getUserDailyIncome
 async function getUserDailyIncome(userID) {
   let [[buildingsRaw], [[optimizeResearchLevel]]] = await Promise.all([
