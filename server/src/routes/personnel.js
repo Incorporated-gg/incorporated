@@ -23,6 +23,7 @@ const handlePersonnelRequest = async (req, res, operationType) => {
 
   if (resourceAmount < 1) {
     res.status(400).json({ error: 'Invalid resource amount' })
+    return
   }
 
   const [
