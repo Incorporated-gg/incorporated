@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import api from '../../lib/api'
-import buildingsUtils from 'shared-lib/buildingsUtils'
+import { buildingsList, calcBuildingPrice, calcBuildingDailyIncome } from 'shared-lib/buildingsUtils'
 import PropTypes from 'prop-types'
+import './Buildings.scss'
+import { useUserData } from '../../lib/user'
 
 let lastBuildingsData = null
 export default function Buildings() {
@@ -34,13 +36,17 @@ export default function Buildings() {
   }
 
   return (
-    <div>
-      <h2>Buildings</h2>
+    <>
       {error && <h4>{error}</h4>}
-      {buildingsUtils.buildingsList.map(b => (
-        <Building key={b.id} building={b} count={buildings ? buildings[b.id] : 0} buy={buyBuilding(b.id)} />
+      {buildingsList.map(building => (
+        <Building
+          key={building.id}
+          building={building}
+          count={buildings ? buildings[building.id] : 0}
+          buy={buyBuilding(building.id)}
+        />
       ))}
-    </div>
+    </>
   )
 }
 
@@ -49,14 +55,23 @@ Building.propTypes = {
   count: PropTypes.number.isRequired,
   buy: PropTypes.func.isRequired,
 }
-function Building({ building, count, buy }) {
-  const coste = Math.ceil(buildingsUtils.calcBuildingPrice(building.id, count)).toLocaleString()
+function Building({ building, count: buildingCount, buy }) {
+  const userData = useUserData()
+  const coste = Math.ceil(calcBuildingPrice(building.id, buildingCount))
+  const income = Math.ceil(calcBuildingDailyIncome(building.id, 1, userData.researchs[5]))
+  const totalIncome = Math.ceil(calcBuildingDailyIncome(building.id, buildingCount, userData.researchs[5]))
+  const canAfford = userData.money > coste
   return (
-    <div>
-      <span>{building.name}: </span>
-      <span>{count}. </span>
-      <span>Precio: {coste}. </span>
-      <button onClick={buy}>Construir</button>
+    <div className={`building-item ${canAfford ? '' : 'can-not-afford'}`}>
+      <div>
+        {building.name} (<b>{buildingCount}</b>)
+      </div>
+      <div>Bºs/día por edificio: {income.toLocaleString()}</div>
+      <div>Bºs/día totales: {totalIncome.toLocaleString()}</div>
+      <div>Precio: {coste.toLocaleString()}</div>
+      <button className="build-button" onClick={canAfford ? buy : undefined}>
+        Construir
+      </button>
     </div>
   )
 }

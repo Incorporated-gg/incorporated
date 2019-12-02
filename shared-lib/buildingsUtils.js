@@ -1,32 +1,108 @@
-const basePrice = [null, 125, 250, 500, 1000, 2000, 4000, 8000, 16000, 32000, 64000]
-const increasePrice = [null, 15, 30, 60, 120, 240, 480, 960, 1920, 3840, 7680]
-const amountForPriceIncrease = [null, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
-const baseIncome = [null, 30, 60, 120, 240, 480, 960, 1920, 3840, 7680, 15360]
-const optimizeResearchSum = [null, 15, 30, 60, 120, 240, 480, 960, 1920, 3840, 7680]
-
 const buildingsList = [
-  { id: 1, name: 'Discotecas' },
-  { id: 2, name: 'Supermercados' },
-  { id: 3, name: 'Bares' },
-  { id: 4, name: 'Restaurantes' },
-  { id: 5, name: 'Hoteles' },
-  { id: 6, name: 'Droguerías' },
-  { id: 7, name: 'Cines' },
-  { id: 8, name: 'Farmacias' },
-  { id: 9, name: 'Despachos' },
-  { id: 10, name: 'Aerolíneas' },
+  {
+    id: 1,
+    name: 'Discotecas',
+    baseIncome: 30,
+    incomeOptimizeResearchSum: 15,
+    basePrice: 125,
+    increasePrice: 15,
+    amountForPriceIncrease: 10,
+  },
+  {
+    id: 2,
+    name: 'Supermercados',
+    baseIncome: 60,
+    incomeOptimizeResearchSum: 30,
+    basePrice: 250,
+    increasePrice: 30,
+    amountForPriceIncrease: 9,
+  },
+  {
+    id: 3,
+    name: 'Bares',
+    baseIncome: 120,
+    incomeOptimizeResearchSum: 60,
+    basePrice: 500,
+    increasePrice: 60,
+    amountForPriceIncrease: 8,
+  },
+  {
+    id: 4,
+    name: 'Restaurantes',
+    baseIncome: 240,
+    incomeOptimizeResearchSum: 120,
+    basePrice: 1000,
+    increasePrice: 120,
+    amountForPriceIncrease: 7,
+  },
+  {
+    id: 5,
+    name: 'Hoteles',
+    baseIncome: 480,
+    incomeOptimizeResearchSum: 240,
+    basePrice: 2000,
+    increasePrice: 240,
+    amountForPriceIncrease: 6,
+  },
+  {
+    id: 6,
+    name: 'Droguerías',
+    baseIncome: 960,
+    incomeOptimizeResearchSum: 480,
+    basePrice: 4000,
+    increasePrice: 480,
+    amountForPriceIncrease: 5,
+  },
+  {
+    id: 7,
+    name: 'Cines',
+    baseIncome: 1920,
+    incomeOptimizeResearchSum: 960,
+    basePrice: 8000,
+    increasePrice: 960,
+    amountForPriceIncrease: 4,
+  },
+  {
+    id: 8,
+    name: 'Farmacias',
+    baseIncome: 3840,
+    incomeOptimizeResearchSum: 1920,
+    basePrice: 16000,
+    increasePrice: 1920,
+    amountForPriceIncrease: 3,
+  },
+  {
+    id: 9,
+    name: 'Despachos',
+    baseIncome: 7680,
+    incomeOptimizeResearchSum: 3840,
+    basePrice: 32000,
+    increasePrice: 3840,
+    amountForPriceIncrease: 2,
+  },
+  {
+    id: 10,
+    name: 'Aerolíneas',
+    baseIncome: 15360,
+    incomeOptimizeResearchSum: 7680,
+    basePrice: 64000,
+    increasePrice: 7680,
+    amountForPriceIncrease: 1,
+  },
 ]
 module.exports.buildingsList = buildingsList
 
 module.exports.calcBuildingPrice = calcBuildingPrice
 function calcBuildingPrice (buildingID, currentAmount) {
+  const buildingInfo = buildingsList.find(b => b.id === buildingID)
   return (
-    basePrice[buildingID] + increasePrice[buildingID] * Math.floor(currentAmount / amountForPriceIncrease[buildingID])
+    buildingInfo.basePrice + buildingInfo.increasePrice * Math.floor(currentAmount / buildingInfo.amountForPriceIncrease)
   )
 }
 
 module.exports.calcBuildingDailyIncome = calcBuildingDailyIncome
 function calcBuildingDailyIncome (buildingID, currentAmount, optimizeResearchLevel) {
-  const incomePerDay = baseIncome[buildingID] * currentAmount + optimizeResearchSum[buildingID] * optimizeResearchLevel
+  const buildingInfo = buildingsList.find(b => b.id === buildingID)
+  const incomePerDay = buildingInfo.baseIncome * currentAmount + buildingInfo.incomeOptimizeResearchSum * optimizeResearchLevel
   return incomePerDay
 }

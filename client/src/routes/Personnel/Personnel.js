@@ -24,7 +24,6 @@ export default function Personnel() {
   useEffect(() => {
     reloadPersonnelData()
   }, [reloadPersonnelData])
-
   return (
     <div>
       <h2>Personnel</h2>
@@ -35,7 +34,7 @@ export default function Personnel() {
             <PersonnelType
               key={personnel.id}
               personnelInfo={personnel}
-              resourceAmount={userPersonnel[personnel.resource_id]}
+              resourceAmount={userPersonnel[personnel.resource_id] || 0}
               reloadPersonnelData={reloadPersonnelData}
             />
           ))}

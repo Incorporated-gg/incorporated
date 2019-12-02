@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import api from '../../lib/api'
 import PropTypes from 'prop-types'
-import { Switch, Route, Link } from 'react-router-dom'
+import { Switch, Route, NavLink } from 'react-router-dom'
 import CreateAlliance from './CreateAlliance'
 import AllianceResearch from './Research'
 import AllianceResources from './Resources'
 import AllianceHome from './Home'
 import AllianceAdmin from './Admin'
 import { userData } from '../../lib/user'
+import './Alliance.scss'
 
 let lastAllianceData = null
 export default function Alliance() {
@@ -32,13 +33,12 @@ export default function Alliance() {
   }, [reloadAllianceData])
 
   return (
-    <div>
-      <h2>Alianza</h2>
+    <>
       {error && <h4>{error}</h4>}
       {alliance === null && <span>Cargando</span>}
       {alliance === false && <CreateAlliance reloadAllianceData={reloadAllianceData} />}
       {alliance && <AllianceRouter reloadAllianceData={reloadAllianceData} alliance={alliance} />}
-    </div>
+    </>
   )
 }
 
@@ -50,21 +50,23 @@ function AllianceRouter({ alliance, reloadAllianceData }) {
   const myMemberData = alliance.members.find(member => member.user.id === userData.id)
 
   return (
-    <div>
-      <nav>
+    <>
+      <nav className="alliance-menu">
         <ul>
           <li>
-            <Link to="/alliance">Home</Link>
+            <NavLink to="/alliance" exact>
+              Home
+            </NavLink>
           </li>
           <li>
-            <Link to="/alliance/resources">Recursos</Link>
+            <NavLink to="/alliance/resources">Recursos</NavLink>
           </li>
           <li>
-            <Link to="/alliance/research">Investigaciones</Link>
+            <NavLink to="/alliance/research">Investigaciones</NavLink>
           </li>
           {myMemberData.is_admin && (
             <li>
-              <Link to="/alliance/admin">Admin</Link>
+              <NavLink to="/alliance/admin">Admin</NavLink>
             </li>
           )}
         </ul>
@@ -84,6 +86,6 @@ function AllianceRouter({ alliance, reloadAllianceData }) {
           <AllianceHome alliance={alliance} />
         </Route>
       </Switch>
-    </div>
+    </>
   )
 }

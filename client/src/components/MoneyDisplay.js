@@ -17,10 +17,8 @@ export default function MoneyDisplay() {
   if (!userData) return null
 
   return (
-    <div>
-      <b>
-        Dinero: {Math.floor(userData.money).toLocaleString()}€ / {maxMoney.toLocaleString()}€
-      </b>
-    </div>
+    <span>
+      {Math.floor(userData.money).toLocaleString()}€ / {maxMoney.toLocaleString()}€
+    </span>
   )
 }
