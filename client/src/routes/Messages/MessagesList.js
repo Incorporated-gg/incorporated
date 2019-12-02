@@ -3,6 +3,7 @@ import api from '../../lib/api'
 import Username from '../../components/Username'
 import PropTypes from 'prop-types'
 import { userData } from '../../lib/user'
+import { buildingsList } from 'shared-lib/buildingsUtils'
 
 MessagesList.propTypes = {
   type: PropTypes.string.isRequired,
@@ -60,7 +61,17 @@ function SingleMessage({ reloadMessagesData, message }) {
         </div>
       )}
       <div>Fecha: {dateFormatted}</div>
-      {message.type === 'private_message' ? <div>{message.data.message}</div> : <div>Tipo desconocido</div>}
+      {message.type === 'private_message' ? (
+        <div>{message.data.message}</div>
+      ) : message.type === 'monopoly_reward' ? (
+        <div>
+          Enhorabuena por ganar el monopolio semanal! Ganaste el monopolio de{' '}
+          {buildingsList.find(b => b.id === message.data.building_id).name} con {message.data.building_quantity}{' '}
+          edificios
+        </div>
+      ) : (
+        <div>Tipo desconocido</div>
+      )}
       {isMine && <button onClick={deleteMessage}>Borrar</button>}
       <hr />
     </div>

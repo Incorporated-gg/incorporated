@@ -28,21 +28,32 @@ const maxResourcesPerLevel = {
   guards: 2000,
   sabots: 2000,
 }
+module.exports.calcResourceMax = calcResourceMax
 function calcResourceMax(resourceID, researchs) {
   const researchID = resourceID === 'money' ? 2 : resourceID === 'guards' ? 4 : resourceID === 'sabots' ? 6 : null
   const researchLevel = researchs[researchID].level
   return maxResourcesPerLevel[resourceID] * (1 + researchLevel)
 }
-module.exports.calcResourceMax = calcResourceMax
+
+module.exports.calcResourceMaxByResearchID = calcResourceMaxByResearchID
+function calcResourceMaxByResearchID(researchID, researchLevel) {
+  const resourceID = researchID === 2 ? 'money' : researchID === 4 ? 'guards' : researchID === 6 ? 'sabots' : null
+  return maxResourcesPerLevel[resourceID] * (1 + researchLevel)
+}
 
 const genResourcesPerLevel = {
   money: 100000,
   guards: 100,
   sabots: 50,
 }
+module.exports.calcResourceGeneration = calcResourceGeneration
 function calcResourceGeneration(resourceID, researchs) {
   const researchID = resourceID === 'money' ? 1 : resourceID === 'guards' ? 3 : resourceID === 'sabots' ? 5 : null
   const researchLevel = researchs[researchID].level
   return genResourcesPerLevel[resourceID] * (1 + researchLevel)
 }
-module.exports.calcResourceGeneration = calcResourceGeneration
+module.exports.calcResourceGenerationByResearchID = calcResourceGenerationByResearchID
+function calcResourceGenerationByResearchID(researchID, researchLevel) {
+  const resourceID = researchID === 1 ? 'money' : researchID === 3 ? 'guards' : researchID === 5 ? 'sabots' : null
+  return genResourcesPerLevel[resourceID] * (1 + researchLevel)
+}

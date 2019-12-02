@@ -1,7 +1,11 @@
 import React, { useState } from 'react'
 import api from '../../lib/api'
 import PropTypes from 'prop-types'
-const { RESEARCHS_LIST } = require('shared-lib/allianceUtils')
+const {
+  RESEARCHS_LIST,
+  calcResourceGenerationByResearchID,
+  calcResourceMaxByResearchID,
+} = require('shared-lib/allianceUtils')
 
 AllianceResearch.propTypes = {
   alliance: PropTypes.object.isRequired,
@@ -25,7 +29,7 @@ SingleResearch.propTypes = {
   reloadAllianceData: PropTypes.func.isRequired,
 }
 function SingleResearch({ researchData, reloadAllianceData }) {
-  const research = RESEARCHS_LIST.find(r => r.id === researchData.id)
+  const researchInfo = RESEARCHS_LIST.find(r => r.id === researchData.id)
   const [amount, setAmount] = useState(0)
 
   const doResearch = e => {
@@ -40,14 +44,30 @@ function SingleResearch({ researchData, reloadAllianceData }) {
       })
   }
 
+  const isResourceGenerator = Boolean(researchData.id % 2)
+  const isResourceBank = !isResourceGenerator
+
   return (
     <div>
       <p>
-        {research.name} <b>(Lvl {researchData.level})</b>
+        {researchInfo.name} <b>(Lvl {researchData.level})</b>
       </p>
       <p>
         {researchData.progress_money.toLocaleString()} / {researchData.price.toLocaleString()}
       </p>
+      {isResourceGenerator && (
+        <p>
+          Genera {calcResourceGenerationByResearchID(researchData.id, researchData.level).toLocaleString()} al día, al
+          mejorarla generará{' '}
+          {calcResourceGenerationByResearchID(researchData.id, researchData.level + 1).toLocaleString()} al día
+        </p>
+      )}
+      {isResourceBank && (
+        <p>
+          Almacena {calcResourceMaxByResearchID(researchData.id, researchData.level).toLocaleString()}, al mejorarla
+          almacenará {calcResourceMaxByResearchID(researchData.id, researchData.level + 1).toLocaleString()}
+        </p>
+      )}
       <form>
         <input type="number" value={amount} onChange={e => setAmount(e.target.value)} />
         <button onClick={doResearch}>Aportar</button>

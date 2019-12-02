@@ -1,18 +1,16 @@
-const basePrice = [null, 2000, 4000, 4000, 30000, 6000, 3000]
-
 const researchList = [
-  { id: 1, name: 'Hacking' },
-  { id: 2, name: 'Ataque' },
-  { id: 3, name: 'Defensa' },
-  { id: 4, name: 'Banco' },
-  { id: 5, name: 'Investigación de mercado' },
-  { id: 6, name: 'Seguridad' },
+  { id: 1, name: 'Hacking', basePrice: 2000 },
+  { id: 2, name: 'Ataque', basePrice: 4000 },
+  { id: 3, name: 'Defensa', basePrice: 4000 },
+  { id: 4, name: 'Banco', basePrice: 30000 },
+  { id: 5, name: 'Investigación de mercado', basePrice: 6000 },
+  { id: 6, name: 'Seguridad', basePrice: 3000 },
 ]
 module.exports.researchList = researchList
 
 function calcResearchPrice(researchID, currentLevel) {
   return Math.round(
-    basePrice[researchID] * Math.pow(1.3, currentLevel)
+    researchList.find(r => r.id === researchID).basePrice * Math.pow(1.3, currentLevel)
   )
 }
 module.exports.calcResearchPrice = calcResearchPrice

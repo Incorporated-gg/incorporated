@@ -18,7 +18,7 @@ async function getUserRank(userID) {
   return {
     alliance_id: allianceMember.alliance_id,
     rank_name: allianceMember.rank_name,
-    is_admin: allianceMember.is_admin,
+    is_admin: Boolean(allianceMember.is_admin),
   }
 }
 
@@ -67,7 +67,7 @@ async function getPrivateData(allianceID) {
       return {
         user: await users.getData(member.user_id),
         rank_name: member.rank_name,
-        is_admin: member.is_admin,
+        is_admin: Boolean(member.is_admin),
       }
     })
   )

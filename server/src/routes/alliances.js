@@ -1,7 +1,6 @@
 const mysql = require('../lib/mysql')
 const alliances = require('../lib/db/alliances')
 const personnel = require('../lib/db/personnel')
-const users = require('../lib/db/users')
 const { CREATE_ALLIANCE_PRICE } = require('shared-lib/allianceUtils')
 
 const alphanumericRegexp = /^[a-z0-9]+$/i
