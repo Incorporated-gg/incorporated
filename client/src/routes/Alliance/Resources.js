@@ -2,44 +2,52 @@ import React, { useState } from 'react'
 import api from '../../lib/api'
 import { calcResourceMax } from 'shared-lib/allianceUtils'
 import PropTypes from 'prop-types'
+import { useUserData, reloadUserData } from '../../lib/user'
 
 AllianceResources.propTypes = {
   alliance: PropTypes.object.isRequired,
   reloadAllianceData: PropTypes.func.isRequired,
 }
 export default function AllianceResources({ alliance, reloadAllianceData }) {
+  const userData = useUserData()
+
   return (
-    <div>
-      <h2>Resources</h2>
-      {Object.values(alliance.resources).map(resourcesData => {
+    <>
+      {Object.values(alliance.resources).map(resourceData => {
         return (
           <SingleResources
-            key={resourcesData.id}
+            key={resourceData.resource_id}
             researchs={alliance.researchs}
-            resourcesData={resourcesData}
+            resourceData={resourceData}
+            userResourceAmount={userData.personnel[resourceData.resource_id] || 0}
             reloadAllianceData={reloadAllianceData}
           />
         )
       })}
-    </div>
+    </>
   )
 }
 
 SingleResources.propTypes = {
-  resourcesData: PropTypes.object.isRequired,
+  resourceData: PropTypes.object.isRequired,
   researchs: PropTypes.object.isRequired,
   reloadAllianceData: PropTypes.func.isRequired,
+  userResourceAmount: PropTypes.number.isRequired,
 }
-function SingleResources({ resourcesData, reloadAllianceData, researchs }) {
+function SingleResources({ resourceData, reloadAllianceData, researchs, userResourceAmount }) {
   const [amount, setAmount] = useState(0)
-  const max = calcResourceMax(resourcesData.id, researchs)
+  const max = calcResourceMax(resourceData.resource_id, researchs)
 
   const doResources = extracting => e => {
     e.preventDefault()
     api
-      .post('/v1/alliance_resources', { resource_id: resourcesData.id, amount: (extracting ? -1 : 1) * amount })
+      .post('/v1/alliance_resources', {
+        resource_id: resourceData.resource_id,
+        amount: (extracting ? -1 : 1) * amount,
+      })
       .then(() => {
         reloadAllianceData()
+        reloadUserData()
       })
       .catch(err => {
         alert(err.message)
@@ -49,8 +57,9 @@ function SingleResources({ resourcesData, reloadAllianceData, researchs }) {
   return (
     <div>
       <p>
-        <b>{resourcesData.id}:</b> {Math.floor(resourcesData.quantity).toLocaleString()} / {max.toLocaleString()}
+        <b>{resourceData.name}:</b> {Math.floor(resourceData.quantity).toLocaleString()} / {max.toLocaleString()}
       </p>
+      {resourceData.resource_id !== 'money' && <p>Tienes {userResourceAmount.toLocaleString()}</p>}
       <form>
         <input type="number" value={amount} onChange={e => setAmount(e.target.value)} />
         <button onClick={doResources(true)}>Sacar</button>

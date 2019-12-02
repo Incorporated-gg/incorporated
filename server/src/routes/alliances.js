@@ -97,13 +97,7 @@ module.exports = app => {
 
     const resourceID = req.body.resource_id
     const amount = parseInt(req.body.amount)
-    let [
-      [resourceAmount],
-    ] = await mysql.query('SELECT quantity FROM alliances_resources WHERE alliance_id=? AND resource_id=?', [
-      alliance.id,
-      resourceID,
-    ])
-    resourceAmount = resourceAmount ? resourceAmount.quantity : 0
+    const resourceAmount = alliance.resources[resourceID].quantity
     if (amount < 0 && resourceAmount < -amount) {
       res.status(401).json({ error: 'No hay suficientes recursos' })
       return

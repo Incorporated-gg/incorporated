@@ -95,14 +95,15 @@ async function getPrivateData(allianceID) {
     'SELECT resource_id, quantity FROM alliances_resources WHERE alliance_id=?',
     [allianceID]
   )
-  const resources = RESOURCES_LIST.map(resID => {
-    const resData = rawResources.find(raw => raw.resource_id === resID)
+  const resources = RESOURCES_LIST.map(res => {
+    const resData = rawResources.find(raw => raw.resource_id === res.resource_id)
     return {
-      id: resID,
+      resource_id: res.resource_id,
+      name: res.name,
       quantity: resData ? resData.quantity : 0,
     }
   }).reduce((prev, curr) => {
-    prev[curr.id] = curr
+    prev[curr.resource_id] = curr
     return prev
   }, {})
 

@@ -15,6 +15,11 @@ export async function userLoggedIn(newSessionID) {
   reloadApp()
 }
 
+export async function reloadUserData() {
+  userData = (await api.get('/v1/my_data')).user_data
+  fireUserDataListeners()
+}
+
 export async function logout() {
   sessionID = null
   userData = null

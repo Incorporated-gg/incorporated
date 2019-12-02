@@ -13,6 +13,7 @@ module.exports = app => {
         money: req.userData.money,
         income_per_second: req.userData.income_per_second,
         researchs: req.userData.researchs,
+        personnel: req.userData.personnel,
       },
     })
   })

@@ -57,16 +57,6 @@ const handlePersonnelRequest = async (req, res, operationType) => {
 }
 
 module.exports = app => {
-  app.get('/v1/personnel', async function(req, res) {
-    if (!req.userData) {
-      res.status(401).json({ error: 'Necesitas estar conectado', error_code: 'not_logged_in' })
-      return
-    }
-    res.json({
-      personnel: req.userData.personnel,
-    })
-  })
-
   app.post('/v1/personnel/hire', async function(req, res) {
     handlePersonnelRequest(req, res, 'hire')
   })
