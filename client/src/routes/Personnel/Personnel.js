@@ -3,9 +3,14 @@ import api from '../../lib/api'
 import { personnelList } from 'shared-lib/personnelUtils'
 import PropTypes from 'prop-types'
 
+let lastPersonnelData = {}
 export default function Personnel() {
-  const [userPersonnel, setUserPersonnel] = useState([])
+  const [userPersonnel, setUserPersonnel] = useState(lastPersonnelData)
   const [error, setError] = useState(false)
+
+  useEffect(() => {
+    lastPersonnelData = userPersonnel
+  }, [userPersonnel])
 
   const reloadPersonnelData = useCallback(() => {
     api
@@ -26,33 +31,32 @@ export default function Personnel() {
       {error && <h4>{error}</h4>}
       <table>
         <tbody>
-          {personnelList
-            ? personnelList.map(p => (
-                <PersonnelType
-                  key={p.id}
-                  personnelData={p}
-                  userPersonnel={userPersonnel}
-                  reloadPersonnelData={reloadPersonnelData}
-                />
-              ))
-            : 'No hay tropas disponibles'}
+          {personnelList.map(personnel => (
+            <PersonnelType
+              key={personnel.id}
+              personnelInfo={personnel}
+              resourceAmount={userPersonnel[personnel.resource_id]}
+              reloadPersonnelData={reloadPersonnelData}
+            />
+          ))}
         </tbody>
       </table>
     </div>
   )
 }
+
 PersonnelType.propTypes = {
-  personnelData: PropTypes.object.isRequired,
-  userPersonnel: PropTypes.object.isRequired,
+  personnelInfo: PropTypes.object.isRequired,
+  resourceAmount: PropTypes.number.isRequired,
   reloadPersonnelData: PropTypes.func.isRequired,
 }
-function PersonnelType({ personnelData, reloadPersonnelData, userPersonnel }) {
+function PersonnelType({ personnelInfo, reloadPersonnelData, resourceAmount }) {
   const [amount, setAmount] = useState(1)
 
   const doPersonnel = operationType => e => {
     e.preventDefault()
     api
-      .post(`/v1/personnel/${operationType}`, { resource_id: personnelData.resource_id, amount })
+      .post(`/v1/personnel/${operationType}`, { resource_id: personnelInfo.resource_id, amount })
       .then(() => reloadPersonnelData())
       .catch(err => {
         alert(err.message)
@@ -60,11 +64,11 @@ function PersonnelType({ personnelData, reloadPersonnelData, userPersonnel }) {
   }
   return (
     <tr>
-      <td>{personnelData.name}</td>
-      <td>Price: {personnelData.price}</td>
-      <td>Cur amount: {userPersonnel[personnelData.resource_id]}</td>
-      <td>Coste de compra: {personnelData.price * amount}</td>
-      <td>Coste de despido: {personnelData.firingCost * amount}</td>
+      <td>
+        {personnelInfo.name} <b>({resourceAmount})</b>
+      </td>
+      <td>Coste de compra: {personnelInfo.price * amount}</td>
+      <td>Coste de despido: {personnelInfo.firingCost * amount}</td>
       <td>
         <form>
           <input type="number" value={amount} onChange={e => setAmount(e.target.value)} />

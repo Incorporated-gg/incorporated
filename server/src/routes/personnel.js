@@ -1,4 +1,5 @@
 const mysql = require('../lib/mysql')
+const personnel = require('../lib/db/personnel')
 const { personnelList } = require('shared-lib/personnelUtils')
 
 const handlePersonnelRequest = async (req, res, operationType) => {
@@ -11,10 +12,8 @@ const handlePersonnelRequest = async (req, res, operationType) => {
     return
   }
 
-  const resourceAmount = req.body.amount
+  const resourceAmount = parseInt(req.body.amount)
   const resourceID = req.body.resource_id
-  const count = 1 // TODO: Use req.body.count
-  if (count > 1) throw new Error('Not implemented yet')
 
   if (!personnelList.find(b => b.resource_id === resourceID)) {
     res.status(400).json({ error: 'Invalid resource_id' })
@@ -26,20 +25,13 @@ const handlePersonnelRequest = async (req, res, operationType) => {
     return
   }
 
-  const [
-    [curPersonnelAmount],
-  ] = await mysql.query('SELECT quantity FROM users_resources WHERE user_id=? and resource_id=?', [
-    req.userData.id,
-    resourceID,
-  ])
-
   let price
   switch (operationType) {
     case 'hire':
       price = personnelList.find(resources => resources.resource_id === resourceID).price * resourceAmount
       break
     case 'fire':
-      if (!curPersonnelAmount || (curPersonnelAmount && curPersonnelAmount.quantity < resourceAmount)) {
+      if (req.userData.personnel[resourceID] < resourceAmount) {
         res.status(400).json({ error: 'No tienes suficiente personal' })
         return
       }
@@ -56,34 +48,8 @@ const handlePersonnelRequest = async (req, res, operationType) => {
   }
 
   req.userData.money -= price
-  if (operationType === 'hire') {
-    req.userData.personnel[resourceID] += resourceAmount
-  } else if (operationType === 'fire') {
-    req.userData.personnel[resourceID] -= resourceAmount
-  }
   await mysql.query('UPDATE users SET money=money-? WHERE id=?', [price, req.userData.id])
-
-  if (!curPersonnelAmount) {
-    await mysql.query('INSERT INTO users_resources (user_id, resource_id, quantity) VALUES (?, ?, ?)', [
-      req.userData.id,
-      resourceID,
-      resourceAmount,
-    ])
-  } else {
-    if (operationType === 'hire') {
-      await mysql.query('UPDATE users_resources SET quantity=quantity+? WHERE user_id=? and resource_id=?', [
-        resourceAmount,
-        req.userData.id,
-        resourceID,
-      ])
-    } else if (operationType === 'fire') {
-      await mysql.query('UPDATE users_resources SET quantity=quantity-? WHERE user_id=? and resource_id=?', [
-        resourceAmount,
-        req.userData.id,
-        resourceID,
-      ])
-    }
-  }
+  await personnel.updatePersonnelAmount(req, resourceID, resourceAmount * (operationType === 'fire' ? -1 : 1))
 
   res.json({
     success: true,

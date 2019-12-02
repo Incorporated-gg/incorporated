@@ -1,5 +1,6 @@
 const mysql = require('../lib/mysql')
 const alliances = require('../lib/db/alliances')
+const personnel = require('../lib/db/personnel')
 const { CREATE_ALLIANCE_PRICE } = require('shared-lib/allianceUtils')
 
 const alphanumericRegexp = /^[a-z0-9]+$/i
@@ -116,7 +117,18 @@ module.exports = app => {
           res.status(401).json({ error: 'No tienes suficiente dinero' })
           return
         }
-        await mysql.query('UPDATE users SET money=money-? WHERE id=?', [amount, req.userData.id])
+        req.userData.money -= amount
+        await mysql.query('UPDATE users SET money=money+? WHERE id=?', [-amount, req.userData.id])
+
+        break
+      case 'sabots':
+      case 'guards':
+        // TODO: Make sure it doesn't exceed bank cap
+        if (amount > 0 && req.userData.personnel[resourceID] < amount) {
+          res.status(401).json({ error: 'No tienes suficientes recursos' })
+          return
+        }
+        await personnel.updatePersonnelAmount(req, resourceID, -amount)
 
         break
       default:

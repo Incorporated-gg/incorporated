@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import api from '../../lib/api'
 import researchUtils from 'shared-lib/researchUtils'
 import PropTypes from 'prop-types'
+import { updateUserData } from '../../lib/user'
 
 let lastResearchData = null
 export default function Researchs() {
@@ -27,6 +28,7 @@ export default function Researchs() {
     try {
       updateResearchN(oldCount + 1)
       await api.post('/v1/buy_research', { research_id: researchID, count: 1 })
+      updateUserData({ researchs: Object.assign({}, researchs, { [researchID]: oldCount + 1 }) })
     } catch (e) {
       updateResearchN(oldCount)
       alert(e.message)
