@@ -83,7 +83,7 @@ function AllianceRouter({ alliance, reloadAllianceData }) {
           <AllianceAdmin alliance={alliance} reloadAllianceData={reloadAllianceData} />
         </Route>
         <Route path="/alliance">
-          <AllianceHome alliance={alliance} />
+          <AllianceHome alliance={alliance} reloadAllianceData={reloadAllianceData} />
         </Route>
       </Switch>
     </>

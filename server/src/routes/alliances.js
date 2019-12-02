@@ -1,6 +1,7 @@
 const mysql = require('../lib/mysql')
 const alliances = require('../lib/db/alliances')
 const personnel = require('../lib/db/personnel')
+const users = require('../lib/db/users')
 const { CREATE_ALLIANCE_PRICE } = require('shared-lib/allianceUtils')
 
 const alphanumericRegexp = /^[a-z0-9]+$/i
@@ -17,7 +18,7 @@ module.exports = app => {
     res.json({ alliance })
   })
 
-  app.post('/v1/alliance_research', async function(req, res) {
+  app.post('/v1/alliance/research', async function(req, res) {
     if (!req.userData) {
       res.status(401).json({ error: 'Necesitas estar conectado', error_code: 'not_logged_in' })
       return
@@ -80,7 +81,7 @@ module.exports = app => {
     })
   })
 
-  app.post('/v1/alliance_resources', async function(req, res) {
+  app.post('/v1/alliance/resources', async function(req, res) {
     if (!req.userData) {
       res.status(401).json({ error: 'Necesitas estar conectado', error_code: 'not_logged_in' })
       return
@@ -140,7 +141,7 @@ module.exports = app => {
     })
   })
 
-  app.post('/v1/create_alliance', async function(req, res) {
+  app.post('/v1/alliance/create', async function(req, res) {
     if (!req.userData) {
       res.status(401).json({ error: 'Necesitas estar conectado', error_code: 'not_logged_in' })
       return
@@ -208,7 +209,7 @@ module.exports = app => {
     res.json({ success: true, new_alliance_id: newAllianceID })
   })
 
-  app.post('/v1/delete_alliance', async function(req, res) {
+  app.post('/v1/alliance/delete', async function(req, res) {
     if (!req.userData) {
       res.status(401).json({ error: 'Necesitas estar conectado', error_code: 'not_logged_in' })
       return
@@ -226,6 +227,73 @@ module.exports = app => {
       mysql.query('DELETE FROM alliances_research WHERE alliance_id=?', [userRank.alliance_id]),
       mysql.query('DELETE FROM alliances_member_requests WHERE alliance_id=?', [userRank.alliance_id]),
     ])
+
+    res.json({ success: true })
+  })
+
+  app.post('/v1/alliance/edit_rank', async function(req, res) {
+    if (!req.userData) {
+      res.status(401).json({ error: 'Necesitas estar conectado', error_code: 'not_logged_in' })
+      return
+    }
+
+    const newRankName = req.body.rank_name
+    const newIsLeader = Boolean(req.body.is_admin)
+
+    const isValidRankName = typeof newRankName === 'string' && newRankName.length >= 1 && newRankName.length <= 20
+    if (!isValidRankName) {
+      res.status(400).json({ error: 'Nombre de rango inválido' })
+      return
+    }
+
+    const userRank = await alliances.getUserRank(req.userData.id)
+    if (!userRank || !userRank.is_admin) {
+      res.status(401).json({ error: 'No eres admin de una alianza' })
+      return
+    }
+    const allianceData = await alliances.getPrivateData(userRank.alliance_id)
+
+    const switchingUser = allianceData.members.find(member => member.user.username === req.body.username)
+    if (!switchingUser) {
+      res.status(401).json({ error: 'Nombre de usuario no encontrado' })
+      return
+    }
+
+    if (!newIsLeader) {
+      const adminsCount = allianceData.members.reduce((prev, curr) => prev + (curr.is_admin ? 1 : 0), 0)
+      if (adminsCount <= 1) {
+        res.status(401).json({ error: 'No puedes quitarle liderazgo al último líder' })
+        return
+      }
+    }
+
+    await mysql.query('UPDATE alliances_members SET is_admin=?, rank_name=? WHERE alliance_id=? AND user_id=?', [
+      newIsLeader,
+      newRankName,
+      userRank.alliance_id,
+      switchingUser.user.id,
+    ])
+
+    res.json({ success: true })
+  })
+
+  app.post('/v1/alliance/leave', async function(req, res) {
+    if (!req.userData) {
+      res.status(401).json({ error: 'Necesitas estar conectado', error_code: 'not_logged_in' })
+      return
+    }
+
+    const userRank = await alliances.getUserRank(req.userData.id)
+    if (!userRank) {
+      res.status(401).json({ error: 'No eres miembro de una alianza' })
+      return
+    }
+    if (userRank.is_admin) {
+      res.status(401).json({ error: 'No puedes salir de una alianza siendo admin' })
+      return
+    }
+
+    await mysql.query('DELETE FROM alliances_members WHERE alliance_id=?', [userRank.alliance_id])
 
     res.json({ success: true })
   })

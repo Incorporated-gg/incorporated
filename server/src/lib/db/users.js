@@ -3,8 +3,10 @@ const alliances = require('./alliances')
 const { calcBuildingDailyIncome } = require('shared-lib/buildingsUtils')
 const { researchList } = require('shared-lib/researchUtils')
 const { personnelList } = require('shared-lib/personnelUtils')
+const { taxList, getIncomeTaxes } = require('shared-lib/taxes')
 
-module.exports.getData = async userID => {
+module.exports.getData = getData
+async function getData(userID) {
   const userDataPromise = mysql.query('SELECT username FROM users WHERE id=?', [userID])
   const rankingDataPromise = mysql.query('SELECT rank, income FROM ranking WHERE user_id=?', [userID])
   const alliancePromise = alliances.getUserAllianceID(userID).then(alliances.getBasicData)
@@ -30,17 +32,40 @@ module.exports.getIDFromUsername = async username => {
 }
 
 module.exports.getUserDailyIncome = getUserDailyIncome
-async function getUserDailyIncome(userID) {
+async function getUserDailyIncome(userID, { withoutExpensesOrTaxes = false } = {}) {
   let [[buildingsRaw], [[optimizeResearchLevel]]] = await Promise.all([
     await mysql.query('SELECT id, quantity FROM buildings WHERE user_id=?', [userID]),
     await mysql.query('SELECT level FROM research WHERE user_id=? AND id=5', [userID]),
   ])
   optimizeResearchLevel = optimizeResearchLevel ? optimizeResearchLevel.level : 0
 
-  return buildingsRaw.reduce(
+  const totalBuildingsIncome = buildingsRaw.reduce(
     (prev, curr) => prev + calcBuildingDailyIncome(curr.id, curr.quantity, optimizeResearchLevel),
     0
   )
+
+  let totalRevenue = totalBuildingsIncome
+  if (!withoutExpensesOrTaxes) {
+    // Taxes
+    let taxesPercent = getIncomeTaxes(totalBuildingsIncome)
+    const hasAlliance = await alliances.getUserAllianceID(userID)
+    if (hasAlliance) taxesPercent += taxList.alliance
+    const taxesCost = totalBuildingsIncome * taxesPercent
+
+    // Personnel maintenance
+    let personnelCost = 0
+    const userPersonnel = await getPersonnel(userID)
+    Object.entries(userPersonnel).forEach(([resourceID, quantity]) => {
+      const personnelInfo = personnelList.find(p => p.resource_id === resourceID)
+      if (!personnelInfo) return
+      const dailyCost = quantity * personnelInfo.dailyMaintenanceCost
+      personnelCost += dailyCost
+    })
+
+    totalRevenue = totalBuildingsIncome - taxesCost - personnelCost
+  }
+
+  return totalRevenue
 }
 
 module.exports.getResearchs = getResearchs

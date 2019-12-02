@@ -1,20 +1,30 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import Username from '../../components/Username'
+import api from '../../lib/api'
 
 AllianceHome.propTypes = {
   alliance: PropTypes.object.isRequired,
+  reloadAllianceData: PropTypes.func.isRequired,
 }
-export default function AllianceHome({ alliance }) {
+export default function AllianceHome({ alliance, reloadAllianceData }) {
+  const leaveAlliance = () => {
+    if (!window.confirm('Estás seguro de que quieres salir?')) return
+    api
+      .post('/v1/alliance/leave')
+      .then(() => {
+        reloadAllianceData()
+      })
+      .catch(err => {
+        alert(err.message)
+      })
+  }
+
   return (
     <div>
       <h5>Datos</h5>
       <table>
         <tbody>
-          <tr>
-            <th>ID</th>
-            <td>{alliance.id}</td>
-          </tr>
           <tr>
             <th>Nombre</th>
             <td>{alliance.long_name}</td>
@@ -49,7 +59,7 @@ export default function AllianceHome({ alliance }) {
                 </td>
                 <td>
                   {member.rank_name}
-                  {member.is_admin ? ' (P)' : ''}
+                  {member.is_admin ? ' (Líder)' : ''}
                 </td>
                 <td>{member.user.income.toLocaleString()}€</td>
               </tr>
@@ -57,6 +67,7 @@ export default function AllianceHome({ alliance }) {
           })}
         </tbody>
       </table>
+      <button onClick={leaveAlliance}>Salir</button>
     </div>
   )
 }

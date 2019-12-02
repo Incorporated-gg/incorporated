@@ -31,7 +31,7 @@ function SingleResearch({ researchData, reloadAllianceData }) {
   const doResearch = e => {
     e.preventDefault()
     api
-      .post('/v1/alliance_research', { research_id: researchData.id, amount })
+      .post('/v1/alliance/research', { research_id: researchData.id, amount })
       .then(() => {
         reloadAllianceData()
       })

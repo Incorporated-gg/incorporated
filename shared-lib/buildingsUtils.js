@@ -1,7 +1,7 @@
 const buildingsList = [
   {
     id: 1,
-    name: 'Discotecas',
+    name: 'Zapaterías',
     baseIncome: 30,
     incomeOptimizeResearchSum: 15,
     basePrice: 125,
@@ -10,7 +10,7 @@ const buildingsList = [
   },
   {
     id: 2,
-    name: 'Supermercados',
+    name: 'Bares',
     baseIncome: 60,
     incomeOptimizeResearchSum: 30,
     basePrice: 250,
@@ -19,7 +19,7 @@ const buildingsList = [
   },
   {
     id: 3,
-    name: 'Bares',
+    name: 'Restaurantes',
     baseIncome: 120,
     incomeOptimizeResearchSum: 60,
     basePrice: 500,
@@ -28,7 +28,7 @@ const buildingsList = [
   },
   {
     id: 4,
-    name: 'Restaurantes',
+    name: 'Supermercados',
     baseIncome: 240,
     incomeOptimizeResearchSum: 120,
     basePrice: 1000,
@@ -37,7 +37,7 @@ const buildingsList = [
   },
   {
     id: 5,
-    name: 'Hoteles',
+    name: 'Droguerías',
     baseIncome: 480,
     incomeOptimizeResearchSum: 240,
     basePrice: 2000,
@@ -46,7 +46,7 @@ const buildingsList = [
   },
   {
     id: 6,
-    name: 'Droguerías',
+    name: 'Farmacias',
     baseIncome: 960,
     incomeOptimizeResearchSum: 480,
     basePrice: 4000,
@@ -55,7 +55,7 @@ const buildingsList = [
   },
   {
     id: 7,
-    name: 'Cines',
+    name: 'Discotecas',
     baseIncome: 1920,
     incomeOptimizeResearchSum: 960,
     basePrice: 8000,
@@ -64,7 +64,7 @@ const buildingsList = [
   },
   {
     id: 8,
-    name: 'Farmacias',
+    name: 'Cines',
     baseIncome: 3840,
     incomeOptimizeResearchSum: 1920,
     basePrice: 16000,
@@ -73,7 +73,7 @@ const buildingsList = [
   },
   {
     id: 9,
-    name: 'Despachos',
+    name: 'Hoteles',
     baseIncome: 7680,
     incomeOptimizeResearchSum: 3840,
     basePrice: 32000,
@@ -103,6 +103,6 @@ function calcBuildingPrice (buildingID, currentAmount) {
 module.exports.calcBuildingDailyIncome = calcBuildingDailyIncome
 function calcBuildingDailyIncome (buildingID, currentAmount, optimizeResearchLevel) {
   const buildingInfo = buildingsList.find(b => b.id === buildingID)
-  const incomePerDay = buildingInfo.baseIncome * currentAmount + buildingInfo.incomeOptimizeResearchSum * optimizeResearchLevel
+  const incomePerDay = (buildingInfo.baseIncome + buildingInfo.incomeOptimizeResearchSum * optimizeResearchLevel) * currentAmount
   return incomePerDay
 }

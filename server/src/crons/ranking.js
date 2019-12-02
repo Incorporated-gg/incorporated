@@ -24,7 +24,7 @@ const run = async () => {
   const parsedUsers = await Promise.all(
     users.map(async user => {
       // Fetch the user's buildings
-      const userTotalIncome = await getUserDailyIncome(user.id)
+      const userTotalIncome = await getUserDailyIncome(user.id, { withoutExpensesOrTaxes: true })
 
       return {
         id: user.id,

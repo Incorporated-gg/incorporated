@@ -13,7 +13,7 @@ export default function CreateAlliance({ reloadAllianceData }) {
   const createAlliance = e => {
     e.preventDefault()
     api
-      .post('/v1/create_alliance', {
+      .post('/v1/alliance/create', {
         long_name: longName,
         short_name: shortName,
         description,

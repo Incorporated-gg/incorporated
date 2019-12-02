@@ -41,7 +41,7 @@ function SingleResources({ resourceData, reloadAllianceData, researchs, userReso
   const doResources = extracting => e => {
     e.preventDefault()
     api
-      .post('/v1/alliance_resources', {
+      .post('/v1/alliance/resources', {
         resource_id: resourceData.resource_id,
         amount: (extracting ? -1 : 1) * amount,
       })
