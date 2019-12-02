@@ -5,9 +5,9 @@ export default function Home() {
   return (
     <div>
       <h2>Home</h2>
-      <a href="#" onClick={logout}>
+      <button type="button" onClick={logout}>
         Logout
-      </a>
+      </button>
     </div>
   )
 }

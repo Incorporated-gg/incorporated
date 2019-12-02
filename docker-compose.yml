@@ -27,7 +27,7 @@ services:
       - DB_HOST
     depends_on:
       - db
-    command: ./wait-for db:3306 -- npx nodemon -L index.js
+    command: npx nodemon -L index.js
     volumes:
       - ./server:/usr/src/server:rw
       - ./shared-lib:/usr/src/shared-lib

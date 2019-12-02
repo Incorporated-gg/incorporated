@@ -19,17 +19,17 @@ export default function Ranking() {
     <div>
       <h2>Ranking</h2>
       {error && <h4>{error}</h4>}
-      {
-        <table>
-          <thead>
-            <tr>
-              <th>Rank</th>
-              <th>Nombre de usuario</th>
-              <th>Ingresos / día</th>
-            </tr>
-          </thead>
-          <tbody>
-            {ranking.map(p => (
+      <table>
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th>Nombre de usuario</th>
+            <th>Ingresos / día</th>
+          </tr>
+        </thead>
+        <tbody>
+          {ranking.length ? (
+            ranking.map(p => (
               <tr key={p.id}>
                 <td>{p.rank_position.toLocaleString()}</td>
                 <td>
@@ -37,10 +37,14 @@ export default function Ranking() {
                 </td>
                 <td>{p.income.toLocaleString()}€</td>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      }
+            ))
+          ) : (
+            <tr>
+              <td>No users found</td>
+            </tr>
+          )}
+        </tbody>
+      </table>
     </div>
   )
 }

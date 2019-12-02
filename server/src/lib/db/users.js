@@ -2,6 +2,7 @@ const mysql = require('../mysql')
 const alliances = require('./alliances')
 const { calcBuildingDailyIncome } = require('shared-lib/buildingsUtils')
 const { researchList } = require('shared-lib/researchUtils')
+const { personnelList } = require('shared-lib/personnelUtils')
 
 module.exports.getData = async userID => {
   const userDataPromise = mysql.query('SELECT username FROM users WHERE id=?', [userID])
@@ -46,4 +47,17 @@ async function getResearchs(userID) {
   if (researchsRaw) researchsRaw.forEach(research => (researchs[research.id] = research.level))
 
   return researchs
+}
+
+module.exports.getPersonnel = getPersonnel
+async function getPersonnel(userID) {
+  const personnels = {}
+  personnelList.forEach(personnel => (personnels[personnel.resource_id] = 0))
+
+  const [personnelRaw] = await mysql.query('SELECT resource_id, quantity FROM users_resources WHERE user_id=?', [
+    userID,
+  ])
+  if (personnelRaw) personnelRaw.forEach(personnel => (personnels[personnel.resource_id] = personnel.quantity))
+
+  return personnels
 }

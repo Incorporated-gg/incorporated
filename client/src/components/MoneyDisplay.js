@@ -12,7 +12,7 @@ export default function MoneyDisplay() {
     return () => clearInterval(interval)
   }, [])
 
-  const maxMoney = calcUserMaxMoney(userData.researchs)
+  const maxMoney = userData ? calcUserMaxMoney(userData.researchs) : 0
 
   if (!userData) return null
 

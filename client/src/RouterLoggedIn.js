@@ -6,6 +6,7 @@ import Research from './routes/Research/Research'
 import MoneyDisplay from './components/MoneyDisplay'
 import Ranking from './routes/Ranking/Ranking'
 import Alliance from './routes/Alliance/Alliance'
+import Personnel from './routes/Personnel/Personnel'
 
 function RouterLoggedIn() {
   return (
@@ -16,6 +17,9 @@ function RouterLoggedIn() {
           <ul>
             <li>
               <Link to="/">Home</Link>
+            </li>
+            <li>
+              <Link to="/personnel">Personal</Link>
             </li>
             <li>
               <Link to="/buildings">Edificios</Link>
@@ -44,6 +48,9 @@ function RouterLoggedIn() {
           </Route>
           <Route path="/alliance">
             <Alliance />
+          </Route>
+          <Route path="/personnel">
+            <Personnel />
           </Route>
           <Route path="/">
             <Home />

@@ -1,5 +1,5 @@
 const mysql = require('./lib/mysql')
-const { getUserDailyIncome, getResearchs } = require('./lib/db/users')
+const { getUserDailyIncome, getResearchs, getPersonnel } = require('./lib/db/users')
 const { calcUserMaxMoney } = require('shared-lib/researchUtils')
 
 module.exports = app => {
@@ -22,6 +22,7 @@ async function authMiddleware(req, res, next) {
 
       req.userData.income_per_second = (await getUserDailyIncome(req.userData.id)) / 60 / 60 / 24
       req.userData.researchs = await getResearchs(req.userData.id)
+      req.userData.personnel = await getPersonnel(req.userData.id)
 
       await updateMoney(req)
     }

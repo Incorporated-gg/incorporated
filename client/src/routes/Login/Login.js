@@ -53,9 +53,9 @@ function Login({ toggleActive }) {
       <button onClick={loginClicked}>login</button>
       <p className="message">
         No tienes cuenta?{' '}
-        <a href="#" onClick={registerClicked}>
+        <button type="button" onClick={registerClicked}>
           Registrarme
-        </a>
+        </button>
       </p>
     </form>
   )
@@ -94,9 +94,9 @@ function Register({ toggleActive }) {
       <button onClick={registerClicked}>Crear</button>
       <p className="message">
         Ya tienes cuenta?{' '}
-        <a href="#" onClick={loginClicked}>
+        <button type="button" onClick={loginClicked}>
           Conectarme
-        </a>
+        </button>
       </p>
     </form>
   )
