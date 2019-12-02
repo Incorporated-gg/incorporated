@@ -20,15 +20,6 @@ export default function Personnel() {
     reloadPersonnelData()
   }, [reloadPersonnelData])
 
-  useEffect(() => {
-    api
-      .get('/v1/personnel')
-      .then(res => {
-        setUserPersonnel(res.personnel)
-      })
-      .catch(err => setError(err.message))
-  }, [])
-
   return (
     <div>
       <h2>Personnel</h2>
