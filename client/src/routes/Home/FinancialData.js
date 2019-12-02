@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import api from '../../lib/api'
 import { buildingsList, calcBuildingDailyIncome } from 'shared-lib/buildingsUtils'
-import { useUserData } from '../../lib/user'
+import { logout, useUserData } from '../../lib/user'
 import { taxList, getIncomeTaxes } from 'shared-lib/taxes'
 import { personnelList } from 'shared-lib/personnelUtils'
 
@@ -41,6 +41,9 @@ export default function FinancialData() {
 
   return (
     <div>
+      <button type="button" onClick={logout}>
+        Logout
+      </button>
       <h1>Finanzas</h1>
       <table>
         <thead>

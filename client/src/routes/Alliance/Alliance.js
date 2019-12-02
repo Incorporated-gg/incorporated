@@ -8,7 +8,6 @@ import AllianceResources from './Resources'
 import AllianceHome from './Home'
 import AllianceAdmin from './Admin'
 import { userData } from '../../lib/user'
-import './Alliance.scss'
 
 let lastAllianceData = null
 export default function Alliance() {
@@ -51,7 +50,7 @@ function AllianceRouter({ alliance, reloadAllianceData }) {
 
   return (
     <>
-      <nav className="alliance-menu">
+      <nav className="sub-menu">
         <ul>
           <li>
             <NavLink to="/alliance" exact>
