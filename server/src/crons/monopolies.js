@@ -3,6 +3,9 @@ const { buildingsList } = require('shared-lib/buildingsUtils')
 const frequencyMs = 60 * 1000
 
 const run = async () => {
+  const date = new Date()
+  const isMonopoliesMinute = date.getUTCDay() === 6 && date.getUTCHours() === 23 && date.getUTCMinutes() === 30
+
   // Update monopolies table
   await Promise.all(
     buildingsList.map(async ({ id: buildingID }) => {
@@ -29,9 +32,7 @@ const run = async () => {
   )
 
   // Send monopolies reward
-  const date = new Date()
-  const isTime = date.getUTCDay() === 6 && date.getUTCHours() === 23 && date.getUTCMinutes() === 30
-  if (!isTime) return
+  if (!isMonopoliesMinute) return
   const messagesCreatedAt = Math.floor(Date.now() / 1000)
   const [monopolyHolders] = await mysql.query('SELECT building_id, user_id, building_quantity FROM monopolies')
   await Promise.all(

@@ -5,6 +5,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: #444;
+  overflow-y: scroll;
 }
 
 *, :after, :before {
@@ -45,6 +46,12 @@ table {
   }
 }
 
+a {
+  text-decoration: none;
+  color: inherit;
+  font-weight: bold;
+}
+
 .sub-menu {
   ul {
     list-style: none;
@@ -65,6 +72,7 @@ table {
         text-decoration: none;
         color: #fff;
         font-size: 0.9em;
+        font-weight: normal;
         &.active {
           background-color: #7A7A7A;
         }

@@ -54,10 +54,16 @@ function SingleMessage({ reloadMessagesData, message }) {
   const dateFormatted = new Date(message.created_at * 1000).toLocaleString()
   return (
     <div>
-      {message.sender && (
+      {isMine && message.sender && (
         <div>
-          Enviado por:
+          {'Enviado por: '}
           <Username user={message.sender} />
+        </div>
+      )}
+      {!isMine && message.receiver && (
+        <div>
+          {'Enviado a: '}
+          <Username user={message.receiver} />
         </div>
       )}
       <div>Fecha: {dateFormatted}</div>

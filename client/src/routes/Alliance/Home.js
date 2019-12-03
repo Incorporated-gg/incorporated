@@ -2,6 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import Username from '../../components/Username'
 import api from '../../lib/api'
+import { Link } from 'react-router-dom'
 
 AllianceHome.propTypes = {
   alliance: PropTypes.object.isRequired,
@@ -47,13 +48,14 @@ export default function AllianceHome({ alliance, reloadAllianceData }) {
             <th>Nombre de usuario</th>
             <th>Rango</th>
             <th>Ingresos por día</th>
+            <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
           {alliance.members.map(member => {
             return (
               <tr key={member.user.id}>
-                <td>{member.user.rank_position}</td>
+                <td>{member.user.rank_position.toLocaleString()}</td>
                 <td>
                   <Username user={member.user} />
                 </td>
@@ -62,6 +64,11 @@ export default function AllianceHome({ alliance, reloadAllianceData }) {
                   {member.is_admin ? ' (Líder)' : ''}
                 </td>
                 <td>{member.user.income.toLocaleString()}€</td>
+                <td>
+                  <p>
+                    <Link to={`/messages/new/${member.user.username}`}>Enviar mensaje</Link>
+                  </p>
+                </td>
               </tr>
             )
           })}

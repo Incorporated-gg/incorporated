@@ -1,4 +1,5 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
 
 Username.propTypes = {
@@ -7,8 +8,8 @@ Username.propTypes = {
 export default function Username({ user }) {
   return (
     <span>
-      <span>{user.username}</span>
-      {user.alliance && <span> [{user.alliance.short_name}]</span>}
+      <Link to={`/ranking/user/${user.username}`}>{user.username}</Link>{' '}
+      {user.alliance && <Link to={`/ranking/alliance/${user.alliance.id}`}>[{user.alliance.short_name}]</Link>}
     </span>
   )
 }

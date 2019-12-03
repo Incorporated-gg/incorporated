@@ -41,6 +41,8 @@ async function getBasicData(allianceID) {
     [allianceID]
   )
 
+  if (!allianceQuery) return false
+
   return {
     id: allianceID,
     created_at: allianceQuery.created_at,

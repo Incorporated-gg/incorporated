@@ -9,10 +9,13 @@ export default function FinancialData() {
   const userData = useUserData()
   const [buildings, setBuildings] = useState(null)
   useEffect(() => {
+    if (!userData) return
     api.get('/v1/buildings').then(res => {
       setBuildings(res.buildings)
     })
-  }, [])
+  }, [userData])
+
+  if (!userData) return null
 
   // Buildings income
   const buildingsIncome = buildingsList.map(buildingInfo => {

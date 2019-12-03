@@ -21,15 +21,14 @@ export async function reloadUserData() {
 }
 
 export async function logout() {
+  await asyncStorage.setItem('session_id', null)
   sessionID = null
   userData = null
-  fireUserDataListeners()
-  await asyncStorage.setItem('session_id', sessionID)
   reloadApp()
 }
 
 export async function loadUserDataFromStorage() {
-  await asyncStorage.getItem('session_id', null).then(newSessionID => (sessionID = newSessionID))
+  sessionID = await asyncStorage.getItem('session_id', null)
   if (sessionID) {
     userData = (await api.get('/v1/my_data')).user_data
     fireUserDataListeners()
