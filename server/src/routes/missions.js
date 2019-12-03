@@ -79,7 +79,6 @@ module.exports = app => {
     }
 
     const defensorBuildings = await getBuildings(toUser.id)
-    console.log('DEFENSOR BUILDINGS' + JSON.stringify(defensorBuildings))
     if (!defensorBuildings[parseInt(req.body.target_building)]) {
       res.status(400).json({
         error: `El usuario que intentas atacar no tiene ${
