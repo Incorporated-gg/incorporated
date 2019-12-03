@@ -1,0 +1,9 @@
+.startNewMission {
+  display: inline-block;
+  padding: 2em;
+  &.notReady {
+    background-color: rgba(0, 0, 0, 0.1);
+    opacity: 0.5;
+  }
+}
+

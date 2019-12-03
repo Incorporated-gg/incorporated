@@ -3,6 +3,7 @@ const alliances = require('./alliances')
 const { calcBuildingDailyIncome } = require('shared-lib/buildingsUtils')
 const { researchList } = require('shared-lib/researchUtils')
 const { personnelList } = require('shared-lib/personnelUtils')
+const { buildingsList } = require('shared-lib/buildingsUtils')
 const { taxList, getIncomeTaxes } = require('shared-lib/taxes')
 
 module.exports.getData = getData
@@ -90,4 +91,40 @@ async function getPersonnel(userID) {
   if (personnelRaw) personnelRaw.forEach(personnel => (personnels[personnel.resource_id] = personnel.quantity))
 
   return personnels
+}
+
+module.exports.getBuildings = getBuildings
+async function getBuildings(userID) {
+  const buildings = {}
+  buildingsList.forEach(building => (buildings[building.id] = 0))
+  const [buildingsRaw] = await mysql.query('SELECT id, quantity FROM buildings WHERE user_id=?', [userID])
+  if (buildingsRaw) buildingsRaw.forEach(building => (buildings[building.id] = building.quantity))
+
+  return buildings
+}
+
+module.exports.getMissions = getMissions
+async function getMissions(userID) {
+  const [
+    missionsRaw,
+  ] = await mysql.query(
+    'SELECT target_user, target_building, mission_type, personnel_sent, started_at, will_finish_at, completed FROM missions WHERE user_id=?',
+    [userID]
+  )
+  const missions = Promise.all(
+    missionsRaw.map(async mission => {
+      const defensorData = await getData(mission.target_user)
+      return {
+        target_user: defensorData,
+        target_building: mission.target_building,
+        mission_type: mission.mission_type,
+        personnel_sent: mission.personnel_sent,
+        started_at: mission.started_at,
+        will_finish_at: mission.will_finish_at,
+        completed: mission.completed,
+      }
+    })
+  )
+
+  return missions
 }

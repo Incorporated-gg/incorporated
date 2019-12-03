@@ -1,6 +1,7 @@
 const mysql = require('../lib/mysql')
 const frequencyMs = 15 * 1000 // Every 15s for dev purposes
 const { getUserDailyIncome } = require('../lib/db/users')
+const { timestampFromEpoch } = require('shared-lib/commonUtils')
 
 const setUserIncome = async (userID, userIncome, rank) => {
   const [[rowExists]] = await mysql.query('SELECT 1 FROM ranking WHERE user_id = ?', [userID])
@@ -12,14 +13,7 @@ const setUserIncome = async (userID, userIncome, rank) => {
 }
 
 const run = async () => {
-  const hora = (epoch = Date.now()) => {
-    let d = new Date(epoch)
-    let h = `${d.getHours()}`.padStart(2, '0')
-    let m = `${d.getMinutes()}`.padStart(2, '0')
-    let s = `${d.getSeconds()}`.padStart(2, '0')
-    return `[${h}:${m}:${s}]`
-  }
-  console.log(`${hora()} Running update ranking CRON`)
+  console.log(`${timestampFromEpoch()} Running update ranking CRON`)
   const [users] = await mysql.query('SELECT id FROM users')
   const parsedUsers = await Promise.all(
     users.map(async user => {

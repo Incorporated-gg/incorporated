@@ -17,6 +17,7 @@ export default function FinancialData() {
 
   if (!userData) return null
 
+  if (!userData) return
   // Buildings income
   const buildingsIncome = buildingsList.map(buildingInfo => {
     const quantity = buildings ? buildings[buildingInfo.id] : 0

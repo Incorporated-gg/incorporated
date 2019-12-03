@@ -40,6 +40,7 @@ export default function Ranking() {
                 <td>{user.income.toLocaleString()}€</td>
                 <td>
                   <Link to={`/messages/new/${user.username}`}>Enviar mensaje</Link>
+                  <Link to={`/missions/attack/${user.username}`}>Atacar</Link>
                 </td>
               </tr>
             ))
