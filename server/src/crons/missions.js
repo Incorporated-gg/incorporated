@@ -5,41 +5,55 @@ const frequencyMs = 10 * 1000
 
 const run = async () => {
   // Missions
-  const curTime = Math.floor(Date.now() / 1000)
-  const [
-    pendingMissions,
-  ] = await mysql.query(
-    'SELECT id, user_id, target_user, target_building, mission_type, personnel_sent, started_at, will_finish_at, completed FROM missions WHERE completed=? AND will_finish_at<=?',
-    [false, curTime]
-  )
-
-  await Promise.all(
-    pendingMissions.map(async mission => {
-      if (mission.mission_type === 'attack') await completeAttackMission(mission)
-    })
-  )
+  await doAttackMissions()
 }
-
 module.exports = {
   run,
   frequencyMs,
 }
 
+function onlyUnique(value, index, self) {
+  return self.indexOf(value) === index
+}
+
+async function doAttackMissions() {
+  const curTime = Math.floor(Date.now() / 1000)
+  const [
+    attackMissions,
+  ] = await mysql.query(
+    'SELECT id, user_id, target_user, target_building, mission_type, personnel_sent, started_at, will_finish_at, completed FROM missions WHERE completed=? AND mission_type=? AND will_finish_at<=?',
+    [false, 'attack', curTime]
+  )
+
+  // Grouping by attacked user solves race conditions when many people are attacking the same user
+  const attackedUsers = attackMissions.map(mission => mission.target_user).filter(onlyUnique)
+  await Promise.all(
+    attackedUsers.map(async attackedUserID => {
+      const userMissions = attackMissions.filter(mission => mission.target_user === attackedUserID)
+      for (const mission of userMissions) {
+        await completeAttackMission(mission)
+      }
+    })
+  )
+}
+
 async function completeAttackMission(mission) {
   // Complete the mission
-  const [[defender]] = await mysql.query('SELECT id FROM users WHERE id=?', [mission.target_user])
-  const [[attacker]] = await mysql.query('SELECT id FROM users WHERE id=?', [mission.user_id])
+  const [[[defender]], [[attacker]]] = await Promise.all([
+    mysql.query('SELECT id FROM users WHERE id=?', [mission.target_user]),
+    mysql.query('SELECT id FROM users WHERE id=?', [mission.user_id]),
+  ])
   if (!defender || !attacker) {
     // Either the defender or attacker do not exist anymore
     await mysql.query('UPDATE missions SET completed=1 WHERE id=?', [mission.id])
     return
   }
-  const [defensorResearchs, defensorPersonnel, defensorBuildings] = await Promise.all([
+  const [defensorResearchs, attackerResearchs, defensorPersonnel, defensorBuildings] = await Promise.all([
     getResearchs(defender.id),
+    getResearchs(attacker.id),
     getPersonnel(defender.id),
     getBuildings(defender.id),
   ])
-  const [attackerResearchs] = await Promise.all([getResearchs(attacker.id)])
   const attackParams = {
     defensorGuards: defensorPersonnel.guards,
     attackerSabots: parseInt(mission.personnel_sent),
@@ -61,6 +75,9 @@ async function completeAttackMission(mission) {
     realAttackerProfit,
   } = simulateAttack(attackParams)
 
+  // Update mission state
+  await mysql.query('UPDATE missions SET completed=1 WHERE id=?', [mission.id])
+
   // Update troops
   await mysql.query('UPDATE users_resources SET quantity=? WHERE user_id=? AND resource_id=?', [
     survivingGuards,
@@ -81,14 +98,7 @@ async function completeAttackMission(mission) {
   ])
 
   // Give money to attacker
-  await mysql.query('UPDATE users SET money=money+?, last_money_update=? WHERE id=?', [
-    attackerTotalIncome,
-    Date.now() / 1000,
-    attacker.id,
-  ])
-
-  // Update mission state
-  await mysql.query('UPDATE missions SET completed=1 WHERE id=?', [mission.id])
+  await mysql.query('UPDATE users SET money=money+? WHERE id=?', [attackerTotalIncome, attacker.id])
 
   // Send messages
   const msgAttackReport = {
