@@ -38,8 +38,8 @@ async function completeHackMission(mission) {
   const hackingResearchLvlDiff = attackerResearchs[1] - defensorResearchs[1]
 
   const successRandom = Math.floor(Math.random() * 30) // [0-30], random
-  const successLvlDiff = Math.min(1, Math.max(0, hackingResearchLvlDiff / 40 / 2 + 0.5)) * 50 // [0-50], 25 being equal level, 0 being -40 lvl diff
-  const successTroops = Math.min(1, Math.max(0, hackersCount / 40)) * 20 // [0-20], 0 being 1 troop, 20 being 40 troops
+  const successLvlDiff = Math.min(1, Math.max(0, hackingResearchLvlDiff / 20 / 2 + 0.5)) * 60 // [0-60], 30 being equal level, 0 being -20 lvl diff
+  const successTroops = Math.min(1, Math.max(0, hackersCount / 40)) * 10 // [0-10], 0 being 1 troop, 10 being 40 troops
   const successPercentage = successRandom + successLvlDiff + successTroops
   const gotCaught = successPercentage < 35
 
