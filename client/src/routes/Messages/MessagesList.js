@@ -75,6 +75,11 @@ function SingleMessage({ reloadMessagesData, message }) {
           {buildingsList.find(b => b.id === message.data.building_id).name} con {message.data.building_quantity}{' '}
           edificios
         </div>
+      ) : message.type === 'attack_report' ? (
+        <div>
+          Resultado de ataque:
+          {JSON.stringify(message.data)}
+        </div>
       ) : (
         <div>Tipo desconocido</div>
       )}

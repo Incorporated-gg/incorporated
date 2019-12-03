@@ -27,7 +27,7 @@ export default function Researchs() {
     const updateResearchN = newN => setResearchs(Object.assign({}, researchs, { [researchID]: newN }))
     try {
       updateResearchN(oldCount + 1)
-      await api.post('/v1/buy_research', { research_id: researchID, count: 1 })
+      await api.post('/v1/research/buy', { research_id: researchID, count: 1 })
       updateUserData({ researchs: Object.assign({}, researchs, { [researchID]: oldCount + 1 }) })
     } catch (e) {
       updateResearchN(oldCount)

@@ -34,11 +34,11 @@ module.exports.getIDFromUsername = async username => {
 
 module.exports.getUserDailyIncome = getUserDailyIncome
 async function getUserDailyIncome(userID, { withoutExpensesOrTaxes = false } = {}) {
-  let [[buildingsRaw], [[optimizeResearchLevel]]] = await Promise.all([
-    await mysql.query('SELECT id, quantity FROM buildings WHERE user_id=?', [userID]),
-    await mysql.query('SELECT level FROM research WHERE user_id=? AND id=5', [userID]),
+  let [[buildingsRaw], researchs] = await Promise.all([
+    mysql.query('SELECT id, quantity FROM buildings WHERE user_id=?', [userID]),
+    getResearchs(userID),
   ])
-  optimizeResearchLevel = optimizeResearchLevel ? optimizeResearchLevel.level : 0
+  const optimizeResearchLevel = researchs[5]
 
   const totalBuildingsIncome = buildingsRaw.reduce(
     (prev, curr) => prev + calcBuildingDailyIncome(curr.id, curr.quantity, optimizeResearchLevel),
@@ -72,7 +72,7 @@ async function getUserDailyIncome(userID, { withoutExpensesOrTaxes = false } = {
 module.exports.getResearchs = getResearchs
 async function getResearchs(userID) {
   const researchs = {}
-  researchList.forEach(research => (researchs[research.id] = 0))
+  researchList.forEach(research => (researchs[research.id] = 1))
 
   const [researchsRaw] = await mysql.query('SELECT id, level FROM research WHERE user_id=?', [userID])
   if (researchsRaw) researchsRaw.forEach(research => (researchs[research.id] = research.level))

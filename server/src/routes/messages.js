@@ -30,6 +30,12 @@ module.exports = app => {
         }
         result.receiver = await users.getData(msg.user_id)
         result.sender = await users.getData(msg.sender_id)
+        if (msg.type === 'attack_report') {
+          result.data.attacker = await users.getData(result.data.attacker_id)
+          result.data.defender = await users.getData(result.data.defender_id)
+          delete result.data.attacker_id
+          delete result.data.defender_id
+        }
         return result
       })
     )

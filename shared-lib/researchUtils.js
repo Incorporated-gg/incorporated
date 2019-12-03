@@ -9,7 +9,7 @@ const researchList = [
 module.exports.researchList = researchList
 
 function calcResearchPrice(researchID, currentLevel) {
-  return Math.round(researchList.find(r => r.id === researchID).basePrice * Math.pow(1.3, currentLevel))
+  return Math.round(researchList.find(r => r.id === researchID).basePrice * Math.pow(1.3, currentLevel - 1))
 }
 module.exports.calcResearchPrice = calcResearchPrice
 

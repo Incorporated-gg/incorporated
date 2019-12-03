@@ -1,4 +1,5 @@
 const mysql = require('../lib/mysql')
+const users = require('../lib/db/users')
 const { researchList, calcResearchPrice } = require('shared-lib/researchUtils')
 
 module.exports = app => {
@@ -13,7 +14,7 @@ module.exports = app => {
     })
   })
 
-  app.post('/v1/buy_research', async function(req, res) {
+  app.post('/v1/research/buy', async function(req, res) {
     if (!req.userData) {
       res.status(401).json({ error: 'Necesitas estar conectado', error_code: 'not_logged_in' })
       return
@@ -31,11 +32,9 @@ module.exports = app => {
       return
     }
 
-    const [[research]] = await mysql.query('SELECT level FROM research WHERE user_id=? and id=?', [
-      req.userData.id,
-      researchID,
-    ])
-    const price = calcResearchPrice(researchID, research ? research.level : 0)
+    const researchs = await users.getResearchs(req.userData.id)
+
+    const price = calcResearchPrice(researchID, researchs[researchID])
     if (price > req.userData.money) {
       res.status(400).json({ error: 'No tienes suficiente dinero' })
       return
@@ -44,8 +43,9 @@ module.exports = app => {
     req.userData.money -= price
     await mysql.query('UPDATE users SET money=money-? WHERE id=?', [price, req.userData.id])
 
-    if (!research) {
-      await mysql.query('INSERT INTO research (user_id, id, level) VALUES (?, ?, ?)', [req.userData.id, researchID, 1])
+    const researchRowExists = researchs[researchID] !== 1
+    if (!researchRowExists) {
+      await mysql.query('INSERT INTO research (user_id, id, level) VALUES (?, ?, ?)', [req.userData.id, researchID, 2])
     } else {
       await mysql.query('UPDATE research SET level=level+? WHERE user_id=? and id=?', [1, req.userData.id, researchID])
     }

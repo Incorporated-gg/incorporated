@@ -12,7 +12,7 @@ export default function Mission({ reloadMissionsCallback }) {
   const userData = useUserData()
   const { username: routeUsername, missionType } = useParams()
   const isAttack = missionType === 'attack'
-  const [toUser, setToUser] = useState(routeUsername)
+  const [toUser, setToUser] = useState(routeUsername || '')
   const [numTroops, setNumTroops] = useState(() => {
     return isAttack ? userData.personnel.sabots : userData.personnel.spies
   })

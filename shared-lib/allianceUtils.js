@@ -11,16 +11,20 @@ const RESEARCHS_LIST = [
 ]
 module.exports.RESEARCHS_LIST = RESEARCHS_LIST
 
-const RESOURCES_LIST = [{
-  resource_id: 'money',
-  name: 'Dinero'
-}, {
-  resource_id: 'sabots',
-  name: 'Saboteadores'
-}, {
-  resource_id: 'guards',
-  name: 'Guardias'
-}]
+const RESOURCES_LIST = [
+  {
+    resource_id: 'money',
+    name: 'Dinero',
+  },
+  {
+    resource_id: 'sabots',
+    name: 'Saboteadores',
+  },
+  {
+    resource_id: 'guards',
+    name: 'Guardias',
+  },
+]
 module.exports.RESOURCES_LIST = RESOURCES_LIST
 
 const maxResourcesPerLevel = {
