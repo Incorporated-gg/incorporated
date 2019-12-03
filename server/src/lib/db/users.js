@@ -108,7 +108,7 @@ async function getMissions(userID) {
   const [
     missionsRaw,
   ] = await mysql.query(
-    'SELECT target_user, target_building, mission_type, personnel_sent, started_at, will_finish_at, completed FROM missions WHERE user_id=?',
+    'SELECT target_user, target_building, mission_type, personnel_sent, started_at, will_finish_at, completed FROM missions WHERE user_id=? ORDER BY will_finish_at DESC LIMIT 50',
     [userID]
   )
   const missions = Promise.all(
@@ -127,4 +127,16 @@ async function getMissions(userID) {
   )
 
   return missions
+}
+
+module.exports.sendMessage = sendMessage
+async function sendMessage({ receiverID, senderID, type, data }) {
+  const messageCreatedAt = Math.floor(Date.now() / 1000)
+  await mysql.query('INSERT INTO messages (user_id, sender_id, created_at, type, data) VALUES (?, ?, ?, ?, ?)', [
+    receiverID,
+    senderID,
+    messageCreatedAt,
+    type,
+    JSON.stringify(data),
+  ])
 }

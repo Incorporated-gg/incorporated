@@ -36,6 +36,14 @@ module.exports = app => {
           delete result.data.attacker_id
           delete result.data.defender_id
         }
+        if (msg.type === 'hack_report') {
+          result.data.defender = await users.getData(result.data.defender_id)
+          delete result.data.defender_id
+        }
+        if (msg.type === 'caught_hackers') {
+          result.data.attacker = await users.getData(result.data.attacker_id)
+          delete result.data.attacker_id
+        }
         return result
       })
     )

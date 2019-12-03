@@ -63,7 +63,7 @@ function AllianceRouter({ alliance, reloadAllianceData }) {
           <li>
             <NavLink to="/alliance/research">Investigaciones</NavLink>
           </li>
-          {myMemberData.is_admin && (
+          {myMemberData && myMemberData.is_admin && (
             <li>
               <NavLink to="/alliance/admin">Admin</NavLink>
             </li>

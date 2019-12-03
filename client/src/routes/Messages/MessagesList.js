@@ -52,6 +52,105 @@ function SingleMessage({ reloadMessagesData, message }) {
   }
   const isMine = message.receiver && message.receiver.id === userData.id
   const dateFormatted = new Date(message.created_at * 1000).toLocaleString()
+
+  let messageElm = null
+  switch (message.type) {
+    case 'private_message':
+      messageElm = <div>{message.data.message}</div>
+      break
+    case 'monopoly_reward':
+      messageElm = (
+        <div>
+          Enhorabuena por ganar el monopolio semanal! Ganaste el monopolio de{' '}
+          {buildingsList.find(b => b.id === message.data.building_id).name} con {message.data.building_quantity}{' '}
+          edificios
+        </div>
+      )
+      break
+    case 'attack_report':
+      const wasIAttacked = message.data.defender && message.data.defender.id === userData.id
+      if (wasIAttacked) {
+        messageElm = (
+          <div>
+            <div>
+              Ataque recibido de <Username user={message.data.attacker} />
+            </div>
+            <div>Resultado: {message.data.result}</div>
+            <div>Guardias muertos: {message.data.guards_killed.toLocaleString()}</div>
+            <div>Saboteadores muertos: {message.data.sabots_killed.toLocaleString()}</div>
+            <div>Edificios destruidos: {message.data.destroyed_buildings}</div>
+            <div>Dinero ganado por edificios: {message.data.income_for_buildings.toLocaleString()}</div>
+            <div>Dinero ganado por muertes: {message.data.income_for_troops.toLocaleString()}</div>
+            <div>Beneficios netos: {message.data.attacker_profit.toLocaleString()}</div>
+          </div>
+        )
+      } else {
+        messageElm = (
+          <div>
+            <div>
+              Ataque a <Username user={message.data.defender} />
+            </div>
+            <div>Resultado: {message.data.result}</div>
+            <div>Guardias muertos: {message.data.guards_killed.toLocaleString()}</div>
+            <div>Saboteadores muertos: {message.data.sabots_killed.toLocaleString()}</div>
+            <div>Edificios destruidos: {message.data.destroyed_buildings}</div>
+            <div>Dinero ganado por edificios: {message.data.income_for_buildings.toLocaleString()}</div>
+            <div>Dinero ganado por muertes: {message.data.income_for_troops.toLocaleString()}</div>
+            <div>Beneficios netos: {message.data.attacker_profit.toLocaleString()}</div>
+          </div>
+        )
+      }
+      break
+    case 'caught_hackers':
+      messageElm = (
+        <div>
+          Hemos cazado a los hackers de X:
+          {JSON.stringify(message.data)}
+        </div>
+      )
+      break
+    case 'hack_report':
+      messageElm = (
+        <div>
+          <div>
+            Resultado de hackeo a: <Username user={message.data.defender} />
+          </div>
+          {message.data.intel_report ? (
+            <>
+              <div>Número de hackers: {message.data.hackers_count}</div>
+              {message.data.intel_report.buildings && (
+                <div>
+                  {'Edificios: '}
+                  {buildingsList
+                    .map(buildingInfo => {
+                      return buildingInfo.name + ': ' + message.data.intel_report.buildings[buildingInfo.id]
+                    })
+                    .join(', ')}{' '}
+                </div>
+              )}
+              {message.data.intel_report.personnel && (
+                <div>
+                  {'Personal: '}
+                  {JSON.stringify(message.data.intel_report.personnel)}{' '}
+                </div>
+              )}
+              {message.data.intel_report.researchs && (
+                <div>
+                  {'Investigaciones: '}
+                  {JSON.stringify(message.data.intel_report.researchs)}{' '}
+                </div>
+              )}
+            </>
+          ) : (
+            <div>Nos cazaron! Hemos perdido a {message.data.hackers_count} hackers</div>
+          )}
+        </div>
+      )
+      break
+    default:
+      messageElm = <div>Tipo desconocido</div>
+  }
+
   return (
     <div>
       {isMine && message.sender && (
@@ -67,22 +166,7 @@ function SingleMessage({ reloadMessagesData, message }) {
         </div>
       )}
       <div>Fecha: {dateFormatted}</div>
-      {message.type === 'private_message' ? (
-        <div>{message.data.message}</div>
-      ) : message.type === 'monopoly_reward' ? (
-        <div>
-          Enhorabuena por ganar el monopolio semanal! Ganaste el monopolio de{' '}
-          {buildingsList.find(b => b.id === message.data.building_id).name} con {message.data.building_quantity}{' '}
-          edificios
-        </div>
-      ) : message.type === 'attack_report' ? (
-        <div>
-          Resultado de ataque:
-          {JSON.stringify(message.data)}
-        </div>
-      ) : (
-        <div>Tipo desconocido</div>
-      )}
+      {messageElm}
       {isMine && <button onClick={deleteMessage}>Borrar</button>}
       <hr />
     </div>

@@ -29,7 +29,7 @@ export default function Missions() {
             <NavLink to="/missions/attack">Atacar</NavLink>
           </li>
           <li>
-            <NavLink to="/missions/spy">Espiar</NavLink>
+            <NavLink to="/missions/hack">Hackear</NavLink>
           </li>
         </ul>
       </nav>

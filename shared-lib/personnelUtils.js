@@ -19,7 +19,7 @@ const personnelList = [
     defensePower: 1,
     dailyMaintenanceCost: 500,
   },
-  { id: 3, name: 'Espías', resource_id: 'spies', price: 1000, firingCost: 1000, dailyMaintenanceCost: 1000 },
+  { id: 3, name: 'Hackers', resource_id: 'hackers', price: 20000, firingCost: 5000, dailyMaintenanceCost: 5000 },
 ]
 
 module.exports.personnelList = personnelList
