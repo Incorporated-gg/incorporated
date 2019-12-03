@@ -10,8 +10,9 @@ const run = async () => {
   const [missions] = await mysql.query(
     'SELECT id, user_id, target_user, target_building, mission_type, personnel_sent, started_at, will_finish_at, completed FROM missions'
   )
-  if (!missions.filter(m => !m.completed).filter(m => m.mission_type === 'attack').length) return
-  missions.forEach(async mission => {
+  const attackMissions = missions.filter(m => m.completed === 0).filter(m => m.mission_type === 'attack')
+  if (!attackMissions.length) return
+  attackMissions.forEach(async mission => {
     const curTime = Date.now() / 1000
     if (mission.will_finish_at > curTime) return
     // Complete the mission
@@ -39,7 +40,7 @@ const run = async () => {
     console.log(attackParams)
     const attackResult = calcularAtaque(attackParams)
 
-    console.log('ATTACK RESULT' + attackResult)
+    console.log('ATTACK RESULT', JSON.stringify(attackResult))
     // Update troops
     await mysql.query('UPDATE users_resources SET quantity=? WHERE user_id=? AND resource_id=?', [
       attackResult.survivingGuards,

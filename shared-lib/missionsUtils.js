@@ -106,6 +106,9 @@ function calcularAtaque({
     ) // edificios destruidos
     if (destroyedBuildings > attackedBuilding.maximumDestroyedBuildings) {
       destroyedBuildings = attackedBuilding.maximumDestroyedBuildings
+    }
+    if (destroyedBuildings > defensorNumEdificios) {
+      destroyedBuildings = defensorNumEdificios
     } // no superar limites edificios destruidos
     // const remainingBuildings = defensorNumEdificios - destroyedBuildings //edificios restantes
 
