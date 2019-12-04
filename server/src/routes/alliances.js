@@ -157,7 +157,7 @@ module.exports = app => {
 
     const isValidLongName =
       typeof longName === 'string' &&
-      longName.length >= 4 &&
+      longName.length >= 2 &&
       longName.length <= 20 &&
       alphanumericRegexp.test(longName.replace(/ /g, '')) // Test for alphanumeric but allow spaces
     if (!isValidLongName) {

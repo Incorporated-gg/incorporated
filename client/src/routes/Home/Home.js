@@ -10,7 +10,7 @@ export default function Home() {
         <ul>
           <li>
             <NavLink to="/" exact>
-              Financias
+              Finanzas
             </NavLink>
           </li>
           <li>
