@@ -6,9 +6,11 @@ import './Missions.scss'
 import { timestampFromEpoch } from 'shared-lib/commonUtils'
 import { buildingsList } from 'shared-lib/buildingsUtils'
 import Mission from './Mission'
+import moment from 'moment'
 
 export default function Missions() {
   const [missions, setMissions] = useState([])
+  const activeMissions = missions.filter(m => !m.completed)
 
   const reloadMissionsCallback = useCallback(() => {
     api
@@ -50,28 +52,26 @@ export default function Missions() {
           </tr>
         </thead>
         <tbody>
-          {missions.filter(m => !m.completed).length ? (
-            missions
-              .filter(m => !m.completed)
-              .map((m, i) => (
-                <tr key={i}>
-                  <td>{m.mission_type}</td>
-                  <td>
-                    <Username user={m.target_user} />
-                  </td>
-                  <td>{m.personnel_sent}</td>
-                  <td>
-                    {m.mission_type === 'attack'
-                      ? buildingsList.find(b => b.id === parseInt(m.target_building)).name
-                      : ''}
-                  </td>
-                  <td>
-                    {new Date(m.will_finish_at * 1000) <= new Date()
-                      ? 'Completando...'
-                      : timestampFromEpoch(m.will_finish_at)}
-                  </td>
-                </tr>
-              ))
+          {activeMissions.length ? (
+            activeMissions.map((m, i) => (
+              <tr key={i}>
+                <td>{m.mission_type}</td>
+                <td>
+                  <Username user={m.target_user} />
+                </td>
+                <td>{m.personnel_sent}</td>
+                <td>
+                  {m.mission_type === 'attack'
+                    ? buildingsList.find(b => b.id === parseInt(m.target_building)).name
+                    : ''}
+                </td>
+                <td>
+                  {new Date(m.will_finish_at * 1000) <= new Date()
+                    ? 'Completando...'
+                    : moment(m.will_finish_at * 1000).fromNow()}
+                </td>
+              </tr>
+            ))
           ) : (
             <tr>
               <td colSpan="3">No hay misiones activas</td>

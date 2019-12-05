@@ -70,7 +70,13 @@ async function completeAttackMission(mission) {
   } = simulateAttack(attackParams)
 
   // Update mission state
-  await mysql.query('UPDATE missions SET completed=1 WHERE id=?', [mission.id])
+  const won = result === 'win' ? 1 : 0
+  await mysql.query('UPDATE missions SET completed=1, gained_fame=?, won=?, profit=? WHERE id=?', [
+    gainedFame,
+    won,
+    realAttackerProfit,
+    mission.id,
+  ])
 
   // Update troops
   await mysql.query('UPDATE users_resources SET quantity=? WHERE user_id=? AND resource_id=?', [

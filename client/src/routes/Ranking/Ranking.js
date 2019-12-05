@@ -39,11 +39,9 @@ export default function Ranking() {
                 </td>
                 <td>{user.income.toLocaleString()}€</td>
                 <td>
-                  <Link to={`/messages/new/${user.username}`}>Enviar mensaje</Link>
-                  {' | '}
-                  <Link to={`/missions/attack/${user.username}`}>Atacar</Link>
-                  {' | '}
-                  <Link to={`/missions/spy/${user.username}`}>Espiar</Link>
+                  <Link to={`/messages/new/${user.username}`}>Enviar mensaje </Link>
+                  <Link to={`/missions/attack/${user.username}`}>| Atacar </Link>
+                  <Link to={`/missions/hack/${user.username}`}>| Hackear </Link>
                 </td>
               </tr>
             ))

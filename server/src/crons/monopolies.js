@@ -5,13 +5,16 @@ const frequencyMs = 60 * 1000
 const run = async () => {
   const date = new Date()
   const isMonopoliesMinute = date.getUTCDay() === 6 && date.getUTCHours() === 23 && date.getUTCMinutes() === 30
+  if (!isMonopoliesMinute) return
 
   // Update monopolies table
   await Promise.all(
     buildingsList.map(async ({ id: buildingID }) => {
       const [
         [monopolyHolder],
-      ] = await mysql.query('SELECT user_id, quantity FROM buildings WHERE id=? ORDER BY quantity DESC', [buildingID])
+      ] = await mysql.query('SELECT user_id, quantity FROM buildings WHERE id=? ORDER BY quantity DESC LIMIT 1', [
+        buildingID,
+      ])
       if (!monopolyHolder) return
 
       const [[doesMonopolyRowExist]] = await mysql.query('SELECT 1 FROM monopolies WHERE building_id=?', [buildingID])
@@ -32,7 +35,6 @@ const run = async () => {
   )
 
   // Send monopolies reward
-  if (!isMonopoliesMinute) return
   const messagesCreatedAt = Math.floor(Date.now() / 1000)
   const [monopolyHolders] = await mysql.query('SELECT building_id, user_id, building_quantity FROM monopolies')
   await Promise.all(
