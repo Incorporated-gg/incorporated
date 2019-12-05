@@ -89,7 +89,7 @@ const run = async () => {
     const curContest = contests.find(c => c.contestName === contest.name)
     curContest.id = contest.id
     if (curContest.contestWillUpdate) curContest.contestWillUpdate()
-    updateOngoingContest(curContest)
+    await updateOngoingContest(curContest)
     if (curContest.contestDidUpdate) curContest.contestDidUpdate()
     // Check if we need to end ongoing contests
     if (curContest.shouldEndContest) {
