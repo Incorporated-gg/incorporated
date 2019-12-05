@@ -6,7 +6,7 @@ import CreateAlliance from './CreateAlliance'
 import AllianceResearch from './Research'
 import AllianceResources from './Resources'
 import AllianceHome from './Home'
-import AllianceAdmin from './Admin'
+import AllianceAdmin from './Admin/index.js'
 import { userData } from '../../lib/user'
 
 let lastAllianceData = null

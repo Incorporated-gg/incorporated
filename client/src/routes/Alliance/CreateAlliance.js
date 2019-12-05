@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import api from '../../lib/api'
 import PropTypes from 'prop-types'
+import { CREATE_ALLIANCE_PRICE } from 'shared-lib/allianceUtils'
 
 CreateAlliance.propTypes = {
   reloadAllianceData: PropTypes.func.isRequired,
@@ -43,6 +44,7 @@ export default function CreateAlliance({ reloadAllianceData }) {
           Descripción: <textarea value={description} onChange={e => setDescription(e.target.value)}></textarea>
         </label>
       </div>
+      <div>Precio: {CREATE_ALLIANCE_PRICE.toLocaleString()}€</div>
       <div>
         <button onClick={createAlliance}>Crear</button>
       </div>

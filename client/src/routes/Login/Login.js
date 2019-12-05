@@ -39,6 +39,10 @@ function Login({ toggleActive }) {
     api
       .post('/v1/login', { username, password })
       .then(res => {
+        if (!res.session_id) {
+          alert(JSON.stringify(res))
+          return
+        }
         return userLoggedIn(res.session_id)
       })
       .catch(err => {
@@ -79,6 +83,10 @@ function Register({ toggleActive }) {
     api
       .post('/v1/register', { username, password, email })
       .then(res => {
+        if (!res.session_id) {
+          alert(JSON.stringify(res))
+          return
+        }
         return userLoggedIn(res.session_id)
       })
       .catch(err => {

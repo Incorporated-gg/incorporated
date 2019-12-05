@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react'
 import api from '../../lib/api'
 import Username from '../../components/Username'
 import { useParams, Link } from 'react-router-dom'
+import { useUserData } from '../../lib/user'
 
 export default function Ranking() {
   const { allianceID: routeAllianceID } = useParams()
   const [alliance, setAlliance] = useState({})
   const [error, setError] = useState(false)
+  const userData = useUserData()
 
   useEffect(() => {
     api
@@ -16,6 +18,13 @@ export default function Ranking() {
       })
       .catch(err => setError(err.message))
   }, [routeAllianceID])
+
+  const createMemberRequest = () => {
+    api
+      .post('/v1/alliance/member_request/create', { alliance_id: alliance.id })
+      .then(() => alert('Petición enviada'))
+      .catch(err => alert(err.message))
+  }
 
   return (
     <div>
@@ -66,6 +75,10 @@ export default function Ranking() {
                     <td>
                       <p>
                         <Link to={`/messages/new/${member.user.username}`}>Enviar mensaje</Link>
+                        {' | '}
+                        <Link to={`/missions/attack/${member.user.username}`}>Atacar</Link>
+                        {' | '}
+                        <Link to={`/missions/spy/${member.user.username}`}>Espiar</Link>
                       </p>
                     </td>
                   </tr>
@@ -73,6 +86,7 @@ export default function Ranking() {
               })}
             </tbody>
           </table>
+          {!userData.has_alliance && <button onClick={createMemberRequest}>Pedir ser miembro</button>}
         </>
       )}
     </div>

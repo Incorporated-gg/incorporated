@@ -2,6 +2,8 @@ const mysql = require('../mysql')
 const users = require('./users')
 const { RESEARCHS_LIST, RESOURCES_LIST } = require('shared-lib/allianceUtils')
 
+module.exports.MAX_MEMBERS = 10
+
 module.exports.getUserAllianceID = getUserAllianceID
 async function getUserAllianceID(userID) {
   const [[memberQuery]] = await mysql.query('SELECT alliance_id FROM alliances_members WHERE user_id=?', [userID])

@@ -42,6 +42,10 @@ export default function Ranking() {
               <td>
                 <p>
                   <Link to={`/messages/new/${user.username}`}>Enviar mensaje</Link>
+                  {' | '}
+                  <Link to={`/missions/attack/${user.username}`}>Atacar</Link>
+                  {' | '}
+                  <Link to={`/missions/spy/${user.username}`}>Espiar</Link>
                 </p>
               </td>
             </tr>
