@@ -15,4 +15,4 @@ jobs:
           HOST: ${{ secrets.HOST }}
           USER: ${{ secrets.USER }}
         with:
-          args: git pull
+          args: cd ./ultraemprendedor && git pull
