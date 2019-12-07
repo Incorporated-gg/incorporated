@@ -1,5 +1,5 @@
 const mysql = require('./lib/mysql')
-const { getUserDailyIncome, getResearchs, getPersonnel } = require('./lib/db/users')
+const { getUserDailyIncome, getResearchs, getPersonnel, getUnreadMessagesCount } = require('./lib/db/users')
 const { calcUserMaxMoney } = require('shared-lib/researchUtils')
 
 module.exports = app => {
@@ -58,12 +58,13 @@ async function updateMoney(req) {
 function modifyResponseBody(req, res, next) {
   var oldJson = res.json
 
-  res.json = function() {
+  res.json = async function() {
     if (req.userData) {
       // Modify response to include extra data for logged in users
       const extraData = {
         money: req.userData.money,
         income_per_second: req.userData.income_per_second,
+        unread_messages_count: await getUnreadMessagesCount(req.userData.id),
       }
       arguments[0]._extra = extraData
     }

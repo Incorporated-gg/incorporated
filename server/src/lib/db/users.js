@@ -140,3 +140,14 @@ async function sendMessage({ receiverID, senderID, type, data }) {
     JSON.stringify(data),
   ])
 }
+
+module.exports.getUnreadMessagesCount = getUnreadMessagesCount
+async function getUnreadMessagesCount(userID) {
+  const [
+    [{ count }],
+  ] = await mysql.query(
+    'SELECT COUNT(*) as count FROM messages WHERE user_id=? AND created_at>(SELECT last_checked_messages_at FROM users WHERE id=?)',
+    [userID, userID]
+  )
+  return count
+}

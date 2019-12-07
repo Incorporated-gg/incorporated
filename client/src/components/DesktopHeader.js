@@ -2,6 +2,7 @@ import React from 'react'
 import MoneyDisplay from '../components/MoneyDisplay'
 import { NavLink } from 'react-router-dom'
 import './DesktopHeader.scss'
+import { useUserData } from '../lib/user'
 
 export default function DesktopHeader() {
   return (
@@ -35,9 +36,17 @@ export default function DesktopHeader() {
           <NavLink to="/alliance">Alianza</NavLink>
         </li>
         <li>
-          <NavLink to="/messages">Mensajes</NavLink>
+          <NavLink to="/messages">
+            Mensajes <MessagesUnreadLabel />
+          </NavLink>
         </li>
       </ul>
     </nav>
   )
+}
+
+function MessagesUnreadLabel() {
+  const userData = useUserData()
+  if (!userData.unread_messages_count) return null
+  return <span>({userData.unread_messages_count})</span>
 }

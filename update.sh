@@ -8,3 +8,5 @@ npm run migrate
 cd $INITIAL_PATH/client
 npm i
 npm run build
+mkdir -p build_nginx
+cp -r build/* build_nginx/

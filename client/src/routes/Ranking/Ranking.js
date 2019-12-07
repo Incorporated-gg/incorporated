@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import api from '../../lib/api'
 import Username from '../../components/Username'
-import { Link } from 'react-router-dom'
+import UserActionLinks from '../../components/UserActionLinks'
 
 export default function Ranking() {
   const [ranking, setRanking] = useState([])
@@ -39,11 +39,7 @@ export default function Ranking() {
                 </td>
                 <td>{user.income.toLocaleString()}€</td>
                 <td>
-                  <Link to={`/messages/new/${user.username}`}>Enviar mensaje</Link>
-                  {' | '}
-                  <Link to={`/missions/attack/${user.username}`}>Atacar</Link>
-                  {' | '}
-                  <Link to={`/missions/hack/${user.username}`}>Hackear</Link>
+                  <UserActionLinks user={user} />
                 </td>
               </tr>
             ))

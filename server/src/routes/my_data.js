@@ -19,6 +19,7 @@ module.exports = app => {
         researchs: req.userData.researchs,
         personnel: req.userData.personnel,
         has_alliance: Boolean(userData.alliance),
+        unread_messages_count: await users.getUnreadMessagesCount(req.userData.id),
       },
     })
   })

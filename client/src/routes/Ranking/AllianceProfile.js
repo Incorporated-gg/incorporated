@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import api from '../../lib/api'
 import Username from '../../components/Username'
-import { useParams, Link } from 'react-router-dom'
+import UserActionLinks from '../../components/UserActionLinks'
+import { useParams } from 'react-router-dom'
 import { useUserData } from '../../lib/user'
 
 export default function Ranking() {
@@ -74,11 +75,7 @@ export default function Ranking() {
                     <td>{member.user.income.toLocaleString()}</td>
                     <td>
                       <p>
-                        <Link to={`/messages/new/${member.user.username}`}>Enviar mensaje</Link>
-                        {' | '}
-                        <Link to={`/missions/attack/${member.user.username}`}>Atacar</Link>
-                        {' | '}
-                        <Link to={`/missions/spy/${member.user.username}`}>Espiar</Link>
+                        <UserActionLinks user={member.user} />
                       </p>
                     </td>
                   </tr>

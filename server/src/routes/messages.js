@@ -12,6 +12,11 @@ module.exports = app => {
     const perPage = 500
     const page = 0
 
+    mysql.query('UPDATE users SET last_checked_messages_at=? WHERE id=?', [
+      Math.floor(Date.now() / 1000),
+      req.userData.id,
+    ])
+
     const [
       messagesRaw,
     ] = await mysql.query(
