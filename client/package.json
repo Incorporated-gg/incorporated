@@ -25,7 +25,6 @@
     "prettier": "^1.19.1"
   },
   "scripts": {
-    "publish": "ssh centos@prod.incorporated.gg 'cd ~/ultraemprendedor && git clean -df && git checkout -- . && git pull && cd client && npm i && npm run build'",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",

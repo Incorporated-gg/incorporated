@@ -135,10 +135,13 @@ module.exports.buildingsList = buildingsList
 module.exports.calcBuildingPrice = calcBuildingPrice
 function calcBuildingPrice(buildingID, currentAmount) {
   const buildingInfo = buildingsList.find(b => b.id === buildingID)
-  return (
-    buildingInfo.basePrice +
-    buildingInfo.increasePrice * Math.floor(currentAmount / buildingInfo.amountForPriceIncrease)
-  )
+  let ttotal = buildingInfo.basePrice - 2 * buildingInfo.increasePrice
+
+  for (let i = 0; i <= currentAmount + 1; i++) {
+    ttotal += buildingInfo.increasePrice * Math.ceil(i / buildingInfo.amountForPriceIncrease + 0.0000000000000001)
+  }
+
+  return ttotal
 }
 
 module.exports.calcBuildingDailyIncome = calcBuildingDailyIncome
