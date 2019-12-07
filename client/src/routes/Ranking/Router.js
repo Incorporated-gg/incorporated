@@ -32,8 +32,7 @@ export default function RankingRouter() {
           <li>
             <NavLink to="/ranking/monopolies">Monopolios</NavLink>
           </li>
-          {contests &&
-            contests.length &&
+          {contests.length &&
             contests.map(contest => (
               <li key={contest.id}>
                 <NavLink to={`/ranking/${contest.name}`}>{contest.name}</NavLink>
