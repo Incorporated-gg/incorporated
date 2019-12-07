@@ -35,7 +35,8 @@
   max-width: 720px;
   font-weight: 600;
   font-size: 1.2em;
-  text-align: right;
   padding: 0.5em 1em;
   color: #fafafa;
+  display: flex;
+  justify-content: space-between;
 }

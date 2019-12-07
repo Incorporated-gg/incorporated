@@ -44,7 +44,7 @@ const updateOngoingContest = async contest => {
         scoreboardRow.score,
         scoreboardRow.rank,
         scoreboardRow.user_id,
-        contest.contestName,
+        contest.id,
       ])
     } else {
       // The user has entered the scoreboards

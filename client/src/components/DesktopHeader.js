@@ -1,13 +1,16 @@
 import React from 'react'
-import MoneyDisplay from '../components/MoneyDisplay'
+import MoneyDisplay from './MoneyDisplay'
+import Username from './Username'
 import { NavLink } from 'react-router-dom'
 import './DesktopHeader.scss'
 import { useUserData } from '../lib/user'
 
 export default function DesktopHeader() {
+  const userData = useUserData()
   return (
     <nav className="desktop-header">
       <div className="money-display">
+        <Username user={userData} />
         <MoneyDisplay />
       </div>
 
@@ -47,6 +50,6 @@ export default function DesktopHeader() {
 
 function MessagesUnreadLabel() {
   const userData = useUserData()
-  if (!userData.unread_messages_count) return null
+  if (!userData || !userData.unread_messages_count) return null
   return <span>({userData.unread_messages_count})</span>
 }
