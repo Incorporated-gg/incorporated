@@ -11,7 +11,7 @@ export default function Monopolies() {
 
   useEffect(() => {
     api
-      .get(`/v1/${contestName}`)
+      .get(`/v1/contests/${contestName}`)
       .then(res => {
         setContestScores(res[contestName])
       })
