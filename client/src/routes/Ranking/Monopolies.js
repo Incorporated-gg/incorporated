@@ -19,6 +19,7 @@ export default function Monopolies() {
   return (
     <div>
       {error && <h4>{error}</h4>}
+      <h2>Monopolies</h2>
       <table>
         <thead>
           <tr>

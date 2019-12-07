@@ -6,6 +6,7 @@ Username.propTypes = {
   user: PropTypes.object.isRequired,
 }
 export default function Username({ user }) {
+  if (!user) return null
   return (
     <span>
       <Link to={`/ranking/user/${user.username}`}>{user.username}</Link>{' '}
