@@ -110,7 +110,7 @@ module.exports = app => {
           'SELECT COUNT(*) AS count FROM missions WHERE user_id=? AND mission_type=? AND started_at>?',
           [req.userData.id, req.body.missionType, dailyCountStartedAt]
         )
-        if (count > MAX_DAILY_SABOTS) {
+        if (count >= MAX_DAILY_SABOTS) {
           res.status(400).json({ error: `Ya has atacado ${MAX_DAILY_SABOTS} veces hoy` })
           return
         }

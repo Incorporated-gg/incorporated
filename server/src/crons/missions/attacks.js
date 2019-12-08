@@ -1,4 +1,5 @@
 const mysql = require('../../lib/mysql')
+const { getUserAllianceID } = require('../../lib/db/alliances')
 const { simulateAttack } = require('shared-lib/missionsUtils')
 const { getResearchs, getPersonnel, getBuildings, sendMessage } = require('../../lib/db/users')
 
@@ -79,8 +80,14 @@ async function completeAttackMission(mission) {
   ])
 
   // Update troops
-  await mysql.query('UPDATE users_resources SET quantity=? WHERE user_id=? AND resource_id=?', [
+  const allianceRestockGuards = await checkAllianceGuardsRestock(
+    attackParams.defensorGuards,
     survivingGuards,
+    defender.id
+  )
+
+  await mysql.query('UPDATE users_resources SET quantity=? WHERE user_id=? AND resource_id=?', [
+    survivingGuards + allianceRestockGuards,
     defender.id,
     'guards',
   ])
@@ -129,4 +136,27 @@ async function completeAttackMission(mission) {
     type: 'attack_report',
     data: msgAttackReport,
   })
+}
+
+async function checkAllianceGuardsRestock(defensorGuards, survivingGuards, defenderID) {
+  const killedGuards = defensorGuards - survivingGuards
+  if (killedGuards === 0) return 0
+  const defenderAllianceID = await getUserAllianceID(defenderID)
+  if (!defenderAllianceID) return 0
+
+  const [
+    [{ quantity: allianceGuardsCount }],
+  ] = await mysql.query('SELECT quantity FROM alliances_resources WHERE alliance_id=? AND resource_id=?', [
+    defenderAllianceID,
+    'guards',
+  ])
+  if (Math.floor(allianceGuardsCount) === 0) return 0
+
+  const restockedGuards = Math.min(Math.floor(allianceGuardsCount), killedGuards)
+  await mysql.query('UPDATE alliances_resources SET quantity=quantity-? WHERE alliance_id=? AND resource_id=?', [
+    restockedGuards,
+    defenderAllianceID,
+    'guards',
+  ])
+  return restockedGuards
 }
