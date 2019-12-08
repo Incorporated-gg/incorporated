@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react'
 import api from '../../lib/api'
 import researchUtils from 'shared-lib/researchUtils'
 import PropTypes from 'prop-types'
-import { updateUserData } from '../../lib/user'
+import { updateUserData, useUserData } from '../../lib/user'
+import './Research.scss'
 
 let lastResearchData = null
 export default function Researchs() {
@@ -37,7 +38,6 @@ export default function Researchs() {
 
   return (
     <div>
-      <h2>Research</h2>
       {error && <h4>{error}</h4>}
       {researchUtils.researchList.map(b => (
         <Research key={b.id} research={b} count={researchs ? researchs[b.id] : 0} buy={buyResearch(b.id)} />
@@ -52,13 +52,18 @@ Research.propTypes = {
   buy: PropTypes.func.isRequired,
 }
 function Research({ research, count, buy }) {
-  const coste = Math.ceil(researchUtils.calcResearchPrice(research.id, count)).toLocaleString()
+  const userData = useUserData()
+  const coste = Math.ceil(researchUtils.calcResearchPrice(research.id, count))
+  const canAfford = userData.money > coste
   return (
-    <div>
-      <span>{research.name}: </span>
-      <span>{count}. </span>
-      <span>Precio: {coste}. </span>
-      <button onClick={buy}>Investigar</button>
+    <div className={`research-item ${canAfford ? '' : 'can-not-afford'}`}>
+      <div>
+        {research.name} (<b>{count}</b>)
+      </div>
+      <div>Precio: {coste.toLocaleString()}.</div>
+      <button className="buy-button" onClick={canAfford ? buy : undefined}>
+        Investigar
+      </button>
     </div>
   )
 }

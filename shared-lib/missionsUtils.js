@@ -1,4 +1,4 @@
-const { buildingsList } = require('./buildingsUtils')
+const { buildingsList, calcBuildingPrice } = require('./buildingsUtils')
 const { personnelList } = require('./personnelUtils')
 
 module.exports.calculateMissionTime = calculateMissionTime
@@ -8,28 +8,24 @@ function calculateMissionTime(missionType, personnelSent) {
   return 0
 }
 
-function getBuildingDestroyedProfit({ attackedBuildingInfo, destroyedBuildings }) {
-  let ttotal = attackedBuildingInfo.basePrice - 2 * attackedBuildingInfo.increasePrice
-
-  Array.from(new Array(destroyedBuildings)).forEach((e, i) => {
-    const taumento =
-      attackedBuildingInfo.increasePrice *
-      Math.ceil(i / attackedBuildingInfo.amountForPriceIncrease + 0.0000000000000001)
-    ttotal += taumento
-  })
-
-  if (destroyedBuildings > attackedBuildingInfo.maximumDestroyedBuildings) {
-    destroyedBuildings = attackedBuildingInfo.maximumDestroyedBuildings
-  }
-  ttotal = Math.round((ttotal * destroyedBuildings) / 2)
-  return ttotal
+function getBuildingDestroyedProfit({ buildingID, defensorNumEdificios, destroyedBuildings }) {
+  const currentPrice = calcBuildingPrice(buildingID, defensorNumEdificios)
+  return Math.round((currentPrice * destroyedBuildings) / 2)
 }
 
-function simulateCombat({ attackerSabots, defensorGuards, defensorSecurityLvl, attackerSabotageLvl }) {
-  const guardsAttackPower = personnelList.find(t => t.resource_id === 'guards').attackPower * defensorSecurityLvl // ataque de guardia
-  const guardsDefensePower = personnelList.find(t => t.resource_id === 'guards').defensePower * defensorSecurityLvl // defensa de guardia
-  const sabotAttackPower = personnelList.find(t => t.resource_id === 'sabots').attackPower * attackerSabotageLvl // ataque de saboteador
-  const sabotDefensePower = personnelList.find(t => t.resource_id === 'sabots').defensePower * attackerSabotageLvl // defensa de saboteador
+function simulateCombat({
+  defensorNumEdificios,
+  attackedBuildingInfo,
+  defensorInfraLvl,
+  attackerSabots,
+  defensorGuards,
+  defensorSecurityLvl,
+  attackerSabotageLvl,
+}) {
+  const guardsAttackPower = personnelList.find(t => t.resource_id === 'guards').attackPower * defensorSecurityLvl
+  const guardsDefensePower = personnelList.find(t => t.resource_id === 'guards').defensePower * defensorSecurityLvl
+  const sabotAttackPower = personnelList.find(t => t.resource_id === 'sabots').attackPower * attackerSabotageLvl
+  const sabotDefensePower = personnelList.find(t => t.resource_id === 'sabots').defensePower * attackerSabotageLvl
 
   // simulamos datos
   const maxDeadGuards = Math.floor((attackerSabots * sabotAttackPower) / guardsDefensePower)
@@ -38,32 +34,26 @@ function simulateCombat({ attackerSabots, defensorGuards, defensorSecurityLvl, a
   const deadSabots = Math.min(attackerSabots, maxDeadSabots)
   const survivingSabots = attackerSabots - deadSabots
   const survivingGuards = defensorGuards - deadGuards
+
+  // Destroyed buildings
+  const buildingResistance =
+    attackedBuildingInfo.baseResistance + attackedBuildingInfo.resistanceIncrease * (defensorInfraLvl - 1)
+  const buildingAttackingPower = sabotAttackPower * survivingSabots - guardsDefensePower * survivingGuards
+  const theoreticalDestroyedBuildings = Math.floor(buildingAttackingPower / buildingResistance)
+  const destroyedBuildings = Math.min(
+    attackedBuildingInfo.maximumDestroyedBuildings,
+    defensorNumEdificios,
+    theoreticalDestroyedBuildings
+  )
+
+  // Return data
   return {
+    destroyedBuildings,
     deadGuards,
     deadSabots,
     survivingSabots,
     survivingGuards,
-    sabotAttackPower,
-    guardsDefensePower,
   }
-}
-
-function calcDestroyedBuildings({
-  defensorNumEdificios,
-  attackedBuildingInfo,
-  defensorInfraLvl,
-  sabotAttackPower,
-  attackerSabots,
-  guardsDefensePower,
-  defensorGuards,
-}) {
-  const buildingResistance =
-    attackedBuildingInfo.baseResistance + attackedBuildingInfo.resistanceIncrease * (defensorInfraLvl - 1)
-  const theoreticalDestroyedBuildings = Math.floor(
-    (sabotAttackPower * attackerSabots - guardsDefensePower * defensorGuards) / buildingResistance
-  )
-
-  return Math.min(attackedBuildingInfo.maximumDestroyedBuildings, defensorNumEdificios, theoreticalDestroyedBuildings)
 }
 
 const guardsPrice = personnelList.find(t => t.resource_id === 'guards').price
@@ -92,21 +82,17 @@ function simulateAttack({
   }
   const attackedBuildingInfo = buildingsList.find(b => b.id === buildingID)
 
-  const {
-    deadSabots,
-    deadGuards,
-    survivingSabots,
-    survivingGuards,
-    sabotAttackPower,
-    guardsDefensePower,
-  } = simulateCombat({
+  const { deadSabots, deadGuards, survivingSabots, survivingGuards, destroyedBuildings } = simulateCombat({
+    defensorNumEdificios,
+    attackedBuildingInfo,
+    defensorInfraLvl,
     attackerSabots,
     defensorGuards,
     defensorSecurityLvl,
     attackerSabotageLvl,
   })
 
-  const result = survivingGuards > 0 ? 'lose' : survivingSabots > 0 ? 'win' : 'draw'
+  const result = survivingGuards > 0 ? 'lose' : destroyedBuildings > 0 ? 'win' : 'draw'
 
   // Killed troops income
   const killedGuardsPrice = deadGuards * guardsPrice
@@ -114,20 +100,9 @@ function simulateAttack({
   const incomeForKilledTroops = killedGuardsPrice * 0.1 + killedSabotsPrice * 0.1
 
   // Destroyed buildings income
-  const destroyedBuildings =
-    result === 'win'
-      ? calcDestroyedBuildings({
-          defensorNumEdificios,
-          attackedBuildingInfo,
-          defensorInfraLvl,
-          sabotAttackPower,
-          attackerSabots,
-          guardsDefensePower,
-          defensorGuards,
-        })
-      : 0
   const incomeForDestroyedBuildings = getBuildingDestroyedProfit({
-    attackedBuildingInfo,
+    buildingID,
+    defensorNumEdificios,
     destroyedBuildings,
   })
 

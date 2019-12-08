@@ -135,6 +135,7 @@ module.exports.buildingsList = buildingsList
 module.exports.calcBuildingPrice = calcBuildingPrice
 function calcBuildingPrice(buildingID, currentAmount) {
   const buildingInfo = buildingsList.find(b => b.id === buildingID)
+  if (!buildingInfo) throw new Error(`Building ${buildingID} not found`)
   let ttotal = buildingInfo.basePrice - 2 * buildingInfo.increasePrice
 
   for (let i = 0; i <= currentAmount + 1; i++) {

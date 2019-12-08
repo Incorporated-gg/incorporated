@@ -16,6 +16,45 @@ module.exports = app => {
     })
   })
 
+  app.post('/v1/missions/cancel', async function(req, res) {
+    if (!req.userData) {
+      res.status(401).json({ error: 'Necesitas estar conectado', error_code: 'not_logged_in' })
+      return
+    }
+
+    const [
+      [mission],
+    ] = await mysql.query(
+      'SELECT id, mission_type, personnel_sent FROM missions WHERE user_id=? AND completed=? AND started_at=?',
+      [req.userData.id, false, req.body.started_at]
+    )
+    if (!mission) {
+      res.status(400).json({
+        error: 'Misión no encontrada',
+      })
+      return
+    }
+
+    // Update
+    const troopType = mission.mission_type === 'hack' ? 'hackers' : mission.mission_type === 'attack' ? 'sabots' : null
+    if (!troopType) {
+      res.status(400).json({
+        error: 'Tipo de misión no reconocido',
+      })
+      return
+    }
+    await mysql.query('DELETE FROM missions WHERE id=?', [mission.id])
+    await mysql.query('UPDATE users_resources SET quantity=quantity+? WHERE user_id=? AND resource_id=?', [
+      mission.personnel_sent,
+      req.userData.id,
+      troopType,
+    ])
+
+    res.json({
+      success: true,
+    })
+  })
+
   app.post('/v1/missions', async function(req, res) {
     if (!req.userData) {
       res.status(401).json({ error: 'Necesitas estar conectado', error_code: 'not_logged_in' })
@@ -58,16 +97,23 @@ module.exports = app => {
           res.status(400).json({ error: 'El edificio enviado no existe' })
           return
         }
-        // Is this error needed? :
-        /* const defensorBuildings = await getBuildings(toUser.id)
-        if (!defensorBuildings[targetBuilding]) {
-          res.status(400).json({
-            error: `El usuario que intentas atacar no tiene ${
-              buildingsList.find(b => b.id === targetBuilding).name
-            }`,
-          })
+
+        // Ensure daily attacks limit
+        const MAX_DAILY_SABOTS = 3
+        const now = new Date()
+        const dailyCountStartedAtTimeString = `${now.getUTCFullYear()}-${now.getUTCMonth() +
+          1}-${now.getUTCDate()} 00:00:00`
+        const dailyCountStartedAt = Math.floor(new Date(dailyCountStartedAtTimeString).getTime() / 1000)
+        const [
+          [{ count }],
+        ] = await mysql.query(
+          'SELECT COUNT(*) AS count FROM missions WHERE user_id=? AND mission_type=? AND started_at>?',
+          [req.userData.id, req.body.missionType, dailyCountStartedAt]
+        )
+        if (count > MAX_DAILY_SABOTS) {
+          res.status(400).json({ error: `Ya has atacado ${MAX_DAILY_SABOTS} veces hoy` })
           return
-        } */
+        }
         break
       case 'hack':
         troopType = 'hackers'

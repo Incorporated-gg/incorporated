@@ -76,6 +76,9 @@ function SingleMessage({ reloadMessagesData, message }) {
               Ataque recibido de <Username user={message.data.attacker} />
             </div>
             <div>Resultado: {message.data.result}</div>
+            <div>
+              Saboteadores enviados: {(message.data.surviving_sabots - message.data.sabots_killed).toLocaleString()}
+            </div>
             <div>Guardias muertos: {message.data.guards_killed.toLocaleString()}</div>
             <div>Saboteadores muertos: {message.data.sabots_killed.toLocaleString()}</div>
             <div>Edificios destruidos: {message.data.destroyed_buildings}</div>
@@ -91,6 +94,9 @@ function SingleMessage({ reloadMessagesData, message }) {
               Ataque a <Username user={message.data.defender} />
             </div>
             <div>Resultado: {message.data.result}</div>
+            <div>
+              Saboteadores enviados: {(message.data.surviving_sabots - message.data.sabots_killed).toLocaleString()}
+            </div>
             <div>Guardias muertos: {message.data.guards_killed.toLocaleString()}</div>
             <div>Saboteadores muertos: {message.data.sabots_killed.toLocaleString()}</div>
             <div>Edificios destruidos: {message.data.destroyed_buildings}</div>
@@ -104,8 +110,8 @@ function SingleMessage({ reloadMessagesData, message }) {
     case 'caught_hackers':
       messageElm = (
         <div>
-          Hemos cazado a los hackers de X:
-          {JSON.stringify(message.data)}
+          Hemos cazado a {message.data.hackers_count.toLocaleString()} hackers de{' '}
+          <Username user={message.data.attacker} /> que nos intentaban robar información confidencial!
         </div>
       )
       break

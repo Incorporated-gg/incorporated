@@ -7,6 +7,7 @@ import { timestampFromEpoch } from 'shared-lib/commonUtils'
 import { buildingsList } from 'shared-lib/buildingsUtils'
 import Mission from './Mission'
 import moment from 'moment'
+import { reloadUserData } from '../../lib/user'
 
 export default function Missions() {
   const [missions, setMissions] = useState([])
@@ -49,29 +50,42 @@ export default function Missions() {
             <th>Tropas enviadas</th>
             <th>Edificio objetivo</th>
             <th>Fecha de finalización</th>
+            <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
           {activeMissions.length ? (
-            activeMissions.map((m, i) => (
-              <tr key={i}>
-                <td>{m.mission_type}</td>
-                <td>
-                  <Username user={m.target_user} />
-                </td>
-                <td>{m.personnel_sent}</td>
-                <td>
-                  {m.mission_type === 'attack'
-                    ? buildingsList.find(b => b.id === parseInt(m.target_building)).name
-                    : ''}
-                </td>
-                <td>
-                  {new Date(m.will_finish_at * 1000) <= new Date()
-                    ? 'Completando...'
-                    : moment(m.will_finish_at * 1000).fromNow()}
-                </td>
-              </tr>
-            ))
+            activeMissions.map((mission, i) => {
+              const isCompleting = new Date(mission.will_finish_at * 1000) <= new Date()
+              const cancelMission = () => {
+                api
+                  .post('/v1/missions/cancel', { started_at: mission.started_at })
+                  .then(() => {
+                    reloadMissionsCallback()
+                    reloadUserData()
+                  })
+                  .catch(err => {
+                    reloadMissionsCallback()
+                    alert(err.message)
+                  })
+              }
+              return (
+                <tr key={i}>
+                  <td>{mission.mission_type}</td>
+                  <td>
+                    <Username user={mission.target_user} />
+                  </td>
+                  <td>{mission.personnel_sent}</td>
+                  <td>
+                    {mission.mission_type === 'attack'
+                      ? buildingsList.find(b => b.id === parseInt(mission.target_building)).name
+                      : ''}
+                  </td>
+                  <td>{isCompleting ? 'Completando...' : moment(mission.will_finish_at * 1000).fromNow()}</td>
+                  <td>{isCompleting ? '' : <button onClick={cancelMission}>Cancelar</button>}</td>
+                </tr>
+              )
+            })
           ) : (
             <tr>
               <td colSpan="3">No hay misiones activas</td>
