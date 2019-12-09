@@ -4,10 +4,8 @@ import { Switch, Route, NavLink } from 'react-router-dom'
 import api from '../../lib/api'
 import './Missions.scss'
 import { timestampFromEpoch } from 'shared-lib/commonUtils'
-import { buildingsList } from 'shared-lib/buildingsUtils'
 import Mission from './Mission'
-import moment from 'moment'
-import { reloadUserData } from '../../lib/user'
+import ActiveMission from './ActiveMission'
 
 export default function Missions() {
   const [missions, setMissions] = useState([])
@@ -55,37 +53,9 @@ export default function Missions() {
         </thead>
         <tbody>
           {activeMissions.length ? (
-            activeMissions.map((mission, i) => {
-              const isCompleting = new Date(mission.will_finish_at * 1000) <= new Date()
-              const cancelMission = () => {
-                api
-                  .post('/v1/missions/cancel', { started_at: mission.started_at })
-                  .then(() => {
-                    reloadMissionsCallback()
-                    reloadUserData()
-                  })
-                  .catch(err => {
-                    reloadMissionsCallback()
-                    alert(err.message)
-                  })
-              }
-              return (
-                <tr key={i}>
-                  <td>{mission.mission_type}</td>
-                  <td>
-                    <Username user={mission.target_user} />
-                  </td>
-                  <td>{mission.personnel_sent}</td>
-                  <td>
-                    {mission.mission_type === 'attack'
-                      ? buildingsList.find(b => b.id === parseInt(mission.target_building)).name
-                      : ''}
-                  </td>
-                  <td>{isCompleting ? 'Completando...' : moment(mission.will_finish_at * 1000).fromNow()}</td>
-                  <td>{isCompleting ? '' : <button onClick={cancelMission}>Cancelar</button>}</td>
-                </tr>
-              )
-            })
+            activeMissions.map((mission, i) => (
+              <ActiveMission key={i} mission={mission} reloadMissionsCallback={reloadMissionsCallback} />
+            ))
           ) : (
             <tr>
               <td colSpan="3">No hay misiones activas</td>
