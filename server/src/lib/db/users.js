@@ -108,13 +108,14 @@ async function getMissions(userID) {
   const [
     missionsRaw,
   ] = await mysql.query(
-    'SELECT target_user, target_building, mission_type, personnel_sent, started_at, will_finish_at, completed FROM missions WHERE user_id=? ORDER BY will_finish_at DESC LIMIT 50',
+    'SELECT user_id, target_user, target_building, mission_type, personnel_sent, started_at, will_finish_at, completed, won, profit FROM missions WHERE user_id=? ORDER BY will_finish_at DESC LIMIT 50',
     [userID]
   )
   const missions = Promise.all(
     missionsRaw.map(async mission => {
       const defensorData = await getData(mission.target_user)
       return {
+        user_id: mission.user_id,
         target_user: defensorData,
         target_building: mission.target_building,
         mission_type: mission.mission_type,
@@ -122,6 +123,8 @@ async function getMissions(userID) {
         started_at: mission.started_at,
         will_finish_at: mission.will_finish_at,
         completed: mission.completed,
+        won: mission.won,
+        profit: mission.profit,
       }
     })
   )

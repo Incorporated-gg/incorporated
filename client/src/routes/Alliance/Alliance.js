@@ -5,6 +5,7 @@ import { Switch, Route, NavLink } from 'react-router-dom'
 import CreateAlliance from './CreateAlliance'
 import AllianceResearch from './Research'
 import AllianceResources from './Resources'
+import AllianceMissions from './Missions'
 import AllianceHome from './Home'
 import AllianceAdmin from './Admin/index.js'
 import { userData } from '../../lib/user'
@@ -61,6 +62,9 @@ function AllianceRouter({ alliance, reloadAllianceData }) {
             <NavLink to="/alliance/resources">Recursos</NavLink>
           </li>
           <li>
+            <NavLink to="/alliance/missions">Misiones</NavLink>
+          </li>
+          <li>
             <NavLink to="/alliance/research">Investigaciones</NavLink>
           </li>
           {myMemberData && myMemberData.is_admin && (
@@ -74,6 +78,9 @@ function AllianceRouter({ alliance, reloadAllianceData }) {
       <Switch>
         <Route path="/alliance/resources">
           <AllianceResources alliance={alliance} reloadAllianceData={reloadAllianceData} />
+        </Route>
+        <Route path="/alliance/missions">
+          <AllianceMissions alliance={alliance} reloadAllianceData={reloadAllianceData} />
         </Route>
         <Route path="/alliance/research">
           <AllianceResearch alliance={alliance} reloadAllianceData={reloadAllianceData} />

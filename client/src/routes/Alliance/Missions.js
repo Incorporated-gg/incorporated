@@ -1,42 +1,19 @@
-import React, { useState, useEffect, useCallback } from 'react'
-import { Switch, Route, NavLink } from 'react-router-dom'
-import api from '../../lib/api'
-import './Missions.scss'
-import Mission from './Mission'
-import MissionRow from './MissionRow'
+import React, { useEffect } from 'react'
+import MissionRow from '../Missions/MissionRow'
+import PropTypes from 'prop-types'
 
-export default function Missions() {
-  const [missions, setMissions] = useState([])
+AllianceMissions.propTypes = {
+  alliance: PropTypes.object.isRequired,
+  reloadAllianceData: PropTypes.func.isRequired,
+}
+export default function AllianceMissions({ alliance, reloadAllianceData }) {
+  const missions = alliance.missions
   const activeMissions = missions.filter(m => !m.completed)
 
-  const reloadMissionsCallback = useCallback(() => {
-    api
-      .get('/v1/missions')
-      .then(res => {
-        setMissions(res.missions)
-      })
-      .catch(err => alert(err.message))
-  }, [])
-
-  useEffect(() => reloadMissionsCallback(), [reloadMissionsCallback])
+  useEffect(() => reloadAllianceData(), [reloadAllianceData])
 
   return (
     <div>
-      <nav className="sub-menu">
-        <ul>
-          <li>
-            <NavLink to="/missions/attack">Atacar</NavLink>
-          </li>
-          <li>
-            <NavLink to="/missions/hack">Hackear</NavLink>
-          </li>
-        </ul>
-      </nav>
-      <Switch>
-        <Route path="/missions/:missionType/:username?">
-          <Mission reloadMissionsCallback={reloadMissionsCallback} />
-        </Route>
-      </Switch>
       <h2>Active missions</h2>
       <table>
         <thead>
@@ -52,7 +29,7 @@ export default function Missions() {
         <tbody>
           {activeMissions.length ? (
             activeMissions.map((mission, i) => (
-              <MissionRow key={i} mission={mission} reloadMissionsCallback={reloadMissionsCallback} />
+              <MissionRow key={i} mission={mission} reloadMissionsCallback={reloadAllianceData} />
             ))
           ) : (
             <tr>
@@ -77,7 +54,7 @@ export default function Missions() {
           {missions.filter(m => m.completed).length ? (
             missions
               .filter(m => m.completed)
-              .map((m, i) => <MissionRow key={i} mission={m} reloadMissionsCallback={reloadMissionsCallback} />)
+              .map((m, i) => <MissionRow key={i} mission={m} reloadMissionsCallback={reloadAllianceData} />)
           ) : (
             <tr>
               <td colSpan="3">No has realizado ninguna misión todavía</td>

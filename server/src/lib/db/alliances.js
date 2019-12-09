@@ -111,6 +111,31 @@ async function getPrivateData(allianceID) {
     return prev
   }, {})
 
+  // Get attack history
+  const [
+    missionsRaw,
+  ] = await mysql.query(
+    'SELECT user_id, target_user, target_building, mission_type, personnel_sent, started_at, will_finish_at, completed, won, profit FROM missions WHERE user_id IN (?) ORDER BY will_finish_at DESC LIMIT 50',
+    [members.map(m => m.user.id)]
+  )
+  const missions = await Promise.all(
+    missionsRaw.map(async mission => {
+      const defensorData = await users.getData(mission.target_user)
+      return {
+        user_id: mission.user_id,
+        target_user: defensorData,
+        target_building: mission.target_building,
+        mission_type: mission.mission_type,
+        personnel_sent: mission.personnel_sent,
+        started_at: mission.started_at,
+        will_finish_at: mission.will_finish_at,
+        completed: mission.completed,
+        won: mission.won,
+        profit: mission.profit,
+      }
+    })
+  )
+
   return {
     id: allianceID,
     created_at: basicData.created_at,
@@ -121,5 +146,6 @@ async function getPrivateData(allianceID) {
     members,
     researchs,
     resources,
+    missions,
   }
 }
