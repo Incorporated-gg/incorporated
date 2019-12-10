@@ -38,7 +38,7 @@ function simulateCombat({
   // Destroyed buildings
   const buildingResistance =
     attackedBuildingInfo.baseResistance + attackedBuildingInfo.resistanceIncrease * (defensorInfraLvl - 1)
-  const buildingAttackingPower = sabotAttackPower * survivingSabots - guardsDefensePower * survivingGuards
+  const buildingAttackingPower = Math.max(0, sabotAttackPower * survivingSabots - guardsDefensePower * survivingGuards)
   const theoreticalDestroyedBuildings = Math.floor(buildingAttackingPower / buildingResistance)
   const destroyedBuildings = Math.min(
     attackedBuildingInfo.maximumDestroyedBuildings,

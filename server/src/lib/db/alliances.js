@@ -116,7 +116,7 @@ async function getPrivateData(allianceID) {
     missionsRaw,
   ] = await mysql.query(
     'SELECT user_id, target_user, target_building, mission_type, personnel_sent, started_at, will_finish_at, completed, won, profit FROM missions WHERE user_id IN (?) ORDER BY will_finish_at DESC LIMIT 50',
-    [members.map(m => m.user.id)]
+    [members.map(m => m.user.id).join(',')]
   )
   const missions = await Promise.all(
     missionsRaw.map(async mission => {
