@@ -4,7 +4,7 @@ import api from '../../lib/api'
 import PropTypes from 'prop-types'
 import { timestampFromEpoch } from 'shared-lib/commonUtils'
 import { buildingsList } from 'shared-lib/buildingsUtils'
-import { getTimeUntil } from '../../lib/util'
+import { getTimeUntil } from '../../lib/utils'
 import { reloadUserData, userData } from '../../lib/user'
 
 MissionRow.propTypes = {
@@ -12,9 +12,9 @@ MissionRow.propTypes = {
   reloadMissionsCallback: PropTypes.func.isRequired,
 }
 export default function MissionRow({ mission, reloadMissionsCallback }) {
-  const [timeLeft, setTimeLeft] = useState(getTimeUntil(mission.will_finish_at * 1000))
+  const [timeLeft, setTimeLeft] = useState(getTimeUntil(mission.will_finish_at))
   useEffect(() => {
-    const int = setInterval(() => setTimeLeft(getTimeUntil(mission.will_finish_at * 1000)))
+    const int = setInterval(() => setTimeLeft(getTimeUntil(mission.will_finish_at)))
     return () => clearInterval(int)
   }, [mission.will_finish_at])
 

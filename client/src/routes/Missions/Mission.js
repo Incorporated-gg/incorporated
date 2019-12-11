@@ -63,7 +63,7 @@ export default function Mission({ reloadMissionsCallback }) {
   const missionSeconds = calculateMissionTime(missionType, numTroops)
 
   return (
-    <form className={`startNewMission${isFormReady ? '' : ' notReady'}`}>
+    <form className="startNewMission">
       <div>
         <label>
           Usuario a {isAttack ? 'atacar' : 'hackear'}
@@ -92,7 +92,9 @@ export default function Mission({ reloadMissionsCallback }) {
       )}
       <div>Tiempo de mision: {missionSeconds}s</div>
       <div>
-        <button onClick={startMission}>Enviar</button>
+        <button onClick={startMission} disabled={!isFormReady}>
+          Enviar
+        </button>
       </div>
     </form>
   )
