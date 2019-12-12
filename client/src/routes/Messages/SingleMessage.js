@@ -47,7 +47,7 @@ export default function SingleMessage({ reloadMessagesData, message }) {
             </div>
             <div>Resultado: {message.data.result}</div>
             <div>
-              Saboteadores enviados: {(message.data.surviving_sabots - message.data.sabots_killed).toLocaleString()}
+              Saboteadores enviados: {(message.data.surviving_sabots + message.data.sabots_killed).toLocaleString()}
             </div>
             <div>Guardias muertos: {message.data.guards_killed.toLocaleString()}</div>
             <div>Saboteadores muertos: {message.data.sabots_killed.toLocaleString()}</div>
@@ -65,7 +65,7 @@ export default function SingleMessage({ reloadMessagesData, message }) {
             </div>
             <div>Resultado: {message.data.result}</div>
             <div>
-              Saboteadores enviados: {(message.data.surviving_sabots - message.data.sabots_killed).toLocaleString()}
+              Saboteadores enviados: {(message.data.surviving_sabots + message.data.sabots_killed).toLocaleString()}
             </div>
             <div>Guardias muertos: {message.data.guards_killed.toLocaleString()}</div>
             <div>Saboteadores muertos: {message.data.sabots_killed.toLocaleString()}</div>
