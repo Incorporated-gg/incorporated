@@ -93,6 +93,27 @@ async function getPersonnel(userID) {
   return personnels
 }
 
+module.exports.getTotalPersonnel = getTotalPersonnel // Includes personnel in active missions
+async function getTotalPersonnel(userID) {
+  const personnels = await getPersonnel(userID)
+  const activeMission = await getActiveMission(userID)
+
+  if (!activeMission) return personnels
+
+  switch (activeMission.mission_type) {
+    case 'hack':
+      personnels['hackers'] += parseInt(activeMission.personnel_sent)
+      break
+    case 'attack':
+      personnels['sabots'] += parseInt(activeMission.personnel_sent)
+      break
+    default:
+      throw new Error(`Mission type "${activeMission.mission_type}" not supported`)
+  }
+
+  return personnels
+}
+
 module.exports.getBuildings = getBuildings
 async function getBuildings(userID) {
   const buildings = {}
@@ -108,7 +129,7 @@ async function getMissions(userID) {
   const [
     missionsRaw,
   ] = await mysql.query(
-    'SELECT user_id, target_user, target_building, mission_type, personnel_sent, started_at, will_finish_at, completed, won, profit FROM missions WHERE user_id=? ORDER BY will_finish_at DESC LIMIT 50',
+    'SELECT user_id, target_user, target_building, mission_type, personnel_sent, started_at, will_finish_at, completed, won, profit FROM missions WHERE user_id=? ORDER BY will_finish_at DESC',
     [userID]
   )
   const missions = Promise.all(
@@ -128,6 +149,34 @@ async function getMissions(userID) {
       }
     })
   )
+
+  return missions
+}
+
+module.exports.getActiveMission = getActiveMission
+async function getActiveMission(userID) {
+  const [
+    [mission],
+  ] = await mysql.query(
+    'SELECT user_id, target_user, target_building, mission_type, personnel_sent, started_at, will_finish_at, completed, won, profit FROM missions WHERE user_id=? AND completed=0 ORDER BY will_finish_at DESC',
+    [userID]
+  )
+
+  if (!mission) return
+
+  const defensorData = await getData(mission.target_user)
+  const missions = {
+    user_id: mission.user_id,
+    target_user: defensorData,
+    target_building: mission.target_building,
+    mission_type: mission.mission_type,
+    personnel_sent: mission.personnel_sent,
+    started_at: mission.started_at,
+    will_finish_at: mission.will_finish_at,
+    completed: mission.completed,
+    won: mission.won,
+    profit: mission.profit,
+  }
 
   return missions
 }

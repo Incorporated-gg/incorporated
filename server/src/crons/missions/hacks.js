@@ -1,5 +1,5 @@
 const mysql = require('../../lib/mysql')
-const { getResearchs, sendMessage, getBuildings, getPersonnel } = require('../../lib/db/users')
+const { getResearchs, sendMessage, getBuildings, getTotalPersonnel } = require('../../lib/db/users')
 
 module.exports = {
   doHackMissions,
@@ -75,7 +75,7 @@ async function completeHackMission(mission) {
     // Generate report
     const intelReport = {}
     intelReport.buildings = await getBuildings(defender.id)
-    if (successPercentage > 45) intelReport.personnel = await getPersonnel(defender.id)
+    if (successPercentage > 45) intelReport.personnel = await getTotalPersonnel(defender.id)
     if (successPercentage > 75) intelReport.researchs = defensorResearchs
 
     // Message intel report
