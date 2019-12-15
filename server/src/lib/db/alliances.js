@@ -104,7 +104,7 @@ async function getPrivateData(allianceID) {
     return {
       resource_id: res.resource_id,
       name: res.name,
-      quantity: resData ? resData.quantity : 0,
+      quantity: resData ? parseInt(resData.quantity) : 0,
     }
   }).reduce((prev, curr) => {
     prev[curr.resource_id] = curr

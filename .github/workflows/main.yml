@@ -3,6 +3,7 @@ name: CI
 on: [push]
 
 jobs:
+  # TODO: Add new step to run tests, instead of doing it in the build task
   build:
 
     runs-on: ubuntu-latest
