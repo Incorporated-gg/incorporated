@@ -92,5 +92,5 @@ async function completeHackMission(mission) {
   }
 
   // Update mission status
-  await mysql.query('UPDATE missions SET completed=1 WHERE id=?', [mission.id])
+  await mysql.query('UPDATE missions SET completed=1, won=? WHERE id=?', [gotCaught ? 0 : 1, mission.id])
 }
