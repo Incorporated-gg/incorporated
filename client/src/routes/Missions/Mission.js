@@ -16,14 +16,14 @@ export default function Mission({ reloadMissionsCallback }) {
   const isAttack = missionType === 'attack'
   const [toUser, setToUser] = useState(routeUsername || '')
   const [numTroops, setNumTroops] = useState(() => {
-    return isAttack ? userData.personnel.sabots : userData.personnel.hackers
+    return isAttack ? userData.personnel.sabots : userData.personnel.spies
   })
   const [targetBuilding, setTargetBuilding] = useState(1)
   const isFormReady = toUser && missionType && numTroops && numTroops > 0 && targetBuilding
 
   useEffect(() => {
-    setNumTroops(isAttack ? userData.personnel.sabots : userData.personnel.hackers)
-  }, [isAttack, userData.personnel.sabots, userData.personnel.hackers])
+    setNumTroops(isAttack ? userData.personnel.sabots : userData.personnel.spies)
+  }, [isAttack, userData.personnel.sabots, userData.personnel.spies])
 
   const startMission = useCallback(
     e => {
@@ -57,7 +57,7 @@ export default function Mission({ reloadMissionsCallback }) {
     [isAttack, isFormReady, missionType, numTroops, reloadMissionsCallback, targetBuilding, toUser]
   )
 
-  const resourceID = isAttack ? 'sabots' : 'hackers'
+  const resourceID = isAttack ? 'sabots' : 'spies'
   const troopName = personnelList.find(p => p.resource_id === resourceID).name
 
   const missionSeconds = calculateMissionTime(missionType, numTroops)
@@ -66,7 +66,7 @@ export default function Mission({ reloadMissionsCallback }) {
     <form className="startNewMission">
       <div>
         <label>
-          Usuario a {isAttack ? 'atacar' : 'hackear'}
+          Usuario a {isAttack ? 'atacar' : 'espiar'}
           {': '}
           <input type="text" name="" value={toUser} onChange={e => setToUser(e.target.value)} />
         </label>

@@ -3,8 +3,8 @@ import { calculateMissionTime, simulateAttack } from './missionsUtils'
 test('Mission times', () => {
   expect(calculateMissionTime('attack', 100)).toBe(300)
   expect(calculateMissionTime('attack', 1)).toBe(300)
-  expect(calculateMissionTime('hack', 100)).toBe(120)
-  expect(calculateMissionTime('hack', 1)).toBe(120)
+  expect(calculateMissionTime('spy', 100)).toBe(120)
+  expect(calculateMissionTime('spy', 1)).toBe(120)
 })
 
 test('Combat normal win', () => {

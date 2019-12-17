@@ -2,7 +2,7 @@ const mysql = require('../../lib/mysql')
 const date = new Date()
 
 // Contest name has to be unique
-const contestName = 'hacking'
+const contestName = 'spy'
 // Start every even week on monday at 00:00
 const shouldStartContest =
   (date.getUTCDate() / 7) % 2 === 0 && date.getUTCDay() === 0 && date.getUTCHours() === 0 && date.getUTCMinutes() === 0
@@ -26,10 +26,10 @@ const contestEnd = () => {
 }
 
 const getScoreboard = async () => {
-  const [topHackers] = await mysql.query(
-    "SELECT COUNT(id) AS score, user_id FROM missions WHERE completed=1 AND mission_type='hack' GROUP BY user_id ORDER BY score DESC LIMIT 30"
+  const [topspies] = await mysql.query(
+    "SELECT COUNT(id) AS score, user_id FROM missions WHERE completed=1 AND mission_type='spy' GROUP BY user_id ORDER BY score DESC LIMIT 30"
   )
-  return topHackers
+  return topspies
 }
 
 module.exports = {

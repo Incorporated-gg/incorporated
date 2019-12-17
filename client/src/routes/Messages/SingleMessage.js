@@ -5,6 +5,8 @@ import PropTypes from 'prop-types'
 import { userData } from '../../lib/user'
 import { buildingsList } from 'shared-lib/buildingsUtils'
 import { Link } from 'react-router-dom'
+import { personnelList } from 'shared-lib/personnelUtils'
+import { researchList } from 'shared-lib/researchUtils'
 
 SingleMessage.propTypes = {
   message: PropTypes.object.isRequired,
@@ -49,6 +51,7 @@ export default function SingleMessage({ reloadMessagesData, message }) {
             <div>
               Saboteadores enviados: {(message.data.surviving_sabots + message.data.sabots_killed).toLocaleString()}
             </div>
+            <div>Edificio atacado: {buildingsList.find(b => b.id === message.data.building_id).name}</div>
             <div>Guardias muertos: {message.data.guards_killed.toLocaleString()}</div>
             <div>Saboteadores muertos: {message.data.sabots_killed.toLocaleString()}</div>
             <div>Edificios destruidos: {message.data.destroyed_buildings}</div>
@@ -67,6 +70,7 @@ export default function SingleMessage({ reloadMessagesData, message }) {
             <div>
               Saboteadores enviados: {(message.data.surviving_sabots + message.data.sabots_killed).toLocaleString()}
             </div>
+            <div>Edificio atacado: {buildingsList.find(b => b.id === message.data.building_id).name}</div>
             <div>Guardias muertos: {message.data.guards_killed.toLocaleString()}</div>
             <div>Saboteadores muertos: {message.data.sabots_killed.toLocaleString()}</div>
             <div>Edificios destruidos: {message.data.destroyed_buildings}</div>
@@ -77,48 +81,62 @@ export default function SingleMessage({ reloadMessagesData, message }) {
         )
       }
       break
-    case 'caught_hackers':
+    case 'caught_spies':
       messageElm = (
         <div>
-          Hemos cazado a {message.data.hackers_count.toLocaleString()} hackers de{' '}
+          Hemos cazado a {message.data.captured_spies.toLocaleString()} espías de{' '}
           <Username user={message.data.attacker} /> que nos intentaban robar información confidencial!
         </div>
       )
       break
-    case 'hack_report':
+    case 'spy_report':
       messageElm = (
         <div>
           <div>
-            Resultado de hackeo a: <Username user={message.data.defender} />
+            Resultado de espionaje a: <Username user={message.data.defender} />
           </div>
+          {message.data.captured_spies > 0 && (
+            <div>
+              Durante la misión el enemigo fue alertado, y capturaron a {message.data.captured_spies.toLocaleString()}{' '}
+              de nuestros espías.
+            </div>
+          )}
           {message.data.intel_report ? (
             <>
-              <div>Número de hackers: {message.data.hackers_count}</div>
+              <div>Número de espías: {message.data.spies_count}</div>
               {message.data.intel_report.buildings && (
                 <div>
-                  {'Edificios: '}
+                  <b>{'Edificios: '}</b>
                   {buildingsList
                     .map(buildingInfo => {
                       return buildingInfo.name + ': ' + message.data.intel_report.buildings[buildingInfo.id]
                     })
-                    .join(', ')}{' '}
+                    .join(', ')}
                 </div>
               )}
               {message.data.intel_report.personnel && (
                 <div>
-                  {'Personal: '}
-                  {JSON.stringify(message.data.intel_report.personnel)}{' '}
+                  <b>{'Personal: '}</b>
+                  {personnelList
+                    .map(personnelInfo => {
+                      return personnelInfo.name + ': ' + message.data.intel_report.personnel[personnelInfo.resource_id]
+                    })
+                    .join(', ')}
                 </div>
               )}
               {message.data.intel_report.researchs && (
                 <div>
-                  {'Investigaciones: '}
-                  {JSON.stringify(message.data.intel_report.researchs)}{' '}
+                  <b>{'Investigaciones: '}</b>
+                  {researchList
+                    .map(researchInfo => {
+                      return researchInfo.name + ': ' + message.data.intel_report.researchs[researchInfo.id]
+                    })
+                    .join(', ')}
                 </div>
               )}
             </>
           ) : (
-            <div>Nos cazaron! Hemos perdido a {message.data.hackers_count} hackers</div>
+            <div>No hemos obtenido ninguna información! Tendremos que enviar más espías</div>
           )}
         </div>
       )
@@ -142,7 +160,9 @@ export default function SingleMessage({ reloadMessagesData, message }) {
         </div>
       )}
       <div>Fecha: {dateFormatted}</div>
+      <br />
       {messageElm}
+      <br />
       {wasSentToMe && message.sender && (
         <button>
           <Link to={`/messages/new/${message.sender.username}`}>Responder</Link>

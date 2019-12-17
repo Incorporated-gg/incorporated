@@ -36,7 +36,7 @@ module.exports = app => {
     }
 
     // Update
-    const troopType = mission.mission_type === 'hack' ? 'hackers' : mission.mission_type === 'attack' ? 'sabots' : null
+    const troopType = mission.mission_type === 'spy' ? 'spies' : mission.mission_type === 'attack' ? 'sabots' : null
     if (!troopType) {
       res.status(400).json({
         error: 'Tipo de misión no reconocido',
@@ -115,11 +115,11 @@ module.exports = app => {
           return
         }
         break
-      case 'hack':
-        troopType = 'hackers'
+      case 'spy':
+        troopType = 'spies'
         if (personnelSent > 40) {
           res.status(400).json({
-            error: 'Solo puedes mandar un máximo de 40 hackers',
+            error: 'Solo puedes mandar un máximo de 40 espías',
           })
           return
         }

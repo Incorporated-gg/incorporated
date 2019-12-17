@@ -21,8 +21,8 @@ const personnelList = [
   },
   {
     id: 3,
-    name: 'Hackers',
-    resource_id: 'hackers',
+    name: 'Espías',
+    resource_id: 'spies',
     price: 2500,
     firingCost: 500,
     dailyMaintenanceCost: 1000,

@@ -4,7 +4,7 @@ const { personnelList } = require('./personnelUtils')
 module.exports.calculateMissionTime = calculateMissionTime
 function calculateMissionTime(missionType, personnelSent) {
   if (missionType === 'attack') return 300
-  if (missionType === 'hack') return 120
+  if (missionType === 'spy') return 120
   return 0
 }
 

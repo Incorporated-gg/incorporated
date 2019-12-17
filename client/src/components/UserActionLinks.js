@@ -12,7 +12,7 @@ export default function UserActionLinks({ user }) {
       {' | '}
       <Link to={`/missions/attack/${user.username}`}>Atacar</Link>
       {' | '}
-      <Link to={`/missions/hack/${user.username}`}>Hackear</Link>
+      <Link to={`/missions/spy/${user.username}`}>Espiar</Link>
     </>
   )
 }

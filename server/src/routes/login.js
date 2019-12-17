@@ -14,12 +14,12 @@ module.exports = app => {
 
     const [[user]] = await mysql.query('SELECT id, password FROM users WHERE username=? LIMIT 1', [username])
     if (!user) {
-      res.json({ success: false })
+      res.status(400).json({ error: 'Datos inválidos', success: false })
       return
     }
     const encryptedPass = user.password
     if (!(await bcrypt.compare(password, encryptedPass))) {
-      res.json({ success: false })
+      res.status(400).json({ error: 'Datos inválidos', success: false })
       return
     }
 

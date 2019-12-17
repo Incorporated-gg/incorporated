@@ -41,11 +41,11 @@ module.exports = app => {
           delete result.data.attacker_id
           delete result.data.defender_id
         }
-        if (msg.type === 'hack_report') {
+        if (msg.type === 'spy_report') {
           result.data.defender = await users.getData(result.data.defender_id)
           delete result.data.defender_id
         }
-        if (msg.type === 'caught_hackers') {
+        if (msg.type === 'caught_spies') {
           result.data.attacker = await users.getData(result.data.attacker_id)
           delete result.data.attacker_id
         }

@@ -41,11 +41,11 @@ async function updateMoney(req) {
   if (moneyUpdateElapsedS <= 0.5) return
 
   const maxMoney = calcUserMaxMoney(req.userData.researchs)
-  if (req.userData.money === maxMoney) return
+  if (req.userData.money >= maxMoney) return
 
-  let moneyAdded = req.userData.income_per_second * moneyUpdateElapsedS
-  const diff = maxMoney - (req.userData.money + moneyAdded)
-  if (diff < 0) moneyAdded += diff
+  const income = req.userData.income_per_second * moneyUpdateElapsedS
+  const moneyAboveMax = Math.max(0, req.userData.money + income - maxMoney)
+  const moneyAdded = income - moneyAboveMax
   await mysql.query('UPDATE users SET money=money+?, last_money_update=? WHERE id=?', [
     moneyAdded,
     tsNow,
