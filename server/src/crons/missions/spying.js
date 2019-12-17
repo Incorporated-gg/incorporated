@@ -36,13 +36,13 @@ async function completeSpyMission(mission) {
   const spiesSent = parseInt(mission.personnel_sent)
 
   const spiesCaptured = calcSpiesCaptured({
-    resLvlAttacker: attackerResearchs[4],
-    resLvLDefender: defensorResearchs[4],
+    resLvlAttacker: attackerResearchs[1],
+    resLvLDefender: defensorResearchs[1],
     spiesSent,
   })
   const spiesRemaining = spiesSent - spiesCaptured
   const informationObtained = calcInformationObtained({
-    resLvLDefender: defensorResearchs[4],
+    resLvLDefender: defensorResearchs[1],
     spiesRemaining,
   })
 
