@@ -117,12 +117,6 @@ module.exports = app => {
         break
       case 'spy':
         troopType = 'spies'
-        if (personnelSent > 40) {
-          res.status(400).json({
-            error: 'Solo puedes mandar un máximo de 40 espías',
-          })
-          return
-        }
 
         break
       default:
