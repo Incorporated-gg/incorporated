@@ -100,7 +100,7 @@ function calcSpiesCaptured({ resLvlAttacker, resLvLDefender, spiesSent }) {
       : 0.18 * resLvLDefender * Math.pow(resLvLDefender - resLvlAttacker, 1.3)
   const spiesProbability =
     sentSpiesPercentage > 1
-      ? 0.1 + Math.pow((1.03 ^ resLvlAttacker) * (sentSpiesPercentage - 1), 2)
+      ? 0.1 + Math.pow(resLvlAttacker, 1.03) * Math.pow(sentSpiesPercentage - 1, 2)
       : sentSpiesPercentage / 10
   const lvlProbability = valueDiff / 100
   const failProbability = spiesProbability + lvlProbability
