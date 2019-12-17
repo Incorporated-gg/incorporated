@@ -98,10 +98,11 @@ export default function SingleMessage({ reloadMessagesData, message }) {
           {message.data.captured_spies > 0 && (
             <div>
               Durante la misión el enemigo fue alertado, y capturaron a {message.data.captured_spies.toLocaleString()}{' '}
-              de nuestros espías.
+              de nuestros espías. Quizás deberíamos haber mandado menos espías, o invertido más en la investigación de
+              espionaje.
             </div>
           )}
-          {message.data.intel_report ? (
+          {message.data.intel_report && Object.keys(message.data.intel_report).length > 0 ? (
             <>
               <div>Número de espías: {message.data.spies_count}</div>
               {message.data.intel_report.buildings && (

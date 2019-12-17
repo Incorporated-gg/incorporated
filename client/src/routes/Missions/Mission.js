@@ -13,7 +13,8 @@ Mission.propTypes = {
 export default function Mission({ reloadMissionsCallback }) {
   const userData = useUserData()
   const { username: routeUsername } = useParams('username')
-  const { missionType } = useParams('missionType') || 'attack'
+  let { missionType } = useParams('missionType')
+  if (!missionType) missionType = 'attack'
   const isAttack = missionType === 'attack'
   const [toUser, setToUser] = useState(routeUsername || '')
   const [numTroops, setNumTroops] = useState(() => {
