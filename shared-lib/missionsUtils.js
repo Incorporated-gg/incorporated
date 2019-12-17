@@ -1,10 +1,12 @@
+const process = require('process')
+
 const { buildingsList, calcBuildingPrice } = require('./buildingsUtils')
 const { personnelList } = require('./personnelUtils')
 
 module.exports.calculateMissionTime = calculateMissionTime
 function calculateMissionTime(missionType, personnelSent) {
-  if (missionType === 'attack') return 300
-  if (missionType === 'spy') return 120
+  if (missionType === 'attack') return process.env.NODE_ENV === 'dev' ? 10 : 300
+  if (missionType === 'spy') return process.env.NODE_ENV === 'dev' ? 10 : 120
   return 0
 }
 

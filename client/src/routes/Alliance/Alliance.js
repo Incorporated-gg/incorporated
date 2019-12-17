@@ -79,7 +79,7 @@ function AllianceRouter({ alliance, reloadAllianceData }) {
         <Route path="/alliance/resources">
           <AllianceResources alliance={alliance} reloadAllianceData={reloadAllianceData} />
         </Route>
-        <Route path="/alliance/missions">
+        <Route path="/alliance/missions/:missionType?">
           <AllianceMissions alliance={alliance} reloadAllianceData={reloadAllianceData} />
         </Route>
         <Route path="/alliance/research">

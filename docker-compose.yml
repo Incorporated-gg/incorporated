@@ -25,6 +25,7 @@ services:
       - DB_USER
       - DB_PASS
       - DB_HOST
+      - NODE_ENV=dev
     depends_on:
       - db
     command: npx nodemon -L index.js

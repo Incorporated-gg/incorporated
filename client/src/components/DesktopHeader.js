@@ -33,7 +33,7 @@ export default function DesktopHeader() {
           <NavLink to="/ranking">Ranking</NavLink>
         </li>
         <li>
-          <NavLink to="/missions/attack">Missions</NavLink>
+          <NavLink to="/missions">Missions</NavLink>
         </li>
         <li>
           <NavLink to="/alliance">Alianza</NavLink>

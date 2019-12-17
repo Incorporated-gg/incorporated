@@ -2,7 +2,7 @@ const mysql = require('../lib/mysql')
 const alliances = require('../lib/db/alliances')
 const personnel = require('../lib/db/personnel')
 const users = require('../lib/db/users')
-const { CREATE_ALLIANCE_PRICE } = require('shared-lib/allianceUtils')
+const { CREATE_ALLIANCE_PRICE, calcResourceMax } = require('shared-lib/allianceUtils')
 
 const alphanumericRegexp = /^[a-z0-9]+$/i
 
@@ -101,6 +101,12 @@ module.exports = app => {
     const resourceAmount = alliance.resources[resourceID].quantity
     if (amount < 0 && resourceAmount < -amount) {
       res.status(401).json({ error: 'No hay suficientes recursos' })
+      return
+    }
+
+    const maxResourceStorage = calcResourceMax(resourceID, alliance.researchs)
+    if (alliance.resources[resourceID].quantity + amount > maxResourceStorage) {
+      res.status(401).json({ error: 'No caben tantos recursos' })
       return
     }
 
