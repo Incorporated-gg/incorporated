@@ -1,7 +1,7 @@
-const mysql = require('../../lib/mysql')
-const { getUserAllianceID } = require('../../lib/db/alliances')
+const mysql = require('../../../lib/mysql')
+const { getUserAllianceID } = require('../../../lib/db/alliances')
 const { simulateAttack } = require('shared-lib/missionsUtils')
-const { getResearchs, getPersonnel, getBuildings, sendMessage } = require('../../lib/db/users')
+const { getResearchs, getPersonnel, getBuildings, sendMessage } = require('../../../lib/db/users')
 
 module.exports = {
   doAttackMissions,
