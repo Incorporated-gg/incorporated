@@ -24,6 +24,23 @@ test('Combat normal win', () => {
   expect(attackResult.survivingGuards).toBe(0)
 })
 
+test('Combat win, but not max buildings destroyed', () => {
+  const attackResult = simulateAttack({
+    defensorNumEdificios: 100,
+    buildingID: 9,
+    defensorInfraLvl: 20,
+    attackerSabots: 950,
+    defensorGuards: 200,
+    defensorSecurityLvl: 30,
+    attackerSabotageLvl: 40,
+  })
+  expect(attackResult.result).toBe('win')
+  expect(attackResult.destroyedBuildings).toBe(1)
+  expect(attackResult.realAttackerProfit).toBe(4942500)
+  expect(attackResult.survivingSabots).toBe(800)
+  expect(attackResult.survivingGuards).toBe(0)
+})
+
 test('Combat little sabots', () => {
   const attackResult = simulateAttack({
     defensorNumEdificios: 100,
@@ -55,5 +72,22 @@ test('Combat no guards and little sabots', () => {
   expect(attackResult.destroyedBuildings).toBe(0)
   expect(attackResult.realAttackerProfit).toBe(0)
   expect(attackResult.survivingSabots).toBe(50)
+  expect(attackResult.survivingGuards).toBe(0)
+})
+
+test('Combat high infra', () => {
+  const attackResult = simulateAttack({
+    defensorNumEdificios: 100,
+    buildingID: 2,
+    defensorInfraLvl: 50,
+    attackerSabots: 3000,
+    defensorGuards: 0,
+    defensorSecurityLvl: 30,
+    attackerSabotageLvl: 40,
+  })
+  expect(attackResult.result).toBe('win')
+  expect(attackResult.destroyedBuildings).toBe(1)
+  expect(attackResult.realAttackerProfit).toBe(9380)
+  expect(attackResult.survivingSabots).toBe(3000)
   expect(attackResult.survivingGuards).toBe(0)
 })

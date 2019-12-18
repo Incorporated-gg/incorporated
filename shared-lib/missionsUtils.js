@@ -1,6 +1,6 @@
 const process = require('process')
 
-const { buildingsList, calcBuildingPrice } = require('./buildingsUtils')
+const { buildingsList, calcBuildingPrice, calcBuildingResistance } = require('./buildingsUtils')
 const { personnelList } = require('./personnelUtils')
 
 module.exports.calculateMissionTime = calculateMissionTime
@@ -38,8 +38,7 @@ function simulateCombat({
   const survivingGuards = defensorGuards - deadGuards
 
   // Destroyed buildings
-  const buildingResistance =
-    attackedBuildingInfo.baseResistance + attackedBuildingInfo.resistanceIncrease * (defensorInfraLvl - 1)
+  const buildingResistance = calcBuildingResistance(attackedBuildingInfo.id, defensorInfraLvl)
   const buildingAttackingPower = Math.max(0, sabotAttackPower * survivingSabots - guardsDefensePower * survivingGuards)
   const theoreticalDestroyedBuildings = Math.floor(buildingAttackingPower / buildingResistance)
   const destroyedBuildings = Math.min(

@@ -8,7 +8,8 @@ export default function Ranking() {
   const [ranking, setRanking] = useState([])
   const [error, setError] = useState(false)
   const { pathname } = useLocation()
-  const type = pathname.split('/').pop()
+  let type = pathname.split('/').pop()
+  if (type === 'ranking') type = 'income'
 
   useEffect(() => {
     api
@@ -28,7 +29,7 @@ export default function Ranking() {
           <tr>
             <th>Posición</th>
             <th>Nombre</th>
-            <th>{type === 'income' ? 'Ingresos / día' : 'Puntos'}</th>
+            <th>{type === 'income' ? 'Ingresos diarios' : 'Puntos'}</th>
             <th>Acciones</th>
           </tr>
         </thead>

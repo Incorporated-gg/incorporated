@@ -75,6 +75,7 @@ async function getPrivateData(allianceID) {
       }
     })
   )
+  members = members.sort((a, b) => (a.user.income > b.user.income ? -1 : 1))
 
   // Get research data
   const [

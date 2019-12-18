@@ -8,8 +8,6 @@ const buildingsList = [
     increasePrice: 15,
     amountForPriceIncrease: 10,
     maximumDestroyedBuildings: 10,
-    baseResistance: 20,
-    resistanceIncrease: 15,
     fame: 1,
   },
   {
@@ -21,8 +19,6 @@ const buildingsList = [
     increasePrice: 30,
     amountForPriceIncrease: 9,
     maximumDestroyedBuildings: 9,
-    baseResistance: 25,
-    resistanceIncrease: 30,
     fame: 2,
   },
   {
@@ -34,8 +30,6 @@ const buildingsList = [
     increasePrice: 60,
     amountForPriceIncrease: 8,
     maximumDestroyedBuildings: 8,
-    baseResistance: 35,
-    resistanceIncrease: 60,
     fame: 4,
   },
   {
@@ -47,8 +41,6 @@ const buildingsList = [
     increasePrice: 120,
     amountForPriceIncrease: 7,
     maximumDestroyedBuildings: 7,
-    baseResistance: 50,
-    resistanceIncrease: 125,
     fame: 8,
   },
   {
@@ -60,8 +52,6 @@ const buildingsList = [
     increasePrice: 240,
     amountForPriceIncrease: 6,
     maximumDestroyedBuildings: 6,
-    baseResistance: 70,
-    resistanceIncrease: 250,
     fame: 16,
   },
   {
@@ -73,8 +63,6 @@ const buildingsList = [
     increasePrice: 480,
     amountForPriceIncrease: 5,
     maximumDestroyedBuildings: 5,
-    baseResistance: 95,
-    resistanceIncrease: 1000,
     fame: 32,
   },
   {
@@ -86,8 +74,6 @@ const buildingsList = [
     increasePrice: 960,
     amountForPriceIncrease: 4,
     maximumDestroyedBuildings: 4,
-    baseResistance: 125,
-    resistanceIncrease: 1000,
     fame: 64,
   },
   {
@@ -99,8 +85,6 @@ const buildingsList = [
     increasePrice: 1920,
     amountForPriceIncrease: 3,
     maximumDestroyedBuildings: 3,
-    baseResistance: 160,
-    resistanceIncrease: 2000,
     fame: 128,
   },
   {
@@ -112,8 +96,6 @@ const buildingsList = [
     increasePrice: 3840,
     amountForPriceIncrease: 2,
     maximumDestroyedBuildings: 2,
-    baseResistance: 200,
-    resistanceIncrease: 5000,
     fame: 256,
   },
   {
@@ -125,8 +107,6 @@ const buildingsList = [
     increasePrice: 7680,
     amountForPriceIncrease: 1,
     maximumDestroyedBuildings: 1,
-    baseResistance: 245,
-    resistanceIncrease: 6000,
     fame: 512,
   },
 ]
@@ -153,8 +133,19 @@ function calcBuildingDailyIncome(buildingID, currentAmount, optimizeResearchLeve
   return incomePerDay
 }
 
-module.exports.getBuildingResistance = getBuildingResistance
-function getBuildingResistance(buildingID, infraLevel) {
-  const buildingInfo = buildingsList.find(b => b.id === buildingID)
-  return buildingInfo.baseResistance + buildingInfo.resistanceIncrease * (infraLevel - 1)
+module.exports.calcBuildingResistance = calcBuildingResistance
+function calcBuildingResistance(buildingID, infraLevel) {
+  const lvlMap = {
+    1: 10,
+    2: 9,
+    3: 8,
+    4: 7,
+    5: 6,
+    6: 5,
+    7: 4,
+    8: 3,
+    9: 2,
+    10: 1,
+  }
+  return Math.round((750 * infraLevel * Math.pow(Math.E, 0.08 * infraLevel)) / lvlMap[buildingID])
 }
