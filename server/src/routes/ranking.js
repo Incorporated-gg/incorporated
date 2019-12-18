@@ -9,8 +9,46 @@ module.exports = app => {
       return
     }
 
-    const [rankingData] = await mysql.query('SELECT user_id FROM ranking ORDER BY ranking.rank ASC')
-    const ranking = await Promise.all(rankingData.map(rankUser => users.getData(rankUser.user_id)))
+    const type = req.query.type === 'alliances' ? 'alliances' : req.query.type === 'research' ? 'research' : 'income'
+
+    let ranking = []
+    switch (type) {
+      case 'income': {
+        const [rankingData] = await mysql.query('SELECT user_id, rank, points FROM ranking_income ORDER BY rank ASC')
+        ranking = await Promise.all(
+          rankingData.map(async rankUser => ({
+            rank: rankUser.rank,
+            points: rankUser.points,
+            user: await users.getData(rankUser.user_id),
+          }))
+        )
+        break
+      }
+      case 'research': {
+        const [rankingData] = await mysql.query('SELECT user_id, rank, points FROM ranking_research ORDER BY rank ASC')
+        ranking = await Promise.all(
+          rankingData.map(async rankUser => ({
+            rank: rankUser.rank,
+            points: rankUser.points,
+            user: await users.getData(rankUser.user_id),
+          }))
+        )
+        break
+      }
+      case 'alliances': {
+        const [rankingData] = await mysql.query(
+          'SELECT alliance_id, rank, points FROM ranking_alliances ORDER BY rank ASC'
+        )
+        ranking = await Promise.all(
+          rankingData.map(async rankAliance => ({
+            rank: rankAliance.rank,
+            points: rankAliance.points,
+            alliance: await alliances.getBasicData(rankAliance.alliance_id),
+          }))
+        )
+        break
+      }
+    }
 
     res.json({
       ranking,

@@ -30,6 +30,16 @@ export default function RankingRouter() {
             </NavLink>
           </li>
           <li>
+            <NavLink to="/ranking/research" exact>
+              Investigaciones
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to="/ranking/alliances" exact>
+              Alianzas
+            </NavLink>
+          </li>
+          <li>
             <NavLink to="/ranking/monopolies">Monopolios</NavLink>
           </li>
           {contests &&
@@ -51,6 +61,12 @@ export default function RankingRouter() {
         </Route>
         <Route path="/ranking/monopolies">
           <Monopolies />
+        </Route>
+        <Route path="/ranking/alliances">
+          <Ranking />
+        </Route>
+        <Route path="/ranking/research">
+          <Ranking />
         </Route>
         <Route path="/ranking/:contestName">
           <Contest />

@@ -9,7 +9,7 @@ const { taxList, getIncomeTaxes } = require('shared-lib/taxes')
 module.exports.getData = getData
 async function getData(userID) {
   const userDataPromise = mysql.query('SELECT username FROM users WHERE id=?', [userID])
-  const rankingDataPromise = mysql.query('SELECT rank, income FROM ranking WHERE user_id=?', [userID])
+  const rankingDataPromise = mysql.query('SELECT rank, points FROM ranking_income WHERE user_id=?', [userID])
   const alliancePromise = alliances.getUserAllianceID(userID).then(alliances.getBasicData)
   const [[[userData]], [[rankingData]], allianceData] = await Promise.all([
     userDataPromise,
@@ -22,7 +22,7 @@ async function getData(userID) {
     id: userID,
     username: userData.username,
     rank_position: rankingData ? rankingData.rank : 0,
-    income: rankingData ? rankingData.income : 0,
+    income: rankingData ? rankingData.points : 0,
     alliance: allianceData,
   }
 }
