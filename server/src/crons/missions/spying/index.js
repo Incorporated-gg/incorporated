@@ -48,7 +48,8 @@ async function completeSpyMission(mission) {
   })
 
   // Update mission status
-  await mysql.query('UPDATE missions SET completed=1 WHERE id=?', [mission.id])
+  const result = spiesCaptured > 0 ? 'caught' : 'not_caught'
+  await mysql.query('UPDATE missions SET completed=1, result=? WHERE id=?', [result, mission.id])
 
   // Return spies to user
   if (spiesRemaining > 0) {

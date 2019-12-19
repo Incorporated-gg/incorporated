@@ -112,39 +112,39 @@ async function getPrivateData(allianceID) {
     return prev
   }, {})
 
-  // Get attack history
+  // Get mission history
   const activeMissionsQuery = mysql.query(
     'SELECT user_id, target_user, target_building, mission_type, personnel_sent, started_at, will_finish_at FROM missions WHERE user_id IN (?) AND completed=0 ORDER BY will_finish_at DESC',
     [members.map(m => m.user.id)]
   )
   const sentAttackMissionsQuery = mysql.query(
-    "SELECT user_id, target_user, target_building, mission_type, personnel_sent, started_at, will_finish_at, completed, won, profit FROM missions WHERE user_id IN (?) AND mission_type='attack' AND completed=1 ORDER BY will_finish_at DESC LIMIT 30",
+    "SELECT user_id, target_user, target_building, mission_type, personnel_sent, started_at, will_finish_at, completed, result, profit FROM missions WHERE user_id IN (?) AND mission_type='attack' AND completed=1 ORDER BY will_finish_at DESC LIMIT 30",
     [members.map(m => m.user.id)]
   )
-  const sentHackMissionsQuery = mysql.query(
-    "SELECT user_id, target_user, mission_type, personnel_sent, started_at, will_finish_at, completed, won FROM missions WHERE user_id IN (?) AND mission_type='hack' AND completed=1 ORDER BY will_finish_at DESC LIMIT 30",
+  const sentSpyMissionsQuery = mysql.query(
+    "SELECT user_id, target_user, mission_type, personnel_sent, started_at, will_finish_at, completed, result FROM missions WHERE user_id IN (?) AND mission_type='spy' AND completed=1 ORDER BY will_finish_at DESC LIMIT 30",
     [members.map(m => m.user.id)]
   )
   const receivedAttackMissionsQuery = mysql.query(
-    "SELECT user_id, target_user, target_building, mission_type, personnel_sent, started_at, will_finish_at, completed, won, profit FROM missions WHERE target_user IN (?) AND mission_type='attack' AND completed=1 ORDER BY will_finish_at DESC LIMIT 30",
+    "SELECT user_id, target_user, target_building, mission_type, personnel_sent, started_at, will_finish_at, completed, result, profit FROM missions WHERE target_user IN (?) AND mission_type='attack' AND completed=1 ORDER BY will_finish_at DESC LIMIT 30",
     [members.map(m => m.user.id)]
   )
-  const receivedHackMissionsQuery = mysql.query(
-    "SELECT user_id, target_user, mission_type, personnel_sent, started_at, will_finish_at, completed, won FROM missions WHERE target_user IN (?) AND mission_type='hack' AND completed=1 AND won=0 ORDER BY will_finish_at DESC LIMIT 30",
+  const receivedSpyMissionsQuery = mysql.query(
+    "SELECT user_id, target_user, mission_type, personnel_sent, started_at, will_finish_at, completed, result FROM missions WHERE target_user IN (?) AND mission_type='spy' AND completed=1 AND result='caught' ORDER BY will_finish_at DESC LIMIT 30",
     [members.map(m => m.user.id)]
   )
   const [
     [activeMissionsRaw],
     [sentAttackMissionsRaw],
-    [sentHackMissionsRaw],
+    [sentSpyMissionsRaw],
     [receivedAttackMissionsRaw],
-    [receivedHackMissionsRaw],
+    [receivedSpyMissionsRaw],
   ] = await Promise.all([
     activeMissionsQuery,
     sentAttackMissionsQuery,
-    sentHackMissionsQuery,
+    sentSpyMissionsQuery,
     receivedAttackMissionsQuery,
-    receivedHackMissionsQuery,
+    receivedSpyMissionsQuery,
   ])
   const activeMissions = await Promise.all(
     activeMissionsRaw.map(async mission => {
@@ -160,8 +160,8 @@ async function getPrivateData(allianceID) {
       }
     })
   )
-  const sentHackMissions = await Promise.all(
-    sentHackMissionsRaw.map(async mission => {
+  const sentSpyMissions = await Promise.all(
+    sentSpyMissionsRaw.map(async mission => {
       const defensorData = await users.getData(mission.target_user)
       return {
         user_id: mission.user_id,
@@ -171,7 +171,7 @@ async function getPrivateData(allianceID) {
         started_at: mission.started_at,
         will_finish_at: mission.will_finish_at,
         completed: mission.completed,
-        won: mission.won,
+        result: mission.result,
       }
     })
   )
@@ -187,13 +187,13 @@ async function getPrivateData(allianceID) {
         started_at: mission.started_at,
         will_finish_at: mission.will_finish_at,
         completed: mission.completed,
-        won: mission.won,
+        result: mission.result,
         profit: mission.profit,
       }
     })
   )
-  const receivedHackMissions = await Promise.all(
-    receivedHackMissionsRaw.map(async mission => {
+  const receivedSpyMissions = await Promise.all(
+    receivedSpyMissionsRaw.map(async mission => {
       const defensorData = await users.getData(mission.target_user)
       return {
         user_id: mission.user_id,
@@ -203,7 +203,7 @@ async function getPrivateData(allianceID) {
         started_at: mission.started_at,
         will_finish_at: mission.will_finish_at,
         completed: mission.completed,
-        won: mission.won,
+        result: mission.result,
       }
     })
   )
@@ -219,7 +219,7 @@ async function getPrivateData(allianceID) {
         started_at: mission.started_at,
         will_finish_at: mission.will_finish_at,
         completed: mission.completed,
-        won: mission.won,
+        result: mission.result,
         profit: mission.profit,
       }
     })
@@ -237,8 +237,8 @@ async function getPrivateData(allianceID) {
     resources,
     active_missions: activeMissions,
     sent_attack_missions: sentAttackMissions,
-    sent_hack_missions: sentHackMissions,
+    sent_spy_missions: sentSpyMissions,
     received_attack_missions: receivedAttackMissions,
-    received_hack_missions: receivedHackMissions,
+    received_spy_missions: receivedSpyMissions,
   }
 }

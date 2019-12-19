@@ -70,7 +70,7 @@ export default function Missions() {
             <th>Usuario objetivo</th>
             <th>Fecha</th>
             <th>Resultado</th>
-            <th>Bºs</th>
+            <th>Acciones</th>
           </tr>
         </thead>
         <tbody>

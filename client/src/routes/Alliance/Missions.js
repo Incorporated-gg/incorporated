@@ -11,9 +11,9 @@ export default function AllianceMissions({ alliance, reloadAllianceData }) {
   const { missionType } = useParams('missionType') || 'attack'
   const activeMissions = alliance.active_missions
   const sentAttackMissions = alliance.sent_attack_missions
-  const sentHackMissions = alliance.sent_hack_missions
+  const sentSpyMissions = alliance.sent_spy_missions
   const receivedAttackMissions = alliance.received_attack_missions
-  const receivedHackMissions = alliance.received_hack_missions
+  const receivedSpyMissions = alliance.received_spy_missions
   let sentMissions, receivedMissions
 
   switch (missionType) {
@@ -21,9 +21,9 @@ export default function AllianceMissions({ alliance, reloadAllianceData }) {
       sentMissions = sentAttackMissions
       receivedMissions = receivedAttackMissions
       break
-    case 'hacks':
-      sentMissions = sentHackMissions
-      receivedMissions = receivedHackMissions
+    case 'spy':
+      sentMissions = sentSpyMissions
+      receivedMissions = receivedSpyMissions
       break
     default:
       sentMissions = sentAttackMissions
@@ -67,7 +67,7 @@ export default function AllianceMissions({ alliance, reloadAllianceData }) {
             </NavLink>
           </li>
           <li>
-            <NavLink to="/alliance/missions/hacks">Hacks</NavLink>
+            <NavLink to="/alliance/missions/spy">Espionajes</NavLink>
           </li>
         </ul>
       </nav>
@@ -79,7 +79,7 @@ export default function AllianceMissions({ alliance, reloadAllianceData }) {
             <th>Usuario objetivo</th>
             <th>Fecha</th>
             <th>Resultado</th>
-            <th>Bºs</th>
+            <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
@@ -102,7 +102,7 @@ export default function AllianceMissions({ alliance, reloadAllianceData }) {
             <th>Usuario objetivo</th>
             <th>Fecha</th>
             <th>Resultado</th>
-            <th>Bºs</th>
+            <th>Acciones</th>
           </tr>
         </thead>
         <tbody>

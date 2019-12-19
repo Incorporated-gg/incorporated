@@ -59,16 +59,16 @@ function Building({ building, count: buildingCount, buy }) {
   const userData = useUserData()
   const coste = Math.ceil(calcBuildingPrice(building.id, buildingCount))
   const income = Math.ceil(calcBuildingDailyIncome(building.id, 1, userData.researchs[5]))
-  const totalIncome = Math.ceil(calcBuildingDailyIncome(building.id, buildingCount, userData.researchs[5]))
+  const timeToRecoverInvestment = Math.round((coste / income) * 10) / 10 + ' días'
   const canAfford = userData.money > coste
   return (
     <div className={`building-item ${canAfford ? '' : 'can-not-afford'}`}>
       <div>
-        {building.name} (<b>{buildingCount}</b>)
+        {building.name} (<b>{buildingCount.toLocaleString()}</b>)
       </div>
-      <div>Bºs/día por edificio: {income.toLocaleString()}</div>
-      <div>Bºs/día totales: {totalIncome.toLocaleString()}</div>
-      <div>Precio: {coste.toLocaleString()}</div>
+      <div>Bºs/día por edificio: {income.toLocaleString()}€</div>
+      <div>PRI: {timeToRecoverInvestment}</div>
+      <div>Precio: {coste.toLocaleString()}€</div>
       <button className="build-button" onClick={canAfford ? buy : undefined}>
         Construir
       </button>

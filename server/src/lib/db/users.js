@@ -101,8 +101,8 @@ async function getTotalPersonnel(userID) {
   if (!activeMission) return personnels
 
   switch (activeMission.mission_type) {
-    case 'hack':
-      personnels['hackers'] += parseInt(activeMission.personnel_sent)
+    case 'spy':
+      personnels['spies'] += parseInt(activeMission.personnel_sent)
       break
     case 'attack':
       personnels['sabots'] += parseInt(activeMission.personnel_sent)
@@ -129,7 +129,7 @@ async function getMissions(userID) {
   const [
     missionsRaw,
   ] = await mysql.query(
-    'SELECT user_id, target_user, target_building, mission_type, personnel_sent, started_at, will_finish_at, completed, won, profit FROM missions WHERE user_id=? ORDER BY will_finish_at DESC',
+    'SELECT user_id, target_user, target_building, mission_type, personnel_sent, started_at, will_finish_at, completed, result, profit FROM missions WHERE user_id=? ORDER BY will_finish_at DESC',
     [userID]
   )
   const missions = Promise.all(
@@ -144,7 +144,7 @@ async function getMissions(userID) {
         started_at: mission.started_at,
         will_finish_at: mission.will_finish_at,
         completed: mission.completed,
-        won: mission.won,
+        result: mission.result,
         profit: mission.profit,
       }
     })
@@ -158,7 +158,7 @@ async function getActiveMission(userID) {
   const [
     [mission],
   ] = await mysql.query(
-    'SELECT user_id, target_user, target_building, mission_type, personnel_sent, started_at, will_finish_at, completed, won, profit FROM missions WHERE user_id=? AND completed=0 ORDER BY will_finish_at DESC',
+    'SELECT user_id, target_user, target_building, mission_type, personnel_sent, started_at, will_finish_at, completed, result, profit FROM missions WHERE user_id=? AND completed=0 ORDER BY will_finish_at DESC',
     [userID]
   )
 
@@ -174,7 +174,7 @@ async function getActiveMission(userID) {
     started_at: mission.started_at,
     will_finish_at: mission.will_finish_at,
     completed: mission.completed,
-    won: mission.won,
+    result: mission.result,
     profit: mission.profit,
   }
 

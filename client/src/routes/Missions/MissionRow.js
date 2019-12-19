@@ -33,6 +33,25 @@ export default function MissionRow({ mission, reloadMissionsCallback }) {
       })
   }
 
+  const openDetailsModal = () => {
+    window.alert(JSON.stringify(mission))
+  }
+
+  const displayResult =
+    mission.result === 'won'
+      ? 'Éxito'
+      : mission.result === 'lose'
+      ? 'Fracaso'
+      : mission.result === 'draw'
+      ? 'Empate'
+      : mission.result === 'caught'
+      ? 'Cazado'
+      : mission.result === 'not_caught'
+      ? 'No Cazado'
+      : mission.result
+
+  const profit = typeof mission.profit === 'number' ? `(${mission.profit.toLocaleString()}€)` : null
+
   return (
     <tr>
       <td>{mission.mission_type}</td>
@@ -42,8 +61,12 @@ export default function MissionRow({ mission, reloadMissionsCallback }) {
       {isComplete ? (
         <>
           <td>{timestampFromEpoch(mission.will_finish_at)}</td>
-          <td>{mission.won === 1 ? 'Éxito' : mission.won === 0 ? 'Fracaso' : 'Desconocido'}</td>
-          <td>{typeof mission.profit === 'number' ? `${mission.profit.toLocaleString()}€` : '-'}</td>
+          <td>
+            {displayResult} <i>{profit}</i>
+          </td>
+          <td>
+            <button onClick={openDetailsModal}>Ver detalles</button>
+          </td>
         </>
       ) : (
         <>
