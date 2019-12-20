@@ -13,7 +13,7 @@ export default function Monopolies() {
     api
       .get(`/v1/contests/${contestName}`)
       .then(res => {
-        setContestScores(res[contestName])
+        setContestScores(res.contestInfo)
       })
       .catch(err => setError(err.message))
   }, [contestName])

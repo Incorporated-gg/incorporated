@@ -13,7 +13,7 @@ const getPreviousScoreboard = async contestID => {
 
 const updateOngoingContest = async contest => {
   // Update scoreboards of ongoing contests
-  const newScoreboardRaw = await contest.getScoreboard()
+  const newScoreboardRaw = await contest.getScoreboard(contest.started_at)
   const newScoreboard = newScoreboardRaw.map((row, rank) => {
     const score = row.score ? parseInt(row.score) : 0
     return {
@@ -73,7 +73,7 @@ const updateOngoingContest = async contest => {
 const run = async () => {
   // Check cron dates and whether we need to run it or not
   const [ongoingContests] = await mysql.query(
-    'SELECT id, name FROM contests WHERE started_at IS NOT NULL AND ended_at IS NULL'
+    'SELECT id, name, started_at FROM contests WHERE started_at IS NOT NULL AND ended_at IS NULL'
   )
 
   const files = fs.readdirSync(path.join(__dirname, 'contests'))
@@ -88,11 +88,12 @@ const run = async () => {
   ongoingContests.forEach(async contest => {
     const curContest = contests.find(c => c.contestName === contest.name)
     curContest.id = contest.id
+    curContest.started_at = contest.started_at
     if (curContest.contestWillUpdate) curContest.contestWillUpdate()
     await updateOngoingContest(curContest)
     if (curContest.contestDidUpdate) curContest.contestDidUpdate()
     // Check if we need to end ongoing contests
-    if (curContest.shouldEndContest) {
+    if (curContest.shouldEndContest()) {
       await mysql.query('UPDATE contests SET ended_at = ? WHERE id = ?', [Date.now() / 1000, contest.id])
       if (curContest.contestEnd) curContest.contestEnd()
     }
@@ -103,7 +104,7 @@ const run = async () => {
     contest => !ongoingContests.find(ongoingContest => ongoingContest.name === contest.contestName)
   )
   inactiveContests.forEach(async inactiveContest => {
-    if (inactiveContest.shouldStartContest) {
+    if (inactiveContest.shouldStartContest()) {
       await mysql.query('INSERT INTO contests (name, started_at) VALUES (?, ?)', [
         inactiveContest.contestName,
         Date.now() / 1000,
