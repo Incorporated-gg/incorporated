@@ -6,7 +6,7 @@ const contestName = 'profit'
 const shouldStartContest = () => {
   const date = new Date()
   return (
-    (date.getUTCDate() / 7) % 2 === 1 &&
+    Math.floor(date.getUTCDate() / 7) % 2 === 1 &&
     date.getUTCDay() === 0 &&
     date.getUTCHours() === 0 &&
     date.getUTCMinutes() === 0
@@ -16,7 +16,7 @@ const shouldStartContest = () => {
 const shouldEndContest = () => {
   const date = new Date()
   return (
-    (date.getUTCDate() / 7) % 2 === 1 &&
+    Math.floor(date.getUTCDate() / 7) % 2 === 1 &&
     date.getUTCDay() === 6 &&
     date.getUTCHours() === 23 &&
     date.getUTCMinutes() === 59
