@@ -29,8 +29,8 @@ export default function Monopolies() {
           </tr>
         </thead>
         <tbody>
-          {monopolies.map(monopoly => (
-            <tr key={monopoly.building_id}>
+          {monopolies.map((monopoly, i) => (
+            <tr key={i}>
               <td>{buildingsList.find(b => b.id === monopoly.building_id).name}</td>
               <td>
                 <Username user={monopoly.user} />

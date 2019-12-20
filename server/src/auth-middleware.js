@@ -65,6 +65,7 @@ function modifyResponseBody(req, res, next) {
         money: req.userData.money,
         income_per_second: req.userData.income_per_second,
         unread_messages_count: await getUnreadMessagesCount(req.userData.id),
+        personnel: req.userData.personnel,
       }
       arguments[0]._extra = extraData
     }
