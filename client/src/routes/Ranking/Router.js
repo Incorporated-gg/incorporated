@@ -56,7 +56,7 @@ export default function RankingRouter() {
         <Route path="/ranking/user/:username">
           <UserProfile />
         </Route>
-        <Route path="/ranking/alliance/:allianceID">
+        <Route path="/ranking/alliance/:allianceShortName">
           <AllianceProfile />
         </Route>
         <Route path="/ranking/monopolies">

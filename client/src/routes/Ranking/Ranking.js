@@ -52,7 +52,9 @@ export default function Ranking() {
                 </td>
                 <td>
                   {rankItem.user && <UserActionLinks user={rankItem.user} />}{' '}
-                  {rankItem.alliance && <Link to={`/ranking/alliance/${rankItem.alliance.id}`}>Ver perfil</Link>}
+                  {rankItem.alliance && (
+                    <Link to={`/ranking/alliance/${rankItem.alliance.short_name}`}>Ver perfil</Link>
+                  )}
                 </td>
               </tr>
             ))

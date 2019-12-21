@@ -242,3 +242,8 @@ async function getPrivateData(allianceID) {
     received_spy_missions: receivedSpyMissions,
   }
 }
+
+module.exports.getIDFromShortName = async shortName => {
+  const [[allianceData]] = await mysql.query('SELECT id FROM alliances WHERE short_name=?', [shortName])
+  return allianceData ? allianceData.id : false
+}

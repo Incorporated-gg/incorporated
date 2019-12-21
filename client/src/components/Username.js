@@ -10,7 +10,7 @@ export default function Username({ user }) {
   return (
     <span>
       <Link to={`/ranking/user/${user.username}`}>{user.username}</Link>{' '}
-      {user.alliance && <Link to={`/ranking/alliance/${user.alliance.id}`}>[{user.alliance.short_name}]</Link>}
+      {user.alliance && <Link to={`/ranking/alliance/${user.alliance.short_name}`}>[{user.alliance.short_name}]</Link>}
     </span>
   )
 }

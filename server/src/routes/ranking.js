@@ -67,13 +67,14 @@ module.exports = app => {
       user: userData,
     })
   })
-  app.get('/v1/ranking/alliance', async function(req, res) {
+  app.get('/v1/ranking/alliance/:allianceShortName', async function(req, res) {
     if (!req.userData) {
       res.status(401).json({ error: 'Necesitas estar conectado', error_code: 'not_logged_in' })
       return
     }
 
-    const basicData = await alliances.getBasicData(req.query.alliance_id)
+    const allianceID = await alliances.getIDFromShortName(req.params.allianceShortName)
+    const basicData = await alliances.getBasicData(allianceID)
     const privateData = await alliances.getPrivateData(basicData.id)
 
     const alliance = Object.assign(basicData, {

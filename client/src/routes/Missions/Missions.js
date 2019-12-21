@@ -25,7 +25,7 @@ export default function Missions() {
       <nav className="sub-menu">
         <ul>
           <li>
-            <NavLink to="/missions">Atacar</NavLink>
+            <NavLink to="/missions/attack">Atacar</NavLink>
           </li>
           <li>
             <NavLink to="/missions/spy">Espiar</NavLink>
@@ -33,7 +33,7 @@ export default function Missions() {
         </ul>
       </nav>
       <Switch>
-        <Route path="/missions/:missionType?/:username?">
+        <Route path="/missions/:missionType/:username?">
           <Mission reloadMissionsCallback={reloadMissionsCallback} />
         </Route>
       </Switch>

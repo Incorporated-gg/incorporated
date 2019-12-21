@@ -6,19 +6,19 @@ import { useParams } from 'react-router-dom'
 import { useUserData } from '../../lib/user'
 
 export default function Ranking() {
-  const { allianceID: routeAllianceID } = useParams()
+  const { allianceShortName } = useParams()
   const [alliance, setAlliance] = useState({})
   const [error, setError] = useState(false)
   const userData = useUserData()
 
   useEffect(() => {
     api
-      .get('/v1/ranking/alliance', { alliance_id: routeAllianceID })
+      .get(`/v1/ranking/alliance/${allianceShortName}`)
       .then(res => {
         setAlliance(res.alliance)
       })
       .catch(err => setError(err.message))
-  }, [routeAllianceID])
+  }, [allianceShortName])
 
   const createMemberRequest = () => {
     api
