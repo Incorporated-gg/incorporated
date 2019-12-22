@@ -7,7 +7,7 @@ const personnelList = [
     firingCost: 500,
     attackPower: 1,
     defensePower: 2,
-    dailyMaintenanceCost: 100,
+    dailyMaintenanceCost: 500,
   },
   {
     id: 2,
@@ -17,7 +17,7 @@ const personnelList = [
     firingCost: 100,
     attackPower: 2,
     defensePower: 1,
-    dailyMaintenanceCost: 500,
+    dailyMaintenanceCost: 100,
   },
   {
     id: 3,
