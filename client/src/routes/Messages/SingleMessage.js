@@ -39,8 +39,9 @@ export default function SingleMessage({ reloadMessagesData, message }) {
         </div>
       )
       break
-    case 'attack_report':
+    case 'attack_report': {
       const wasIAttacked = message.data.defender && message.data.defender.id === userData.id
+      const buildingInfo = buildingsList.find(b => b.id === message.data.building_id)
       if (wasIAttacked) {
         messageElm = (
           <div>
@@ -51,7 +52,7 @@ export default function SingleMessage({ reloadMessagesData, message }) {
             <div>
               Saboteadores enviados: {(message.data.surviving_sabots + message.data.sabots_killed).toLocaleString()}
             </div>
-            <div>Edificio atacado: {buildingsList.find(b => b.id === message.data.building_id).name}</div>
+            <div>Edificio atacado: {buildingInfo.name}</div>
             <div>Guardias muertos: {message.data.guards_killed.toLocaleString()}</div>
             <div>Saboteadores muertos: {message.data.sabots_killed.toLocaleString()}</div>
             <div>Edificios destruidos: {message.data.destroyed_buildings}</div>
@@ -70,7 +71,7 @@ export default function SingleMessage({ reloadMessagesData, message }) {
             <div>
               Saboteadores enviados: {(message.data.surviving_sabots + message.data.sabots_killed).toLocaleString()}
             </div>
-            <div>Edificio atacado: {buildingsList.find(b => b.id === message.data.building_id).name}</div>
+            <div>Edificio atacado: {buildingInfo.name}</div>
             <div>Guardias muertos: {message.data.guards_killed.toLocaleString()}</div>
             <div>Saboteadores muertos: {message.data.sabots_killed.toLocaleString()}</div>
             <div>Edificios destruidos: {message.data.destroyed_buildings}</div>
@@ -81,6 +82,7 @@ export default function SingleMessage({ reloadMessagesData, message }) {
         )
       }
       break
+    }
     case 'caught_spies':
       messageElm = (
         <div>

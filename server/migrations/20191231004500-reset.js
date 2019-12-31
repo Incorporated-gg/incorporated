@@ -20,6 +20,9 @@ exports.up = async function(db) {
   await db.runSql('DELETE FROM research')
   await db.runSql('DELETE FROM alliances_research')
   await db.runSql('DELETE FROM alliances_resources')
+  await db.runSql('DELETE FROM users_resources')
+  await db.runSql('DELETE FROM messages')
+  await db.runSql('DELETE FROM monopolies')
   await db.runSql('UPDATE users SET money=450000')
 }
 

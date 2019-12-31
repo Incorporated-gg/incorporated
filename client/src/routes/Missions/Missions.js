@@ -30,6 +30,9 @@ export default function Missions() {
           <li>
             <NavLink to="/missions/spy">Espiar</NavLink>
           </li>
+          <li>
+            <NavLink to="/missions/simulator">Simulador</NavLink>
+          </li>
         </ul>
       </nav>
       <Switch>
