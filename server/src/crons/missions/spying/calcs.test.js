@@ -28,7 +28,7 @@ test('Spy 2', () => {
       resLvlAttacker: 10,
       spiesSent: 100,
     })
-  ).toBe(112.16033757648152)
+  ).toBe(112.16033757648157)
 
   expect(
     _calcInformationObtainedProbabilities({

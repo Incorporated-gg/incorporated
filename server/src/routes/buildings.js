@@ -1,5 +1,5 @@
 const mysql = require('../lib/mysql')
-const buildingsUtils = require('shared-lib/buildingsUtils')
+const { buildingsList, calcBuildingPrice } = require('shared-lib/buildingsUtils')
 
 module.exports = app => {
   app.get('/v1/buildings', async function(req, res) {
@@ -9,7 +9,7 @@ module.exports = app => {
     }
 
     const buildings = {}
-    buildingsUtils.buildingsList.forEach(building => (buildings[building.id] = 0))
+    buildingsList.forEach(building => (buildings[building.id] = 0))
 
     const [buildingsRaw] = await mysql.query('SELECT id, quantity FROM buildings WHERE user_id=?', [req.userData.id])
     if (buildingsRaw) buildingsRaw.forEach(building => (buildings[building.id] = building.quantity))
@@ -32,8 +32,16 @@ module.exports = app => {
     const count = 1 // TODO: Use req.body.count
     if (count > 1) throw new Error('Not implemented yet')
 
-    if (!buildingsUtils.buildingsList.find(b => b.id === buildingID)) {
+    const buildingInfo = buildingsList.find(b => b.id === buildingID)
+    if (!buildingInfo) {
       res.status(400).json({ error: 'Invalid building_id' })
+      return
+    }
+
+    const currentOptimizeLvl = req.userData.researchs[5]
+    const hasEnoughOptimizeLvl = currentOptimizeLvl >= buildingInfo.requiredOptimizeResearchLevel
+    if (!hasEnoughOptimizeLvl) {
+      res.status(400).json({ error: 'No tienes suficiente nivel de oficina central' })
       return
     }
 
@@ -41,7 +49,7 @@ module.exports = app => {
       req.userData.id,
       buildingID,
     ])
-    const price = buildingsUtils.calcBuildingPrice(buildingID, building ? building.quantity : 0)
+    const price = calcBuildingPrice(buildingID, building ? building.quantity : 0)
     if (price > req.userData.money) {
       res.status(400).json({ error: 'No tienes suficiente dinero' })
       return

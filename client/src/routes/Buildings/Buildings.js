@@ -4,6 +4,7 @@ import { buildingsList, calcBuildingPrice, calcBuildingDailyIncome } from 'share
 import PropTypes from 'prop-types'
 import './Buildings.scss'
 import { useUserData } from '../../lib/user'
+import OptimizeResearch from './OptimizeResearch'
 
 let lastBuildingsData = null
 export default function Buildings() {
@@ -38,10 +39,12 @@ export default function Buildings() {
   return (
     <>
       {error && <h4>{error}</h4>}
+      <OptimizeResearch buildings={buildings} />
+      <br />
       {buildingsList.map(building => (
         <Building
           key={building.id}
-          building={building}
+          buildingInfo={building}
           count={buildings ? buildings[building.id] : 0}
           buy={buyBuilding(building.id)}
         />
@@ -51,25 +54,31 @@ export default function Buildings() {
 }
 
 Building.propTypes = {
-  building: PropTypes.object.isRequired,
+  buildingInfo: PropTypes.object.isRequired,
   count: PropTypes.number.isRequired,
   buy: PropTypes.func.isRequired,
 }
-function Building({ building, count: buildingCount, buy }) {
+function Building({ buildingInfo, count: buildingCount, buy }) {
   const userData = useUserData()
-  const coste = Math.ceil(calcBuildingPrice(building.id, buildingCount))
-  const income = Math.ceil(calcBuildingDailyIncome(building.id, 1, userData.researchs[5]))
-  const timeToRecoverInvestment = Math.round((coste / income) * 10) / 10 + ' días'
+  const coste = calcBuildingPrice(buildingInfo.id, buildingCount)
+  const income = calcBuildingDailyIncome(buildingInfo.id, 1, userData.researchs[5])
+  const timeToRecoverInvestment = (Math.round((coste / income) * 10) / 10).toLocaleString() + ' días'
+
+  const currentOptimizeLvl = userData.researchs[5]
+  const hasEnoughOptimizeLvl = currentOptimizeLvl >= buildingInfo.requiredOptimizeResearchLevel
   const canAfford = userData.money > coste
+  const canBuy = hasEnoughOptimizeLvl && canAfford
+
   return (
-    <div className={`building-item ${canAfford ? '' : 'can-not-afford'}`}>
+    <div className={`building-item ${canBuy ? '' : 'can-not-afford'}`}>
       <div>
-        {building.name} (<b>{buildingCount.toLocaleString()}</b>)
+        {buildingInfo.name} (<b>{buildingCount.toLocaleString()}</b>)
       </div>
       <div>Bºs/día por edificio: {income.toLocaleString()}€</div>
       <div>PRI: {timeToRecoverInvestment}</div>
       <div>Precio: {coste.toLocaleString()}€</div>
-      <button className="build-button" onClick={canAfford ? buy : undefined}>
+      {!hasEnoughOptimizeLvl && <div>Necesitas oficina central nivel {buildingInfo.requiredOptimizeResearchLevel}</div>}
+      <button className="build-button" onClick={canBuy ? buy : undefined}>
         Construir
       </button>
     </div>

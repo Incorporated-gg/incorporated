@@ -29,7 +29,7 @@ function calcSpiesCaptured({ resLvlAttacker, resLvLDefender, spiesSent }) {
   const caught = randomNum < failProbability
   let spiesCaptured = 0
   if (caught) {
-    const randomPart = Math.random() * 0.75 + 0.25
+    const randomPart = Math.random() * 1 + 0.5
     spiesCaptured = Math.ceil(randomPart * failProbability * spiesSent)
     spiesCaptured = Math.min(spiesSent, spiesCaptured)
   }

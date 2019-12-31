@@ -4,7 +4,7 @@ const bcrypt = require('bcryptjs')
 
 const emailRegexp = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
 const alphanumericRegexp = /^[a-z0-9]+$/i
-const initialMoney = 100000
+const initialMoney = 450000
 
 module.exports = app => {
   app.post('/v1/register', async function(req, res) {
