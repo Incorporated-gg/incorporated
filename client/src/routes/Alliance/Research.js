@@ -12,15 +12,30 @@ AllianceResearch.propTypes = {
   reloadAllianceData: PropTypes.func.isRequired,
 }
 export default function AllianceResearch({ alliance, reloadAllianceData }) {
+  const chartData = {
+    type: 'pie',
+    data: {
+      labels: alliance.research_shares.map(sh => sh.user.username),
+      datasets: [{ data: alliance.research_shares.map(sh => sh.total) }],
+    },
+  }
+  const chartImgUrl = `https://quickchart.io/chart?width=500&height=500&c=${JSON.stringify(chartData)}`
+
   return (
-    <div>
-      <h2>Research</h2>
-      {Object.values(alliance.researchs).map(researchData => {
-        return (
-          <SingleResearch key={researchData.id} researchData={researchData} reloadAllianceData={reloadAllianceData} />
-        )
-      })}
-    </div>
+    <>
+      <div>
+        <h2>Research</h2>
+        {Object.values(alliance.researchs).map(researchData => {
+          return (
+            <SingleResearch key={researchData.id} researchData={researchData} reloadAllianceData={reloadAllianceData} />
+          )
+        })}
+      </div>
+      <div>
+        <h2>Aportes</h2>
+        <img style={{ width: '100%' }} src={chartImgUrl} />
+      </div>
+    </>
   )
 }
 

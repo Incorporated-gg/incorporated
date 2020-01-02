@@ -24,6 +24,17 @@ export default function AllianceResources({ alliance, reloadAllianceData }) {
           />
         )
       })}
+      <div>
+        <h2>Historial de recursos</h2>
+        {alliance.resources_log.map(logEntry => {
+          return (
+            <div key={Math.random()}>
+              <b>{logEntry.user.username}</b>: {logEntry.quantity > 0 ? 'metió' : 'sacó'}{' '}
+              {Math.abs(logEntry.quantity).toLocaleString()} {logEntry.resource_id}
+            </div>
+          )
+        })}
+      </div>
     </>
   )
 }

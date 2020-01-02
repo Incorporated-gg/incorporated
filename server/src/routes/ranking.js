@@ -75,10 +75,10 @@ module.exports = app => {
 
     const allianceID = await alliances.getIDFromShortName(req.params.allianceShortName)
     const basicData = await alliances.getBasicData(allianceID)
-    const privateData = await alliances.getPrivateData(basicData.id)
+    const members = await alliances.getMembers(basicData.id)
 
     const alliance = Object.assign(basicData, {
-      members: privateData.members,
+      members,
     })
 
     res.json({

@@ -55,14 +55,13 @@ async function getBasicData(allianceID) {
   }
 }
 
-module.exports.getPrivateData = getPrivateData
-async function getPrivateData(allianceID) {
-  if (!allianceID) return false
-  // Get basic alliance data
-  const basicData = await getBasicData(allianceID)
-  if (!basicData) return false
+module.exports.getIDFromShortName = async shortName => {
+  const [[allianceData]] = await mysql.query('SELECT id FROM alliances WHERE short_name=?', [shortName])
+  return allianceData ? allianceData.id : false
+}
 
-  // Get members
+module.exports.getMembers = getMembers
+async function getMembers(allianceID) {
   let [members] = await mysql.query('SELECT user_id, rank_name, is_admin FROM alliances_members WHERE alliance_id=?', [
     allianceID,
   ])
@@ -76,8 +75,11 @@ async function getPrivateData(allianceID) {
     })
   )
   members = members.sort((a, b) => (a.user.income > b.user.income ? -1 : 1))
+  return members
+}
 
-  // Get research data
+module.exports.getResearchs = getResearchs
+async function getResearchs(allianceID) {
   const [
     rawResearchs,
   ] = await mysql.query('SELECT id, level, progress_money FROM alliances_research WHERE alliance_id=?', [allianceID])
@@ -94,8 +96,11 @@ async function getPrivateData(allianceID) {
     prev[curr.id] = curr
     return prev
   }, {})
+  return researchs
+}
 
-  // Get resources
+module.exports.getResources = getResources
+async function getResources(allianceID) {
   const [rawResources] = await mysql.query(
     'SELECT resource_id, quantity FROM alliances_resources WHERE alliance_id=?',
     [allianceID]
@@ -111,28 +116,34 @@ async function getPrivateData(allianceID) {
     prev[curr.resource_id] = curr
     return prev
   }, {})
+  return resources
+}
 
-  // Get mission history
+module.exports.getMissionHistory = getMissionHistory
+async function getMissionHistory(members = []) {
+  const memberIDs = members.map(m => m.user.id)
+
   const activeMissionsQuery = mysql.query(
     'SELECT user_id, target_user, target_building, mission_type, personnel_sent, started_at, will_finish_at FROM missions WHERE user_id IN (?) AND completed=0 ORDER BY will_finish_at DESC',
-    [members.map(m => m.user.id)]
+    [memberIDs]
   )
   const sentAttackMissionsQuery = mysql.query(
     "SELECT user_id, target_user, target_building, mission_type, personnel_sent, started_at, will_finish_at, completed, result, profit FROM missions WHERE user_id IN (?) AND mission_type='attack' AND completed=1 ORDER BY will_finish_at DESC LIMIT 30",
-    [members.map(m => m.user.id)]
+    [memberIDs]
   )
   const sentSpyMissionsQuery = mysql.query(
     "SELECT user_id, target_user, mission_type, personnel_sent, started_at, will_finish_at, completed, result FROM missions WHERE user_id IN (?) AND mission_type='spy' AND completed=1 ORDER BY will_finish_at DESC LIMIT 30",
-    [members.map(m => m.user.id)]
+    [memberIDs]
   )
   const receivedAttackMissionsQuery = mysql.query(
     "SELECT user_id, target_user, target_building, mission_type, personnel_sent, started_at, will_finish_at, completed, result, profit FROM missions WHERE target_user IN (?) AND mission_type='attack' AND completed=1 ORDER BY will_finish_at DESC LIMIT 30",
-    [members.map(m => m.user.id)]
+    [memberIDs]
   )
   const receivedSpyMissionsQuery = mysql.query(
     "SELECT user_id, target_user, mission_type, personnel_sent, started_at, will_finish_at, completed, result FROM missions WHERE target_user IN (?) AND mission_type='spy' AND completed=1 AND result='caught' ORDER BY will_finish_at DESC LIMIT 30",
-    [members.map(m => m.user.id)]
+    [memberIDs]
   )
+
   const [
     [activeMissionsRaw],
     [sentAttackMissionsRaw],
@@ -224,17 +235,7 @@ async function getPrivateData(allianceID) {
       }
     })
   )
-
   return {
-    id: allianceID,
-    created_at: basicData.created_at,
-    picture_url: basicData.picture_url,
-    long_name: basicData.long_name,
-    short_name: basicData.short_name,
-    description: basicData.description,
-    members,
-    researchs,
-    resources,
     active_missions: activeMissions,
     sent_attack_missions: sentAttackMissions,
     sent_spy_missions: sentSpyMissions,
@@ -243,7 +244,42 @@ async function getPrivateData(allianceID) {
   }
 }
 
-module.exports.getIDFromShortName = async shortName => {
-  const [[allianceData]] = await mysql.query('SELECT id FROM alliances WHERE short_name=?', [shortName])
-  return allianceData ? allianceData.id : false
+module.exports.getResourcesLog = getResourcesLog
+async function getResourcesLog(allianceID) {
+  const [
+    rawLog,
+  ] = await mysql.query(
+    'SELECT user_id, created_at, resource_id, quantity FROM alliances_resources_log WHERE alliance_id=? ORDER BY created_at DESC LIMIT 20',
+    [allianceID]
+  )
+  const resourcesLog = await Promise.all(
+    rawLog.map(async raw => {
+      return {
+        user: await users.getData(raw.user_id),
+        created_at: raw.created_at,
+        resource_id: raw.resource_id,
+        quantity: raw.quantity,
+      }
+    })
+  )
+  return resourcesLog
+}
+
+module.exports.getResearchShares = getResearchShares
+async function getResearchShares(allianceID) {
+  const [
+    rawShares,
+  ] = await mysql.query(
+    'SELECT user_id, SUM(money) as total FROM alliances_research_log WHERE alliance_id=? GROUP BY user_id ORDER BY total DESC',
+    [allianceID]
+  )
+  const researchShares = await Promise.all(
+    rawShares.map(async raw => {
+      return {
+        user: await users.getData(raw.user_id),
+        total: parseInt(raw.total),
+      }
+    })
+  )
+  return researchShares
 }

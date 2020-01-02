@@ -9,11 +9,11 @@ AllianceMissions.propTypes = {
 }
 export default function AllianceMissions({ alliance, reloadAllianceData }) {
   const { missionType } = useParams('missionType') || 'attack'
-  const activeMissions = alliance.active_missions
-  const sentAttackMissions = alliance.sent_attack_missions
-  const sentSpyMissions = alliance.sent_spy_missions
-  const receivedAttackMissions = alliance.received_attack_missions
-  const receivedSpyMissions = alliance.received_spy_missions
+  const activeMissions = alliance.mission_history.active_missions
+  const sentAttackMissions = alliance.mission_history.sent_attack_missions
+  const sentSpyMissions = alliance.mission_history.sent_spy_missions
+  const receivedAttackMissions = alliance.mission_history.received_attack_missions
+  const receivedSpyMissions = alliance.mission_history.received_spy_missions
   let sentMissions, receivedMissions
 
   switch (missionType) {
