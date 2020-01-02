@@ -12,7 +12,7 @@ function calcResearchPrice(researchID, currentLevel) {
   const researchInfo = researchList.find(r => r.id === researchID)
 
   // Custom base for optimize buildings
-  const powerBase = researchID === 5 ? 2 : 1.3
+  const powerBase = researchID === 5 ? 1.75 : 1.3
   return Math.round(researchInfo.basePrice * Math.pow(powerBase, currentLevel - 1))
 }
 module.exports.calcResearchPrice = calcResearchPrice
