@@ -11,6 +11,10 @@ module.exports.researchList = researchList
 function calcResearchPrice(researchID, currentLevel) {
   const researchInfo = researchList.find(r => r.id === researchID)
 
+  if (researchID === 4) {
+    // Custom price for max money
+    return 25000 + 35000 * (currentLevel - 1)
+  }
   // Custom base for optimize buildings
   const powerBase = researchID === 5 ? 1.75 : 1.3
   return Math.round(researchInfo.basePrice * Math.pow(powerBase, currentLevel - 1))
@@ -18,6 +22,6 @@ function calcResearchPrice(researchID, currentLevel) {
 module.exports.calcResearchPrice = calcResearchPrice
 
 function calcUserMaxMoney(researchs) {
-  return Math.floor(450000 * Math.pow(1.5, researchs[4] - 1))
+  return 500000 + 300000 * (researchs[4] - 1)
 }
 module.exports.calcUserMaxMoney = calcUserMaxMoney
