@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import api from '../../lib/api'
-import { buildingsList, calcBuildingPrice, calcBuildingDailyIncome } from 'shared-lib/buildingsUtils'
-import PropTypes from 'prop-types'
+import { buildingsList } from 'shared-lib/buildingsUtils'
 import './Buildings.scss'
-import { useUserData } from '../../lib/user'
+import BuildingItem from './BuildingItem'
 import OptimizeResearch from './OptimizeResearch'
 
 let lastBuildingsData = null
@@ -24,63 +23,47 @@ export default function Buildings() {
       .catch(err => setError(err.message))
   }, [])
 
-  const buyBuilding = buildingID => async () => {
-    const oldCount = buildings[buildingID]
-    const updateBuildingN = newN => setBuildings(Object.assign({}, buildings, { [buildingID]: newN }))
-    try {
-      updateBuildingN(oldCount + 1)
-      await api.post('/v1/buy_buildings', { building_id: buildingID, count: 1 })
-    } catch (e) {
-      updateBuildingN(oldCount)
-      alert(e.message)
-    }
+  const updateBuildingN = buildingID => newN => setBuildings(Object.assign({}, buildings, { [buildingID]: newN }))
+
+  const positions = {
+    research: { top: 20, left: 98 },
+    b1: { top: 8, left: 23 },
+    b2: { top: 82, left: 42 },
+    b3: { top: 1, left: 80 },
+    b4: { top: 40, left: 25 },
+    b5: { top: 59, left: 85 },
+    b6: { top: 95, left: 83 },
+  }
+  const citySize = { width: 720, height: 1000 }
+  const cityZoom = Math.min(1, window.innerWidth / citySize.width)
+  function getTransformFromPos(pos) {
+    const pxLeft = (pos.left / 100) * citySize.width
+    const perLeft = pos.left
+    const pxTop = (pos.top / 100) * citySize.height
+    const perTop = pos.top
+    return `translate(calc(${pxLeft}px - ${perLeft}%), calc(${pxTop}px - ${perTop}%))`
   }
 
   return (
     <>
       {error && <h4>{error}</h4>}
-      <OptimizeResearch buildings={buildings} />
-      <br />
-      {buildingsList.map(building => (
-        <Building
-          key={building.id}
-          buildingInfo={building}
-          count={buildings ? buildings[building.id] : 0}
-          buy={buyBuilding(building.id)}
-        />
-      ))}
-    </>
-  )
-}
-
-Building.propTypes = {
-  buildingInfo: PropTypes.object.isRequired,
-  count: PropTypes.number.isRequired,
-  buy: PropTypes.func.isRequired,
-}
-function Building({ buildingInfo, count: buildingCount, buy }) {
-  const userData = useUserData()
-  const coste = calcBuildingPrice(buildingInfo.id, buildingCount)
-  const income = calcBuildingDailyIncome(buildingInfo.id, 1, userData.researchs[5])
-  const timeToRecoverInvestment = (Math.round((coste / income) * 10) / 10).toLocaleString() + ' días'
-
-  const currentOptimizeLvl = userData.researchs[5]
-  const hasEnoughOptimizeLvl = currentOptimizeLvl >= buildingInfo.requiredOptimizeResearchLevel
-  const canAfford = userData.money > coste
-  const canBuy = hasEnoughOptimizeLvl && canAfford
-
-  return (
-    <div className={`building-item ${canBuy ? '' : 'can-not-afford'}`}>
-      <div>
-        {buildingInfo.name} (<b>{buildingCount.toLocaleString()}</b>)
+      <div className="city-container">
+        <div className="city" style={{ width: citySize.width, height: citySize.height, zoom: cityZoom }}>
+          <div className="city-bg" />
+          <OptimizeResearch style={{ transform: getTransformFromPos(positions['research']) }} buildings={buildings} />
+          {buildingsList.map(building => {
+            return (
+              <BuildingItem
+                style={{ transform: getTransformFromPos(positions['b' + building.id]) }}
+                key={building.id}
+                buildingInfo={building}
+                count={buildings ? buildings[building.id] : 0}
+                updateBuildingN={updateBuildingN(building.id)}
+              />
+            )
+          })}
+        </div>
       </div>
-      <div>Bºs/día por edificio: {income.toLocaleString()}€</div>
-      <div>PRI: {timeToRecoverInvestment}</div>
-      <div>Precio: {coste.toLocaleString()}€</div>
-      {!hasEnoughOptimizeLvl && <div>Necesitas oficina central nivel {buildingInfo.requiredOptimizeResearchLevel}</div>}
-      <button className="build-button" onClick={canBuy ? buy : undefined}>
-        Construir
-      </button>
-    </div>
+    </>
   )
 }

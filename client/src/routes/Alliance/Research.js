@@ -33,7 +33,7 @@ export default function AllianceResearch({ alliance, reloadAllianceData }) {
       </div>
       <div>
         <h2>Aportes</h2>
-        <img style={{ width: '100%' }} src={chartImgUrl} />
+        <img style={{ width: '100%' }} src={chartImgUrl} alt="" />
       </div>
     </>
   )
