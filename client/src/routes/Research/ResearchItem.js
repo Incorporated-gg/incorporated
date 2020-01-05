@@ -8,9 +8,8 @@ import './ResearchItem.scss'
 ResearchItem.propTypes = {
   researchID: PropTypes.number.isRequired,
   children: PropTypes.node,
-  style: PropTypes.object,
 }
-export default function ResearchItem({ style, researchID, children }) {
+export default function ResearchItem({ researchID, children }) {
   const userData = useUserData()
   const research = researchList.find(r => r.id === researchID)
   const count = userData.researchs[researchID]
@@ -27,13 +26,13 @@ export default function ResearchItem({ style, researchID, children }) {
   }, [researchID, userData.researchs])
 
   return (
-    <div className="research-item" style={style}>
+    <div className="research-item">
       <div>
         {research.name} (<b>{count}</b>)
       </div>
       <div>Precio: {coste.toLocaleString()}€</div>
       {children}
-      <button className="buy-button" disabled={canAfford} onClick={canAfford ? buyResearch : undefined}>
+      <button className="buy-button" disabled={!canAfford} onClick={canAfford ? buyResearch : undefined}>
         Investigar
       </button>
     </div>

@@ -7,9 +7,8 @@ import PropTypes from 'prop-types'
 
 OptimizeResearch.propTypes = {
   buildings: PropTypes.object,
-  style: PropTypes.object,
 }
-export default function OptimizeResearch({ buildings, style }) {
+export default function OptimizeResearch({ buildings }) {
   const userData = useUserData()
   const currentOptimizeLvl = userData.researchs[5]
   const coste = calcResearchPrice(5, currentOptimizeLvl)
@@ -31,11 +30,9 @@ export default function OptimizeResearch({ buildings, style }) {
 
   const timeToRecoverResarch = (Math.round((coste / income) * 10) / 10).toLocaleString() + ' días'
   return (
-    <div style={style} className="city-item">
-      <ResearchItem researchID={5}>
-        <div>El resto de edificios darán más dinero</div>
-        <div>PRI: {timeToRecoverResarch}</div>
-      </ResearchItem>
-    </div>
+    <ResearchItem researchID={5}>
+      <div>El resto de edificios darán más dinero</div>
+      <div>PRI: {timeToRecoverResarch}</div>
+    </ResearchItem>
   )
 }
