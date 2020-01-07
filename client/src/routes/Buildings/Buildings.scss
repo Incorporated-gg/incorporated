@@ -1,53 +1,28 @@
-.city-container {
-  overflow: auto;
-  width: 100%;
-  .city {
+.buildings-list {
+  position: relative;
+
+  .background {
+    position: absolute;
+    top: -10%;
+    left: -10%;
+    width: 110%;
+    height: 110%;
+    background: linear-gradient(to bottom, rgba(140, 122, 122, 1) 0%, rgba(175, 135, 124, 1) 65%, rgba(175, 135, 124, 1) 100%) fixed;
+    background: url('https://s3-us-west-2.amazonaws.com/s.cdpn.io/195612/coc-background.jpg') no-repeat center center fixed;
+    background-size: cover;
+  }
+
+  .content {
+    padding-top: 1em;
     position: relative;
-    overflow: hidden;
-    .city-bg {
-      background-image: url('./img/city.jpg');
-      background-color: rgb(98, 133, 54);
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-    }
-    .city-item {
-      position: absolute;
-      left: 0;
-      top: 0;
-      >div {
-        display: flex;
-        text-align: center;
-        align-items: center;
-        flex-direction: column;
-        justify-content: center;
-        cursor: pointer;
-        background-color: rgba(50, 50, 50, 0.6);
-        width: 8.5em;
-        height: 8.5em;
-        padding: 0.5em;
-        border-radius: 50%;
-        user-select: none;
-        color: white;
-        font-family: "Roboto";
-        .name {
-          font-weight: 500;
-          font-size: 1.25em;
-          text-shadow: 2px 3px 1px rgba(0, 0, 0, 0.2);
-        }
-        .count {
-          margin-top: 0.4em;
-        }
-        .PRI {
-          font-size: 0.85em;
-          margin-top: 0.4em;
-        }
-        transition: all ease-in-out .3s;
-        &:hover {
-          transform: scale(1.1);
-        }
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-auto-rows: 1fr;
+
+    @media screen and (max-width: 719px) {
+      & {
+        grid-template-columns: 1fr;
+        grid-auto-rows: unset;
       }
     }
   }
@@ -55,10 +30,12 @@
 
 .building-item {
   padding: 0.5em;
+
   .build-button {
     display: block;
     margin-top: 0.5em;
     margin-left: auto;
+
     &:disabled {
       opacity: 0.5;
     }

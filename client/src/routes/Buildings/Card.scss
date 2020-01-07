@@ -1,0 +1,127 @@
+@import url(https://fonts.googleapis.com/css?family=Lato:400,700,900);
+
+$border-radius-size: 14px;
+$accent-color: #EC9B3B;
+
+.card-container {
+  width: 100%;
+  padding: 1.5em 2em;
+}
+
+.card {
+  position: relative;
+  background: #fafafa;
+  text-align: center;
+  border-radius: $border-radius-size + 5;
+  box-shadow: -1px 15px 30px -12px black;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  .image {
+    position: relative;
+    height: 130px;
+    margin-bottom: 25px;
+    border-top-left-radius: $border-radius-size;
+    border-top-right-radius: $border-radius-size;
+    background: url('./img/card-bg.jpg');
+    background-size: cover;
+
+    img {
+      width: 100%;
+      max-width: 230px;
+      position: absolute;
+      top: -60px;
+      left: 0;
+      right: 0;
+      margin: auto;
+      filter: drop-shadow(12px 12px 25px rgba(0, 0, 0, 0.5));
+    }
+  }
+
+  .name {
+    font-size: 1.8em;
+    font-weight: 900;
+  }
+
+  .subtitle {
+    font-size: 1.5em;
+    font-weight: 900;
+    opacity: 0.97;
+    text-shadow: 1px 2px 5px rgba(0, 0 ,0, 0.08);
+    font-family: "Roboto";
+  }
+
+  .description {
+    padding: 0.5em 1em;
+    flex-grow: 1;
+    white-space: pre-wrap;
+  }
+
+  .accent-bg {
+    font-weight: 700;
+    border-bottom-left-radius: $border-radius-size;
+    border-bottom-right-radius: $border-radius-size;
+    background: $accent-color;
+
+    .buy-button {
+      border: none;
+      border-radius: 0.35em;
+      font-size: 1.2em;
+      padding: 0.3em 0.75em;
+      line-height: 1;
+      background-color: #fafafa;
+      color: $accent-color;
+      font-weight: 900;
+      margin: 1em auto;
+      box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.4);
+
+      &:disabled {
+        opacity: 0.4;
+      }
+    }
+
+    .stat-container {
+      background-color: #fafafa;
+      box-shadow: 0px 2px 5px 1px rgba(0, 0, 0, 0.3);
+      color: #272742;
+      margin: 0.75em;
+      border-radius: 0.3em;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+
+      .stat-icon {
+        display: inline-block;
+        background-color: rgba(0, 0, 30, 0.6);
+        border-radius: 0.15em;
+        font-size: 2em;
+        width: 1em;
+        height: 1em;
+        margin: 0.15em;
+        margin-right: 0.3em;
+
+        img {
+          width: 1em;
+          height: 1em;
+        }
+      }
+
+      .stats-text {
+        font-size: 1.2em;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        .stat-title {
+          font-size: 0.85em;
+          line-height: 1;
+          font-weight: 800;
+          opacity: 0.93;
+        }
+        .stat-value {
+          line-height: 1;
+        }
+      }
+    }
+  }
+}
