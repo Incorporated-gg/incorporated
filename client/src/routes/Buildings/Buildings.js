@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import './Buildings.scss'
 import BuildingItem from './BuildingItem'
 import OptimizeResearch from './OptimizeResearch'
-import { buildingsList, calcBuildingDailyIncome } from 'shared-lib/buildingsUtils'
+import { buildingsList, calcBuildingDailyIncome, calcBuildingMaxMoney } from 'shared-lib/buildingsUtils'
 import { useUserData, userData as userDataRaw, fireUserDataListeners } from '../../lib/user'
 import { getIncomeTaxes } from 'shared-lib/taxes'
 
@@ -52,7 +52,13 @@ function setupBuildingsBankUpdater(taxesPercent) {
       buildingID = parseInt(buildingID)
       const dailyIncome = calcBuildingDailyIncome(buildingID, building.quantity, userData.researchs[5])
       const intervalRevenue = (deltaMs / 1000) * (dailyIncome / 24 / 60 / 60) * (1 - taxesPercent)
+      const maxMoney = calcBuildingMaxMoney({
+        buildingID,
+        buildingAmount: building.quantity,
+        bankResearchLevel: userData.researchs[4],
+      })
       building.money += intervalRevenue
+      if (building.money > maxMoney.maxTotal) building.money = maxMoney.maxTotal
     })
 
     fireUserDataListeners()

@@ -59,8 +59,8 @@ async function updateMoney(req) {
   const [buildings] = await mysql.query('SELECT id, quantity, money FROM buildings WHERE user_id=?', [req.userData.id])
 
   const buildingsIncomes = buildings.map(building => ({
-    id: building.id,
-    quantity: building.quantity,
+    ...building,
+    money: parseFloat(building.money),
     income: calcBuildingDailyIncome(building.id, building.quantity, req.userData.researchs[5]),
   }))
   const totalBuildingsIncome = buildingsIncomes.reduce((prev, curr) => prev + curr.income, 0)
@@ -77,13 +77,18 @@ async function updateMoney(req) {
       if (building.money >= maxMoney.maxTotal) return
 
       const buildingRevenue = building.income * (1 - taxesPct)
-      const moneyGenerated = (buildingRevenue / 24 / 60 / 60) * moneyUpdateElapsedS
+      let moneyGenerated = (buildingRevenue / 24 / 60 / 60) * moneyUpdateElapsedS
+      const moneyOverTotal = Math.max(0, building.money + moneyGenerated - maxMoney.maxTotal)
+      moneyGenerated = moneyGenerated - moneyOverTotal
+
+      console.log(building, moneyGenerated, maxMoney.maxTotal)
 
       await mysql.query('UPDATE buildings SET money=money+? WHERE user_id=? AND id=?', [
         moneyGenerated,
         req.userData.id,
         building.id,
       ])
+      req.userData.buildings[building.id].money += moneyGenerated
     })
   )
 

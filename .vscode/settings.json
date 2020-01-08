@@ -3,6 +3,8 @@
     "./client", "./server", "./shared-lib"
   ],
   "files.watcherExclude": {
-    "**/node_modules/**": true
+      "**/.git/objects/**": true,
+      "**/.git/subtree-cache/**": true,
+      "**/node_modules/*/**": true
   }
 }
