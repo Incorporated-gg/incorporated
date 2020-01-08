@@ -1,5 +1,5 @@
 const researchList = [
-  { id: 1, name: 'Spying', basePrice: 2000 },
+  { id: 1, name: 'Espionaje', basePrice: 2000 },
   { id: 2, name: 'Ataque', basePrice: 4000 },
   { id: 3, name: 'Defensa', basePrice: 4000 },
   { id: 4, name: 'Banco', basePrice: 10000 },

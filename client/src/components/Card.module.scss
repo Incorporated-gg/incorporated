@@ -1,7 +1,8 @@
 $border-radius-size: 14px;
 $accent-color: #EC9B3B;
 
-.card-container {
+
+.cardContainer {
   width: 100%;
 }
 
@@ -22,14 +23,14 @@ $accent-color: #EC9B3B;
     margin-bottom: 1em;
     border-top-left-radius: $border-radius-size;
     border-top-right-radius: $border-radius-size;
-    background: url('./img/card-bg.jpg');
+    background: url('./cardImg/card-bg.jpg');
     background-size: cover;
 
     img {
       width: 100%;
       max-width: 13em;
       position: absolute;
-      top: -3.7em;
+      top: -3.4em;
       left: 0;
       right: 0;
       margin: auto;
@@ -47,12 +48,12 @@ $accent-color: #EC9B3B;
     font-size: 1.4em;
     font-weight: 900;
     opacity: 0.97;
-    text-shadow: 1px 2px 5px rgba(0, 0 ,0, 0.08);
+    text-shadow: 1px 2px 5px rgba(0, 0, 0, 0.08);
     font-family: "Roboto";
   }
 
   .description {
-    padding: 0.5em 1em;
+    padding: 0.5em;
     flex-grow: 1;
     white-space: pre-wrap;
     display: flex;
@@ -60,13 +61,13 @@ $accent-color: #EC9B3B;
     justify-content: center;
   }
 
-  .accent-bg {
+  .accentBg {
     font-weight: 700;
     border-bottom-left-radius: $border-radius-size;
     border-bottom-right-radius: $border-radius-size;
     background: $accent-color;
 
-    .buy-button {
+    .buyButton {
       border: none;
       border-radius: 0.3em;
       font-size: 1.2em;
@@ -75,15 +76,16 @@ $accent-color: #EC9B3B;
       background-color: #fafafa;
       color: $accent-color;
       font-weight: 900;
-      margin: 1em auto;
+      margin: 0.5em auto;
       box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.4);
+      letter-spacing: 0.05em;
 
       &:disabled {
         opacity: 0.4;
       }
     }
 
-    .stat-container {
+    .statContainer {
       background-color: #fafafa;
       box-shadow: 0px 2px 5px 1px rgba(0, 0, 0, 0.3);
       color: #272742;
@@ -92,9 +94,9 @@ $accent-color: #EC9B3B;
       display: flex;
       flex-direction: row;
       align-items: center;
-      font-size: 1.3em;
+      font-size: 1.25em;
 
-      .stat-icon {
+      .statIcon {
         display: inline-block;
         background-color: rgba(0, 0, 30, 0.6);
         border-radius: 0.15em;
@@ -110,19 +112,23 @@ $accent-color: #EC9B3B;
         }
       }
 
-      .stats-text {
+      .statsText {
         display: flex;
         flex-direction: column;
         align-items: flex-start;
-        .stat-title {
+
+        .statTitle {
           font-size: 0.85em;
           line-height: 1;
           font-weight: 800;
           opacity: 0.95;
         }
-        .stat-value {
+
+        .statValue {
           line-height: 1;
-          span.unsafe {
+          text-align: left;
+
+          .unsafe {
             color: #841515;
           }
         }

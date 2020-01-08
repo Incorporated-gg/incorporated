@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react'
-import './Buildings.scss'
+import React, { useEffect, useState } from 'react'
+import styles from './Buildings.module.scss'
 import BuildingItem from './BuildingItem'
 import OptimizeResearch from './OptimizeResearch'
 import { buildingsList, calcBuildingDailyIncome, calcBuildingMaxMoney } from 'shared-lib/buildingsUtils'
@@ -8,6 +8,7 @@ import { getIncomeTaxes } from 'shared-lib/taxes'
 
 export default function Buildings() {
   const userData = useUserData()
+  const [activeScreen, setActiveScreen] = useState('bank')
 
   // Calculate taxes percent
   const buildingsIncome = buildingsList.map(buildingInfo => {
@@ -23,14 +24,29 @@ export default function Buildings() {
     return () => clearInterval(interval)
   }, [taxesPercent])
 
+  const switchBuyAndBank = () => {
+    setActiveScreen(activeScreen === 'bank' ? 'buy' : 'bank')
+  }
+
   return (
-    <div className="buildings-list">
-      <div className="background" />
-      <div className="content">
-        <OptimizeResearch />
-        {buildingsList.map(buildingInfo => (
-          <BuildingItem key={buildingInfo.id} buildingID={buildingInfo.id} taxesPercent={taxesPercent} />
-        ))}
+    <div className={styles.buildingsList}>
+      <div className={styles.background} />
+      <div className={styles.content}>
+        <button className={styles.switchBuyAndBank} onClick={switchBuyAndBank}>
+          CAMBIAR A {activeScreen === 'bank' ? 'COMPRAR' : 'BANCO'}
+        </button>
+        <br />
+        <div className={styles.grid}>
+          <OptimizeResearch activeScreen={activeScreen} />
+          {buildingsList.map(buildingInfo => (
+            <BuildingItem
+              key={buildingInfo.id}
+              buildingID={buildingInfo.id}
+              taxesPercent={taxesPercent}
+              activeScreen={activeScreen}
+            />
+          ))}
+        </div>
       </div>
     </div>
   )

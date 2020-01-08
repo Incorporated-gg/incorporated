@@ -2,10 +2,15 @@ import React, { useCallback } from 'react'
 import { calcResearchPrice } from 'shared-lib/researchUtils'
 import { calcBuildingDailyIncome } from 'shared-lib/buildingsUtils'
 import { useUserData } from '../../lib/user'
-import Card from './Card'
+import Card, { Stat } from '../../components/Card'
 import { buyResearch } from '../Research/buyResearch'
+import cardStyles from '../../components/Card.module.scss'
+import PropTypes from 'prop-types'
 
-export default function OptimizeResearch() {
+OptimizeResearch.propTypes = {
+  activeScreen: PropTypes.string.isRequired,
+}
+export default function OptimizeResearch({ activeScreen }) {
   const userData = useUserData()
   const researchID = 5
   const currentOptimizeLvl = userData.researchs[researchID]
@@ -17,18 +22,26 @@ export default function OptimizeResearch() {
 
   return (
     <Card
-      isResearch
       image={require('./img/central-office.png')}
       title={'Oficina Central'}
-      buildingCount={currentOptimizeLvl}
+      subtitle={`Lvl. ${currentOptimizeLvl.toLocaleString()}`}
       desc={'Al subir de nivel, el resto de edificios darán más dinero.'}
-      coste={coste.toLocaleString()}
-      pri={timeToRecoverInvestment}
-      dailyIncome={income}
-      canBuy={coste < userData.money}
-      onBuy={buyResearchClicked}
-      accentColor={'#F6901A'}
-    />
+      accentColor={'#F6901A'}>
+      {activeScreen === 'buy' && (
+        <>
+          <Stat img={require('./img/stat-price.png')} title={'Coste'} value={`${coste}€`} />
+          <Stat img={require('./img/stat-pri.png')} title={'PRI'} value={`${timeToRecoverInvestment} días`} />
+
+          <button
+            className={cardStyles.buyButton}
+            onClick={buyResearchClicked}
+            disabled={coste >= userData.money}
+            style={{ color: '#F6901A' }}>
+            COMPRAR
+          </button>
+        </>
+      )}
+    </Card>
   )
 }
 

@@ -81,8 +81,6 @@ async function updateMoney(req) {
       const moneyOverTotal = Math.max(0, building.money + moneyGenerated - maxMoney.maxTotal)
       moneyGenerated = moneyGenerated - moneyOverTotal
 
-      console.log(building, moneyGenerated, maxMoney.maxTotal)
-
       await mysql.query('UPDATE buildings SET money=money+? WHERE user_id=? AND id=?', [
         moneyGenerated,
         req.userData.id,

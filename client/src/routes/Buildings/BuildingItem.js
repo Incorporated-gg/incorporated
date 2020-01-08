@@ -1,9 +1,15 @@
 import React from 'react'
-import { calcBuildingPrice, calcBuildingDailyIncome, buildingsList } from 'shared-lib/buildingsUtils'
+import {
+  calcBuildingPrice,
+  calcBuildingDailyIncome,
+  buildingsList,
+  calcBuildingMaxMoney,
+} from 'shared-lib/buildingsUtils'
 import PropTypes from 'prop-types'
 import { useUserData, updateUserData } from '../../lib/user'
 import api from '../../lib/api'
-import Card from './Card'
+import Card, { Stat } from '../../components/Card'
+import cardStyles from '../../components/Card.module.scss'
 
 const buildingImages = {
   1: require('./img/b1.png'),
@@ -23,7 +29,7 @@ const buildingDescriptions = {
 }
 const buildingAccentColors = {
   1: '#EE5487',
-  2: '#481c82',
+  2: '#612aab',
   3: '#82BB30',
   4: '#378cd8',
   5: '#d0ac29',
@@ -33,8 +39,9 @@ const buildingAccentColors = {
 BuildingItem.propTypes = {
   buildingID: PropTypes.number.isRequired,
   taxesPercent: PropTypes.number.isRequired,
+  activeScreen: PropTypes.string.isRequired,
 }
-export default function BuildingItem({ buildingID, taxesPercent }) {
+export default function BuildingItem({ buildingID, taxesPercent, activeScreen }) {
   const userData = useUserData()
   const buildingInfo = buildingsList.find(b => b.id === buildingID)
   const buildingCount = userData.buildings[buildingID].quantity
@@ -84,21 +91,62 @@ export default function BuildingItem({ buildingID, taxesPercent }) {
     }
   }
 
+  const accumulatedMoney = userData.buildings[buildingID].money
+
+  const maxMoney = calcBuildingMaxMoney({
+    buildingID: buildingID,
+    buildingAmount: buildingCount,
+    bankResearchLevel: userData.researchs[4],
+  })
+  const moneyClassName = `${accumulatedMoney > maxMoney.maxSafe ? cardStyles.unsafe : ''}`
+
   return (
     <Card
       image={buildingImages[buildingID]}
-      buildingID={buildingInfo.id}
       title={buildingInfo.name}
-      buildingCount={buildingCount}
+      subtitle={buildingCount.toLocaleString()}
       desc={desc}
-      coste={coste.toLocaleString()}
-      pri={timeToRecoverInvestment}
-      dailyIncome={income}
-      canBuy={canBuy}
-      onBuy={buyBuilding}
-      accentColor={buildingAccentColors[buildingID]}
-      accumulatedMoney={userData.buildings[buildingID].money}
-      onExtractMoney={onExtractMoney}
-    />
+      accentColor={buildingAccentColors[buildingID]}>
+      {activeScreen === 'buy' && (
+        <>
+          <Stat img={require('./img/stat-price.png')} title={'Coste'} value={`${coste}€`} />
+          <Stat img={require('./img/stat-pri.png')} title={'PRI'} value={`${timeToRecoverInvestment} días`} />
+
+          <button
+            className={cardStyles.buyButton}
+            onClick={buyBuilding}
+            disabled={!canBuy}
+            style={{ color: buildingAccentColors[buildingID] }}>
+            COMPRAR
+          </button>
+        </>
+      )}
+      {activeScreen === 'bank' && (
+        <>
+          <Stat
+            img={require('./img/stat-income.png')}
+            title={'Bºs / día'}
+            value={`${Math.round(income * buildingCount).toLocaleString()}€`}
+          />
+          <Stat
+            img={require('./img/stat-price.png')}
+            title={'Banco'}
+            value={
+              <>
+                <span className={moneyClassName}>{Math.floor(accumulatedMoney).toLocaleString()}€</span>
+                <span> / </span>
+                <span>{maxMoney.maxTotal.toLocaleString()}€</span>
+              </>
+            }
+          />
+          <button
+            className={cardStyles.buyButton}
+            onClick={onExtractMoney}
+            style={{ color: buildingAccentColors[buildingID] }}>
+            SACAR
+          </button>
+        </>
+      )}
+    </Card>
   )
 }
