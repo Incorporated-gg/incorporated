@@ -7,6 +7,7 @@ import { buildingsList } from 'shared-lib/buildingsUtils'
 import { Link } from 'react-router-dom'
 import { personnelList } from 'shared-lib/personnelUtils'
 import { researchList } from 'shared-lib/researchUtils'
+import styles from './Messages.module.scss'
 
 SingleMessage.propTypes = {
   message: PropTypes.object.isRequired,
@@ -42,45 +43,20 @@ export default function SingleMessage({ reloadMessagesData, message }) {
     case 'attack_report': {
       const wasIAttacked = message.data.defender && message.data.defender.id === userData.id
       const buildingInfo = buildingsList.find(b => b.id === message.data.building_id)
-      if (wasIAttacked) {
-        messageElm = (
-          <div>
+      messageElm = (
+        <div>
+          {wasIAttacked ? (
             <div>
               Ataque recibido de <Username user={message.data.attacker} />
             </div>
-            <div>Resultado: {message.data.result}</div>
-            <div>
-              Saboteadores enviados: {(message.data.surviving_sabots + message.data.sabots_killed).toLocaleString()}
-            </div>
-            <div>Edificio atacado: {buildingInfo.name}</div>
-            <div>Guardias muertos: {message.data.guards_killed.toLocaleString()}</div>
-            <div>Saboteadores muertos: {message.data.sabots_killed.toLocaleString()}</div>
-            <div>Edificios destruidos: {message.data.destroyed_buildings}</div>
-            <div>Dinero ganado por edificios: {message.data.income_for_buildings.toLocaleString()}</div>
-            <div>Dinero ganado por muertes: {message.data.income_for_troops.toLocaleString()}</div>
-            <div>Beneficios netos: {message.data.attacker_profit.toLocaleString()}</div>
-          </div>
-        )
-      } else {
-        messageElm = (
-          <div>
+          ) : (
             <div>
               Ataque a <Username user={message.data.defender} />
             </div>
-            <div>Resultado: {message.data.result}</div>
-            <div>
-              Saboteadores enviados: {(message.data.surviving_sabots + message.data.sabots_killed).toLocaleString()}
-            </div>
-            <div>Edificio atacado: {buildingInfo.name}</div>
-            <div>Guardias muertos: {message.data.guards_killed.toLocaleString()}</div>
-            <div>Saboteadores muertos: {message.data.sabots_killed.toLocaleString()}</div>
-            <div>Edificios destruidos: {message.data.destroyed_buildings}</div>
-            <div>Dinero ganado por edificios: {message.data.income_for_buildings.toLocaleString()}</div>
-            <div>Dinero ganado por muertes: {message.data.income_for_troops.toLocaleString()}</div>
-            <div>Beneficios netos: {message.data.attacker_profit.toLocaleString()}</div>
-          </div>
-        )
-      }
+          )}
+          <AttackReportMsg message={message} buildingInfo={buildingInfo} />
+        </div>
+      )
       break
     }
     case 'caught_spies':
@@ -112,9 +88,12 @@ export default function SingleMessage({ reloadMessagesData, message }) {
                   <b>{'Edificios: '}</b>
                   {buildingsList
                     .map(buildingInfo => {
-                      return buildingInfo.name + ': ' + message.data.intel_report.buildings[buildingInfo.id]
+                      const building = message.data.intel_report.buildings[buildingInfo.id]
+                      return `${
+                        buildingInfo.name
+                      }. Cantidad: ${building.quantity.toLocaleString()}. Dinero: ${building.money.toLocaleString()}.`
                     })
-                    .join(', ')}
+                    .join('\n')}
                 </div>
               )}
               {message.data.intel_report.personnel && (
@@ -164,7 +143,7 @@ export default function SingleMessage({ reloadMessagesData, message }) {
       )}
       <div>Fecha: {dateFormatted}</div>
       <br />
-      {messageElm}
+      <div className={styles.messageText}>{messageElm}</div>
       <br />
       {wasSentToMe && message.sender && (
         <button>
@@ -174,5 +153,27 @@ export default function SingleMessage({ reloadMessagesData, message }) {
       {wasSentToMe && <button onClick={deleteMessage}>Borrar</button>}
       <hr />
     </div>
+  )
+}
+
+AttackReportMsg.propTypes = {
+  message: PropTypes.object.isRequired,
+  buildingInfo: PropTypes.object.isRequired,
+}
+function AttackReportMsg({ message, buildingInfo }) {
+  return (
+    <>
+      <div>Resultado: {message.data.result}</div>
+      <div>Saboteadores enviados: {(message.data.surviving_sabots + message.data.sabots_killed).toLocaleString()}</div>
+      <div>Edificio atacado: {buildingInfo.name}</div>
+      <div>Guardias muertos: {message.data.guards_killed.toLocaleString()}</div>
+      <div>Saboteadores muertos: {message.data.sabots_killed.toLocaleString()}</div>
+      <div>Ladrones muertos: {message.data.thiefs_killed && message.data.thiefs_killed.toLocaleString()}</div>
+      <div>Edificios destruidos: {message.data.destroyed_buildings}</div>
+      <div>Dinero ganado por edificios: {message.data.income_for_buildings.toLocaleString()}€</div>
+      <div>Dinero ganado por muertes: {message.data.income_for_troops.toLocaleString()}€</div>
+      <div>Dinero ganado por robo: {message.data.robbed_money && message.data.robbed_money.toLocaleString()}€</div>
+      <div>Beneficios netos: {message.data.attacker_profit.toLocaleString()}€</div>
+    </>
   )
 }

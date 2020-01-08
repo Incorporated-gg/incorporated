@@ -24,10 +24,11 @@ module.exports = app => {
 
     const [
       [mission],
-    ] = await mysql.query(
-      'SELECT id, mission_type, personnel_sent FROM missions WHERE user_id=? AND completed=? AND started_at=?',
-      [req.userData.id, false, req.body.started_at]
-    )
+    ] = await mysql.query('SELECT id, mission_type FROM missions WHERE user_id=? AND completed=? AND started_at=?', [
+      req.userData.id,
+      false,
+      req.body.started_at,
+    ])
     if (!mission) {
       res.status(400).json({
         error: 'Misión no encontrada',
@@ -36,19 +37,7 @@ module.exports = app => {
     }
 
     // Update
-    const troopType = mission.mission_type === 'spy' ? 'spies' : mission.mission_type === 'attack' ? 'sabots' : null
-    if (!troopType) {
-      res.status(400).json({
-        error: 'Tipo de misión no reconocido',
-      })
-      return
-    }
     await mysql.query('DELETE FROM missions WHERE id=?', [mission.id])
-    await mysql.query('UPDATE users_resources SET quantity=quantity+? WHERE user_id=? AND resource_id=?', [
-      mission.personnel_sent,
-      req.userData.id,
-      troopType,
-    ])
 
     res.json({
       success: true,
@@ -77,29 +66,41 @@ module.exports = app => {
       return
     }
 
-    const personnelSent = parseInt(req.body.personnel_sent)
-    const targetBuilding = req.body.target_building ? parseInt(req.body.target_building) : null
+    const missionType = req.body.missionType
 
-    if (personnelSent < 1) {
-      res.status(400).json({
-        error: 'Debes enviar algunas tropas',
-      })
-      return
-    }
+    const sentSpies = parseInt(req.body.sent_spies) || undefined
+    const sentSabots = parseInt(req.body.sent_sabots) || undefined
+    const sentThiefs = parseInt(req.body.sent_thiefs) || undefined
+    const targetBuilding = req.body.target_building ? parseInt(req.body.target_building) : undefined
 
-    let troopType
     const userPersonnel = await getPersonnel(req.userData.id)
-    switch (req.body.missionType) {
+    switch (missionType) {
       case 'attack':
-        troopType = 'sabots'
-
         if (!buildingsList.find(b => b.id === targetBuilding)) {
           res.status(400).json({ error: 'El edificio enviado no existe' })
           return
         }
+        if (sentSabots + sentThiefs < 1) {
+          res.status(400).json({
+            error: 'Debes enviar algunos saboteadores o ladrones',
+          })
+          return
+        }
+        if (userPersonnel.sabots < sentSabots) {
+          res.status(400).json({
+            error: 'No tienes suficientes saboteadores',
+          })
+          return
+        }
+        if (userPersonnel.thiefs < sentThiefs) {
+          res.status(400).json({
+            error: 'No tienes suficientes ladrones',
+          })
+          return
+        }
 
         // Ensure daily attacks limit
-        const MAX_DAILY_SABOTS = 3
+        const MAX_DAILY_SABOTS = process.env.NODE_ENV === 'dev' ? 999 : 3
         const now = new Date()
         const dailyCountStartedAtTimeString = `${now.getUTCFullYear()}-${now.getUTCMonth() +
           1}-${now.getUTCDate()} 00:00:00`
@@ -108,7 +109,7 @@ module.exports = app => {
           [{ count }],
         ] = await mysql.query(
           'SELECT COUNT(*) AS count FROM missions WHERE user_id=? AND mission_type=? AND started_at>?',
-          [req.userData.id, req.body.missionType, dailyCountStartedAt]
+          [req.userData.id, missionType, dailyCountStartedAt]
         )
         if (count >= MAX_DAILY_SABOTS) {
           res.status(400).json({ error: `Ya has atacado ${MAX_DAILY_SABOTS} veces hoy` })
@@ -116,7 +117,18 @@ module.exports = app => {
         }
         break
       case 'spy':
-        troopType = 'spies'
+        if (sentSpies < 1) {
+          res.status(400).json({
+            error: 'Debes enviar algunos espías',
+          })
+          return
+        }
+        if (userPersonnel.spies < sentSpies) {
+          res.status(400).json({
+            error: 'No tienes suficientes espías',
+          })
+          return
+        }
 
         break
       default:
@@ -126,24 +138,17 @@ module.exports = app => {
         return
     }
 
-    if (userPersonnel[troopType] < personnelSent) {
-      res.status(400).json({
-        error: 'No tienes suficientes tropas',
-      })
-      return
-    }
-
-    await mysql.query('UPDATE users_resources SET quantity=quantity-? WHERE user_id=? AND resource_id=?', [
-      personnelSent,
-      req.userData.id,
-      troopType,
-    ])
-
-    const missionDuration = calculateMissionTime(req.body.missionType, personnelSent)
+    const missionDuration = calculateMissionTime(missionType)
     const tsNow = Math.floor(Date.now() / 1000)
+    const data = JSON.stringify({
+      building: targetBuilding,
+      spies: sentSpies,
+      sabots: sentSabots,
+      thiefs: sentThiefs,
+    })
     await mysql.query(
-      'INSERT INTO missions (user_id, mission_type, target_building, target_user, personnel_sent, started_at, will_finish_at) VALUES (?, ?, ?, ?, ?, ?, ?)',
-      [req.userData.id, req.body.missionType, targetBuilding, toUser.id, personnelSent, tsNow, tsNow + missionDuration]
+      'INSERT INTO missions (user_id, mission_type, data, target_user, started_at, will_finish_at) VALUES (?, ?, ?, ?, ?, ?)',
+      [req.userData.id, missionType, data, toUser.id, tsNow, tsNow + missionDuration]
     )
     res.json({
       success: true,

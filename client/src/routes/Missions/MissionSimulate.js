@@ -1,79 +1,68 @@
 import React, { useState, useEffect } from 'react'
 import { useUserData } from '../../lib/user'
-import { buildingsList } from 'shared-lib/buildingsUtils'
+import { buildingsList, calcBuildingMaxMoney } from 'shared-lib/buildingsUtils'
 import { calculateMissionTime, simulateAttack } from 'shared-lib/missionsUtils'
 
 Mission.propTypes = {}
 export default function Mission() {
   const userData = useUserData()
   const [guards, setGuards] = useState(0)
-  const [resDefense, setResDefense] = useState(1)
-  const [resAttack, setResAttack] = useState(1)
-  const [resInfra, setResInfra] = useState(1)
-  const [buildingsCount, setBuildingsCount] = useState(0)
-  const [numTroops, setNumTroops] = useState(() => {
-    return userData.personnel.sabots
-  })
+  const [defensorSecurityLvl, setDefensorSecurityLvl] = useState(1)
+  const [attackerSabotageLvl, setAttackerSabotageLvl] = useState(userData.researchs[2])
+  const [infraResearchLvl, setInfraResearchLvl] = useState(1)
+  const [bankResearchLvl, setBankResearchLvl] = useState(1)
+  const [buildingAmount, setBuildingAmount] = useState(0)
+  const [storedMoney, setStoredMoney] = useState(0)
+  const [attackerSabots, setAttackerSabots] = useState(userData.personnel.sabots)
+  const [attackerThiefs, setAttackerThiefs] = useState(userData.personnel.thiefs)
   const [targetBuilding, setTargetBuilding] = useState(1)
 
   useEffect(() => {
-    setNumTroops(userData.personnel.sabots)
+    setAttackerSabots(userData.personnel.sabots)
   }, [userData.personnel.sabots, userData.personnel.spies])
 
-  const missionSeconds = calculateMissionTime('attack', numTroops)
+  const missionSeconds = calculateMissionTime('attack')
+
+  const maxMoney = calcBuildingMaxMoney({
+    buildingID: targetBuilding,
+    buildingAmount,
+    bankResearchLevel: bankResearchLvl,
+  })
+  const unprotectedMoney = Math.max(0, storedMoney - maxMoney.maxRobbedPerAttack)
 
   const simulation = simulateAttack({
     defensorGuards: guards,
-    attackerSabots: numTroops,
-    defensorSecurityLvl: resDefense,
-    attackerSabotageLvl: resAttack,
+    attackerSabots,
+    attackerThiefs,
+    defensorSecurityLvl,
+    attackerSabotageLvl,
     buildingID: targetBuilding,
-    defensorInfraLvl: resInfra,
-    defensorNumEdificios: buildingsCount,
+    infraResearchLvl,
+    buildingAmount,
+    unprotectedMoney,
   })
 
   return (
     <form className="startNewMission">
       <div>
         <label>
-          Guardias
-          {': '}
-          <input type="number" value={guards} onChange={e => setGuards(e.target.value)} />
-        </label>
-      </div>
-      <div>
-        <label>
           Saboteadores
           {': '}
-          <input type="number" value={numTroops} onChange={e => setNumTroops(e.target.value)} />
+          <input type="number" value={attackerSabots} onChange={e => setAttackerSabots(e.target.value)} />
         </label>
       </div>
       <div>
         <label>
-          Lvl Defensa
+          Ladrones
           {': '}
-          <input type="number" value={resDefense} onChange={e => setResDefense(e.target.value)} />
+          <input type="number" value={attackerThiefs} onChange={e => setAttackerThiefs(e.target.value)} />
         </label>
       </div>
       <div>
         <label>
           Lvl Ataque
           {': '}
-          <input type="number" value={resAttack} onChange={e => setResAttack(e.target.value)} />
-        </label>
-      </div>
-      <div>
-        <label>
-          Lvl infra
-          {': '}
-          <input type="number" value={resInfra} onChange={e => setResInfra(e.target.value)} />
-        </label>
-      </div>
-      <div>
-        <label>
-          Num edificios
-          {': '}
-          <input type="number" value={buildingsCount} onChange={e => setBuildingsCount(e.target.value)} />
+          <input type="number" value={attackerSabotageLvl} onChange={e => setAttackerSabotageLvl(e.target.value)} />
         </label>
       </div>
       <label>
@@ -86,6 +75,48 @@ export default function Mission() {
           ))}
         </select>
       </label>
+      <div>
+        <label>
+          Guardias
+          {': '}
+          <input type="number" value={guards} onChange={e => setGuards(e.target.value)} />
+        </label>
+      </div>
+      <div>
+        <label>
+          Lvl Defensa
+          {': '}
+          <input type="number" value={defensorSecurityLvl} onChange={e => setDefensorSecurityLvl(e.target.value)} />
+        </label>
+      </div>
+      <div>
+        <label>
+          Lvl infra
+          {': '}
+          <input type="number" value={infraResearchLvl} onChange={e => setInfraResearchLvl(e.target.value)} />
+        </label>
+      </div>
+      <div>
+        <label>
+          Lvl banco
+          {': '}
+          <input type="number" value={bankResearchLvl} onChange={e => setBankResearchLvl(e.target.value)} />
+        </label>
+      </div>
+      <div>
+        <label>
+          Num edificios
+          {': '}
+          <input type="number" value={buildingAmount} onChange={e => setBuildingAmount(e.target.value)} />
+        </label>
+      </div>
+      <div>
+        <label>
+          Dinero almacenado en edificio
+          {': '}
+          <input type="number" value={storedMoney} onChange={e => setStoredMoney(e.target.value)} />
+        </label>
+      </div>
       <div>Tiempo de mision: {missionSeconds}s</div>
       <div style={{ whiteSpace: 'pre-wrap' }}>{JSON.stringify(simulation, null, 2)}</div>
     </form>

@@ -30,7 +30,7 @@ export default function Mission({ reloadMissionsCallback }) {
         .post('/v1/missions', {
           missionType: 'spy',
           target_user: toUser,
-          personnel_sent: numTroops,
+          sent_spies: numTroops,
         })
         .then(() => {
           reloadUserData()
@@ -43,7 +43,7 @@ export default function Mission({ reloadMissionsCallback }) {
 
   const troopName = personnelList.find(p => p.resource_id === 'spies').name
 
-  const missionSeconds = calculateMissionTime('spy', numTroops)
+  const missionSeconds = calculateMissionTime('spy')
 
   return (
     <form className="startNewMission">

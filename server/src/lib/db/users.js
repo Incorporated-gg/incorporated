@@ -1,8 +1,10 @@
 const mysql = require('../mysql')
 const alliances = require('./alliances')
+const { parseMissionFromDB } = require('./missions')
 const { researchList } = require('shared-lib/researchUtils')
 const { personnelList } = require('shared-lib/personnelUtils')
-const { calcBuildingDailyIncome, buildingsList } = require('shared-lib/buildingsUtils')
+const { getIncomeTaxes } = require('shared-lib/taxes')
+const { calcBuildingDailyIncome, buildingsList, calcBuildingMaxMoney } = require('shared-lib/buildingsUtils')
 
 module.exports.getData = getData
 async function getData(userID) {
@@ -86,20 +88,6 @@ async function getPersonnel(userID) {
 module.exports.getTotalPersonnel = getTotalPersonnel // Includes personnel in active missions
 async function getTotalPersonnel(userID) {
   const personnels = await getPersonnel(userID)
-  const activeMission = await getActiveMission(userID)
-
-  if (!activeMission) return personnels
-
-  switch (activeMission.mission_type) {
-    case 'spy':
-      personnels['spies'] += parseInt(activeMission.personnel_sent)
-      break
-    case 'attack':
-      personnels['sabots'] += parseInt(activeMission.personnel_sent)
-      break
-    default:
-      throw new Error(`Mission type "${activeMission.mission_type}" not supported`)
-  }
 
   return personnels
 }
@@ -127,54 +115,10 @@ async function getMissions(userID) {
   const [
     missionsRaw,
   ] = await mysql.query(
-    'SELECT user_id, target_user, target_building, mission_type, personnel_sent, started_at, will_finish_at, completed, result, profit FROM missions WHERE user_id=? ORDER BY will_finish_at DESC',
+    'SELECT user_id, target_user, data, mission_type, started_at, will_finish_at, completed, result, profit FROM missions WHERE user_id=? ORDER BY will_finish_at DESC',
     [userID]
   )
-  const missions = Promise.all(
-    missionsRaw.map(async mission => {
-      const defensorData = await getData(mission.target_user)
-      return {
-        user_id: mission.user_id,
-        target_user: defensorData,
-        target_building: mission.target_building,
-        mission_type: mission.mission_type,
-        personnel_sent: mission.personnel_sent,
-        started_at: mission.started_at,
-        will_finish_at: mission.will_finish_at,
-        completed: mission.completed,
-        result: mission.result,
-        profit: mission.profit,
-      }
-    })
-  )
-
-  return missions
-}
-
-module.exports.getActiveMission = getActiveMission
-async function getActiveMission(userID) {
-  const [
-    [mission],
-  ] = await mysql.query(
-    'SELECT user_id, target_user, target_building, mission_type, personnel_sent, started_at, will_finish_at, completed, result, profit FROM missions WHERE user_id=? AND completed=0 ORDER BY will_finish_at DESC',
-    [userID]
-  )
-
-  if (!mission) return
-
-  const defensorData = await getData(mission.target_user)
-  const missions = {
-    user_id: mission.user_id,
-    target_user: defensorData,
-    target_building: mission.target_building,
-    mission_type: mission.mission_type,
-    personnel_sent: mission.personnel_sent,
-    started_at: mission.started_at,
-    will_finish_at: mission.will_finish_at,
-    completed: mission.completed,
-    result: mission.result,
-    profit: mission.profit,
-  }
+  const missions = Promise.all(missionsRaw.map(parseMissionFromDB))
 
   return missions
 }
@@ -200,4 +144,55 @@ async function getUnreadMessagesCount(userID) {
     [userID, userID]
   )
   return count
+}
+
+module.exports.runUserMoneyUpdate = runUserMoneyUpdate
+async function runUserMoneyUpdate(userID) {
+  const [[{ last_money_update: lastMoneyUpdate }]] = await mysql.query(
+    'SELECT last_money_update FROM users WHERE id=?',
+    [userID]
+  )
+  const currentTimestamp = Math.floor(Date.now() / 1000)
+  const moneyUpdateElapsedS = currentTimestamp - lastMoneyUpdate
+  if (moneyUpdateElapsedS < 1) return
+  await mysql.query('UPDATE users SET last_money_update=? WHERE id=?', [currentTimestamp, userID])
+
+  // Buildings Income
+  const userResearchs = await getResearchs(userID)
+
+  const [buildings] = await mysql.query('SELECT id, quantity, money FROM buildings WHERE user_id=?', [userID])
+  const buildingsIncomes = buildings.map(building => ({
+    ...building,
+    money: parseFloat(building.money),
+    income: calcBuildingDailyIncome(building.id, building.quantity, userResearchs[5]),
+  }))
+  const totalBuildingsIncome = buildingsIncomes.reduce((prev, curr) => prev + curr.income, 0)
+  const hasAlliance = await alliances.getUserAllianceID(userID)
+  const taxesPct = getIncomeTaxes(totalBuildingsIncome, hasAlliance)
+
+  await Promise.all(
+    buildingsIncomes.map(async building => {
+      const maxMoney = calcBuildingMaxMoney({
+        buildingID: building.id,
+        buildingAmount: building.quantity,
+        bankResearchLevel: userResearchs[4],
+      })
+      if (building.money >= maxMoney.maxTotal) return
+
+      const buildingRevenue = building.income * (1 - taxesPct)
+      let moneyGenerated = (buildingRevenue / 24 / 60 / 60) * moneyUpdateElapsedS
+      const moneyOverTotal = Math.max(0, building.money + moneyGenerated - maxMoney.maxTotal)
+      moneyGenerated = moneyGenerated - moneyOverTotal
+
+      await mysql.query('UPDATE buildings SET money=money+? WHERE user_id=? AND id=?', [
+        moneyGenerated,
+        userID,
+        building.id,
+      ])
+    })
+  )
+
+  // Personnel Costs
+  const personnelCosts = ((await getUserPersonnelCosts(userID)) / 24 / 60 / 60) * moneyUpdateElapsedS
+  await mysql.query('UPDATE users SET money=money-? WHERE id=?', [personnelCosts, userID])
 }

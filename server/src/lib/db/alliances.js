@@ -1,5 +1,6 @@
 const mysql = require('../mysql')
 const users = require('./users')
+const { parseMissionFromDB } = require('./missions')
 const { RESEARCHS_LIST, RESOURCES_LIST } = require('shared-lib/allianceUtils')
 
 module.exports.MAX_MEMBERS = 10
@@ -124,23 +125,23 @@ async function getMissionHistory(members = []) {
   const memberIDs = members.map(m => m.user.id)
 
   const activeMissionsQuery = mysql.query(
-    'SELECT user_id, target_user, target_building, mission_type, personnel_sent, started_at, will_finish_at FROM missions WHERE user_id IN (?) AND completed=0 ORDER BY will_finish_at DESC',
+    'SELECT user_id, target_user, data, mission_type, started_at, will_finish_at FROM missions WHERE user_id IN (?) AND completed=0 ORDER BY will_finish_at DESC',
     [memberIDs]
   )
   const sentAttackMissionsQuery = mysql.query(
-    "SELECT user_id, target_user, target_building, mission_type, personnel_sent, started_at, will_finish_at, completed, result, profit FROM missions WHERE user_id IN (?) AND mission_type='attack' AND completed=1 ORDER BY will_finish_at DESC LIMIT 30",
+    "SELECT user_id, target_user, data, mission_type, started_at, will_finish_at, completed, result, profit FROM missions WHERE user_id IN (?) AND mission_type='attack' AND completed=1 ORDER BY will_finish_at DESC LIMIT 30",
     [memberIDs]
   )
   const sentSpyMissionsQuery = mysql.query(
-    "SELECT user_id, target_user, mission_type, personnel_sent, started_at, will_finish_at, completed, result FROM missions WHERE user_id IN (?) AND mission_type='spy' AND completed=1 ORDER BY will_finish_at DESC LIMIT 30",
+    "SELECT user_id, target_user, data, mission_type, started_at, will_finish_at, completed, result FROM missions WHERE user_id IN (?) AND mission_type='spy' AND completed=1 ORDER BY will_finish_at DESC LIMIT 30",
     [memberIDs]
   )
   const receivedAttackMissionsQuery = mysql.query(
-    "SELECT user_id, target_user, target_building, mission_type, personnel_sent, started_at, will_finish_at, completed, result, profit FROM missions WHERE target_user IN (?) AND mission_type='attack' AND completed=1 ORDER BY will_finish_at DESC LIMIT 30",
+    "SELECT user_id, target_user, data, mission_type, started_at, will_finish_at, completed, result, profit FROM missions WHERE target_user IN (?) AND mission_type='attack' AND completed=1 ORDER BY will_finish_at DESC LIMIT 30",
     [memberIDs]
   )
   const receivedSpyMissionsQuery = mysql.query(
-    "SELECT user_id, target_user, mission_type, personnel_sent, started_at, will_finish_at, completed, result FROM missions WHERE target_user IN (?) AND mission_type='spy' AND completed=1 AND result='caught' ORDER BY will_finish_at DESC LIMIT 30",
+    "SELECT user_id, target_user, data, mission_type, started_at, will_finish_at, completed, result FROM missions WHERE target_user IN (?) AND mission_type='spy' AND completed=1 AND result='caught' ORDER BY will_finish_at DESC LIMIT 30",
     [memberIDs]
   )
 
@@ -157,84 +158,11 @@ async function getMissionHistory(members = []) {
     receivedAttackMissionsQuery,
     receivedSpyMissionsQuery,
   ])
-  const activeMissions = await Promise.all(
-    activeMissionsRaw.map(async mission => {
-      const defensorData = await users.getData(mission.target_user)
-      return {
-        user_id: mission.user_id,
-        target_user: defensorData,
-        target_building: mission.target_building,
-        mission_type: mission.mission_type,
-        personnel_sent: mission.personnel_sent,
-        started_at: mission.started_at,
-        will_finish_at: mission.will_finish_at,
-      }
-    })
-  )
-  const sentSpyMissions = await Promise.all(
-    sentSpyMissionsRaw.map(async mission => {
-      const defensorData = await users.getData(mission.target_user)
-      return {
-        user_id: mission.user_id,
-        target_user: defensorData,
-        mission_type: mission.mission_type,
-        personnel_sent: mission.personnel_sent,
-        started_at: mission.started_at,
-        will_finish_at: mission.will_finish_at,
-        completed: mission.completed,
-        result: mission.result,
-      }
-    })
-  )
-  const sentAttackMissions = await Promise.all(
-    sentAttackMissionsRaw.map(async mission => {
-      const defensorData = await users.getData(mission.target_user)
-      return {
-        user_id: mission.user_id,
-        target_user: defensorData,
-        target_building: mission.target_building,
-        mission_type: mission.mission_type,
-        personnel_sent: mission.personnel_sent,
-        started_at: mission.started_at,
-        will_finish_at: mission.will_finish_at,
-        completed: mission.completed,
-        result: mission.result,
-        profit: mission.profit,
-      }
-    })
-  )
-  const receivedSpyMissions = await Promise.all(
-    receivedSpyMissionsRaw.map(async mission => {
-      const defensorData = await users.getData(mission.target_user)
-      return {
-        user_id: mission.user_id,
-        target_user: defensorData,
-        mission_type: mission.mission_type,
-        personnel_sent: mission.personnel_sent,
-        started_at: mission.started_at,
-        will_finish_at: mission.will_finish_at,
-        completed: mission.completed,
-        result: mission.result,
-      }
-    })
-  )
-  const receivedAttackMissions = await Promise.all(
-    receivedAttackMissionsRaw.map(async mission => {
-      const defensorData = await users.getData(mission.target_user)
-      return {
-        user_id: mission.user_id,
-        target_user: defensorData,
-        target_building: mission.target_building,
-        mission_type: mission.mission_type,
-        personnel_sent: mission.personnel_sent,
-        started_at: mission.started_at,
-        will_finish_at: mission.will_finish_at,
-        completed: mission.completed,
-        result: mission.result,
-        profit: mission.profit,
-      }
-    })
-  )
+  const activeMissions = await Promise.all(activeMissionsRaw.map(parseMissionFromDB))
+  const sentSpyMissions = await Promise.all(sentSpyMissionsRaw.map(parseMissionFromDB))
+  const sentAttackMissions = await Promise.all(sentAttackMissionsRaw.map(parseMissionFromDB))
+  const receivedSpyMissions = await Promise.all(receivedSpyMissionsRaw.map(parseMissionFromDB))
+  const receivedAttackMissions = await Promise.all(receivedAttackMissionsRaw.map(parseMissionFromDB))
   return {
     active_missions: activeMissions,
     sent_attack_missions: sentAttackMissions,

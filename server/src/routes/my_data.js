@@ -1,4 +1,5 @@
 const users = require('../lib/db/users')
+const mysql = require('../lib/mysql')
 
 module.exports = app => {
   app.get('/v1/my_data', async function(req, res) {
@@ -8,12 +9,13 @@ module.exports = app => {
     }
 
     const userData = await users.getData(req.userData.id)
+    const [[extraInfo]] = await mysql.query('SELECT email FROM users WHERE id=?', [req.userData.id])
 
     res.json({
       user_data: {
-        id: req.userData.id,
-        username: req.userData.username,
-        email: req.userData.email,
+        id: userData.id,
+        username: userData.username,
+        email: extraInfo.email,
         has_alliance: Boolean(userData.alliance),
       },
     })

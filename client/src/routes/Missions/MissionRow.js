@@ -70,11 +70,11 @@ export default function MissionRow({ mission, reloadMissionsCallback }) {
         </>
       ) : (
         <>
-          <td>{mission.personnel_sent}</td>
           <td>
-            {mission.mission_type === 'attack'
-              ? buildingsList.find(b => b.id === parseInt(mission.target_building)).name
-              : ''}
+            Spies: {mission.sent_spies} Sabots: {mission.sent_sabots} Thiefs: {mission.sent_thiefs}
+          </td>
+          <td>
+            {mission.mission_type === 'attack' ? buildingsList.find(b => b.id === mission.target_building).name : ''}
           </td>
           <td>{isCompleting ? 'Completando...' : `${timeLeft.minutes}:${timeLeft.seconds}`}</td>
           <td>

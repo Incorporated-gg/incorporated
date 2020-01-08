@@ -97,6 +97,7 @@ function calcBuildingResistance(buildingID, infraLevel) {
 
 function calcBuildingMaxMoney({ buildingID, buildingAmount, bankResearchLevel }) {
   const buildingInfo = buildingsList.find(b => b.id === buildingID)
+  if (buildingAmount < 1) buildingAmount = 1
 
   const maxTotalPer =
     800 / buildingInfo.maximumDestroyedBuildings +
@@ -106,6 +107,7 @@ function calcBuildingMaxMoney({ buildingID, buildingAmount, bankResearchLevel })
   return {
     maxSafe: maxSafePer * buildingAmount,
     maxTotal: maxTotalPer * buildingAmount,
+    maxRobbedPerAttack: maxSafePer * buildingAmount * 0.1,
   }
 }
 module.exports.calcBuildingMaxMoney = calcBuildingMaxMoney

@@ -3,47 +3,77 @@ const process = require('process')
 const { buildingsList, calcBuildingPrice, calcBuildingResistance } = require('./buildingsUtils')
 const { personnelList } = require('./personnelUtils')
 
+const guardsInfo = personnelList.find(t => t.resource_id === 'guards')
+const sabotsInfo = personnelList.find(t => t.resource_id === 'sabots')
+const thiefsInfo = personnelList.find(t => t.resource_id === 'thiefs')
+
 module.exports.calculateMissionTime = calculateMissionTime
-function calculateMissionTime(missionType, personnelSent) {
+function calculateMissionTime(missionType) {
   if (missionType === 'attack') return process.env.NODE_ENV === 'dev' ? 10 : 300
   if (missionType === 'spy') return process.env.NODE_ENV === 'dev' ? 10 : 120
   return 0
 }
 
-function getBuildingDestroyedProfit({ buildingID, defensorNumEdificios, destroyedBuildings }) {
-  const currentPrice = calcBuildingPrice(buildingID, defensorNumEdificios)
+function getBuildingDestroyedProfit({ buildingID, buildingAmount, destroyedBuildings }) {
+  const currentPrice = calcBuildingPrice(buildingID, buildingAmount)
   return Math.round((currentPrice * destroyedBuildings) / 2)
 }
 
 function simulateCombat({
-  defensorNumEdificios,
   attackedBuildingInfo,
-  defensorInfraLvl,
+  buildingAmount,
+  infraResearchLvl,
   attackerSabots,
+  attackerThiefs,
   defensorGuards,
   defensorSecurityLvl,
   attackerSabotageLvl,
 }) {
-  const guardsAttackPower = personnelList.find(t => t.resource_id === 'guards').attackPower * defensorSecurityLvl
-  const guardsDefensePower = personnelList.find(t => t.resource_id === 'guards').defensePower * defensorSecurityLvl
-  const sabotAttackPower = personnelList.find(t => t.resource_id === 'sabots').attackPower * attackerSabotageLvl
-  const sabotDefensePower = personnelList.find(t => t.resource_id === 'sabots').defensePower * attackerSabotageLvl
+  const guardsAttackPower = guardsInfo.combatPower * defensorSecurityLvl
+  const guardsDefensePower = 2 * guardsInfo.combatPower * defensorSecurityLvl
+  const sabotAttackPower = 2 * sabotsInfo.combatPower * attackerSabotageLvl
+  const sabotDefensePower = sabotsInfo.combatPower * attackerSabotageLvl
+  const thiefsAttackPower = 2 * thiefsInfo.combatPower * attackerSabotageLvl
+  const thiefsDefensePower = thiefsInfo.combatPower * attackerSabotageLvl
 
-  // simulamos datos
-  const maxDeadGuards = Math.floor((attackerSabots * sabotAttackPower) / guardsDefensePower)
-  const maxDeadSabots = Math.floor((defensorGuards * guardsAttackPower) / sabotDefensePower)
-  const deadGuards = Math.min(defensorGuards, maxDeadGuards)
-  const deadSabots = Math.min(attackerSabots, maxDeadSabots)
-  const survivingSabots = attackerSabots - deadSabots
-  const survivingGuards = defensorGuards - deadGuards
+  // Simulamos lucha
+  let deadSabots = 0
+  let deadThiefs = 0
+  let deadGuards = 0
+  let survivingSabots = attackerSabots
+  let survivingThiefs = attackerThiefs
+  let survivingGuards = defensorGuards
+
+  if (survivingGuards > 0) {
+    // kill sabots
+    const maxDeadSabots = Math.floor((survivingGuards * guardsAttackPower) / sabotDefensePower)
+    deadSabots = Math.min(attackerSabots, maxDeadSabots)
+    survivingSabots = attackerSabots - deadSabots
+
+    // kill guards
+    const maxDeadGuardsFromSabots = Math.floor((attackerSabots * sabotAttackPower) / guardsDefensePower)
+    deadGuards = Math.min(survivingGuards, maxDeadGuardsFromSabots)
+    survivingGuards = survivingGuards - deadGuards
+  }
+  if (survivingGuards > 0) {
+    // kill thiefs
+    const maxDeadThiefs = Math.floor((survivingGuards * guardsAttackPower) / thiefsDefensePower)
+    deadThiefs = Math.min(attackerThiefs, maxDeadThiefs)
+    survivingThiefs = attackerThiefs - deadThiefs
+
+    // kill guards
+    const maxDeadGuardsFromThiefs = Math.floor((attackerThiefs * thiefsAttackPower) / guardsDefensePower)
+    deadGuards = Math.min(survivingGuards, maxDeadGuardsFromThiefs)
+    survivingGuards = survivingGuards - deadGuards
+  }
 
   // Destroyed buildings
-  const buildingResistance = calcBuildingResistance(attackedBuildingInfo.id, defensorInfraLvl)
-  const buildingAttackingPower = Math.max(0, sabotAttackPower * survivingSabots - guardsDefensePower * survivingGuards)
-  const theoreticalDestroyedBuildings = Math.floor(buildingAttackingPower / buildingResistance)
+  const buildingResistance = calcBuildingResistance(attackedBuildingInfo.id, infraResearchLvl)
+  const attackPowerVsBuildings = Math.max(0, survivingSabots * sabotAttackPower + survivingThiefs * thiefsAttackPower)
+  const theoreticalDestroyedBuildings = Math.floor(attackPowerVsBuildings / buildingResistance)
   const destroyedBuildings = Math.min(
     attackedBuildingInfo.maximumDestroyedBuildings,
-    defensorNumEdificios,
+    buildingAmount,
     theoreticalDestroyedBuildings
   )
 
@@ -54,40 +84,50 @@ function simulateCombat({
     deadSabots,
     survivingSabots,
     survivingGuards,
+    survivingThiefs,
   }
 }
 
-const guardsPrice = personnelList.find(t => t.resource_id === 'guards').price
-const sabotPrice = personnelList.find(t => t.resource_id === 'sabots').price
-
 module.exports.simulateAttack = simulateAttack
 function simulateAttack({
+  buildingID,
+  buildingAmount,
   defensorGuards,
   attackerSabots,
+  attackerThiefs,
   defensorSecurityLvl,
   attackerSabotageLvl,
-  buildingID,
-  defensorInfraLvl,
-  defensorNumEdificios,
+  infraResearchLvl,
+  unprotectedMoney,
 }) {
   if (
+    typeof buildingID === 'undefined' ||
+    typeof buildingAmount === 'undefined' ||
     typeof defensorGuards === 'undefined' ||
     typeof attackerSabots === 'undefined' ||
+    typeof attackerThiefs === 'undefined' ||
     typeof defensorSecurityLvl === 'undefined' ||
     typeof attackerSabotageLvl === 'undefined' ||
-    typeof buildingID === 'undefined' ||
-    typeof defensorInfraLvl === 'undefined' ||
-    typeof defensorNumEdificios === 'undefined'
+    typeof infraResearchLvl === 'undefined' ||
+    typeof unprotectedMoney === 'undefined'
   ) {
     throw new Error('Missing params for attack simulation')
   }
   const attackedBuildingInfo = buildingsList.find(b => b.id === buildingID)
 
-  const { deadSabots, deadGuards, survivingSabots, survivingGuards, destroyedBuildings } = simulateCombat({
-    defensorNumEdificios,
+  const {
+    deadSabots,
+    deadGuards,
+    survivingSabots,
+    survivingGuards,
+    survivingThiefs,
+    destroyedBuildings,
+  } = simulateCombat({
+    buildingAmount,
     attackedBuildingInfo,
-    defensorInfraLvl,
+    infraResearchLvl,
     attackerSabots,
+    attackerThiefs,
     defensorGuards,
     defensorSecurityLvl,
     attackerSabotageLvl,
@@ -96,31 +136,37 @@ function simulateAttack({
   const result = survivingGuards > 0 ? 'lose' : destroyedBuildings > 0 ? 'win' : 'draw'
 
   // Killed troops income
-  const killedGuardsPrice = deadGuards * guardsPrice
-  const killedSabotsPrice = deadSabots * sabotPrice
+  const killedGuardsPrice = deadGuards * guardsInfo.price
+  const killedSabotsPrice = deadSabots * sabotsInfo.price
   const incomeForKilledTroops = killedGuardsPrice * 0.1 + killedSabotsPrice * 0.1
 
   // Destroyed buildings income
   const incomeForDestroyedBuildings = getBuildingDestroyedProfit({
     buildingID,
-    defensorNumEdificios,
+    buildingAmount,
     destroyedBuildings,
   })
 
+  // Robbing income
+  const maxRobbedMoney = survivingSabots * sabotsInfo.robbingPower + survivingThiefs * thiefsInfo.robbingPower
+  const robbedMoney = Math.min(maxRobbedMoney, unprotectedMoney)
+
   // Misc calculations
-  const attackerTotalIncome = incomeForKilledTroops + incomeForDestroyedBuildings
+  const attackerTotalIncome = incomeForKilledTroops + incomeForDestroyedBuildings + robbedMoney
   const realAttackerProfit = attackerTotalIncome - killedSabotsPrice
   const gainedFame = destroyedBuildings * attackedBuildingInfo.fame
 
   return {
     result,
-    survivingSabots,
     survivingGuards,
+    survivingSabots,
+    survivingThiefs,
     gainedFame,
     destroyedBuildings,
     incomeForDestroyedBuildings,
     incomeForKilledTroops,
     attackerTotalIncome,
     realAttackerProfit,
+    robbedMoney,
   }
 }

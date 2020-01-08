@@ -1,5 +1,5 @@
 const mysql = require('../../../lib/mysql')
-const { getResearchs, sendMessage, getBuildings, getPersonnel } = require('../../../lib/db/users')
+const { getResearchs, sendMessage, getBuildings, getPersonnel, runUserMoneyUpdate } = require('../../../lib/db/users')
 const { calcSpiesCaptured, calcInformationObtained } = require('./calcs')
 
 module.exports = {
@@ -11,7 +11,7 @@ async function doSpyMissions() {
   const [
     spyMissions,
   ] = await mysql.query(
-    'SELECT id, user_id, target_user, mission_type, personnel_sent, started_at, will_finish_at, completed FROM missions WHERE completed=? AND mission_type=? AND will_finish_at<=?',
+    'SELECT id, user_id, data, target_user, mission_type, started_at, will_finish_at, completed FROM missions WHERE completed=? AND mission_type=? AND will_finish_at<=?',
     [false, 'spy', tsNow]
   )
 
@@ -20,6 +20,7 @@ async function doSpyMissions() {
 }
 
 async function completeSpyMission(mission) {
+  const data = JSON.parse(mission.data)
   // Complete the mission
   const [[[defender]], [[attacker]]] = await Promise.all([
     mysql.query('SELECT id FROM users WHERE id=?', [mission.target_user]),
@@ -30,12 +31,13 @@ async function completeSpyMission(mission) {
     await mysql.query('UPDATE missions SET completed=1 WHERE id=?', [mission.id])
     return
   }
+
   const [defensorResearchs, attackerResearchs] = await Promise.all([
     getResearchs(defender.id),
     getResearchs(attacker.id),
   ])
-  const spiesSent = parseInt(mission.personnel_sent)
 
+  const spiesSent = data.spies
   const spiesCaptured = calcSpiesCaptured({
     resLvlAttacker: attackerResearchs[1],
     resLvLDefender: defensorResearchs[1],
@@ -51,10 +53,10 @@ async function completeSpyMission(mission) {
   const result = spiesCaptured > 0 ? 'caught' : 'not_caught'
   await mysql.query('UPDATE missions SET completed=1, result=? WHERE id=?', [result, mission.id])
 
-  // Return spies to user
-  if (spiesRemaining > 0) {
-    await mysql.query('UPDATE users_resources SET quantity=quantity+? WHERE user_id=? AND resource_id=?', [
-      spiesRemaining,
+  // Reduce spies if some were captured
+  if (spiesCaptured > 0) {
+    await mysql.query('UPDATE users_resources SET quantity=quantity-? WHERE user_id=? AND resource_id=?', [
+      spiesCaptured,
       attacker.id,
       'spies',
     ])
@@ -73,9 +75,12 @@ async function completeSpyMission(mission) {
     })
   }
 
+  // Run money update for defender, so buildings money info is correct
+  await runUserMoneyUpdate(defender.id)
+
   // Generate report
   const intelReport = {}
-  if (informationObtained.buildings) intelReport.buildings = await getBuildings(defender.id).map(b => b.quantity)
+  if (informationObtained.buildings) intelReport.buildings = await getBuildings(defender.id)
   if (informationObtained.personnel) intelReport.personnel = await getPersonnel(defender.id)
   if (informationObtained.research) intelReport.researchs = defensorResearchs
 

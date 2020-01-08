@@ -14,14 +14,13 @@ export default function Mission({ reloadMissionsCallback }) {
   const userData = useUserData()
   const { username: routeUsername } = useParams('username')
   const [toUser, setToUser] = useState(routeUsername || '')
-  const [numTroops, setNumTroops] = useState(() => {
-    return userData.personnel.sabots
-  })
+  const [numSabots, setNumSabots] = useState(userData.personnel.sabots)
+  const [numThiefs, setNumThiefs] = useState(userData.personnel.thiefs)
   const [targetBuilding, setTargetBuilding] = useState(1)
-  const isFormReady = toUser && numTroops && numTroops > 0 && targetBuilding
+  const isFormReady = toUser && (numSabots > 0 || numThiefs > 0) && targetBuilding
 
   useEffect(() => {
-    setNumTroops(userData.personnel.sabots)
+    setNumSabots(userData.personnel.sabots)
   }, [userData.personnel.sabots, userData.personnel.spies])
 
   const startMission = useCallback(
@@ -32,7 +31,8 @@ export default function Mission({ reloadMissionsCallback }) {
         .post('/v1/missions', {
           missionType: 'attack',
           target_user: toUser,
-          personnel_sent: numTroops,
+          sent_sabots: numSabots,
+          sent_thiefs: numThiefs,
           target_building: targetBuilding,
         })
         .then(() => {
@@ -41,12 +41,10 @@ export default function Mission({ reloadMissionsCallback }) {
         })
         .catch(error => alert(error))
     },
-    [isFormReady, numTroops, reloadMissionsCallback, targetBuilding, toUser]
+    [isFormReady, numSabots, numThiefs, reloadMissionsCallback, targetBuilding, toUser]
   )
 
-  const troopName = personnelList.find(p => p.resource_id === 'sabots').name
-
-  const missionSeconds = calculateMissionTime('attack', numTroops)
+  const missionSeconds = calculateMissionTime('attack')
 
   return (
     <form className="startNewMission">
@@ -59,9 +57,16 @@ export default function Mission({ reloadMissionsCallback }) {
       </div>
       <div>
         <label>
-          {troopName}
+          {personnelList.find(p => p.resource_id === 'sabots').name}
           {': '}
-          <input type="number" name="quantity" value={numTroops} onChange={e => setNumTroops(e.target.value)} />
+          <input type="number" name="quantity" value={numSabots} onChange={e => setNumSabots(e.target.value)} />
+        </label>
+      </div>
+      <div>
+        <label>
+          {personnelList.find(p => p.resource_id === 'thiefs').name}
+          {': '}
+          <input type="number" name="quantity" value={numThiefs} onChange={e => setNumThiefs(e.target.value)} />
         </label>
       </div>
       <label>
