@@ -2,6 +2,8 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import styles from './Card.module.scss'
 
+export const cardStyles = styles
+
 Card.propTypes = {
   image: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
@@ -11,7 +13,8 @@ Card.propTypes = {
   children: PropTypes.node,
 }
 
-export default function Card({ image, title, subtitle, desc, accentColor, children }) {
+export default Card
+export function Card({ image, title, subtitle, desc, accentColor, children }) {
   return (
     <div className={styles.cardContainer}>
       <div className={styles.card}>

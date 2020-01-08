@@ -109,11 +109,11 @@ export default function BuildingItem({ buildingID, taxesPercent, activeScreen })
       accentColor={buildingAccentColors[buildingID]}>
       {activeScreen === 'buy' && (
         <>
-          <Stat img={require('./img/stat-price.png')} title={'Coste'} value={`${coste}€`} />
+          <Stat img={require('./img/stat-price.png')} title={'Coste'} value={`${coste.toLocaleString()}€`} />
           <Stat img={require('./img/stat-pri.png')} title={'PRI'} value={`${timeToRecoverInvestment} días`} />
 
           <button
-            className={cardStyles.buyButton}
+            className={cardStyles.button}
             onClick={buyBuilding}
             disabled={!canBuy}
             style={{ color: buildingAccentColors[buildingID] }}>
@@ -140,7 +140,7 @@ export default function BuildingItem({ buildingID, taxesPercent, activeScreen })
             }
           />
           <button
-            className={cardStyles.buyButton}
+            className={cardStyles.button}
             onClick={onExtractMoney}
             style={{ color: buildingAccentColors[buildingID] }}>
             SACAR

@@ -50,7 +50,7 @@ export default function ResearchItem({ researchID }) {
       <Stat img={require('./img/stat-price.png')} title={'Coste'} value={`${cost.toLocaleString()}€`} />
 
       <button
-        className={cardStyles.buyButton}
+        className={cardStyles.button}
         onClick={buyResearchClicked}
         disabled={!canAfford}
         style={{ color: researchAccentColors[researchID] }}>

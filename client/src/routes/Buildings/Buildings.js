@@ -5,6 +5,7 @@ import OptimizeResearch from './OptimizeResearch'
 import { buildingsList, calcBuildingDailyIncome, calcBuildingMaxMoney } from 'shared-lib/buildingsUtils'
 import { useUserData, userData as userDataRaw, fireUserDataListeners } from '../../lib/user'
 import { getIncomeTaxes } from 'shared-lib/taxes'
+import CardList, { cardListStyles } from '../../components/CardList'
 
 export default function Buildings() {
   const userData = useUserData()
@@ -29,26 +30,23 @@ export default function Buildings() {
   }
 
   return (
-    <div className={styles.buildingsList}>
-      <div className={styles.background} />
-      <div className={styles.content}>
-        <button className={styles.switchBuyAndBank} onClick={switchBuyAndBank}>
-          CAMBIAR A {activeScreen === 'bank' ? 'COMPRAR' : 'BANCO'}
-        </button>
-        <br />
-        <div className={styles.grid}>
-          <OptimizeResearch activeScreen={activeScreen} />
-          {buildingsList.map(buildingInfo => (
-            <BuildingItem
-              key={buildingInfo.id}
-              buildingID={buildingInfo.id}
-              taxesPercent={taxesPercent}
-              activeScreen={activeScreen}
-            />
-          ))}
-        </div>
+    <CardList noGrid>
+      <button className={styles.switchBuyAndBank} onClick={switchBuyAndBank}>
+        CAMBIAR A {activeScreen === 'bank' ? 'COMPRAR' : 'BANCO'}
+      </button>
+      <br />
+      <div className={cardListStyles.grid}>
+        <OptimizeResearch activeScreen={activeScreen} />
+        {buildingsList.map(buildingInfo => (
+          <BuildingItem
+            key={buildingInfo.id}
+            buildingID={buildingInfo.id}
+            taxesPercent={taxesPercent}
+            activeScreen={activeScreen}
+          />
+        ))}
       </div>
-    </div>
+    </CardList>
   )
 }
 

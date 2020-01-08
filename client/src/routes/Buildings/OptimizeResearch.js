@@ -29,11 +29,11 @@ export default function OptimizeResearch({ activeScreen }) {
       accentColor={'#F6901A'}>
       {activeScreen === 'buy' && (
         <>
-          <Stat img={require('./img/stat-price.png')} title={'Coste'} value={`${coste}€`} />
+          <Stat img={require('./img/stat-price.png')} title={'Coste'} value={`${coste.toLocaleString()}€`} />
           <Stat img={require('./img/stat-pri.png')} title={'PRI'} value={`${timeToRecoverInvestment} días`} />
 
           <button
-            className={cardStyles.buyButton}
+            className={cardStyles.button}
             onClick={buyResearchClicked}
             disabled={coste >= userData.money}
             style={{ color: '#F6901A' }}>
