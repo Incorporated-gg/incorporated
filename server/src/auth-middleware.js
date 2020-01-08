@@ -1,6 +1,14 @@
 const mysql = require('./lib/mysql')
-const { getUserDailyIncome, getResearchs, getPersonnel, getUnreadMessagesCount } = require('./lib/db/users')
-const { calcUserMaxMoney } = require('shared-lib/researchUtils')
+const {
+  getResearchs,
+  getPersonnel,
+  getUnreadMessagesCount,
+  getUserPersonnelCosts,
+  getBuildings,
+} = require('./lib/db/users')
+const { getUserAllianceID } = require('./lib/db/alliances')
+const { calcBuildingDailyIncome, calcBuildingMaxMoney } = require('shared-lib/buildingsUtils')
+const { getIncomeTaxes } = require('shared-lib/taxes')
 
 module.exports = app => {
   app.use(authMiddleware)
@@ -20,9 +28,15 @@ async function authMiddleware(req, res, next) {
         sessionData.user_id,
       ])
 
-      req.userData.income_per_second = (await getUserDailyIncome(req.userData.id)) / 60 / 60 / 24
-      req.userData.researchs = await getResearchs(req.userData.id)
-      req.userData.personnel = await getPersonnel(req.userData.id)
+      const [researchs, personnel, buildings] = await Promise.all([
+        getResearchs(req.userData.id),
+        getPersonnel(req.userData.id),
+        getBuildings(req.userData.id),
+      ])
+
+      req.userData.researchs = researchs
+      req.userData.personnel = personnel
+      req.userData.buildings = buildings
 
       await updateMoney(req)
     }
@@ -38,21 +52,44 @@ async function authMiddleware(req, res, next) {
 async function updateMoney(req) {
   const tsNow = Math.floor(Date.now() / 1000)
   const moneyUpdateElapsedS = tsNow - req.userData.last_money_update
-  if (moneyUpdateElapsedS <= 0.5) return
+  if (moneyUpdateElapsedS < 1) return
+  await mysql.query('UPDATE users SET last_money_update=? WHERE id=?', [tsNow, req.userData.id])
 
-  const maxMoney = calcUserMaxMoney(req.userData.researchs)
-  if (req.userData.money >= maxMoney) return
+  // Buildings Income
+  const [buildings] = await mysql.query('SELECT id, quantity, money FROM buildings WHERE user_id=?', [req.userData.id])
 
-  const income = req.userData.income_per_second * moneyUpdateElapsedS
-  const moneyAboveMax = Math.max(0, req.userData.money + income - maxMoney)
-  const moneyAdded = income - moneyAboveMax
-  await mysql.query('UPDATE users SET money=money+?, last_money_update=? WHERE id=?', [
-    moneyAdded,
-    tsNow,
-    req.userData.id,
-  ])
-  req.userData.money += moneyAdded
-  req.userData.money = Math.floor(req.userData.money)
+  const buildingsIncomes = buildings.map(building => ({
+    id: building.id,
+    quantity: building.quantity,
+    income: calcBuildingDailyIncome(building.id, building.quantity, req.userData.researchs[5]),
+  }))
+  const totalBuildingsIncome = buildingsIncomes.reduce((prev, curr) => prev + curr.income, 0)
+  const hasAlliance = await getUserAllianceID(req.userData.id)
+  const taxesPct = getIncomeTaxes(totalBuildingsIncome, hasAlliance)
+
+  await Promise.all(
+    buildingsIncomes.map(async building => {
+      const maxMoney = calcBuildingMaxMoney({
+        buildingID: building.id,
+        buildingAmount: building.quantity,
+        bankResearchLevel: req.userData.researchs[4],
+      })
+      if (building.money >= maxMoney.maxTotal) return
+
+      const buildingRevenue = building.income * (1 - taxesPct)
+      const moneyGenerated = (buildingRevenue / 24 / 60 / 60) * moneyUpdateElapsedS
+
+      await mysql.query('UPDATE buildings SET money=money+? WHERE user_id=? AND id=?', [
+        moneyGenerated,
+        req.userData.id,
+        building.id,
+      ])
+    })
+  )
+
+  // Personnel Costs
+  const personnelCosts = ((await getUserPersonnelCosts(req.userData.id)) / 24 / 60 / 60) * moneyUpdateElapsedS
+  await mysql.query('UPDATE users SET money=money-? WHERE id=?', [personnelCosts, req.userData.id])
 }
 
 function modifyResponseBody(req, res, next) {
@@ -63,9 +100,10 @@ function modifyResponseBody(req, res, next) {
       // Modify response to include extra data for logged in users
       const extraData = {
         money: req.userData.money,
-        income_per_second: req.userData.income_per_second,
         unread_messages_count: await getUnreadMessagesCount(req.userData.id),
         personnel: req.userData.personnel,
+        researchs: req.userData.researchs,
+        buildings: req.userData.buildings,
       }
       arguments[0]._extra = extraData
     }

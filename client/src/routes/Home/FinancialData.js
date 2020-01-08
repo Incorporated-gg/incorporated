@@ -1,33 +1,24 @@
-import React, { useState, useEffect } from 'react'
-import api from '../../lib/api'
+import React from 'react'
 import { buildingsList, calcBuildingDailyIncome } from 'shared-lib/buildingsUtils'
 import { logout, useUserData } from '../../lib/user'
-import { taxList, getIncomeTaxes } from 'shared-lib/taxes'
+import { getIncomeTaxes } from 'shared-lib/taxes'
 import { personnelList } from 'shared-lib/personnelUtils'
 
 export default function FinancialData() {
   const userData = useUserData()
-  const [buildings, setBuildings] = useState(null)
-  useEffect(() => {
-    if (!userData) return
-    api.get('/v1/buildings').then(res => {
-      setBuildings(res.buildings)
-    })
-  }, [userData])
 
   if (!userData) return null
 
   // Buildings income
   const buildingsIncome = buildingsList.map(buildingInfo => {
-    const quantity = buildings ? buildings[buildingInfo.id] : 0
+    const quantity = userData.buildings[buildingInfo.id].quantity
     const income = calcBuildingDailyIncome(buildingInfo.id, quantity, userData.researchs[5])
     return { building_id: buildingInfo.id, name: buildingInfo.name, quantity, income }
   })
   const totalBuildingsIncome = buildingsIncome.reduce((prev, curr) => prev + curr.income, 0)
 
   // Taxes
-  let taxesPercent = getIncomeTaxes(totalBuildingsIncome)
-  if (userData.has_alliance) taxesPercent += taxList.alliance
+  const taxesPercent = getIncomeTaxes(totalBuildingsIncome, userData.has_alliance)
   const totalTaxes = Math.round(totalBuildingsIncome * taxesPercent)
 
   // Personnel maintenance

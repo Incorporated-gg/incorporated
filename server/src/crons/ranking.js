@@ -7,7 +7,7 @@ async function doIncomeRanking() {
   const parsedUsers = await Promise.all(
     users.map(async user => {
       // Fetch the user's income
-      const userTotalIncome = await getUserDailyIncome(user.id, { withoutExpensesOrTaxes: true })
+      const userTotalIncome = await getUserDailyIncome(user.id)
 
       return {
         user_id: user.id,
@@ -81,7 +81,7 @@ async function doAlliancesRanking() {
   await Promise.all(
     users.map(async user => {
       // Fetch the user's income
-      const userTotalIncome = await getUserDailyIncome(user.user_id, { withoutExpensesOrTaxes: true })
+      const userTotalIncome = await getUserDailyIncome(user.user_id)
 
       let currPoints = 0
       if (parsedAlliances.has(user.alliance_id)) {

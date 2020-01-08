@@ -56,7 +56,7 @@ async function completeAttackMission(mission) {
     attackerSabotageLvl: attackerResearchs[2],
     buildingID: parseInt(mission.target_building),
     defensorInfraLvl: defensorResearchs[6],
-    defensorNumEdificios: defensorBuildings[parseInt(mission.target_building)],
+    defensorNumEdificios: defensorBuildings[parseInt(mission.target_building)].quantity,
   }
   const {
     result,

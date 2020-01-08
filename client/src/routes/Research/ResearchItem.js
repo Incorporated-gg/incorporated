@@ -1,9 +1,9 @@
 import React, { useCallback } from 'react'
-import api from '../../lib/api'
 import { calcResearchPrice, researchList } from 'shared-lib/researchUtils'
 import PropTypes from 'prop-types'
-import { updateUserData, useUserData } from '../../lib/user'
+import { useUserData } from '../../lib/user'
 import './ResearchItem.scss'
+import { buyResearch } from './buyResearch'
 
 ResearchItem.propTypes = {
   researchID: PropTypes.number.isRequired,
@@ -15,15 +15,7 @@ export default function ResearchItem({ researchID, children }) {
   const count = userData.researchs[researchID]
   const coste = Math.ceil(calcResearchPrice(research.id, count))
   const canAfford = userData.money > coste
-  const buyResearch = useCallback(async () => {
-    try {
-      await api.post('/v1/research/buy', { research_id: researchID, count: 1 })
-      const newCount = userData.researchs[researchID] + 1
-      updateUserData({ researchs: Object.assign({}, userData.researchs, { [researchID]: newCount }) })
-    } catch (e) {
-      alert(e.message)
-    }
-  }, [researchID, userData.researchs])
+  const buyResearchClicked = useCallback(() => buyResearch(researchID), [researchID])
 
   return (
     <div className="research-item">
@@ -32,7 +24,7 @@ export default function ResearchItem({ researchID, children }) {
       </div>
       <div>Precio: {coste.toLocaleString()}€</div>
       {children}
-      <button className="buy-button" disabled={!canAfford} onClick={canAfford ? buyResearch : undefined}>
+      <button className="buy-button" disabled={!canAfford} onClick={canAfford ? buyResearchClicked : undefined}>
         Investigar
       </button>
     </div>

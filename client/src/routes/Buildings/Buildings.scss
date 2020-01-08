@@ -13,13 +13,21 @@
   }
 
   .content {
-    padding-top: 1em;
     position: relative;
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr;
     grid-auto-rows: 1fr;
+    column-gap: 1em;
+    row-gap: 3em;
+    padding: 2.5em 1em;
 
     @media screen and (max-width: 719px) {
+      & {
+        grid-template-columns: 1fr 1fr;
+        grid-auto-rows: unset;
+      }
+    }
+    @media screen and (max-width: 399px) {
       & {
         grid-template-columns: 1fr;
         grid-auto-rows: unset;

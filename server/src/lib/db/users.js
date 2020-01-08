@@ -1,10 +1,8 @@
 const mysql = require('../mysql')
 const alliances = require('./alliances')
-const { calcBuildingDailyIncome } = require('shared-lib/buildingsUtils')
 const { researchList } = require('shared-lib/researchUtils')
 const { personnelList } = require('shared-lib/personnelUtils')
-const { buildingsList } = require('shared-lib/buildingsUtils')
-const { taxList, getIncomeTaxes } = require('shared-lib/taxes')
+const { calcBuildingDailyIncome, buildingsList } = require('shared-lib/buildingsUtils')
 
 module.exports.getData = getData
 async function getData(userID) {
@@ -32,8 +30,21 @@ module.exports.getIDFromUsername = async username => {
   return userData ? userData.id : false
 }
 
+module.exports.getUserPersonnelCosts = getUserPersonnelCosts
+async function getUserPersonnelCosts(userID) {
+  let personnelCost = 0
+  const userPersonnel = await getPersonnel(userID)
+  Object.entries(userPersonnel).forEach(([resourceID, quantity]) => {
+    const personnelInfo = personnelList.find(p => p.resource_id === resourceID)
+    if (!personnelInfo) return
+    const dailyCost = quantity * personnelInfo.dailyMaintenanceCost
+    personnelCost += dailyCost
+  })
+  return personnelCost
+}
+
 module.exports.getUserDailyIncome = getUserDailyIncome
-async function getUserDailyIncome(userID, { withoutExpensesOrTaxes = false } = {}) {
+async function getUserDailyIncome(userID) {
   let [[buildingsRaw], researchs] = await Promise.all([
     mysql.query('SELECT id, quantity FROM buildings WHERE user_id=?', [userID]),
     getResearchs(userID),
@@ -45,28 +56,7 @@ async function getUserDailyIncome(userID, { withoutExpensesOrTaxes = false } = {
     0
   )
 
-  let totalRevenue = totalBuildingsIncome
-  if (!withoutExpensesOrTaxes) {
-    // Taxes
-    let taxesPercent = getIncomeTaxes(totalBuildingsIncome)
-    const hasAlliance = await alliances.getUserAllianceID(userID)
-    if (hasAlliance) taxesPercent += taxList.alliance
-    const taxesCost = totalBuildingsIncome * taxesPercent
-
-    // Personnel maintenance
-    let personnelCost = 0
-    const userPersonnel = await getPersonnel(userID)
-    Object.entries(userPersonnel).forEach(([resourceID, quantity]) => {
-      const personnelInfo = personnelList.find(p => p.resource_id === resourceID)
-      if (!personnelInfo) return
-      const dailyCost = quantity * personnelInfo.dailyMaintenanceCost
-      personnelCost += dailyCost
-    })
-
-    totalRevenue = totalBuildingsIncome - taxesCost - personnelCost
-  }
-
-  return totalRevenue
+  return totalBuildingsIncome
 }
 
 module.exports.getResearchs = getResearchs
@@ -116,11 +106,19 @@ async function getTotalPersonnel(userID) {
 
 module.exports.getBuildings = getBuildings
 async function getBuildings(userID) {
-  const buildings = {}
-  buildingsList.forEach(building => (buildings[building.id] = 0))
-  const [buildingsRaw] = await mysql.query('SELECT id, quantity FROM buildings WHERE user_id=?', [userID])
-  if (buildingsRaw) buildingsRaw.forEach(building => (buildings[building.id] = building.quantity))
+  const buildings = buildingsList.reduce((curr, building) => {
+    curr[building.id] = {
+      quantity: 0,
+      money: 0,
+    }
+    return curr
+  }, {})
 
+  const [buildingsRaw] = await mysql.query('SELECT id, quantity, money FROM buildings WHERE user_id=?', [userID])
+  buildingsRaw.forEach(building => {
+    buildings[building.id].quantity = building.quantity
+    buildings[building.id].money = parseInt(building.money)
+  })
   return buildings
 }
 

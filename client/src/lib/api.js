@@ -39,7 +39,12 @@ async function parseApiResponse(res) {
     logout()
   }
   if (jsonResponse._extra) {
-    updateUserData(jsonResponse._extra)
+    updateUserData({
+      ...jsonResponse._extra,
+      // Needed for the internal implementation of Buildings's bank auto update.
+      // See src/routes/Buildings/Buildings.js -> setupBuildingsBankUpdater()
+      __buildings_last_buildings_money_update: undefined,
+    })
   }
 
   if (!res.ok) throw new Error(jsonResponse.error || JSON.stringify(jsonResponse))

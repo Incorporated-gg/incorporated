@@ -1,6 +1,13 @@
 .desktop-header {
   max-width: 100%;
-  background-color: rgba(0, 0, 0, 0.2);
+  background-color: #363636;
+  position: sticky;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  margin: 0 auto;
+  z-index: 1000;
 }
 
 .main-menu {

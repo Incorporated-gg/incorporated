@@ -1,5 +1,8 @@
 {
   "eslint.workingDirectories": [
     "./client", "./server", "./shared-lib"
-  ]
+  ],
+  "files.watcherExclude": {
+    "**/node_modules/**": true
+  }
 }

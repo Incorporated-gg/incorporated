@@ -3,17 +3,6 @@ const users = require('../lib/db/users')
 const { researchList, calcResearchPrice } = require('shared-lib/researchUtils')
 
 module.exports = app => {
-  app.get('/v1/research', async function(req, res) {
-    if (!req.userData) {
-      res.status(401).json({ error: 'Necesitas estar conectado', error_code: 'not_logged_in' })
-      return
-    }
-
-    res.json({
-      researchs: req.userData.researchs,
-    })
-  })
-
   app.post('/v1/research/buy', async function(req, res) {
     if (!req.userData) {
       res.status(401).json({ error: 'Necesitas estar conectado', error_code: 'not_logged_in' })

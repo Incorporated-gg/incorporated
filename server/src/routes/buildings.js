@@ -2,24 +2,7 @@ const mysql = require('../lib/mysql')
 const { buildingsList, calcBuildingPrice } = require('shared-lib/buildingsUtils')
 
 module.exports = app => {
-  app.get('/v1/buildings', async function(req, res) {
-    if (!req.userData) {
-      res.status(401).json({ error: 'Necesitas estar conectado', error_code: 'not_logged_in' })
-      return
-    }
-
-    const buildings = {}
-    buildingsList.forEach(building => (buildings[building.id] = 0))
-
-    const [buildingsRaw] = await mysql.query('SELECT id, quantity FROM buildings WHERE user_id=?', [req.userData.id])
-    if (buildingsRaw) buildingsRaw.forEach(building => (buildings[building.id] = building.quantity))
-
-    res.json({
-      buildings,
-    })
-  })
-
-  app.post('/v1/buy_buildings', async function(req, res) {
+  app.post('/v1/buildings/buy', async function(req, res) {
     if (!req.userData) {
       res.status(401).json({ error: 'Necesitas estar conectado', error_code: 'not_logged_in' })
       return
@@ -70,6 +53,37 @@ module.exports = app => {
         req.userData.id,
         buildingID,
       ])
+    }
+    req.userData.buildings[buildingID].quantity += 1
+
+    res.json({
+      success: true,
+    })
+  })
+
+  app.post('/v1/buildings/extract_money', async function(req, res) {
+    if (!req.userData) {
+      res.status(401).json({ error: 'Necesitas estar conectado', error_code: 'not_logged_in' })
+      return
+    }
+    if (!req.body.building_id) {
+      res.status(400).json({ error: 'Faltan datos' })
+      return
+    }
+    const buildingID = req.body.building_id
+
+    const buildingInfo = buildingsList.find(b => b.id === buildingID)
+    if (!buildingInfo) {
+      res.status(400).json({ error: 'Invalid building_id' })
+      return
+    }
+
+    const extractedMoney = req.userData.buildings[buildingID].money
+    if (extractedMoney > 0) {
+      await mysql.query('UPDATE users SET money=money+? WHERE id=?', [extractedMoney, req.userData.id])
+      req.userData.money += extractedMoney
+      await mysql.query('UPDATE buildings SET money=0 WHERE user_id=? and id=?', [req.userData.id, buildingID])
+      req.userData.buildings[buildingID].money = 0
     }
 
     res.json({

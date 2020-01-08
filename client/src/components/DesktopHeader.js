@@ -8,43 +8,45 @@ import { useUserData } from '../lib/user'
 export default function DesktopHeader() {
   const userData = useUserData()
   return (
-    <nav className="desktop-header">
-      <div className="money-display">
-        <Username user={userData} />
-        <MoneyDisplay />
-      </div>
+    <>
+      <nav className="desktop-header">
+        <div className="money-display">
+          <Username user={userData} />
+          <MoneyDisplay />
+        </div>
 
-      <ul className="main-menu">
-        <li>
-          <NavLink to="/" exact>
-            Home
-          </NavLink>
-        </li>
-        <li>
-          <NavLink to="/personnel">Personal</NavLink>
-        </li>
-        <li>
-          <NavLink to="/buildings">Edificios</NavLink>
-        </li>
-        <li>
-          <NavLink to="/research">Investigaciones</NavLink>
-        </li>
-        <li>
-          <NavLink to="/ranking">Ranking</NavLink>
-        </li>
-        <li>
-          <NavLink to="/missions">Missions</NavLink>
-        </li>
-        <li>
-          <NavLink to="/alliance">Alianza</NavLink>
-        </li>
-        <li>
-          <NavLink to="/messages">
-            Mensajes <MessagesUnreadLabel />
-          </NavLink>
-        </li>
-      </ul>
-    </nav>
+        <ul className="main-menu">
+          <li>
+            <NavLink to="/" exact>
+              Home
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to="/personnel">Personal</NavLink>
+          </li>
+          <li>
+            <NavLink to="/buildings">Edificios</NavLink>
+          </li>
+          <li>
+            <NavLink to="/research">Investigaciones</NavLink>
+          </li>
+          <li>
+            <NavLink to="/ranking">Ranking</NavLink>
+          </li>
+          <li>
+            <NavLink to="/missions">Missions</NavLink>
+          </li>
+          <li>
+            <NavLink to="/alliance">Alianza</NavLink>
+          </li>
+          <li>
+            <NavLink to="/messages">
+              Mensajes <MessagesUnreadLabel />
+            </NavLink>
+          </li>
+        </ul>
+      </nav>
+    </>
   )
 }
 

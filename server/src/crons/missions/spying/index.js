@@ -75,7 +75,7 @@ async function completeSpyMission(mission) {
 
   // Generate report
   const intelReport = {}
-  if (informationObtained.buildings) intelReport.buildings = await getBuildings(defender.id)
+  if (informationObtained.buildings) intelReport.buildings = await getBuildings(defender.id).map(b => b.quantity)
   if (informationObtained.personnel) intelReport.personnel = await getPersonnel(defender.id)
   if (informationObtained.research) intelReport.researchs = defensorResearchs
 
