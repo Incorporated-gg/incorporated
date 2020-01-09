@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
-import Login from './routes/Login/Login'
-import RouterLoggedIn from './RouterLoggedIn'
+import LoggedInRouter from './routers/LoggedInRouter'
 import { userData, loadUserDataFromStorage } from './lib/user'
+import LoginRouter from './routers/LoginRouter'
 
 export function reloadApp() {
   staticReloadApp()
@@ -29,18 +28,8 @@ function App() {
   }, [loading])
 
   if (loading) return null
-  if (!loggedIn) {
-    return (
-      <Router>
-        <Switch>
-          <Route path="/">
-            <Login />
-          </Route>
-        </Switch>
-      </Router>
-    )
-  }
-  return <RouterLoggedIn />
+
+  return loggedIn ? <LoggedInRouter /> : <LoginRouter />
 }
 
 export default App

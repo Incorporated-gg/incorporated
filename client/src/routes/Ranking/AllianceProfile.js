@@ -83,7 +83,7 @@ export default function Ranking() {
               })}
             </tbody>
           </table>
-          {!userData.has_alliance && <button onClick={createMemberRequest}>Pedir ser miembro</button>}
+          {!userData.alliance && <button onClick={createMemberRequest}>Pedir ser miembro</button>}
         </>
       )}
     </div>

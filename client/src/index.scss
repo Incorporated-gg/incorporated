@@ -10,7 +10,9 @@ body {
   word-break: break-word;
 }
 
-*, :after, :before {
+*,
+:after,
+:before {
   box-sizing: border-box;
 }
 
@@ -28,21 +30,25 @@ button {
   padding: 0.25em 0.75em;
 }
 
-input, textarea {
+input,
+textarea {
   border: 1px solid rgba(0, 0, 0, 0.4);
   background-color: rgba(255, 255, 255, 0.5);
   border-radius: 0.3em;
   padding: 0.2em;
 }
+
 input {
   width: 6em;
 }
+
 textarea {
   width: auto;
 }
 
 table {
   min-width: 100%;
+
   th {
     text-align: left;
   }
@@ -62,10 +68,12 @@ a {
     flex-wrap: wrap;
     padding: 0;
     margin: 0;
-    background-color: rgba(0, 0, 0, 0.2);
+    background-color: rgba(50, 50, 50, 0.3);
+
     li {
       margin: 0;
       flex-grow: 1;
+
       a {
         display: block;
         padding: 0.75em;
@@ -75,8 +83,9 @@ a {
         color: #fff;
         font-size: 0.9em;
         font-weight: normal;
+
         &.active {
-          background-color: #7A7A7A;
+          background-color: rgba(255, 255, 255, 0.3);
         }
       }
     }
@@ -93,12 +102,15 @@ a {
   background-color: rgba(0, 0, 0, 0.5);
   transition: opacity 200ms ease-in-out;
 }
+
 .ReactModal__Overlay--after-open {
   opacity: 1;
 }
+
 .ReactModal__Overlay--before-close {
   opacity: 0;
 }
+
 .ReactModal__Content {
   position: absolute;
   border-radius: 4px;

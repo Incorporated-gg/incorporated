@@ -16,7 +16,7 @@ module.exports = app => {
         id: userData.id,
         username: userData.username,
         email: extraInfo.email,
-        has_alliance: Boolean(userData.alliance),
+        alliance: userData.alliance,
       },
     })
   })

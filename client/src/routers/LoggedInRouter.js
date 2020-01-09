@@ -1,22 +1,24 @@
 import React from 'react'
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
-import Home from './routes/Home/Home'
-import Buildings from './routes/Buildings/Buildings'
-import Research from './routes/Research/Research'
-import Ranking from './routes/Ranking/Router'
-import Alliance from './routes/Alliance/Alliance'
-import Personnel from './routes/Personnel/Personnel'
-import Missions from './routes/Missions/Missions'
-import Messages from './routes/Messages/Messages'
-import DesktopHeader from './components/DesktopHeader'
-import './RouterLoggedIn.scss'
+import Home from '../routes/Home/Home'
+import Buildings from '../routes/Buildings/Buildings'
+import Research from '../routes/Research/Research'
+import Ranking from '../routes/Ranking/Router'
+import Alliance from '../routes/Alliance/Alliance'
+import Personnel from '../routes/Personnel/Personnel'
+import Missions from '../routes/Missions/Missions'
+import Messages from '../routes/Messages/Messages'
+import { Header, Footer } from './HeaderAndFooter'
+import styles from './LoggedIn.module.scss'
+import ScrollToTop from './ScrollToTop'
 
-function RouterLoggedIn() {
+export default function LoggedInRouter() {
   return (
     <Router>
-      <>
-        <DesktopHeader />
-        <div className="loggedin-container">
+      <ScrollToTop />
+      <div className={styles.loggedinContainer}>
+        <Header />
+        <div className={styles.contentContainer}>
           <Switch>
             <Route path="/buildings">
               <Buildings />
@@ -44,9 +46,8 @@ function RouterLoggedIn() {
             </Route>
           </Switch>
         </div>
-      </>
+        <Footer />
+      </div>
     </Router>
   )
 }
-
-export default RouterLoggedIn

@@ -11,6 +11,7 @@ export function get(url, data) {
   return apiFetch('GET', url, data)
 }
 
+let lastApiCallID = null
 function apiFetch(method, url, payload = {}) {
   let body
   let headers = {}
@@ -28,17 +29,19 @@ function apiFetch(method, url, payload = {}) {
         .map(([key, val]) => `${key}=${val}`)
         .join('&')
   }
-  return window.fetch(`${API_URL}${url}`, { method, headers, body }).then(parseApiResponse)
+
+  lastApiCallID = Math.random()
+  return window.fetch(`${API_URL}${url}`, { method, headers, body }).then(res => parseApiResponse(lastApiCallID, res))
 }
 
-async function parseApiResponse(res) {
+async function parseApiResponse(apiCallID, res) {
   const contentType = res.headers.get('content-type')
   const jsonResponse = contentType.startsWith('application/json;') ? await res.json() : await res.text()
 
   if (jsonResponse.error_code === 'invalid_session_id') {
     logout()
   }
-  if (jsonResponse._extra) {
+  if (apiCallID === lastApiCallID && jsonResponse._extra) {
     updateUserData({
       ...jsonResponse._extra,
       // Needed for the internal implementation of Buildings's bank auto update.

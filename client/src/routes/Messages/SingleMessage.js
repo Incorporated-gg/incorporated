@@ -8,6 +8,7 @@ import { Link } from 'react-router-dom'
 import { personnelList } from 'shared-lib/personnelUtils'
 import { researchList } from 'shared-lib/researchUtils'
 import styles from './Messages.module.scss'
+import UserActionLinks from '../../components/UserActionLinks'
 
 SingleMessage.propTypes = {
   message: PropTypes.object.isRequired,
@@ -26,10 +27,79 @@ export default function SingleMessage({ reloadMessagesData, message }) {
   const wasSentToMe = message.receiver && message.receiver.id === userData.id
   const dateFormatted = new Date(message.created_at * 1000).toLocaleString()
 
+  let messageElm
+  try {
+    messageElm = parseMessage(message)
+  } catch (err) {
+    console.error(err)
+    messageElm = (
+      <div>
+        <b>Error al intepretar mensaje</b>: {err.message}
+      </div>
+    )
+  }
+
+  return (
+    <div>
+      {wasSentToMe && message.sender && (
+        <div>
+          {'Enviado por: '}
+          <Username user={message.sender} />
+        </div>
+      )}
+      {!wasSentToMe && message.receiver && (
+        <div>
+          {'Enviado a: '}
+          <Username user={message.receiver} />
+        </div>
+      )}
+      <div>Fecha: {dateFormatted}</div>
+      <br />
+      <div className={styles.messageText}>{messageElm}</div>
+      <br />
+      {wasSentToMe && message.sender && (
+        <button>
+          <Link to={`/messages/new/${message.sender.username}`}>Responder</Link>
+        </button>
+      )}
+      {wasSentToMe && <button onClick={deleteMessage}>Borrar</button>}
+      <hr />
+    </div>
+  )
+}
+
+AttackReportMsg.propTypes = {
+  message: PropTypes.object.isRequired,
+  buildingInfo: PropTypes.object.isRequired,
+}
+function AttackReportMsg({ message, buildingInfo }) {
+  return (
+    <>
+      <div>Resultado: {message.data.result}</div>
+      <div>Saboteadores enviados: {(message.data.surviving_sabots + message.data.sabots_killed).toLocaleString()}</div>
+      <div>Edificio atacado: {buildingInfo.name}</div>
+      <div>Guardias muertos: {message.data.guards_killed.toLocaleString()}</div>
+      <div>Saboteadores muertos: {message.data.sabots_killed.toLocaleString()}</div>
+      <div>Ladrones muertos: {message.data.thiefs_killed && message.data.thiefs_killed.toLocaleString()}</div>
+      <div>Edificios destruidos: {message.data.destroyed_buildings}</div>
+      <div>Dinero ganado por edificios: {message.data.income_for_buildings.toLocaleString()}€</div>
+      <div>Dinero ganado por muertes: {message.data.income_for_troops.toLocaleString()}€</div>
+      <div>Dinero ganado por robo: {message.data.robbed_money && message.data.robbed_money.toLocaleString()}€</div>
+      <div>Beneficios netos: {message.data.attacker_profit.toLocaleString()}€</div>
+    </>
+  )
+}
+
+function parseMessage(message) {
   let messageElm = null
   switch (message.type) {
     case 'private_message':
-      messageElm = <div>{message.data.message}</div>
+      messageElm = (
+        <div>
+          <div>{message.data.message}</div>
+          <UserActionLinks user={message.sender} />
+        </div>
+      )
       break
     case 'monopoly_reward':
       messageElm = (
@@ -55,6 +125,7 @@ export default function SingleMessage({ reloadMessagesData, message }) {
             </div>
           )}
           <AttackReportMsg message={message} buildingInfo={buildingInfo} />
+          <UserActionLinks user={wasIAttacked ? message.data.attacker : message.data.defender} />
         </div>
       )
       break
@@ -64,6 +135,7 @@ export default function SingleMessage({ reloadMessagesData, message }) {
         <div>
           Hemos cazado a {message.data.captured_spies.toLocaleString()} espías de{' '}
           <Username user={message.data.attacker} /> que nos intentaban robar información confidencial!
+          <UserActionLinks user={message.data.attacker} />
         </div>
       )
       break
@@ -117,63 +189,21 @@ export default function SingleMessage({ reloadMessagesData, message }) {
                 </div>
               )}
             </>
-          ) : (
+          ) : message.data.captured_spies === 0 ? (
             <div>No hemos obtenido ninguna información! Tendremos que enviar más espías</div>
+          ) : (
+            <div>No hemos obtenido ninguna información! Nos han capturado a demasiados espías</div>
           )}
+          <UserActionLinks user={message.data.defender} />
         </div>
       )
       break
     default:
-      messageElm = <div>Tipo desconocido</div>
+      messageElm = (
+        <div>
+          <b>Tipo desconocido</b>: {JSON.stringify(message)}
+        </div>
+      )
   }
-
-  return (
-    <div>
-      {wasSentToMe && message.sender && (
-        <div>
-          {'Enviado por: '}
-          <Username user={message.sender} />
-        </div>
-      )}
-      {!wasSentToMe && message.receiver && (
-        <div>
-          {'Enviado a: '}
-          <Username user={message.receiver} />
-        </div>
-      )}
-      <div>Fecha: {dateFormatted}</div>
-      <br />
-      <div className={styles.messageText}>{messageElm}</div>
-      <br />
-      {wasSentToMe && message.sender && (
-        <button>
-          <Link to={`/messages/new/${message.sender.username}`}>Responder</Link>
-        </button>
-      )}
-      {wasSentToMe && <button onClick={deleteMessage}>Borrar</button>}
-      <hr />
-    </div>
-  )
-}
-
-AttackReportMsg.propTypes = {
-  message: PropTypes.object.isRequired,
-  buildingInfo: PropTypes.object.isRequired,
-}
-function AttackReportMsg({ message, buildingInfo }) {
-  return (
-    <>
-      <div>Resultado: {message.data.result}</div>
-      <div>Saboteadores enviados: {(message.data.surviving_sabots + message.data.sabots_killed).toLocaleString()}</div>
-      <div>Edificio atacado: {buildingInfo.name}</div>
-      <div>Guardias muertos: {message.data.guards_killed.toLocaleString()}</div>
-      <div>Saboteadores muertos: {message.data.sabots_killed.toLocaleString()}</div>
-      <div>Ladrones muertos: {message.data.thiefs_killed && message.data.thiefs_killed.toLocaleString()}</div>
-      <div>Edificios destruidos: {message.data.destroyed_buildings}</div>
-      <div>Dinero ganado por edificios: {message.data.income_for_buildings.toLocaleString()}€</div>
-      <div>Dinero ganado por muertes: {message.data.income_for_troops.toLocaleString()}€</div>
-      <div>Dinero ganado por robo: {message.data.robbed_money && message.data.robbed_money.toLocaleString()}€</div>
-      <div>Beneficios netos: {message.data.attacker_profit.toLocaleString()}€</div>
-    </>
-  )
+  return messageElm
 }

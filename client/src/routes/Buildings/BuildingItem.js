@@ -58,7 +58,7 @@ export default function BuildingItem({ buildingID, taxesPercent, activeScreen })
     if (!canBuy) return
     try {
       updateUserData({
-        ...userData,
+        money: userData.money - coste,
         buildings: {
           ...userData.buildings,
           [buildingID]: { ...userData.buildings[buildingID], quantity: buildingCount + 1 },
@@ -78,7 +78,6 @@ export default function BuildingItem({ buildingID, taxesPercent, activeScreen })
     try {
       const extractedMoney = userData.buildings[buildingID].money
       updateUserData({
-        ...userData,
         money: userData.money + extractedMoney,
         buildings: {
           ...userData.buildings,

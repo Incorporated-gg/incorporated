@@ -18,7 +18,7 @@ export default function FinancialData() {
   const totalBuildingsIncome = buildingsIncome.reduce((prev, curr) => prev + curr.income, 0)
 
   // Taxes
-  const taxesPercent = getIncomeTaxes(totalBuildingsIncome, userData.has_alliance)
+  const taxesPercent = getIncomeTaxes(totalBuildingsIncome, userData.alliance)
   const totalTaxes = Math.round(totalBuildingsIncome * taxesPercent)
 
   // Personnel maintenance

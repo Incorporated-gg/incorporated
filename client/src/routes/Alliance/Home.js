@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import Username from '../../components/Username'
 import api from '../../lib/api'
-import { Link } from 'react-router-dom'
+import UserActionLinks from '../../components/UserActionLinks'
 
 AllianceHome.propTypes = {
   alliance: PropTypes.object.isRequired,
@@ -65,9 +65,7 @@ export default function AllianceHome({ alliance, reloadAllianceData }) {
                 </td>
                 <td>{member.user.income.toLocaleString()}€</td>
                 <td>
-                  <p>
-                    <Link to={`/messages/new/${member.user.username}`}>Enviar mensaje</Link>
-                  </p>
+                  <UserActionLinks user={member.user} />
                 </td>
               </tr>
             )

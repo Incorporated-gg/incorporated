@@ -18,7 +18,7 @@ export default function Buildings() {
     return { building_id: buildingInfo.id, name: buildingInfo.name, quantity, income }
   })
   const totalBuildingsIncome = buildingsIncome.reduce((prev, curr) => prev + curr.income, 0)
-  const taxesPercent = getIncomeTaxes(totalBuildingsIncome, userData.has_alliance)
+  const taxesPercent = getIncomeTaxes(totalBuildingsIncome, userData.alliance)
 
   useEffect(() => {
     const interval = setupBuildingsBankUpdater(taxesPercent)

@@ -1,0 +1,83 @@
+.loggedinContainer {
+    width: 100%;
+    flex-grow: 1;
+    align-self: center;
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(to bottom, rgb(140, 122, 122) 0%, rgb(175, 135, 124) 65%, rgb(175, 135, 124) 100%);
+    background-position: center center;
+    background-size: cover;
+    background-attachment: fixed;
+}
+
+.stickyFullwidthBar {
+    position: sticky;
+    left: 0;
+    right: 0;
+    width: 100%;
+    margin: 0 auto;
+    z-index: 1000;
+}
+
+.contentContainer {
+    max-width: 720px;
+    width: 100%;
+    flex-grow: 1;
+    align-self: center;
+    overflow-x: auto;
+}
+
+.desktopHeader {
+    max-width: 720px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.mainMenu {
+    background-color: rgba(45, 45, 45, 0.98);
+    margin: 0 auto;
+    list-style: none;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: 0;
+    max-width: 720px;
+
+    li {
+        margin: 0;
+        flex-grow: 1;
+
+        a {
+            display: block;
+            padding: 1em;
+            max-width: 100%;
+            text-align: center;
+            text-decoration: none;
+            color: #fff;
+            font-size: 0.9em;
+            font-weight: normal;
+
+            &:global(.active) {
+                background-color: rgba(255, 255, 255, 0.3);
+            }
+        }
+    }
+}
+
+.moneyBar {
+    background-color: rgba(45, 45, 45, 0.98);
+    margin: 0 auto;
+    max-width: 720px;
+    font-weight: 600;
+    font-size: 1.2em;
+    padding: 0.5em 1em;
+    color: #fafafa;
+    display: grid;
+    grid-template-columns: 2fr 1fr 2fr;
+    align-items: center;
+    .logoContainer {
+        img {
+            width: 100%;
+        }
+    }
+}
