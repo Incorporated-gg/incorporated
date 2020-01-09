@@ -1,5 +1,6 @@
 const mysql = require('../../lib/mysql')
 const alliances = require('../../lib/db/alliances')
+const { hasActiveMission } = require('../../lib/db/users')
 const personnel = require('../../lib/db/personnel')
 const { calcResourceMax } = require('shared-lib/allianceUtils')
 
@@ -11,9 +12,15 @@ module.exports = app => {
     }
 
     const allianceID = await alliances.getUserAllianceID(req.userData.id)
-    if (!allianceID) return false
+    if (!allianceID) {
+      res.json({ alliance: false })
+      return
+    }
     const basicData = await alliances.getBasicData(allianceID)
-    if (!basicData) return false // Alliance doesn't exist
+    if (!basicData) {
+      res.json({ alliance: false })
+      return
+    }
 
     const [members, researchs, resources, resourcesLog, researchShares] = await Promise.all([
       alliances.getMembers(allianceID),
@@ -137,6 +144,13 @@ module.exports = app => {
     const maxResourceStorage = calcResourceMax(resourceID, allianceResearchs)
     if (allianceResources[resourceID].quantity + resourceAmount > maxResourceStorage) {
       res.status(401).json({ error: 'No caben tantos recursos' })
+      return
+    }
+
+    if (resourceID !== 'money' && (await hasActiveMission(req.userData.id))) {
+      res.status(400).json({
+        error: 'Tienes una misión en curso',
+      })
       return
     }
 

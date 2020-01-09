@@ -123,6 +123,13 @@ async function getMissions(userID) {
   return missions
 }
 
+module.exports.hasActiveMission = hasActiveMission
+async function hasActiveMission(userID) {
+  const [activeMissions] = await mysql.query('SELECT 1 FROM missions WHERE user_id=? AND completed=0', [userID])
+
+  return activeMissions.length > 0
+}
+
 module.exports.sendMessage = sendMessage
 async function sendMessage({ receiverID, senderID, type, data }) {
   const messageCreatedAt = Math.floor(Date.now() / 1000)

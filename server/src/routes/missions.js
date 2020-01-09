@@ -1,5 +1,6 @@
 const mysql = require('../lib/mysql')
-const { getMissions, getPersonnel } = require('../lib/db/users')
+const { getMissions, getPersonnel, hasActiveMission } = require('../lib/db/users')
+const { getUserAllianceID } = require('../lib/db/alliances')
 const { buildingsList } = require('shared-lib/buildingsUtils')
 const { calculateMissionTime } = require('shared-lib/missionsUtils')
 
@@ -50,16 +51,15 @@ module.exports = app => {
       return
     }
 
-    const missions = await getMissions(req.userData.id)
-    if (missions.filter(m => !m.completed).length) {
+    if (await hasActiveMission(req.userData.id)) {
       res.status(400).json({
         error: 'Ya tienes una misión en curso',
       })
       return
     }
 
-    const [[toUser]] = await mysql.query('SELECT id FROM users WHERE username = ?', [req.body.target_user])
-    if (!toUser) {
+    const [[targetUser]] = await mysql.query('SELECT id FROM users WHERE username = ?', [req.body.target_user])
+    if (!targetUser) {
       res.status(400).json({
         error: 'El usuario indicado no existe',
       })
@@ -68,9 +68,9 @@ module.exports = app => {
 
     const missionType = req.body.missionType
 
-    const sentSpies = parseInt(req.body.sent_spies) || undefined
-    const sentSabots = parseInt(req.body.sent_sabots) || undefined
-    const sentThiefs = parseInt(req.body.sent_thiefs) || undefined
+    const sentSpies = parseInt(req.body.sent_spies) || 0
+    const sentSabots = parseInt(req.body.sent_sabots) || 0
+    const sentThiefs = parseInt(req.body.sent_thiefs) || 0
     const targetBuilding = req.body.target_building ? parseInt(req.body.target_building) : undefined
 
     const userPersonnel = await getPersonnel(req.userData.id)
@@ -95,6 +95,14 @@ module.exports = app => {
         if (userPersonnel.thiefs < sentThiefs) {
           res.status(400).json({
             error: 'No tienes suficientes ladrones',
+          })
+          return
+        }
+        const attackedAllianceID = await getUserAllianceID(targetUser.id)
+        const myAllianceID = await getUserAllianceID(req.userData.id)
+        if (attackedAllianceID === myAllianceID) {
+          res.status(400).json({
+            error: 'No puedes atacar a alguien de tu alianza',
           })
           return
         }
@@ -140,15 +148,17 @@ module.exports = app => {
 
     const missionDuration = calculateMissionTime(missionType)
     const tsNow = Math.floor(Date.now() / 1000)
-    const data = JSON.stringify({
-      building: targetBuilding,
-      spies: sentSpies,
-      sabots: sentSabots,
-      thiefs: sentThiefs,
-    })
+    const data = {}
+    if (missionType === 'spy') {
+      data.spies = sentSpies
+    } else if (missionType === 'attack') {
+      data.building = targetBuilding
+      data.sabots = sentSabots
+      data.thiefs = sentThiefs
+    }
     await mysql.query(
       'INSERT INTO missions (user_id, mission_type, data, target_user, started_at, will_finish_at) VALUES (?, ?, ?, ?, ?, ?)',
-      [req.userData.id, missionType, data, toUser.id, tsNow, tsNow + missionDuration]
+      [req.userData.id, missionType, JSON.stringify(data), targetUser.id, tsNow, tsNow + missionDuration]
     )
     res.json({
       success: true,

@@ -28,7 +28,7 @@ export default function Mission() {
     buildingAmount,
     bankResearchLevel: bankResearchLvl,
   })
-  const unprotectedMoney = Math.max(0, storedMoney - maxMoney.maxRobbedPerAttack)
+  const unprotectedMoney = Math.min(Math.max(0, storedMoney - maxMoney.maxSafe), maxMoney.maxRobbedPerAttack)
 
   const simulation = simulateAttack({
     defensorGuards: guards,
