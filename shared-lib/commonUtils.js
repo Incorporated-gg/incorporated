@@ -1,4 +1,4 @@
-const timestampFromEpoch = (epoch = Date.now() / 1000) => {
+const timestampFromEpoch = epoch => {
   epoch *= 1000
   const date = new Date(epoch)
   const d = `${date.getDate()}`.padStart(2, '0')

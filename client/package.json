@@ -11,7 +11,8 @@
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.2.0",
     "react-transition-group": "^4.3.0",
-    "shared-lib": "file:../shared-lib"
+    "shared-lib": "file:../shared-lib",
+    "socket.io-client": "^2.3.0"
   },
   "devDependencies": {
     "eslint": "^6.7.1",

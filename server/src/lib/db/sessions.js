@@ -24,3 +24,9 @@ async function generateSessionID() {
 
   return randomSessionID
 }
+
+module.exports.getUserIDFromSessionID = async sessionID => {
+  if (!sessionID) return
+  const [[{ user_id: userID }]] = await mysql.query('SELECT user_id FROM sessions WHERE id=?', [sessionID])
+  return userID
+}

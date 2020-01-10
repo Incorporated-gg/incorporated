@@ -11,6 +11,7 @@ import Messages from '../routes/Messages/Messages'
 import { Header, Footer } from './HeaderAndFooter'
 import styles from './LoggedIn.module.scss'
 import ScrollToTop from './ScrollToTop'
+import ChatBubble from '../components/ChatBubble'
 
 export default function LoggedInRouter() {
   return (
@@ -48,6 +49,7 @@ export default function LoggedInRouter() {
         </div>
         <Footer />
       </div>
+      <ChatBubble />
     </Router>
   )
 }

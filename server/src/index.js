@@ -1,6 +1,9 @@
 const express = require('express')
 const app = express()
+const server = require('http').Server(app)
+const io = require('socket.io').listen(server)
 const { setupRoutes } = require('./routes')
+const { setupChat } = require('./chat')
 const setupCrons = require('./crons')
 
 require('./express-async-errors-patch')
@@ -34,6 +37,9 @@ require('./auth-middleware')(app)
 // Our routes
 setupRoutes(app)
 
+// Setup chat
+setupChat(io)
+
 // Errors middleware
 app.use(errorHandler)
 function errorHandler(err, req, res, next) {
@@ -41,7 +47,7 @@ function errorHandler(err, req, res, next) {
   res.status(500).json({ error: 'Error 500: Algo salió mal' })
 }
 
-app.listen(3001, () => {
+server.listen(3001, () => {
   console.log('Server listening on port 3001!')
 })
 

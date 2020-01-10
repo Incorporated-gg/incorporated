@@ -1,0 +1,135 @@
+@import '../_variables.scss';
+
+.chatBubble {
+  position: fixed;
+  bottom: 100px;
+  right: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  z-index: 200;
+  
+  @media screen and (min-width: $screen-medium) {
+    bottom: 30px;
+    right: 30px;
+  }
+
+  .chatToggleButton {
+    background-color: lightgray;
+    width: 75px;
+    height: 75px;
+    padding: 15px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    outline: none;
+  }
+
+  .chatWindow {
+    position: fixed;
+    background-color: gray;
+    left: 0;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    transition: opacity 200ms;
+    
+    @media screen and (min-width: $screen-medium) {
+      &:not(.fullScreen) {
+        position: relative;
+        margin-bottom: 15px;
+        width: 400px;
+        height: 400px;
+      }
+    }
+
+    .chatWindowHeader {
+      display: flex;
+      background-color: rgba(0, 0, 0, 0.4);;
+      
+      .chatWindowTitle {
+        padding: 15px;
+        flex: 1 0;
+      }
+      
+      .closeButton,
+      .fullScreenButton {
+        width: 50px;
+        height: auto;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: rgba(0, 0, 0, 0.4);
+        color: white;
+        cursor: pointer;
+
+        &:hover {
+          background-color: #222222;
+        }
+      }
+
+      .fullScreenButton {
+        display: none;
+
+        @media screen and (min-width: $screen-medium) {
+          display: unset;
+        }
+      }
+
+    }
+
+    .chatWindowBody {
+      flex: 1;
+      background-color: lightgray;
+      display: flex;
+      overflow-y: scroll;
+      
+      &.showRoomList {
+        .chatRoomList {
+          position: sticky;
+          top: 0;
+          display: flex;
+        }
+      }
+      .chatRoomList {
+        display: none;
+        background-color: rgba(0, 0, 0, 0.2);
+        flex-direction: column;
+        flex-basis: 150px;
+
+        .chatRoom {
+          padding: 10px;
+          border-bottom: 1px solid #333333;
+        }
+      }
+      
+      .chatMessagesWrapper {
+        padding: 10px;
+        display: flex;
+        flex-direction: column;
+
+        .timeStamp {
+          font-size: 12px;
+          color: gray;
+        }
+      }
+    }
+
+    .chatWindowFooter {
+      display: flex;
+
+      form {
+        display: flex;
+        flex: 1 0;
+
+        .chatTextInput {
+          flex: 1 0;
+          padding: 10px;
+        }
+      }
+    }
+  }
+}

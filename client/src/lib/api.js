@@ -1,8 +1,8 @@
 import { updateUserData, sessionID, logout } from './user'
 
-const API_URL = process.env.NODE_ENV === 'development' ? `http://${window.location.hostname}:3001` : '/api'
+export const API_URL = process.env.NODE_ENV === 'development' ? `http://${window.location.hostname}:3001` : '/api'
 
-export default { get, post }
+export default { get, post, API_URL }
 
 export function post(url, data) {
   return apiFetch('POST', url, data)
