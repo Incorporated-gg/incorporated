@@ -4,7 +4,7 @@ export const API_URL = process.env.NODE_ENV === 'development' ? `http://${window
 export const SERVER_URL =
   process.env.NODE_ENV === 'development'
     ? `http://${window.location.hostname}:3001`
-    : `https://${window.location.hostname}`
+    : `https://${window.location.hostname}/api`
 
 export default { get, post, API_URL }
 
