@@ -1,10 +1,6 @@
 import { updateUserData, sessionID, logout } from './user'
 
 export const API_URL = process.env.NODE_ENV === 'development' ? `http://${window.location.hostname}:3001` : '/api'
-export const SERVER_URL =
-  process.env.NODE_ENV === 'development'
-    ? `http://${window.location.hostname}:3001`
-    : `https://${window.location.hostname}/api`
 
 export default { get, post, API_URL }
 

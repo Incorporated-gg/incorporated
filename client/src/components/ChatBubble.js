@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
-import { SERVER_URL } from '../lib/api'
+import { API_URL } from '../lib/api'
 import { sessionID } from '../lib/user'
 import Username from './Username'
 import { timestampFromEpoch } from 'shared-lib/commonUtils'
@@ -48,7 +48,8 @@ export default function ChatBubble() {
   }, [])
 
   useEffect(() => {
-    client.current = io(SERVER_URL, {
+    client.current = io(API_URL, {
+      path: process.env.NODE_ENV === 'development' ? '' : '/api/socket.io',
       query: {
         sessionID,
       },
