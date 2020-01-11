@@ -2,6 +2,23 @@ version: '3'
 
 services:
 
+  nginx-proxy:
+    image: jwilder/nginx-proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - backend
+      - default
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - ./nginx-conf/logs:/var/log/nginx:rw
+      - ./nginx-conf/vhost.d:/etc/nginx/vhost.d
+      - ./nginx-conf/conf.d/dev:/etc/nginx/conf.d
+      - ./nginx-conf/certs:/etc/nginx/certs:rw
+    environment:
+      - DEFAULT_HOST=incorporated.local
+
   client:
     build: ./client
     networks:

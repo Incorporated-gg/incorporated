@@ -49,7 +49,7 @@ export default function ChatBubble() {
 
   useEffect(() => {
     client.current = io(API_URL, {
-      path: process.env.NODE_ENV === 'development' ? '' : '/api/socket.io',
+      path: '/api/socket.io',
       query: {
         sessionID,
       },
@@ -132,7 +132,7 @@ export default function ChatBubble() {
             <button type="button" onClick={() => setIsSelectingRoom(!isSelectingRoom)}>
               ☰ Salas
             </button>
-            <h3 className="chatWindowTitle">Chat ({currentRoom.name})</h3>
+            <h3 className="chatWindowTitle">Chat ({currentRoom && currentRoom.name})</h3>
             <button type="button" className="fullScreenButton" onClick={() => setIsFullscreen(!isFullscreen)}>
               <span>+</span>
             </button>
