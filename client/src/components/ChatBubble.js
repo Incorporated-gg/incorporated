@@ -62,7 +62,10 @@ export default function ChatBubble() {
         }
         return originalList.map(list => {
           if (list.room === room) {
-            list.messagesArray = Array.prototype.concat(list.messagesArray, messagesArray)
+            const filteredMessages = messagesArray.filter(
+              message => !list.messagesArray.find(m => m.id === message.id && m.date < message.date)
+            )
+            list.messagesArray = Array.prototype.concat(list.messagesArray, filteredMessages)
           }
           return list
         })
