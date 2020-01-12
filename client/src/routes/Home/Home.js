@@ -1,6 +1,11 @@
-import React from 'react'
-import FinancialData from './FinancialData'
+import { useEffect } from 'react'
+import { useHistory } from 'react-router-dom'
 
 export default function Home() {
-  return <FinancialData />
+  const history = useHistory()
+
+  useEffect(() => {
+    history.push('/buildings')
+  }, [history])
+  return null
 }

@@ -4,7 +4,7 @@ import { Switch, Route, NavLink } from 'react-router-dom'
 import api from '../../lib/api'
 import Monopolies from './Monopolies'
 import Ranking from './Ranking'
-import UserProfile from './UserProfile'
+import UserProfile from './UserProfile/UserProfile'
 import AllianceProfile from './AllianceProfile'
 import Contest from './Contest'
 

@@ -42,6 +42,11 @@ setupRoutes(app)
 // Setup chat
 setupChat(io)
 
+// 404
+app.all('*', function(req, res) {
+  res.status(404).json({ error: '404 Not Found' })
+})
+
 // Errors middleware
 app.use(errorHandler)
 function errorHandler(err, req, res, next) {

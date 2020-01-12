@@ -1,5 +1,10 @@
 import React from 'react'
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
+import { Header, Footer } from './HeaderAndFooter'
+import styles from './LoggedIn.module.scss'
+import ScrollToTop from './ScrollToTop'
+import ChatBubble from '../components/ChatBubble'
+
 import Home from '../routes/Home/Home'
 import Buildings from '../routes/Buildings/Buildings'
 import Research from '../routes/Research/Research'
@@ -8,10 +13,7 @@ import Alliance from '../routes/Alliance/Alliance'
 import Personnel from '../routes/Personnel/Personnel'
 import Missions from '../routes/Missions/Missions'
 import Messages from '../routes/Messages/Messages'
-import { Header, Footer } from './HeaderAndFooter'
-import styles from './LoggedIn.module.scss'
-import ScrollToTop from './ScrollToTop'
-import ChatBubble from '../components/ChatBubble'
+import Settings from '../routes/Settings/Settings'
 
 export default function LoggedInRouter() {
   return (
@@ -41,6 +43,9 @@ export default function LoggedInRouter() {
             </Route>
             <Route path="/missions/:missionType?/:username?">
               <Missions />
+            </Route>
+            <Route path="/settings">
+              <Settings />
             </Route>
             <Route path="/">
               <Home />

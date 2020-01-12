@@ -40,11 +40,6 @@ function Menu({ className, style }) {
   return (
     <ul style={style} className={className}>
       <li>
-        <NavLink to="/" exact>
-          Home
-        </NavLink>
-      </li>
-      <li>
         <NavLink to="/personnel">Personal</NavLink>
       </li>
       <li>
@@ -65,6 +60,11 @@ function Menu({ className, style }) {
       <li>
         <NavLink to="/messages">
           Mensajes <MessagesUnreadLabel />
+        </NavLink>
+      </li>
+      <li>
+        <NavLink to="/settings" exact>
+          Opciones
         </NavLink>
       </li>
     </ul>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import LoggedInRouter from './routers/LoggedInRouter'
 import { userData, loadUserDataFromStorage } from './lib/user'
 import LoginRouter from './routers/LoginRouter'
+import ErrorBoundary from './components/ErrorBoundary'
 
 export function reloadApp() {
   staticReloadApp()
@@ -29,7 +30,7 @@ function App() {
 
   if (loading) return null
 
-  return loggedIn ? <LoggedInRouter /> : <LoginRouter />
+  return <ErrorBoundary>{loggedIn ? <LoggedInRouter /> : <LoginRouter />}</ErrorBoundary>
 }
 
 export default App

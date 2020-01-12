@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import api from '../../lib/api'
 import Username from '../../components/Username'
-import UserActionLinks from '../../components/UserActionLinks'
 import { Link, useLocation } from 'react-router-dom'
+import styles from './Ranking.module.scss'
 
 export default function Ranking() {
   const [ranking, setRanking] = useState([])
@@ -20,51 +20,29 @@ export default function Ranking() {
       .catch(err => setError(err.message))
   }, [type])
 
+  if (error) return <h4>{error}</h4>
+
   return (
-    <div>
-      <h2>Ranking</h2>
-      {error && <h4>{error}</h4>}
-      <table>
-        <thead>
-          <tr>
-            <th>Posición</th>
-            <th>Nombre</th>
-            <th>{type === 'income' ? 'Ingresos diarios' : 'Puntos'}</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          {ranking.length ? (
-            ranking.map(rankItem => (
-              <tr key={rankItem.rank}>
-                <td>{rankItem.rank.toLocaleString()}</td>
-                <td>
-                  {rankItem.user && <Username user={rankItem.user} />}
-                  {rankItem.alliance && (
-                    <span>
-                      {rankItem.alliance.long_name} ({rankItem.alliance.short_name})
-                    </span>
-                  )}
-                </td>
-                <td>
-                  {rankItem.points.toLocaleString()}
-                  {type === 'income' ? '€' : ''}
-                </td>
-                <td>
-                  {rankItem.user && <UserActionLinks user={rankItem.user} />}{' '}
-                  {rankItem.alliance && (
-                    <Link to={`/ranking/alliance/${rankItem.alliance.short_name}`}>Ver perfil</Link>
-                  )}
-                </td>
-              </tr>
-            ))
-          ) : (
-            <tr>
-              <td>No users found</td>
-            </tr>
-          )}
-        </tbody>
-      </table>
+    <div className={styles.rankingContainer}>
+      {ranking.map(rankItem => (
+        <div
+          key={rankItem.user ? rankItem.user.id : rankItem.alliance ? rankItem.alliance.id : Math.random()}
+          className={styles.rankingItem}>
+          <div className={`${styles.rankPosition} pos${rankItem.rank}`}>{rankItem.rank.toLocaleString()}</div>
+          <div className={styles.username}>
+            {rankItem.user && <Username user={rankItem.user} />}
+            {rankItem.alliance && (
+              <Link to={`/ranking/alliance/${rankItem.alliance.short_name}`}>
+                {rankItem.alliance.long_name} ({rankItem.alliance.short_name})
+              </Link>
+            )}
+          </div>
+          <div className={styles.points}>
+            {rankItem.points.toLocaleString()}
+            {type === 'income' ? '€' : ''}
+          </div>
+        </div>
+      ))}
     </div>
   )
 }

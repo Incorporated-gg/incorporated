@@ -1,17 +1,13 @@
 {
   "name": "server",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
   "scripts": {
-    "start": "NODE_ENV=dev nodemon index.js",
-    "migrate": "npx db-migrate up --config migrations/database.json",
-    "undo_migration": "npx db-migrate down --config migrations/database.json",
+    "start": "nodemon -L index.js",
+    "migrate_prod": "npx db-migrate up --config migrations/database_prod.json",
+    "migrate_dev_docker": "npx db-migrate up --config migrations/database_dev_docker.json",
+    "undo_migration_dev_docker": "npx db-migrate down --config migrations/database_dev_docker.json",
     "test": "npx jest"
   },
-  "keywords": [],
-  "author": "",
-  "license": "MIT",
+  "private": true,
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
