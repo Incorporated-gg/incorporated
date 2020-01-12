@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import api from '../../lib/api'
 import PropTypes from 'prop-types'
 import { CREATE_ALLIANCE_PRICE } from 'shared-lib/allianceUtils'
+import { reloadUserData } from '../../lib/user'
 
 CreateAlliance.propTypes = {
   reloadAllianceData: PropTypes.func.isRequired,
@@ -21,6 +22,7 @@ export default function CreateAlliance({ reloadAllianceData }) {
       })
       .then(res => {
         reloadAllianceData()
+        reloadUserData()
       })
       .catch(err => {
         alert(err.message)

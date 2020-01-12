@@ -5,6 +5,7 @@ import { useParams } from 'react-router-dom'
 import { personnelList } from 'shared-lib/personnelUtils'
 import { calculateMissionTime } from 'shared-lib/missionsUtils'
 import PropTypes from 'prop-types'
+import styles from './Missions.module.scss'
 
 Mission.propTypes = {
   reloadMissionsCallback: PropTypes.func.isRequired,
@@ -46,7 +47,7 @@ export default function Mission({ reloadMissionsCallback }) {
   const missionSeconds = calculateMissionTime('spy')
 
   return (
-    <form className="startNewMission">
+    <form className={styles.startNewMission}>
       <div>
         <label>
           Usuario a espiar

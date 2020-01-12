@@ -6,6 +6,7 @@ import { buildingsList } from 'shared-lib/buildingsUtils'
 import { personnelList } from 'shared-lib/personnelUtils'
 import { calculateMissionTime } from 'shared-lib/missionsUtils'
 import PropTypes from 'prop-types'
+import styles from './Missions.module.scss'
 
 Mission.propTypes = {
   reloadMissionsCallback: PropTypes.func.isRequired,
@@ -47,7 +48,7 @@ export default function Mission({ reloadMissionsCallback }) {
   const missionSeconds = calculateMissionTime('attack')
 
   return (
-    <form className="startNewMission">
+    <form className={styles.startNewMission}>
       <div>
         <label>
           Usuario a atacar

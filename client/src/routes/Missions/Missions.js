@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { Switch, Route, NavLink } from 'react-router-dom'
 import api from '../../lib/api'
-import './Missions.scss'
 import Mission from './Mission'
 import MissionRow from './MissionRow'
+import styles from './Missions.module.scss'
 
 export default function Missions() {
   const [missions, setMissions] = useState([])
@@ -40,54 +40,58 @@ export default function Missions() {
           <Mission reloadMissionsCallback={reloadMissionsCallback} />
         </Route>
       </Switch>
-      <h2>Active missions</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Tipo de misión</th>
-            <th>Usuario objetivo</th>
-            <th>Tropas enviadas</th>
-            <th>Edificio objetivo</th>
-            <th>Fecha de finalización</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          {activeMissions.length ? (
-            activeMissions.map((mission, i) => (
-              <MissionRow key={i} mission={mission} reloadMissionsCallback={reloadMissionsCallback} />
-            ))
-          ) : (
+
+      <div className={styles.container}>
+        <h2>Active missions</h2>
+        <table>
+          <thead>
             <tr>
-              <td colSpan="3">No hay misiones activas</td>
+              <th>Tipo de misión</th>
+              <th>Usuario objetivo</th>
+              <th>Tropas enviadas</th>
+              <th>Edificio objetivo</th>
+              <th>Fecha de finalización</th>
+              <th>Acciones</th>
             </tr>
-          )}
-        </tbody>
-      </table>
-      <hr />
-      <h2>Completed missions</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Tipo de misión</th>
-            <th>Usuario objetivo</th>
-            <th>Fecha</th>
-            <th>Resultado</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          {missions.filter(m => m.completed).length ? (
-            missions
-              .filter(m => m.completed)
-              .map((m, i) => <MissionRow key={i} mission={m} reloadMissionsCallback={reloadMissionsCallback} />)
-          ) : (
+          </thead>
+          <tbody>
+            {activeMissions.length ? (
+              activeMissions.map((mission, i) => (
+                <MissionRow key={i} mission={mission} reloadMissionsCallback={reloadMissionsCallback} />
+              ))
+            ) : (
+              <tr>
+                <td colSpan="3">No hay misiones activas</td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+      <div className={styles.container}>
+        <h2>Completed missions</h2>
+        <table>
+          <thead>
             <tr>
-              <td colSpan="3">No has realizado ninguna misión todavía</td>
+              <th>Tipo de misión</th>
+              <th>Usuario objetivo</th>
+              <th>Fecha</th>
+              <th>Resultado</th>
+              <th>Acciones</th>
             </tr>
-          )}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {missions.filter(m => m.completed).length ? (
+              missions
+                .filter(m => m.completed)
+                .map((m, i) => <MissionRow key={i} mission={m} reloadMissionsCallback={reloadMissionsCallback} />)
+            ) : (
+              <tr>
+                <td colSpan="3">No has realizado ninguna misión todavía</td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
   )
 }

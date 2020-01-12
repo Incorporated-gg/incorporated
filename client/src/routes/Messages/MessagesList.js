@@ -7,11 +7,11 @@ MessagesList.propTypes = {
   type: PropTypes.string.isRequired,
 }
 export default function MessagesList({ type }) {
-  const [messages, setMessages] = useState([])
+  const [messages, setMessages] = useState()
   const [error, setError] = useState(false)
 
   const reloadMessagesData = useCallback(() => {
-    setMessages([])
+    setMessages()
     api
       .get('/v1/messages', { type })
       .then(res => {
@@ -23,13 +23,12 @@ export default function MessagesList({ type }) {
   useEffect(() => {
     reloadMessagesData()
   }, [reloadMessagesData])
-  return (
-    <>
-      {error && <h4>{error}</h4>}
-      {messages.length === 0 && <h4>No hay mensajes</h4>}
-      {messages.map(message => (
-        <SingleMessage key={message.id} message={message} reloadMessagesData={reloadMessagesData} />
-      ))}
-    </>
-  )
+
+  if (error) return <h4>{error}</h4>
+  if (!messages) return <div>Cargando</div>
+  if (messages.length === 0) return <div>No hay mensajes</div>
+
+  return messages.map(message => (
+    <SingleMessage key={message.id} message={message} reloadMessagesData={reloadMessagesData} />
+  ))
 }

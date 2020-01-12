@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useUserData } from '../../lib/user'
 import { buildingsList, calcBuildingMaxMoney } from 'shared-lib/buildingsUtils'
 import { calculateMissionTime, simulateAttack } from 'shared-lib/missionsUtils'
+import styles from './Missions.module.scss'
 
 Mission.propTypes = {}
 export default function Mission() {
@@ -43,7 +44,7 @@ export default function Mission() {
   })
 
   return (
-    <form className="startNewMission">
+    <form className={styles.startNewMission}>
       <div>
         <label>
           Saboteadores

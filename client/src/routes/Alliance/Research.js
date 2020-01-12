@@ -1,11 +1,12 @@
 import React, { useState } from 'react'
 import api from '../../lib/api'
 import PropTypes from 'prop-types'
-const {
+import styles from './Research.module.scss'
+import {
   RESEARCHS_LIST,
   calcResourceGenerationByResearchID,
   calcResourceMaxByResearchID,
-} = require('shared-lib/allianceUtils')
+} from 'shared-lib/allianceUtils'
 
 AllianceResearch.propTypes = {
   alliance: PropTypes.object.isRequired,
@@ -31,9 +32,10 @@ export default function AllianceResearch({ alliance, reloadAllianceData }) {
           )
         })}
       </div>
+      <br />
       <div>
         <h2>Aportes</h2>
-        <img style={{ width: '100%' }} src={chartImgUrl} alt="" />
+        <img className={styles.aportesImg} src={chartImgUrl} alt="" />
       </div>
     </>
   )

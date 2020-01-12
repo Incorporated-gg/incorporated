@@ -5,7 +5,7 @@ import api from '../../lib/api'
 import Monopolies from './Monopolies'
 import Ranking from './Ranking'
 import UserProfile from './UserProfile/UserProfile'
-import AllianceProfile from './AllianceProfile'
+import AllianceProfile from './AllianceProfile/AllianceProfile'
 import Contest from './Contest'
 
 export default function RankingRouter() {

@@ -40,7 +40,7 @@ export default function SingleMessage({ reloadMessagesData, message }) {
   }
 
   return (
-    <div>
+    <div className={styles.messageContainer}>
       {wasSentToMe && message.sender && (
         <div>
           {'Enviado por: '}
@@ -63,7 +63,6 @@ export default function SingleMessage({ reloadMessagesData, message }) {
         </button>
       )}
       {wasSentToMe && <button onClick={deleteMessage}>Borrar</button>}
-      <hr />
     </div>
   )
 }
