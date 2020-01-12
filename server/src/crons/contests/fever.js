@@ -21,23 +21,15 @@ const shouldEndContest = () => {
 }
 
 // Callback to be executed when the contest starts
-const contestStart = () => {
-  console.log(`[INFO] Contest ${contestName} has started`)
-}
+const contestStart = () => {}
 
 // Callback to be executed every time the contests cron gets called
-const contestDidUpdate = () => {
-  console.log(`[INFO] Contest ${contestName} has been updated`)
-}
+const contestDidUpdate = () => {}
 
-const contestWillUpdate = () => {
-  console.log(`[INFO] Contest ${contestName} will be updated`)
-}
+const contestWillUpdate = () => {}
 
 // Callback to be executed once the contest ends
-const contestEnd = () => {
-  console.log(`[INFO] Contest ${contestName} has ended`)
-}
+const contestEnd = () => {}
 
 // Has to return an array of objects containing { score, user_id }
 const getScoreboard = async startDate => {

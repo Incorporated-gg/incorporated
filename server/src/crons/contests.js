@@ -35,11 +35,9 @@ const updateOngoingContest = async contest => {
     const previousUserRecord = previousScoreboard.find(row => row.user_id === scoreboardRow.user_id)
     if (previousUserRecord) {
       if (previousUserRecord.score === scoreboardRow.score && previousUserRecord.rank === scoreboardRow.rank) {
-        console.log(`User ${scoreboardRow.user_id} hasn't changed for contest ${contest.contestName}`)
         return
       }
       // The user stays in the scoreboards
-      console.log(`Updating user ${scoreboardRow.user_id} in contest ${contest.contestName} scoreboards`)
       await mysql.query('UPDATE contests_scoreboards SET score = ?, rank = ? WHERE user_id = ? AND contest_id = ?', [
         scoreboardRow.score,
         scoreboardRow.rank,
@@ -48,7 +46,6 @@ const updateOngoingContest = async contest => {
       ])
     } else {
       // The user has entered the scoreboards
-      console.log(`Adding new user ${scoreboardRow.user_id} to contest ${contest.contestName} scoreboards`)
       await mysql.query('INSERT INTO contests_scoreboards (contest_id, user_id, score, rank) VALUES (?, ?, ?, ?)', [
         contest.id,
         scoreboardRow.user_id,
@@ -62,7 +59,6 @@ const updateOngoingContest = async contest => {
     oldRow => !newScoreboard.find(newRow => newRow.user_id === oldRow.user_id)
   )
   staleRows.forEach(async staleRow => {
-    console.log(`Removing stale user ${staleRow.user_id} from contest ${contest.contestName} scoreboards`)
     await mysql.query('DELETE FROM contests_scoreboards WHERE contest_id = ? AND user_id = ?', [
       contest.id,
       staleRow.user_id,
