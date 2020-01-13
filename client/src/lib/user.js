@@ -6,21 +6,16 @@ import { reloadApp } from '../App'
 export let sessionID = null
 export let userData = null
 
-async function refreshUserDataFromAPI() {
-  const userDataFromAPI = await api.get('/v1/my_data')
-  userData = Object.assign(userDataFromAPI.user_data, userDataFromAPI._extra)
-}
-
 export async function userLoggedIn(newSessionID) {
   sessionID = newSessionID
   await asyncStorage.setItem('session_id', sessionID)
-  await refreshUserDataFromAPI()
-  fireUserDataListeners()
+  await reloadUserData()
   reloadApp()
 }
 
 export async function reloadUserData() {
-  await refreshUserDataFromAPI()
+  const userDataFromAPI = await api.get('/v1/my_data')
+  userData = Object.assign(userDataFromAPI.user_data, userDataFromAPI._extra)
   fireUserDataListeners()
 }
 
@@ -33,10 +28,7 @@ export async function logout() {
 
 export async function loadUserDataFromStorage() {
   sessionID = await asyncStorage.getItem('session_id', null)
-  if (sessionID) {
-    await refreshUserDataFromAPI()
-    fireUserDataListeners()
-  }
+  if (sessionID) await reloadUserData()
 }
 
 export function updateUserData(newData) {

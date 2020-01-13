@@ -1,5 +1,4 @@
 const mysql = require('../lib/mysql')
-const users = require('../lib/db/users')
 const { researchList, calcResearchPrice } = require('shared-lib/researchUtils')
 
 module.exports = app => {
@@ -21,23 +20,22 @@ module.exports = app => {
       return
     }
 
-    const researchs = await users.getResearchs(req.userData.id)
-
-    const price = calcResearchPrice(researchID, researchs[researchID])
+    const price = calcResearchPrice(researchID, req.userData.researchs[researchID])
     if (price > req.userData.money) {
       res.status(400).json({ error: 'No tienes suficiente dinero' })
       return
     }
 
-    req.userData.money -= price
     await mysql.query('UPDATE users SET money=money-? WHERE id=?', [price, req.userData.id])
+    req.userData.money -= price
 
-    const researchRowExists = researchs[researchID] !== 1
+    const researchRowExists = req.userData.researchs[researchID] !== 1
     if (!researchRowExists) {
       await mysql.query('INSERT INTO research (user_id, id, level) VALUES (?, ?, ?)', [req.userData.id, researchID, 2])
     } else {
       await mysql.query('UPDATE research SET level=level+? WHERE user_id=? and id=?', [1, req.userData.id, researchID])
     }
+    req.userData.researchs[researchID] += 1
 
     res.json({
       success: true,

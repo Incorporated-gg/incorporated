@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback, useMemo } from 'react'
 import {
   calcBuildingPrice,
   calcBuildingDailyIncome,
@@ -6,10 +6,12 @@ import {
   calcBuildingMaxMoney,
 } from 'shared-lib/buildingsUtils'
 import PropTypes from 'prop-types'
-import { useUserData, updateUserData } from '../../lib/user'
+import { userData as userDataRaw, useUserData, updateUserData } from '../../lib/user'
 import api from '../../lib/api'
 import Card, { Stat } from '../../components/Card'
 import cardStyles from '../../components/Card.module.scss'
+import { buyBuilding } from './buyBuilding'
+import useHoldPress from '../../lib/useHoldPress'
 
 const buildingImages = {
   1: require('./img/b1.png'),
@@ -47,57 +49,13 @@ export default function BuildingItem({ buildingID, taxesPercent, activeScreen })
   const buildingCount = userData.buildings[buildingID].quantity
   const coste = calcBuildingPrice(buildingID, buildingCount)
   const income = calcBuildingDailyIncome(buildingID, 1, userData.researchs[5]) * (1 - taxesPercent)
-  const timeToRecoverInvestment = (Math.round((coste / income) * 10) / 10).toLocaleString()
 
   const currentOptimizeLvl = userData.researchs[5]
   const hasEnoughOptimizeLvl = currentOptimizeLvl >= buildingInfo.requiredOptimizeResearchLevel
-  const canAfford = userData.money > coste
-  const canBuy = hasEnoughOptimizeLvl && canAfford
-
-  const buyBuilding = async () => {
-    if (!canBuy) return
-    try {
-      updateUserData({
-        money: userData.money - coste,
-        buildings: {
-          ...userData.buildings,
-          [buildingID]: { ...userData.buildings[buildingID], quantity: buildingCount + 1 },
-        },
-      })
-      await api.post('/v1/buildings/buy', { building_id: buildingID, count: 1 })
-    } catch (e) {
-      alert(e.message)
-    }
-  }
 
   let desc = buildingDescriptions[buildingID]
   if (!hasEnoughOptimizeLvl)
     desc = `${desc}\nNecesitas oficina central nivel ${buildingInfo.requiredOptimizeResearchLevel}.`
-
-  const onExtractMoney = async () => {
-    try {
-      const extractedMoney = userData.buildings[buildingID].money
-      updateUserData({
-        money: userData.money + extractedMoney,
-        buildings: {
-          ...userData.buildings,
-          [buildingID]: { ...userData.buildings[buildingID], money: 0 },
-        },
-      })
-      await api.post('/v1/buildings/extract_money', { building_id: buildingID })
-    } catch (e) {
-      alert(e.message)
-    }
-  }
-
-  const accumulatedMoney = userData.buildings[buildingID].money
-
-  const maxMoney = calcBuildingMaxMoney({
-    buildingID: buildingID,
-    buildingAmount: buildingCount,
-    bankResearchLevel: userData.researchs[4],
-  })
-  const moneyClassName = `${accumulatedMoney > maxMoney.maxSafe ? cardStyles.unsafe : ''}`
 
   return (
     <Card
@@ -107,45 +65,108 @@ export default function BuildingItem({ buildingID, taxesPercent, activeScreen })
       desc={desc}
       accentColor={buildingAccentColors[buildingID]}>
       {activeScreen === 'buy' && (
-        <>
-          <Stat img={require('./img/stat-price.png')} title={'Coste'} value={`${coste.toLocaleString()}€`} />
-          <Stat img={require('./img/stat-pri.png')} title={'PRI'} value={`${timeToRecoverInvestment} días`} />
-
-          <button
-            className={cardStyles.button}
-            onClick={buyBuilding}
-            disabled={!canBuy}
-            style={{ color: buildingAccentColors[buildingID] }}>
-            COMPRAR
-          </button>
-        </>
+        <BuyScreen buildingID={buildingID} income={income} coste={coste} hasEnoughOptimizeLvl={hasEnoughOptimizeLvl} />
       )}
-      {activeScreen === 'bank' && (
-        <>
-          <Stat
-            img={require('./img/stat-income.png')}
-            title={'Bºs / día'}
-            value={`${Math.round(income * buildingCount).toLocaleString()}€`}
-          />
-          <Stat
-            img={require('./img/stat-price.png')}
-            title={'Banco'}
-            value={
-              <>
-                <span className={moneyClassName}>{Math.floor(accumulatedMoney).toLocaleString()}€</span>
-                <span> / </span>
-                <span>{maxMoney.maxTotal.toLocaleString()}€</span>
-              </>
-            }
-          />
-          <button
-            className={cardStyles.button}
-            onClick={onExtractMoney}
-            style={{ color: buildingAccentColors[buildingID] }}>
-            SACAR
-          </button>
-        </>
-      )}
+      {activeScreen === 'bank' && <ExtractScreen buildingID={buildingID} income={income} />}
     </Card>
+  )
+}
+
+BuyScreen.propTypes = {
+  buildingID: PropTypes.number.isRequired,
+  coste: PropTypes.number.isRequired,
+  income: PropTypes.number.isRequired,
+  hasEnoughOptimizeLvl: PropTypes.bool.isRequired,
+}
+function BuyScreen({ buildingID, coste, income, hasEnoughOptimizeLvl }) {
+  const canAfford = userDataRaw.money > coste
+  const canBuy = hasEnoughOptimizeLvl && canAfford
+
+  const timeToRecoverInvestment = (Math.round((coste / income) * 10) / 10).toLocaleString()
+
+  const onBuyBuildingPressed = useCallback(() => buyBuilding(buildingID), [buildingID])
+  const buyHoldPress = useHoldPress({
+    callback: onBuyBuildingPressed,
+    rampUpMs: 2500,
+    initialMs: 600,
+    endMs: 100,
+  })
+
+  return (
+    <>
+      <Stat img={require('./img/stat-price.png')} title={'Coste'} value={`${coste.toLocaleString()}€`} />
+      <Stat img={require('./img/stat-pri.png')} title={'PRI'} value={`${timeToRecoverInvestment} días`} />
+
+      <button
+        {...buyHoldPress}
+        className={cardStyles.button}
+        disabled={!canBuy}
+        style={{ color: buildingAccentColors[buildingID] }}>
+        COMPRAR
+      </button>
+    </>
+  )
+}
+
+ExtractScreen.propTypes = {
+  buildingID: PropTypes.number.isRequired,
+  income: PropTypes.number.isRequired,
+}
+function ExtractScreen({ buildingID, income }) {
+  const buildingCount = userDataRaw.buildings[buildingID].quantity
+  const accumulatedMoney = userDataRaw.buildings[buildingID].money
+
+  const maxMoney = useMemo(
+    () =>
+      calcBuildingMaxMoney({
+        buildingID: buildingID,
+        buildingAmount: buildingCount,
+        bankResearchLevel: userDataRaw.researchs[4],
+      }),
+    [buildingID, buildingCount]
+  )
+  const moneyClassName = `${accumulatedMoney > maxMoney.maxSafe ? cardStyles.unsafe : ''}`
+
+  const onExtractMoney = useCallback(async () => {
+    try {
+      const extractedMoney = userDataRaw.buildings[buildingID].money
+      updateUserData({
+        money: userDataRaw.money + extractedMoney,
+        buildings: {
+          ...userDataRaw.buildings,
+          [buildingID]: { ...userDataRaw.buildings[buildingID], money: 0 },
+        },
+      })
+      await api.post('/v1/buildings/extract_money', { building_id: buildingID })
+    } catch (e) {
+      alert(e.message)
+    }
+  }, [buildingID])
+
+  return (
+    <>
+      <Stat
+        img={require('./img/stat-income.png')}
+        title={'Bºs / día'}
+        value={`${Math.round(income * buildingCount).toLocaleString()}€`}
+      />
+      <Stat
+        img={require('./img/stat-price.png')}
+        title={'Banco'}
+        value={
+          <>
+            <span className={moneyClassName}>{Math.floor(accumulatedMoney).toLocaleString()}€</span>
+            <span> / </span>
+            <span>{maxMoney.maxTotal.toLocaleString()}€</span>
+          </>
+        }
+      />
+      <button
+        className={cardStyles.button}
+        onClick={onExtractMoney}
+        style={{ color: buildingAccentColors[buildingID] }}>
+        SACAR
+      </button>
+    </>
   )
 }
