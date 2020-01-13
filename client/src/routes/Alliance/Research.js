@@ -61,29 +61,35 @@ function SingleResearch({ researchData, reloadAllianceData }) {
       })
   }
 
-  const isResourceGenerator = Boolean(researchData.id % 2)
-  const isResourceBank = !isResourceGenerator
-
   return (
     <div>
       <p>
         {researchInfo.name} <b>(Lvl {researchData.level})</b>
       </p>
       <p>
-        {researchData.progress_money.toLocaleString()} / {researchData.price.toLocaleString()}
+        {researchData.progress_money.toLocaleString()}€ / {researchData.price.toLocaleString()}€
       </p>
-      {isResourceGenerator && (
-        <p>
-          Genera {calcResourceGenerationByResearchID(researchData.id, researchData.level).toLocaleString()} al día, al
-          mejorarla generará{' '}
-          {calcResourceGenerationByResearchID(researchData.id, researchData.level + 1).toLocaleString()} al día
-        </p>
+      {researchInfo.type === 'resource' && (
+        <>
+          <p>
+            Genera {calcResourceGenerationByResearchID(researchData.id, researchData.level).toLocaleString()} al día, al
+            mejorarla generará{' '}
+            {calcResourceGenerationByResearchID(researchData.id, researchData.level + 1).toLocaleString()} al día
+          </p>
+          <p>
+            Almacena {calcResourceMaxByResearchID(researchData.id, researchData.level).toLocaleString()}, al mejorarla
+            almacenará {calcResourceMaxByResearchID(researchData.id, researchData.level + 1).toLocaleString()}
+          </p>
+        </>
       )}
-      {isResourceBank && (
-        <p>
-          Almacena {calcResourceMaxByResearchID(researchData.id, researchData.level).toLocaleString()}, al mejorarla
-          almacenará {calcResourceMaxByResearchID(researchData.id, researchData.level + 1).toLocaleString()}
-        </p>
+      {researchInfo.type === 'buff' && (
+        <>
+          <p>
+            Da {researchData.level + 1} niveles de investigación a todos los miembros de la alianza mientras está
+            activa.
+          </p>
+          <p>Se puede activar durante 1h y tiene un cooldown de 2 días.</p>
+        </>
       )}
       <form>
         <input type="number" value={amount} onChange={e => setAmount(e.target.value)} />

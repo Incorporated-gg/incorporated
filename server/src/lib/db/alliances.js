@@ -211,3 +211,44 @@ async function getResearchShares(allianceID) {
   )
   return researchShares
 }
+
+module.exports.getBuffsData = getBuffsData
+async function getBuffsData(allianceID) {
+  const [
+    [buffsLastUsed],
+  ] = await mysql.query('SELECT buff_attack_last_used, buff_defense_last_used FROM alliances WHERE id=?', [allianceID])
+
+  const now = Math.floor(Date.now() / 1000)
+
+  return {
+    attack: {
+      active: now - buffsLastUsed.buff_attack_last_used < 60 * 60 * 2,
+      can_activate: now - buffsLastUsed.buff_attack_last_used > 60 * 60 * 24 * 2,
+      last_used: buffsLastUsed.buff_attack_last_used,
+    },
+    defense: {
+      active: now - buffsLastUsed.buff_defense_last_used < 60 * 60 * 2,
+      can_activate: now - buffsLastUsed.buff_defense_last_used > 60 * 60 * 24 * 2,
+      last_used: buffsLastUsed.buff_defense_last_used,
+    },
+  }
+}
+
+module.exports.getResearchBonusFromBuffs = getResearchBonusFromBuffs
+async function getResearchBonusFromBuffs(allianceID) {
+  if (!allianceID) {
+    return {
+      2: 0,
+      3: 0,
+    }
+  }
+  const [buffsData, researchs] = await Promise.all([getBuffsData(allianceID), getResearchs(allianceID)])
+
+  const bonusAttackLvls = buffsData.attack.active ? researchs[5].level + 1 : 0
+  const bonusDefenseLvls = buffsData.defense.active ? researchs[6].level + 1 : 0
+
+  return {
+    2: bonusAttackLvls,
+    3: bonusDefenseLvls,
+  }
+}

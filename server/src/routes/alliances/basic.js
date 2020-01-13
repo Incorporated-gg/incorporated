@@ -22,12 +22,13 @@ module.exports = app => {
       return
     }
 
-    const [members, researchs, resources, resourcesLog, researchShares] = await Promise.all([
+    const [members, researchs, resources, resourcesLog, researchShares, buffsData] = await Promise.all([
       alliances.getMembers(allianceID),
       alliances.getResearchs(allianceID),
       alliances.getResources(allianceID),
       alliances.getResourcesLog(allianceID),
       alliances.getResearchShares(allianceID),
+      alliances.getBuffsData(allianceID),
     ])
 
     const missionHistory = await alliances.getMissionHistory(members)
@@ -40,6 +41,7 @@ module.exports = app => {
       resources_log: resourcesLog,
       research_shares: researchShares,
       mission_history: missionHistory,
+      buffs_data: buffsData,
     }
 
     res.json({ alliance })
@@ -168,6 +170,7 @@ module.exports = app => {
         break
       case 'sabots':
       case 'guards':
+      case 'thiefs':
         // TODO: Make sure it doesn't exceed bank cap
         if (resourceAmount > 0 && req.userData.personnel[resourceID] < resourceAmount) {
           res.status(401).json({ error: 'No tienes suficientes recursos' })
@@ -185,6 +188,16 @@ module.exports = app => {
       'INSERT INTO alliances_resources_log (alliance_id, user_id, created_at, resource_id, quantity) VALUES (?, ?, ?, ?, ?)',
       [allianceID, req.userData.id, Math.floor(Date.now() / 1000), resourceID, resourceAmount]
     )
+
+    if (allianceResources[resourceID].quantity === 0) {
+      // INSERT alliances_resources row just in case there is no row. If duplicate, we just catch the error and ignore it
+      try {
+        await mysql.query('INSERT INTO alliances_resources (alliance_id, resource_id, quantity) VALUES (?, ?, 0)', [
+          allianceID,
+          resourceID,
+        ])
+      } catch (e) {}
+    }
 
     await mysql.query('UPDATE alliances_resources SET quantity=quantity+? WHERE alliance_id=? AND resource_id=?', [
       resourceAmount,

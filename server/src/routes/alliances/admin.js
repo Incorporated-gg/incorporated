@@ -140,4 +140,45 @@ module.exports = app => {
 
     res.json({ success: true })
   })
+
+  app.post('/v1/alliance/buffs/activate', async function(req, res) {
+    if (!req.userData) {
+      res.status(401).json({ error: 'Necesitas estar conectado', error_code: 'not_logged_in' })
+      return
+    }
+
+    const userRank = await alliances.getUserRank(req.userData.id)
+    if (!userRank || !userRank.is_admin) {
+      res.status(401).json({ error: 'No eres admin de una alianza' })
+      return
+    }
+
+    if (!req.body.buff_id) {
+      res.status(400).json({ error: 'Faltan datos' })
+      return
+    }
+
+    const buffID = req.body.buff_id
+
+    const buffsData = await alliances.getBuffsData(userRank.alliance_id)
+    const buff = buffsData[buffID]
+
+    if (!buff) {
+      res.status(401).json({ error: 'Este buff no existe' })
+      return
+    }
+    if (buff.active) {
+      res.status(401).json({ error: 'Este buff ya está activo' })
+      return
+    }
+    if (!buff.can_activate) {
+      res.status(401).json({ error: 'Aún no puedes activar este buff' })
+      return
+    }
+
+    const msNow = Math.floor(Date.now() / 1000)
+    await mysql.query('UPDATE alliances SET ??=? WHERE id=?', [`buff_${buffID}_last_used`, msNow, userRank.alliance_id])
+
+    res.json({ success: true })
+  })
 }

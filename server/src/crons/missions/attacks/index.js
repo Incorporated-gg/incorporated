@@ -1,5 +1,5 @@
 const mysql = require('../../../lib/mysql')
-const { getUserAllianceID } = require('../../../lib/db/alliances')
+const { getUserAllianceID, getResearchBonusFromBuffs } = require('../../../lib/db/alliances')
 const { calcBuildingMaxMoney } = require('shared-lib/buildingsUtils')
 const { simulateAttack } = require('shared-lib/missionsUtils')
 const { getResearchs, getPersonnel, getBuildings, sendMessage, runUserMoneyUpdate } = require('../../../lib/db/users')
@@ -50,19 +50,37 @@ async function completeAttackMission(mission) {
   await runUserMoneyUpdate(defender.id)
 
   // Get basic info and simulate attack
-  const [defensorResearchs, attackerResearchs, defensorPersonnel, defensorBuildings] = await Promise.all([
-    getResearchs(defender.id),
+  const [
+    attackerResearchs,
+    attackerAllianceID,
+    defenderResearchs,
+    defenderPersonnel,
+    defenderBuildings,
+    defenderAllianceID,
+  ] = await Promise.all([
     getResearchs(attacker.id),
+    getUserAllianceID(attacker.id),
+    getResearchs(defender.id),
     getPersonnel(defender.id),
     getBuildings(defender.id),
+    getUserAllianceID(defender.id),
   ])
-  const buildingAmount = defensorBuildings[data.building].quantity
+  const [attackerResearchBonusFromBuffs, defenderResearchBonusFromBuffs] = await Promise.all([
+    getResearchBonusFromBuffs(attackerAllianceID),
+    getResearchBonusFromBuffs(defenderAllianceID),
+  ])
+  const attackerSabotageLevel = attackerResearchs[2] + attackerResearchBonusFromBuffs[2]
+  const defenderSecurityLevel = defenderResearchs[3] + defenderResearchBonusFromBuffs[3]
+  const defenderBankLevel = defenderResearchs[4]
+  const defenderInfraLevel = defenderResearchs[6]
+
+  const buildingAmount = defenderBuildings[data.building].quantity
   const maxMoney = calcBuildingMaxMoney({
     buildingID: data.building,
     buildingAmount,
-    bankResearchLevel: defensorResearchs[4],
+    bankResearchLevel: defenderBankLevel,
   })
-  const storedMoney = Math.floor(defensorBuildings[data.building].money)
+  const storedMoney = Math.floor(defenderBuildings[data.building].money)
   const unprotectedMoney = Math.min(Math.max(0, storedMoney - maxMoney.maxSafe), maxMoney.maxRobbedPerAttack)
 
   const {
@@ -78,13 +96,13 @@ async function completeAttackMission(mission) {
     realAttackerProfit,
     robbedMoney,
   } = simulateAttack({
-    defensorGuards: defensorPersonnel.guards,
+    defensorGuards: defenderPersonnel.guards,
     attackerSabots: data.sabots,
     attackerThiefs: data.thiefs,
-    defensorSecurityLvl: defensorResearchs[3],
-    attackerSabotageLvl: attackerResearchs[2],
+    defensorSecurityLvl: defenderSecurityLevel,
+    attackerSabotageLvl: attackerSabotageLevel,
     buildingID: data.building,
-    infraResearchLvl: defensorResearchs[6],
+    infraResearchLvl: defenderInfraLevel,
     buildingAmount,
     unprotectedMoney,
   })
@@ -98,8 +116,8 @@ async function completeAttackMission(mission) {
   ])
 
   // Update troops
-  const killedGuards = defensorPersonnel.guards - survivingGuards
-  const allianceRestockGuards = await calcAllianceGuardsRestock(killedGuards, defender.id)
+  const killedGuards = defenderPersonnel.guards - survivingGuards
+  const allianceRestockGuards = await calcAllianceGuardsRestock(killedGuards, defenderAllianceID)
   const killedGuardsAfterRestock = killedGuards + allianceRestockGuards
   if (killedGuardsAfterRestock > 0) {
     await mysql.query('UPDATE users_resources SET quantity=quantity-? WHERE user_id=? AND resource_id=?', [
@@ -171,9 +189,8 @@ async function completeAttackMission(mission) {
   })
 }
 
-async function calcAllianceGuardsRestock(killedGuards, defenderID) {
+async function calcAllianceGuardsRestock(killedGuards, defenderAllianceID) {
   if (killedGuards === 0) return 0
-  const defenderAllianceID = await getUserAllianceID(defenderID)
   if (!defenderAllianceID) return 0
 
   let [
