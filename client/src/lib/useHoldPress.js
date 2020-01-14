@@ -9,6 +9,7 @@ export default function useHoldPress({ callback, ms, rampUpMs, initialMs, endMs 
   const pressedInterval = useRef()
 
   const startHoldPress = useCallback(() => {
+    if (pressedInterval.current) return
     callback()
     const timingFn = ms ? () => ms : msElapsed => mapNumberRange(msElapsed, 0, rampUpMs, initialMs, endMs)
     pressedInterval.current = setVariableInterval(callback, timingFn)
@@ -16,6 +17,12 @@ export default function useHoldPress({ callback, ms, rampUpMs, initialMs, endMs 
 
   const stopHoldPress = useCallback(() => {
     pressedInterval.current && pressedInterval.current.stop()
+
+    setTimeout(() => {
+      // Hack to avoid double callback on single press in mobile.
+      // Events are fired in this order: onTouchStart, onTouchEnd, onMouseUp, onMouseDown
+      pressedInterval.current = undefined
+    }, 10)
   }, [])
 
   useEffect(() => {

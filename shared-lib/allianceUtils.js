@@ -2,12 +2,12 @@ const CREATE_ALLIANCE_PRICE = 500000
 module.exports.CREATE_ALLIANCE_PRICE = CREATE_ALLIANCE_PRICE
 
 const RESEARCHS_LIST = [
-  { id: 1, name: 'Banco', basePrice: 500000, priceIncreasePerLevel: 500000, type: 'resource' },
-  { id: 2, name: 'Cabinas de guardias', basePrice: 200000, priceIncreasePerLevel: 200000, type: 'resource' },
-  { id: 3, name: 'Barracones de saboteadores', basePrice: 200000, priceIncreasePerLevel: 200000, type: 'resource' },
-  { id: 4, name: 'Academias de ladrones', basePrice: 200000, priceIncreasePerLevel: 200000, type: 'resource' },
-  { id: 5, name: 'Buff de ataque', basePrice: 5000000, priceIncreasePerLevel: 5000000, type: 'buff' },
-  { id: 6, name: 'Buff de defensa', basePrice: 5000000, priceIncreasePerLevel: 5000000, type: 'buff' },
+  { id: 1, name: 'Banco', pricePerLvl: 500000, type: 'resource' },
+  { id: 2, name: 'Cabinas de guardias', pricePerLvl: 200000, type: 'resource' },
+  { id: 3, name: 'Barracones de saboteadores', pricePerLvl: 200000, type: 'resource' },
+  { id: 4, name: 'Academias de ladrones', pricePerLvl: 200000, type: 'resource' },
+  { id: 5, name: 'Buff de ataque', pricePerLvl: 5000000, type: 'buff' },
+  { id: 6, name: 'Buff de defensa', pricePerLvl: 5000000, type: 'buff' },
 ]
 module.exports.RESEARCHS_LIST = RESEARCHS_LIST
 
@@ -31,6 +31,19 @@ const RESOURCES_LIST = [
 ]
 module.exports.RESOURCES_LIST = RESOURCES_LIST
 
+module.exports.calcResearchPrice = calcResearchPrice
+function calcResearchPrice(researchID, researchLevel) {
+  const data = RESEARCHS_LIST.find(raw => raw.id === researchID)
+  if (!data) return false
+
+  if (data.type === 'buff') {
+    // Custom price formula for buffs
+    return data.pricePerLvl * Math.pow(researchLevel + 1, 2)
+  }
+
+  return data.pricePerLvl * (researchLevel + 1)
+}
+
 const mapResourceIDToResearchID = {
   money: 1,
   guards: 2,
@@ -43,6 +56,7 @@ const mapResearchIDToResourceID = {
   3: 'sabots',
   4: 'thiefs',
 }
+
 // Resource max
 const maxResourcesPerLevel = {
   money: 500000,

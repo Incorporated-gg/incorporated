@@ -2,7 +2,7 @@ const mysql = require('../../lib/mysql')
 const alliances = require('../../lib/db/alliances')
 const { hasActiveMission } = require('../../lib/db/users')
 const personnel = require('../../lib/db/personnel')
-const { calcResourceMax } = require('shared-lib/allianceUtils')
+const { calcResourceMax, calcResearchPrice } = require('shared-lib/allianceUtils')
 
 module.exports = app => {
   app.get('/v1/alliance', async function(req, res) {
@@ -91,7 +91,7 @@ module.exports = app => {
     while (newProgressMoney >= newPrice) {
       newLevel++
       newProgressMoney -= newPrice
-      newPrice = alliances.getResearchPrice(researchID, newLevel)
+      newPrice = calcResearchPrice(researchID, newLevel)
     }
     const doesDBRowExist = research.level === 0 && research.progress_money === 0
     if (doesDBRowExist) {

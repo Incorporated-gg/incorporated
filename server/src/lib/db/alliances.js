@@ -1,7 +1,7 @@
 const mysql = require('../mysql')
 const users = require('./users')
 const { parseMissionFromDB } = require('./missions')
-const { RESEARCHS_LIST, RESOURCES_LIST } = require('shared-lib/allianceUtils')
+const { RESEARCHS_LIST, RESOURCES_LIST, calcResearchPrice } = require('shared-lib/allianceUtils')
 
 module.exports.MAX_MEMBERS = 10
 
@@ -23,14 +23,6 @@ async function getUserRank(userID) {
     rank_name: allianceMember.rank_name,
     is_admin: Boolean(allianceMember.is_admin),
   }
-}
-
-module.exports.getResearchPrice = getResearchPrice
-function getResearchPrice(researchID, level) {
-  const data = RESEARCHS_LIST.find(raw => raw.id === researchID)
-  if (!data) return false
-  const price = data.basePrice + data.priceIncreasePerLevel * level
-  return price
 }
 
 module.exports.getBasicData = getBasicData
@@ -90,7 +82,7 @@ async function getResearchs(allianceID) {
     return {
       id: research.id,
       level,
-      price: getResearchPrice(research.id, level),
+      price: calcResearchPrice(research.id, level),
       progress_money: data ? data.progress_money : 0,
     }
   }).reduce((prev, curr) => {
