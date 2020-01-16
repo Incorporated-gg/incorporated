@@ -6,9 +6,10 @@ async function parseMissionFromDB(mission) {
 
   if (mission.mission_type === 'spy') {
     const defensorData = await users.getData(mission.target_user)
+    const attackerData = await users.getData(mission.user_id)
     const data = JSON.parse(mission.data)
     return {
-      user_id: mission.user_id,
+      user: attackerData,
       target_user: defensorData,
       mission_type: mission.mission_type,
       sent_spies: data.spies,
@@ -19,9 +20,10 @@ async function parseMissionFromDB(mission) {
     }
   } else if (mission.mission_type === 'attack') {
     const defensorData = await users.getData(mission.target_user)
+    const attackerData = await users.getData(mission.user_id)
     const data = JSON.parse(mission.data)
     return {
-      user_id: mission.user_id,
+      user: attackerData,
       target_user: defensorData,
       target_building: data.building,
       mission_type: mission.mission_type,
@@ -32,6 +34,7 @@ async function parseMissionFromDB(mission) {
       completed: mission.completed,
       result: mission.result,
       profit: mission.profit,
+      report: data.report,
     }
   } else throw new Error(`Unknown mission type: ${mission.mission_type}`)
 }

@@ -9,6 +9,7 @@ import { personnelList } from 'shared-lib/personnelUtils'
 import { researchList } from 'shared-lib/researchUtils'
 import styles from './Messages.module.scss'
 import UserActionLinks from '../../components/UserActionLinks'
+import ErrorBoundary from '../../components/ErrorBoundary'
 
 SingleMessage.propTypes = {
   message: PropTypes.object.isRequired,
@@ -55,7 +56,9 @@ export default function SingleMessage({ reloadMessagesData, message }) {
       )}
       <div>Fecha: {dateFormatted}</div>
       <br />
-      <div className={styles.messageText}>{messageElm}</div>
+      <ErrorBoundary>
+        <div className={styles.messageText}>{messageElm}</div>
+      </ErrorBoundary>
       <br />
       {wasSentToMe && message.sender && (
         <button>
@@ -64,28 +67,6 @@ export default function SingleMessage({ reloadMessagesData, message }) {
       )}
       {wasSentToMe && <button onClick={deleteMessage}>Borrar</button>}
     </div>
-  )
-}
-
-AttackReportMsg.propTypes = {
-  message: PropTypes.object.isRequired,
-  buildingInfo: PropTypes.object.isRequired,
-}
-function AttackReportMsg({ message, buildingInfo }) {
-  return (
-    <>
-      <div>Resultado: {message.data.result}</div>
-      <div>Saboteadores enviados: {(message.data.surviving_sabots + message.data.sabots_killed).toLocaleString()}</div>
-      <div>Edificio atacado: {buildingInfo.name}</div>
-      <div>Guardias muertos: {message.data.guards_killed.toLocaleString()}</div>
-      <div>Saboteadores muertos: {message.data.sabots_killed.toLocaleString()}</div>
-      <div>Ladrones muertos: {message.data.thiefs_killed && message.data.thiefs_killed.toLocaleString()}</div>
-      <div>Edificios destruidos: {message.data.destroyed_buildings}</div>
-      <div>Dinero ganado por edificios: {message.data.income_for_buildings.toLocaleString()}€</div>
-      <div>Dinero ganado por muertes: {message.data.income_for_troops.toLocaleString()}€</div>
-      <div>Dinero ganado por robo: {message.data.robbed_money && message.data.robbed_money.toLocaleString()}€</div>
-      <div>Beneficios netos: {message.data.attacker_profit.toLocaleString()}€</div>
-    </>
   )
 }
 
@@ -110,23 +91,7 @@ function parseMessage(message) {
       )
       break
     case 'attack_report': {
-      const wasIAttacked = message.data.defender && message.data.defender.id === userData.id
-      const buildingInfo = buildingsList.find(b => b.id === message.data.building_id)
-      messageElm = (
-        <div>
-          {wasIAttacked ? (
-            <div>
-              Ataque recibido de <Username user={message.data.attacker} />
-            </div>
-          ) : (
-            <div>
-              Ataque a <Username user={message.data.defender} />
-            </div>
-          )}
-          <AttackReportMsg message={message} buildingInfo={buildingInfo} />
-          <UserActionLinks user={wasIAttacked ? message.data.attacker : message.data.defender} />
-        </div>
-      )
+      messageElm = <AttackReportMsg message={message} />
       break
     }
     case 'caught_spies':
@@ -205,4 +170,39 @@ function parseMessage(message) {
       )
   }
   return messageElm
+}
+
+AttackReportMsg.propTypes = {
+  message: PropTypes.object.isRequired,
+}
+function AttackReportMsg({ message }) {
+  const mission = message.data.mission
+  const wasIAttacked = mission.target_user && mission.target_user.id === userData.id
+  const buildingInfo = buildingsList.find(b => b.id === mission.target_building)
+  return (
+    <div>
+      {wasIAttacked ? (
+        <div>
+          Ataque recibido de <Username user={mission.user} />
+        </div>
+      ) : (
+        <div>
+          Ataque a <Username user={mission.target_user} />
+        </div>
+      )}
+      <div>Resultado: {mission.result}</div>
+      <div>Ladrones enviados: {mission.sent_thiefs.toLocaleString()}</div>
+      <div>Saboteadores enviados: {mission.sent_sabots.toLocaleString()}</div>
+      <div>Edificio atacado: {buildingInfo.name}</div>
+      <div>Guardias muertos: {mission.report.killed_guards.toLocaleString()}</div>
+      <div>Saboteadores muertos: {mission.report.killed_sabots.toLocaleString()}</div>
+      <div>Ladrones muertos: {mission.report.killed_thiefs.toLocaleString()}</div>
+      <div>Edificios destruidos: {mission.report.destroyed_buildings}</div>
+      <div>Dinero ganado por edificios: {mission.report.income_from_buildings.toLocaleString()}€</div>
+      <div>Dinero ganado por muertes: {mission.report.income_from_troops.toLocaleString()}€</div>
+      <div>Dinero ganado por robo: {mission.report.income_from_robbed_money.toLocaleString()}€</div>
+      <div>Beneficios netos: {mission.profit.toLocaleString()}€</div>
+      <UserActionLinks user={wasIAttacked ? mission.user : mission.target_user} />
+    </div>
+  )
 }

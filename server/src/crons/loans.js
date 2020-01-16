@@ -16,7 +16,8 @@ const run = async () => {
       }
       // Money exchange
       const moneyExchange =
-        ((loan.money_amount * loan.interest_rate) / 100 / LOAN_DAYS_DURATION / (24 * 60 * 60 * 1000)) * frequencyMs
+        ((loan.money_amount * (loan.interest_rate / 100 + 1)) / LOAN_DAYS_DURATION / (24 * 60 * 60 * 1000)) *
+        frequencyMs
       await mysql.query('UPDATE users SET money=money+? WHERE id=?', [moneyExchange, loan.lender_id])
       await mysql.query('UPDATE users SET money=money-? WHERE id=?', [moneyExchange, loan.borrower_id])
     })

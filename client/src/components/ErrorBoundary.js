@@ -22,7 +22,7 @@ class ErrorBoundary extends React.Component {
       // Puedes renderizar cualquier interfaz de repuesto
       return (
         <div>
-          <h1>Something went wrong.</h1>
+          <h1>Algo salió mal.</h1>
           <pre>{this.state.error.message}</pre>
         </div>
       )

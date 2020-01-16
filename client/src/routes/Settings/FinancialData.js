@@ -22,8 +22,13 @@ export default function FinancialData() {
   }, [refreshLoansList])
 
   const LOAN_DAYS_DURATION = 7
-  const gainedFromLoans = givenLoan ? (givenLoan.money_amount * givenLoan.interest_rate) / 100 / LOAN_DAYS_DURATION : 0
-  const lostFromLoans = takenLoan ? (takenLoan.money_amount * takenLoan.interest_rate) / 100 / LOAN_DAYS_DURATION : 0
+  const gainedFromLoans =
+    givenLoan && givenLoan.borrower
+      ? Math.round((givenLoan.money_amount * (givenLoan.interest_rate / 100 + 1)) / LOAN_DAYS_DURATION)
+      : 0
+  const lostFromLoans = takenLoan
+    ? Math.round((takenLoan.money_amount * (takenLoan.interest_rate / 100 + 1)) / LOAN_DAYS_DURATION)
+    : 0
 
   if (!userData) return null
 

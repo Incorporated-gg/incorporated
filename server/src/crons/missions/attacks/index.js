@@ -106,17 +106,34 @@ async function completeAttackMission(mission) {
     buildingAmount,
     unprotectedMoney,
   })
+  const killedSabots = data.sabots - survivingSabots
+  const killedThiefs = data.thiefs - survivingThiefs
+  const killedGuards = defenderPersonnel.guards - survivingGuards
 
   // Update mission state
-  await mysql.query('UPDATE missions SET completed=1, gained_fame=?, result=?, profit=? WHERE id=?', [
+  const attackReport = {
+    killed_guards: killedGuards,
+    killed_sabots: killedSabots,
+    killed_thiefs: killedThiefs,
+    destroyed_buildings: destroyedBuildings,
+    income_from_buildings: incomeForDestroyedBuildings,
+    income_from_troops: incomeForKilledTroops,
+    income_from_robbed_money: robbedMoney,
+    attacker_total_income: attackerTotalIncome,
+  }
+  const attackData = JSON.stringify({
+    ...data,
+    report: attackReport,
+  })
+  await mysql.query('UPDATE missions SET completed=1, gained_fame=?, result=?, profit=?, data=? WHERE id=?', [
     gainedFame,
     result,
     realAttackerProfit,
+    attackData,
     mission.id,
   ])
 
   // Update troops
-  const killedGuards = defenderPersonnel.guards - survivingGuards
   const allianceRestockGuards = await calcAllianceGuardsRestock(killedGuards, defenderAllianceID)
   const killedGuardsAfterRestock = killedGuards + allianceRestockGuards
   if (killedGuardsAfterRestock > 0) {
@@ -127,7 +144,6 @@ async function completeAttackMission(mission) {
     ])
   }
 
-  const killedSabots = data.sabots - survivingSabots
   if (killedSabots > 0) {
     await mysql.query('UPDATE users_resources SET quantity=quantity-? WHERE user_id=? AND resource_id=?', [
       killedSabots,
@@ -135,7 +151,6 @@ async function completeAttackMission(mission) {
       'sabots',
     ])
   }
-  const killedThiefs = data.thiefs - survivingThiefs
   if (killedThiefs > 0) {
     await mysql.query('UPDATE users_resources SET quantity=quantity-? WHERE user_id=? AND resource_id=?', [
       killedThiefs,
@@ -156,36 +171,17 @@ async function completeAttackMission(mission) {
   await mysql.query('UPDATE users SET money=money+? WHERE id=?', [attackerTotalIncome, attacker.id])
 
   // Send messages
-  const msgAttackReport = {
-    attacker_id: attacker.id,
-    defender_id: defender.id,
-    building_id: data.building,
-    result,
-    guards_killed: killedGuards,
-    sabots_killed: killedSabots,
-    thiefs_killed: killedThiefs,
-    surviving_sabots: survivingSabots,
-    surviving_guards: survivingGuards,
-    surviving_thiefs: survivingThiefs,
-    gained_fame: gainedFame,
-    destroyed_buildings: destroyedBuildings,
-    income_for_buildings: incomeForDestroyedBuildings,
-    income_for_troops: incomeForKilledTroops,
-    robbed_money: robbedMoney,
-    attacker_total_income: attackerTotalIncome,
-    attacker_profit: realAttackerProfit,
-  }
   await sendMessage({
     receiverID: attacker.id,
     senderID: null,
     type: 'attack_report',
-    data: msgAttackReport,
+    data: { mission_id: mission.id },
   })
   await sendMessage({
     receiverID: defender.id,
     senderID: null,
     type: 'attack_report',
-    data: msgAttackReport,
+    data: { mission_id: mission.id },
   })
 }
 

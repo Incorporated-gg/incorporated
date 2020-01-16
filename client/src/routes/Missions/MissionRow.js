@@ -78,7 +78,7 @@ export default function MissionRow({ mission, reloadMissionsCallback }) {
           </td>
           <td>{isCompleting ? 'Completando...' : `${timeLeft.minutes}:${timeLeft.seconds}`}</td>
           <td>
-            {isCompleting || mission.user_id !== userData.id ? '' : <button onClick={cancelMission}>Cancelar</button>}
+            {isCompleting || mission.user.id !== userData.id ? '' : <button onClick={cancelMission}>Cancelar</button>}
           </td>
         </>
       )}
