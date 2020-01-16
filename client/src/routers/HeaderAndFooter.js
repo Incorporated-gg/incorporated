@@ -46,16 +46,19 @@ function Menu({ className, style }) {
         <NavLink to="/buildings">Edificios</NavLink>
       </li>
       <li>
-        <NavLink to="/research">Investigaciones</NavLink>
+        <NavLink to="/research">Invest</NavLink>
       </li>
       <li>
         <NavLink to="/ranking">Ranking</NavLink>
       </li>
       <li>
-        <NavLink to="/missions">Missions</NavLink>
+        <NavLink to="/missions">Misiones</NavLink>
       </li>
       <li>
         <NavLink to="/alliance">Alianza</NavLink>
+      </li>
+      <li>
+        <NavLink to="/loans">Préstamos</NavLink>
       </li>
       <li>
         <NavLink to="/messages">

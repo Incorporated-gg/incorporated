@@ -1,11 +1,29 @@
-import React from 'react'
+import React, { useCallback, useState, useEffect } from 'react'
 import { buildingsList, calcBuildingDailyIncome } from 'shared-lib/buildingsUtils'
 import { useUserData } from '../../lib/user'
+import api from '../../lib/api'
 import { getIncomeTaxes } from 'shared-lib/taxes'
 import { personnelList } from 'shared-lib/personnelUtils'
 
 export default function FinancialData() {
   const userData = useUserData()
+  const [givenLoan, setGivenLoan] = useState()
+  const [takenLoan, setTakenLoan] = useState()
+
+  // Loans
+  const refreshLoansList = useCallback(() => {
+    api.get('/v1/loans').then(res => {
+      setGivenLoan(res.given_loan)
+      setTakenLoan(res.taken_loan)
+    })
+  }, [])
+  useEffect(() => {
+    refreshLoansList()
+  }, [refreshLoansList])
+
+  const LOAN_DAYS_DURATION = 7
+  const gainedFromLoans = givenLoan ? (givenLoan.money_amount * givenLoan.interest_rate) / 100 / LOAN_DAYS_DURATION : 0
+  const lostFromLoans = takenLoan ? (takenLoan.money_amount * takenLoan.interest_rate) / 100 / LOAN_DAYS_DURATION : 0
 
   if (!userData) return null
 
@@ -31,7 +49,7 @@ export default function FinancialData() {
   })
 
   // Total
-  const totalTotal = totalBuildingsIncome - totalTaxes - totalPersonnel
+  const totalTotal = totalBuildingsIncome - totalTaxes - totalPersonnel - lostFromLoans + gainedFromLoans
 
   return (
     <div>
@@ -65,6 +83,11 @@ export default function FinancialData() {
             <td>Total edificios</td>
             <td>{totalBuildingsIncome.toLocaleString()}</td>
             <td></td>
+          </tr>
+          <tr>
+            <td>Préstamos</td>
+            <td>{gainedFromLoans.toLocaleString()}</td>
+            <td>{lostFromLoans.toLocaleString()}</td>
           </tr>
           <tr>
             <td>Impuestos ({(taxesPercent * 100).toLocaleString()}%)</td>

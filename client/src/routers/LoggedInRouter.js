@@ -14,6 +14,7 @@ import Personnel from '../routes/Personnel/Personnel'
 import Missions from '../routes/Missions/Missions'
 import Messages from '../routes/Messages/Messages'
 import Settings from '../routes/Settings/Settings'
+import Loans from '../routes/Loans/Loans'
 
 export default function LoggedInRouter() {
   return (
@@ -46,6 +47,9 @@ export default function LoggedInRouter() {
             </Route>
             <Route path="/settings">
               <Settings />
+            </Route>
+            <Route path="/loans">
+              <Loans />
             </Route>
             <Route path="/">
               <Home />

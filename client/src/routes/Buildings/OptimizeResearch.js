@@ -37,7 +37,7 @@ export default function OptimizeResearch({ activeScreen }) {
             onClick={buyResearchClicked}
             disabled={coste >= userData.money}
             style={{ color: '#F6901A' }}>
-            COMPRAR
+            MEJORAR
           </button>
         </>
       )}
