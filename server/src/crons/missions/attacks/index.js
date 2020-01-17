@@ -135,7 +135,7 @@ async function completeAttackMission(mission) {
 
   // Update troops
   const allianceRestockGuards = await calcAllianceGuardsRestock(killedGuards, defenderAllianceID)
-  const killedGuardsAfterRestock = killedGuards + allianceRestockGuards
+  const killedGuardsAfterRestock = killedGuards - allianceRestockGuards
   if (killedGuardsAfterRestock > 0) {
     await mysql.query('UPDATE users_resources SET quantity=quantity-? WHERE user_id=? AND resource_id=?', [
       killedGuardsAfterRestock,
