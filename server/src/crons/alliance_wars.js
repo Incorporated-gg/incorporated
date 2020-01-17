@@ -1,13 +1,9 @@
 const mysql = require('../lib/mysql')
 const alliances = require('../lib/db/alliances')
 const { sendMessage } = require('../lib/db/users')
-const frequencyMs = 60 * 1000
+const frequencyMs = 5 * 60 * 1000
 
 const run = async () => {
-  const date = new Date()
-  const isMidnight = date.getUTCHours() === 0 && date.getUTCMinutes() === 0
-  if (!isMidnight) return
-
   const activeWars = await getAllActiveWars()
   await Promise.all(activeWars.map(executeNewDayForWar))
 }
@@ -35,6 +31,8 @@ function getDayFirstTimestampFromDate(date) {
 
 const WAR_DAYS_DURATION = 5
 async function executeNewDayForWar(war) {
+  if (!war.data) war.data = { days: {} }
+
   const firstTsToday = getDayFirstTimestampFromDate(new Date())
 
   const firstTsWarCreatedAt = getDayFirstTimestampFromDate(new Date(war.created_at * 1000))
@@ -51,11 +49,16 @@ async function executeNewDayForWar(war) {
   const membersAlliance1 = (await alliances.getMembers(war.alliance1_id)).map(m => m.user.id)
   const membersAlliance2 = (await alliances.getMembers(war.alliance2_id)).map(m => m.user.id)
 
+  // End war if appropiate
+  if (warDay > WAR_DAYS_DURATION) {
+    await endWar(war, membersAlliance1, membersAlliance2)
+    return
+  }
+
   // Calc daily points
-  const warDayDate = new Date(war.created_at * 1000 + warDay * 60 * 60 * 24)
-  const warDayStartingTs = Math.floor(warDayDate.getTime() / 1000)
-  const attacksAlliance1 = await getAttacksFromUsers(membersAlliance1, membersAlliance2, warDayStartingTs)
-  const attacksAlliance2 = await getAttacksFromUsers(membersAlliance2, membersAlliance1, warDayStartingTs)
+  const attacksMinTs = firstTsToday - 60 * 60 * 24
+  const attacksAlliance1 = await getAttacksFromUsers(membersAlliance1, membersAlliance2, attacksMinTs)
+  const attacksAlliance2 = await getAttacksFromUsers(membersAlliance2, membersAlliance1, attacksMinTs)
 
   let dailyPointsAlliance1 = attacksAlliance1.map(attackToPoints).reduce((prev, curr) => prev + curr, 0)
   let dailyPointsAlliance2 = attacksAlliance2.map(attackToPoints).reduce((prev, curr) => prev + curr, 0)
@@ -79,26 +82,21 @@ async function executeNewDayForWar(war) {
   }
 
   // Save war points
-  if (!war.data) war.data = { days: {} }
   war.data.days[warDay] = {
     war_points_alliance1: warPointsAlliance1,
     war_points_alliance2: warPointsAlliance2,
   }
 
   await mysql.query('UPDATE alliances_wars SET data=? WHERE id=?', [JSON.stringify(war.data), war.id])
-
-  if (warDay >= WAR_DAYS_DURATION) {
-    await endWar(war, membersAlliance1, membersAlliance2)
-  }
 }
 
-async function getAttacksFromUsers(userIDs, attackedUserIDs, minTs) {
-  const maxTs = minTs + 60 * 60 * 24 - 1
+async function getAttacksFromUsers(userIDs, attackedUserIDs, attacksMinTs) {
+  const attacksMaxTs = attacksMinTs + 60 * 60 * 24
   const [
     attacks,
   ] = await mysql.query(
     'SELECT target_user, result, profit, data FROM missions WHERE mission_type="attack" AND completed=1 AND will_finish_at>? AND will_finish_at<? AND user_id IN (?) AND target_user IN (?)',
-    [minTs, maxTs, userIDs, attackedUserIDs]
+    [attacksMinTs, attacksMaxTs, userIDs, attackedUserIDs]
   )
   return attacks.map(attack => {
     attack.data = JSON.parse(attack.data)
