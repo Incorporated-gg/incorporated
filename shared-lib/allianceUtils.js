@@ -1,5 +1,5 @@
-const CREATE_ALLIANCE_PRICE = 500000
-module.exports.CREATE_ALLIANCE_PRICE = CREATE_ALLIANCE_PRICE
+module.exports.CREATE_ALLIANCE_PRICE = 500000
+module.exports.MAX_ALLIANCE_MEMBERS = 5
 
 const RESEARCHS_LIST = [
   { id: 1, name: 'Banco', pricePerLvl: 500000, type: 'resource' },

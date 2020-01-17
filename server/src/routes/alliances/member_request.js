@@ -1,6 +1,7 @@
 const mysql = require('../../lib/mysql')
 const alliances = require('../../lib/db/alliances')
 const users = require('../../lib/db/users')
+const { MAX_ALLIANCE_MEMBERS } = require('shared-lib/allianceUtils')
 
 module.exports = app => {
   app.get('/v1/alliance/member_request/list', async function(req, res) {
@@ -44,7 +45,7 @@ module.exports = app => {
       res.status(401).json({ error: 'Esta alianza no existe' })
       return
     }
-    if (allianceMembers.length === alliances.MAX_MEMBERS) {
+    if (allianceMembers.length >= MAX_ALLIANCE_MEMBERS) {
       res.status(401).json({ error: 'Esta alianza no puede tener más miembros' })
       return
     }
@@ -90,7 +91,7 @@ function memberRequestAction(action) {
     }
 
     if (action === 'accept') {
-      if (allianceMembers.length === alliances.MAX_MEMBERS) {
+      if (allianceMembers.length >= MAX_ALLIANCE_MEMBERS) {
         res.status(401).json({ error: 'Esta alianza no puede tener más miembros' })
         return
       }

@@ -91,7 +91,14 @@ function parseMessage(message) {
       )
       break
     case 'attack_report': {
-      messageElm = <AttackReportMsg message={message} />
+      const mission = message.data.mission
+      const wasIAttacked = mission.target_user && mission.target_user.id === userData.id
+      messageElm = (
+        <>
+          <AttackReportMsg mission={mission} showSender={wasIAttacked} showTarget={!wasIAttacked} />
+          <UserActionLinks user={wasIAttacked ? mission.user : mission.target_user} />
+        </>
+      )
       break
     }
     case 'caught_spies':
@@ -173,24 +180,33 @@ function parseMessage(message) {
 }
 
 AttackReportMsg.propTypes = {
-  message: PropTypes.object.isRequired,
+  mission: PropTypes.object.isRequired,
+  showSender: PropTypes.bool,
+  showTarget: PropTypes.bool,
 }
-function AttackReportMsg({ message }) {
-  const mission = message.data.mission
-  const wasIAttacked = mission.target_user && mission.target_user.id === userData.id
+export function AttackReportMsg({ mission, showSender, showTarget }) {
   const buildingInfo = buildingsList.find(b => b.id === mission.target_building)
+  const displayResult =
+    mission.result === 'win'
+      ? 'Éxito'
+      : mission.result === 'lose'
+      ? 'Fracaso'
+      : mission.result === 'draw'
+      ? 'Empate'
+      : mission.result
   return (
     <div>
-      {wasIAttacked ? (
+      {showSender && (
         <div>
           Ataque recibido de <Username user={mission.user} />
         </div>
-      ) : (
+      )}
+      {showTarget && (
         <div>
           Ataque a <Username user={mission.target_user} />
         </div>
       )}
-      <div>Resultado: {mission.result}</div>
+      <div>Resultado: {displayResult}</div>
       <div>Ladrones enviados: {mission.sent_thiefs.toLocaleString()}</div>
       <div>Saboteadores enviados: {mission.sent_sabots.toLocaleString()}</div>
       <div>Edificio atacado: {buildingInfo.name}</div>
@@ -202,7 +218,6 @@ function AttackReportMsg({ message }) {
       <div>Dinero ganado por muertes: {mission.report.income_from_troops.toLocaleString()}€</div>
       <div>Dinero ganado por robo: {mission.report.income_from_robbed_money.toLocaleString()}€</div>
       <div>Beneficios netos: {mission.profit.toLocaleString()}€</div>
-      <UserActionLinks user={wasIAttacked ? mission.user : mission.target_user} />
     </div>
   )
 }

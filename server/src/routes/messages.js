@@ -37,14 +37,10 @@ module.exports = app => {
         result.receiver = await users.getData(msg.user_id)
         result.sender = await users.getData(msg.sender_id)
         if (msg.type === 'attack_report') {
-          try {
-            const [[missionRaw]] = await mysql.query('SELECT * FROM missions WHERE id=?', [result.data.mission_id])
-            const mission = await missions.parseMissionFromDB(missionRaw)
-            delete result.data.mission_id
-            result.data.mission = mission
-            // Old mission reports (saved in msgs directly instead of in the own missions) were causing this to crash.
-            // The try catch block could be deleted with a migration to delete all attack_report messages from before the change
-          } catch (e) {}
+          const [[missionRaw]] = await mysql.query('SELECT * FROM missions WHERE id=?', [result.data.mission_id])
+          const mission = await missions.parseMissionFromDB(missionRaw)
+          delete result.data.mission_id
+          result.data.mission = mission
         }
         if (msg.type === 'spy_report') {
           result.data.defender = await users.getData(result.data.defender_id)

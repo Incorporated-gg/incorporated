@@ -9,6 +9,8 @@ UserActionLinks.propTypes = {
 }
 export default function UserActionLinks({ user }) {
   const userData = useUserData()
+  if (!user) return <span>Usuario desconocido</span>
+
   const isMe = userData.id === user.id
   const shareAlliance = isMe || (userData.alliance && user.alliance && userData.alliance.id === user.alliance.id)
   return (
