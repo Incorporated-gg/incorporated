@@ -7,6 +7,7 @@ import AllianceResearch from './Research'
 import AllianceResources from './Resources'
 import AllianceMissions from './Missions'
 import AllianceHome from './Home'
+import AllianceWars from './Wars'
 import AllianceAdmin from './Admin/index.js'
 import { userData } from '../../lib/user'
 
@@ -67,6 +68,9 @@ function AllianceRouter({ alliance, reloadAllianceData }) {
           <li>
             <NavLink to="/alliance/research">Investigaciones</NavLink>
           </li>
+          <li>
+            <NavLink to="/alliance/wars">Guerras</NavLink>
+          </li>
           {myMemberData && myMemberData.is_admin && (
             <li>
               <NavLink to="/alliance/admin">Admin</NavLink>
@@ -87,6 +91,9 @@ function AllianceRouter({ alliance, reloadAllianceData }) {
         </Route>
         <Route path="/alliance/admin">
           <AllianceAdmin alliance={alliance} reloadAllianceData={reloadAllianceData} />
+        </Route>
+        <Route path="/alliance/wars">
+          <AllianceWars alliance={alliance} reloadAllianceData={reloadAllianceData} />
         </Route>
         <Route path="/alliance">
           <AllianceHome alliance={alliance} reloadAllianceData={reloadAllianceData} />

@@ -5,6 +5,7 @@ import { useParams } from 'react-router-dom'
 import { useUserData, reloadUserData } from '../../../lib/user'
 import styles from './AllianceProfile.module.scss'
 import RankItem from '../../../components/RankItem'
+import WarInfo from '../../Alliance/WarInfo'
 
 export default function Ranking() {
   const { allianceShortName } = useParams()
@@ -44,6 +45,20 @@ export default function Ranking() {
         alert(err.message)
       })
   }
+  const declareWar = () => {
+    if (!window.confirm('Estás seguro de que quieres declarar guerra a esta alianza?')) return
+    api
+      .post('/v1/alliance/declare_war', {
+        alliance_id: alliance.id,
+      })
+      .then(() => {
+        reloadAllianceData()
+        reloadUserData()
+      })
+      .catch(err => {
+        alert(err.message)
+      })
+  }
 
   if (error) return <h4>{error}</h4>
 
@@ -51,11 +66,11 @@ export default function Ranking() {
 
   return (
     <div className={styles.container}>
-      <h3>
+      <h1>
         {alliance.long_name} ({alliance.short_name})
-      </h3>
+      </h1>
       <div className={styles.allianceDescText}> {alliance.description}</div>
-      <h3>Miembros</h3>
+      <h2>Miembros</h2>
       {alliance.members.map(member => {
         return (
           <RankItem
@@ -72,8 +87,25 @@ export default function Ranking() {
           </RankItem>
         )
       })}
-      {!userData.alliance && <button onClick={createMemberRequest}>Pedir ser miembro</button>}
-      {userData.alliance && userData.alliance.id === alliance.id && <button onClick={leaveAlliance}>Salir</button>}
+      <br />
+      <h2>Acciones</h2>
+      {!userData.alliance ? (
+        <button onClick={createMemberRequest}>Pedir ser miembro</button>
+      ) : userData.alliance.id === alliance.id ? (
+        <button onClick={leaveAlliance}>Salir</button>
+      ) : (
+        userData.alliance_user_rank.is_admin && <button onClick={declareWar}>Declarar guerra</button>
+      )}
+      <br />
+      <h2>Guerras activas</h2>
+      {alliance.active_wars.map(war => {
+        return <WarInfo war={war} key={war.id} />
+      })}
+      <br />
+      <h2>Guerras pasadas</h2>
+      {alliance.past_wars.map(war => {
+        return <WarInfo war={war} key={war.id} />
+      })}
     </div>
   )
 }

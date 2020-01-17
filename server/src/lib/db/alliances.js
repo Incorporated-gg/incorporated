@@ -59,13 +59,11 @@ async function getMembers(allianceID) {
     allianceID,
   ])
   members = await Promise.all(
-    members.map(async member => {
-      return {
-        user: await users.getData(member.user_id),
-        rank_name: member.rank_name,
-        is_admin: Boolean(member.is_admin),
-      }
-    })
+    members.map(async member => ({
+      user: await users.getData(member.user_id),
+      rank_name: member.rank_name,
+      is_admin: Boolean(member.is_admin),
+    }))
   )
   members = members.sort((a, b) => (a.user.income > b.user.income ? -1 : 1))
   return members
@@ -242,5 +240,54 @@ async function getResearchBonusFromBuffs(allianceID) {
   return {
     2: bonusAttackLvls,
     3: bonusDefenseLvls,
+  }
+}
+
+module.exports.checkWarBetweenAlliances = checkWarBetweenAlliances
+async function checkWarBetweenAlliances(allianceID1, allianceID2) {
+  const [
+    [war],
+  ] = await mysql.query(
+    'SELECT id, created_at FROM alliances_wars WHERE completed=0 AND ((alliance1_id=? AND alliance2_id=?) OR (alliance2_id=? AND alliance1_id=?))',
+    [allianceID1, allianceID2, allianceID1, allianceID2]
+  )
+
+  return Boolean(war)
+}
+
+module.exports.getAllianceActiveWars = getAllianceActiveWars
+async function getAllianceActiveWars(allianceID) {
+  let [
+    activeWars,
+  ] = await mysql.query(
+    'SELECT id, created_at, alliance1_id, alliance2_id, data FROM alliances_wars WHERE completed=0 AND (alliance1_id=? OR alliance2_id=?) ORDER BY created_at DESC',
+    [allianceID, allianceID]
+  )
+  activeWars = await Promise.all(activeWars.map(war => parseWar(allianceID, war)))
+
+  return activeWars
+}
+
+module.exports.getAlliancePastWars = getAlliancePastWars
+async function getAlliancePastWars(allianceID) {
+  let [
+    pastWars,
+  ] = await mysql.query(
+    'SELECT id, created_at, alliance1_id, alliance2_id, data FROM alliances_wars WHERE completed=1 AND (alliance1_id=? OR alliance2_id=?) ORDER BY created_at DESC LIMIT 10',
+    [allianceID, allianceID]
+  )
+  pastWars = await Promise.all(pastWars.map(war => parseWar(allianceID, war)))
+
+  return pastWars
+}
+
+async function parseWar(allianceID, war) {
+  const combatantID = war.alliance1_id === allianceID ? war.alliance2_id : war.alliance1_id
+  const combatant = await getBasicData(combatantID)
+  return {
+    id: war.id,
+    created_at: war.created_at,
+    data: JSON.parse(war.data),
+    combatant,
   }
 }

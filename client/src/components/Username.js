@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
 
 Username.propTypes = {
-  user: PropTypes.object.isRequired,
+  user: PropTypes.object,
 }
 export default function Username({ user }) {
   if (!user) return <span>Usuario desconocido</span>

@@ -1,5 +1,5 @@
 const mysql = require('../lib/mysql')
-const frequencyMs = 15 * 1000 // Every 15s for dev purposes
+const frequencyMs = 30 * 60 * 1000
 const { getUserDailyIncome } = require('../lib/db/users')
 
 async function doIncomeRanking() {

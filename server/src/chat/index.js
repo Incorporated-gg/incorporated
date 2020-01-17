@@ -35,8 +35,6 @@ module.exports.setupChat = io => {
       }
     })
     .on('connection', socket => {
-      console.log('got new inbound connection from ' + socket.id)
-
       chatrooms.forEach(room => {
         socket.join(room.name)
         socket.emit('messages', {

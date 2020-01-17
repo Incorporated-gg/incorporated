@@ -22,13 +22,24 @@ module.exports = app => {
       return
     }
 
-    const [members, researchs, resources, resourcesLog, researchShares, buffsData] = await Promise.all([
+    const [
+      members,
+      researchs,
+      resources,
+      resourcesLog,
+      researchShares,
+      buffsData,
+      activeWars,
+      pastWars,
+    ] = await Promise.all([
       alliances.getMembers(allianceID),
       alliances.getResearchs(allianceID),
       alliances.getResources(allianceID),
       alliances.getResourcesLog(allianceID),
       alliances.getResearchShares(allianceID),
       alliances.getBuffsData(allianceID),
+      alliances.getAllianceActiveWars(allianceID),
+      alliances.getAlliancePastWars(allianceID),
     ])
 
     const missionHistory = await alliances.getMissionHistory(members)
@@ -42,6 +53,8 @@ module.exports = app => {
       research_shares: researchShares,
       mission_history: missionHistory,
       buffs_data: buffsData,
+      active_wars: activeWars,
+      past_wars: pastWars,
     }
 
     res.json({ alliance })

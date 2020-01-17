@@ -1,4 +1,5 @@
 const users = require('../lib/db/users')
+const alliances = require('../lib/db/alliances')
 const mysql = require('../lib/mysql')
 
 module.exports = app => {
@@ -8,8 +9,13 @@ module.exports = app => {
       return
     }
 
-    const userData = await users.getData(req.userData.id)
-    const [[extraInfo]] = await mysql.query('SELECT email FROM users WHERE id=?', [req.userData.id])
+    const extraInfoPromise = mysql.query('SELECT email FROM users WHERE id=?', [req.userData.id])
+
+    const [userData, [[extraInfo]], userRank] = await Promise.all([
+      users.getData(req.userData.id),
+      extraInfoPromise,
+      alliances.getUserRank(req.userData.id),
+    ])
 
     res.json({
       user_data: {
@@ -17,6 +23,7 @@ module.exports = app => {
         username: userData.username,
         email: extraInfo.email,
         alliance: userData.alliance,
+        alliance_user_rank: userRank,
       },
     })
   })

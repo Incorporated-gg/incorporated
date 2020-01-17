@@ -16,7 +16,7 @@ async function getData(userID) {
     rankingDataPromise,
     alliancePromise,
   ])
-  if (!userData) return false
+  if (!userData) return null
 
   return {
     id: userID,
@@ -29,7 +29,7 @@ async function getData(userID) {
 
 module.exports.getIDFromUsername = async username => {
   const [[userData]] = await mysql.query('SELECT id FROM users WHERE username=?', [username])
-  return userData ? userData.id : false
+  return userData ? userData.id : null
 }
 
 module.exports.getUserPersonnelCosts = getUserPersonnelCosts

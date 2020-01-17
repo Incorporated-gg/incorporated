@@ -47,6 +47,7 @@ export default function AllianceHome({ alliance, reloadAllianceData }) {
           </RankItem>
         )
       })}
+      <br />
       <button onClick={leaveAlliance}>Salir</button>
     </div>
   )

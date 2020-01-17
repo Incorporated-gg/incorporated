@@ -110,9 +110,8 @@ module.exports = app => {
         // Ensure daily attacks limit
         const MAX_DAILY_SABOTS = process.env.NODE_ENV === 'dev' ? 999 : 3
         const now = new Date()
-        const dailyCountStartedAtTimeString = `${now.getUTCFullYear()}-${now.getUTCMonth() +
-          1}-${now.getUTCDate()} 00:00:00`
-        const dailyCountStartedAt = Math.floor(new Date(dailyCountStartedAtTimeString).getTime() / 1000)
+        const dayStartDate = new Date(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate())
+        const dailyCountStartedAt = Math.floor(dayStartDate.getTime() / 1000)
         const [
           [{ count }],
         ] = await mysql.query(

@@ -1,5 +1,6 @@
 const mysql = require('../lib/mysql')
 const users = require('../lib/db/users')
+const alliances = require('../lib/db/alliances')
 const missions = require('../lib/db/missions')
 
 module.exports = app => {
@@ -25,34 +26,7 @@ module.exports = app => {
       [type === 'sent' ? 'sender_id' : 'user_id', req.userData.id, page * perPage, perPage]
     )
 
-    const messages = await Promise.all(
-      messagesRaw.map(async msg => {
-        const data = JSON.parse(msg.data)
-        const result = {
-          id: msg.id,
-          created_at: msg.created_at,
-          type: msg.type,
-          data,
-        }
-        result.receiver = await users.getData(msg.user_id)
-        result.sender = await users.getData(msg.sender_id)
-        if (msg.type === 'attack_report') {
-          const [[missionRaw]] = await mysql.query('SELECT * FROM missions WHERE id=?', [result.data.mission_id])
-          const mission = await missions.parseMissionFromDB(missionRaw)
-          delete result.data.mission_id
-          result.data.mission = mission
-        }
-        if (msg.type === 'spy_report') {
-          result.data.defender = await users.getData(result.data.defender_id)
-          delete result.data.defender_id
-        }
-        if (msg.type === 'caught_spies') {
-          result.data.attacker = await users.getData(result.data.attacker_id)
-          delete result.data.attacker_id
-        }
-        return result
-      })
-    )
+    const messages = await Promise.all(messagesRaw.map(parseMessage))
 
     res.json({
       messages,
@@ -108,4 +82,52 @@ module.exports = app => {
       success: true,
     })
   })
+}
+
+async function parseMessage(msg) {
+  const data = JSON.parse(msg.data)
+  const result = {
+    id: msg.id,
+    created_at: msg.created_at,
+    type: msg.type,
+    receiver: await users.getData(msg.user_id),
+    sender: await users.getData(msg.sender_id),
+    data,
+  }
+  try {
+    switch (msg.type) {
+      case 'attack_report': {
+        const [[missionRaw]] = await mysql.query('SELECT * FROM missions WHERE id=?', [result.data.mission_id])
+        const mission = await missions.parseMissionFromDB(missionRaw)
+        delete result.data.mission_id
+        result.data.mission = mission
+        break
+      }
+      case 'spy_report': {
+        result.data.defender = await users.getData(result.data.defender_id)
+        delete result.data.defender_id
+        break
+      }
+      case 'caught_spies': {
+        result.data.attacker = await users.getData(result.data.attacker_id)
+        delete result.data.attacker_id
+        break
+      }
+      case 'war_started':
+      case 'war_ended': {
+        const [[war]] = await mysql.query('SELECT alliance1_id, alliance2_id, data FROM alliances_wars WHERE id=?', [
+          result.data.war_id,
+        ])
+        result.data.attacker_alliance = await alliances.getBasicData(war.alliance1_id)
+        result.data.defender_alliance = await alliances.getBasicData(war.alliance2_id)
+        if (msg.type === 'war_ended') result.data.winner = JSON.parse(war.data).winner
+        delete result.data.war_id
+        break
+      }
+    }
+  } catch (e) {
+    console.error(e)
+  }
+
+  return result
 }

@@ -10,6 +10,7 @@ import { researchList } from 'shared-lib/researchUtils'
 import styles from './Messages.module.scss'
 import UserActionLinks from '../../components/UserActionLinks'
 import ErrorBoundary from '../../components/ErrorBoundary'
+import AllianceLink from '../../components/AllianceLink'
 
 SingleMessage.propTypes = {
   message: PropTypes.object.isRequired,
@@ -110,6 +111,42 @@ function parseMessage(message) {
         </div>
       )
       break
+    case 'war_started': {
+      const didWeDeclare =
+        userData.alliance &&
+        message.data.attacker_alliance &&
+        userData.alliance.id === message.data.attacker_alliance.id
+      messageElm = didWeDeclare ? (
+        <div>
+          Hemos declarado la guerra a la alianza <AllianceLink alliance={message.data.defender_alliance} />. Comenzará a
+          las 00:00 hora server
+        </div>
+      ) : (
+        <div>
+          Nos ha declarado la guerra la alianza <AllianceLink alliance={message.data.attacker_alliance} />. Comenzará a
+          las 00:00 hora server
+        </div>
+      )
+      break
+    }
+    case 'war_ended': {
+      const didWeDeclare =
+        userData.alliance &&
+        message.data.attacker_alliance &&
+        userData.alliance.id === message.data.attacker_alliance.id
+      messageElm = (
+        <div>
+          Ha terminado la guerra con la alianza{' '}
+          <AllianceLink alliance={didWeDeclare ? message.data.defender_alliance : message.data.attacker_alliance} />. Ha
+          ganado la alianza{' '}
+          <AllianceLink
+            alliance={message.data.winner === 1 ? message.data.attacker_alliance : message.data.defender_alliance}
+          />
+          .
+        </div>
+      )
+      break
+    }
     case 'spy_report':
       messageElm = (
         <div>
@@ -172,7 +209,7 @@ function parseMessage(message) {
     default:
       messageElm = (
         <div>
-          <b>Tipo desconocido</b>: {JSON.stringify(message)}
+          <b>Tipo &quot;{message.type}&quot; desconocido</b>: {JSON.stringify(message)}
         </div>
       )
   }

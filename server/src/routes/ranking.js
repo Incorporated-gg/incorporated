@@ -74,11 +74,17 @@ module.exports = app => {
     }
 
     const allianceID = await alliances.getIDFromShortName(req.params.allianceShortName)
-    const basicData = await alliances.getBasicData(allianceID)
-    const members = await alliances.getMembers(basicData.id)
+    const [basicData, members, activeWars, pastWars] = await Promise.all([
+      alliances.getBasicData(allianceID),
+      alliances.getMembers(allianceID),
+      alliances.getAllianceActiveWars(allianceID),
+      alliances.getAlliancePastWars(allianceID),
+    ])
 
     const alliance = Object.assign(basicData, {
       members,
+      active_wars: activeWars,
+      past_wars: pastWars,
     })
 
     res.json({
