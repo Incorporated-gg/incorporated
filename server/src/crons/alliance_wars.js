@@ -56,9 +56,8 @@ async function executeNewDayForWar(war) {
   }
 
   // Calc daily points
-  const attacksMinTs = firstTsToday - 60 * 60 * 24
-  const attacksAlliance1 = await getAttacksFromUsers(membersAlliance1, membersAlliance2, attacksMinTs)
-  const attacksAlliance2 = await getAttacksFromUsers(membersAlliance2, membersAlliance1, attacksMinTs)
+  const attacksAlliance1 = await getAttacksFromUsers(membersAlliance1, membersAlliance2, firstTsToday)
+  const attacksAlliance2 = await getAttacksFromUsers(membersAlliance2, membersAlliance1, firstTsToday)
 
   let dailyPointsAlliance1 = attacksAlliance1.map(attackToPoints).reduce((prev, curr) => prev + curr, 0)
   let dailyPointsAlliance2 = attacksAlliance2.map(attackToPoints).reduce((prev, curr) => prev + curr, 0)
@@ -74,11 +73,11 @@ async function executeNewDayForWar(war) {
 
   // Calc war points from this day
   const totalDailyPoints = dailyPointsAlliance1 + dailyPointsAlliance2
-  let warPointsAlliance1 = 0
-  let warPointsAlliance2 = 0
+  let warPointsAlliance1 = 50
+  let warPointsAlliance2 = 50
   if (totalDailyPoints > 0) {
-    warPointsAlliance1 = dailyPointsAlliance1 / totalDailyPoints
-    warPointsAlliance2 = dailyPointsAlliance2 / totalDailyPoints
+    warPointsAlliance1 = Math.round(dailyPointsAlliance1 / totalDailyPoints * 100)
+    warPointsAlliance2 = Math.round(dailyPointsAlliance2 / totalDailyPoints * 100)
   }
 
   // Save war points
