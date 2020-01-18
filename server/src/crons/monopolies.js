@@ -1,10 +1,11 @@
 const mysql = require('../lib/mysql')
 const { buildingsList } = require('shared-lib/buildingsUtils')
+const { getServerDate } = require('shared-lib/serverTime')
 const frequencyMs = 60 * 1000
 
 const run = async () => {
-  const date = new Date()
-  const isMonopoliesMinute = date.getUTCDay() === 6 && date.getUTCHours() === 23 && date.getUTCMinutes() === 30
+  const serverDate = getServerDate()
+  const isMonopoliesMinute = serverDate.day === 6 && serverDate.hours === 23 && serverDate.minutes === 30
   if (!isMonopoliesMinute) return
 
   // Update monopolies table

@@ -243,16 +243,19 @@ async function getResearchBonusFromBuffs(allianceID) {
   }
 }
 
-module.exports.checkWarBetweenAlliances = checkWarBetweenAlliances
-async function checkWarBetweenAlliances(allianceID1, allianceID2) {
+module.exports.getActiveWarBetweenAlliances = getActiveWarBetweenAlliances
+async function getActiveWarBetweenAlliances(allianceID1, allianceID2) {
   const [
     [war],
   ] = await mysql.query(
-    'SELECT id, created_at FROM alliances_wars WHERE completed=0 AND ((alliance1_id=? AND alliance2_id=?) OR (alliance2_id=? AND alliance1_id=?))',
+    'SELECT id FROM alliances_wars WHERE completed=0 AND ((alliance1_id=? AND alliance2_id=?) OR (alliance2_id=? AND alliance1_id=?))',
     [allianceID1, allianceID2, allianceID1, allianceID2]
   )
+  if (!war) return null
 
-  return Boolean(war)
+  return {
+    id: war.id,
+  }
 }
 
 module.exports.getAllianceActiveWars = getAllianceActiveWars

@@ -1,8 +1,13 @@
 const mysql = require('../../../lib/mysql')
-const { getUserAllianceID, getResearchBonusFromBuffs } = require('../../../lib/db/alliances')
+const {
+  getUserAllianceID,
+  getResearchBonusFromBuffs,
+  getActiveWarBetweenAlliances,
+} = require('../../../lib/db/alliances')
 const { calcBuildingMaxMoney } = require('shared-lib/buildingsUtils')
 const { simulateAttack } = require('shared-lib/missionsUtils')
 const { getResearchs, getPersonnel, getBuildings, sendMessage, runUserMoneyUpdate } = require('../../../lib/db/users')
+const { onNewWarAttack } = require('../../alliance_wars')
 
 module.exports = {
   doAttackMissions,
@@ -183,6 +188,14 @@ async function completeAttackMission(mission) {
     type: 'attack_report',
     data: { mission_id: mission.id },
   })
+
+  // Update war data if there's one
+  await checkAndUpdateActiveWar(attackerAllianceID, defenderAllianceID)
+}
+
+async function checkAndUpdateActiveWar(attackerAllianceID, defenderAllianceID) {
+  const activeWar = await getActiveWarBetweenAlliances(attackerAllianceID, defenderAllianceID)
+  if (activeWar) onNewWarAttack(activeWar.id)
 }
 
 async function calcAllianceGuardsRestock(killedGuards, defenderAllianceID) {

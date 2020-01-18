@@ -1,25 +1,26 @@
 const mysql = require('../../lib/mysql')
+const { getServerDate } = require('shared-lib/serverTime')
 
 // Contest name has to be unique
 const contestName = 'spy'
 // Start every even week on monday at 00:00
 const shouldStartContest = () => {
-  const date = new Date()
+  const serverDate = getServerDate()
   return (
-    Math.floor(date.getUTCDate() / 7) % 2 === 0 &&
-    date.getUTCDay() === 0 &&
-    date.getUTCHours() === 0 &&
-    date.getUTCMinutes() === 0
+    Math.floor(serverDate.day / 7) % 2 === 0 &&
+    serverDate.day_of_the_week === 0 &&
+    serverDate.hours === 0 &&
+    serverDate.minutes === 0
   )
 }
 // End every even week on sunday at 23:59
 const shouldEndContest = () => {
-  const date = new Date()
+  const serverDate = getServerDate()
   return (
-    Math.floor(date.getUTCDate() / 7) % 2 === 0 &&
-    date.getUTCDay() === 6 &&
-    date.getUTCHours() === 23 &&
-    date.getUTCMinutes() === 59
+    Math.floor(serverDate.day / 7) % 2 === 0 &&
+    serverDate.day_of_the_week === 6 &&
+    serverDate.hours === 23 &&
+    serverDate.minutes === 59
   )
 }
 

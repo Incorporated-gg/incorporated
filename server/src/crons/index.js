@@ -13,11 +13,18 @@ module.exports = () => {
     const filePath = path.join(__dirname, file)
     if (!fs.lstatSync(filePath).isFile()) return
     const cron = require(filePath)
-    if (!cron || !cron.run || !cron.frequencyMs) return
-    cron.run().catch(err => {
-      err.message = `[CRON] [${file}]: ` + err.message
-      console.error(err)
-    })
-    setInterval(() => cron.run(), cron.frequencyMs)
+    if (!cron) return
+    if (cron.run && cron.frequencyMs) {
+      cron.run().catch(err => {
+        err.message = `[CRON] [${file}]: ` + err.message
+        console.error(err)
+      })
+      setInterval(() => cron.run(), cron.frequencyMs)
+    } else if (cron.runOnce) {
+      cron.runOnce().catch(err => {
+        err.message = `[CRON] [${file}]: ` + err.message
+        console.error(err)
+      })
+    }
   })
 }

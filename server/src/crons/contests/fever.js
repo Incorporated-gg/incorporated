@@ -1,22 +1,23 @@
 const mysql = require('../../lib/mysql')
+const { getServerDate } = require('shared-lib/serverTime')
 
 // Contest name has to be unique
 const contestName = 'fever'
-const getLastDayOfMonth = (y, m) => {
-  return new Date(y, m + 1, 0).getDate()
+const getLastDayOfMonth = (year, monthWithBase1) => {
+  return new Date(year, monthWithBase1, 0).getDate()
 }
 // The first day of every month at 00:00
 const shouldStartContest = () => {
-  const date = new Date()
-  return date.getUTCDate() === 1 && date.getUTCHours() === 0 && date.getUTCMinutes() === 0
+  const serverDate = getServerDate()
+  return serverDate.day === 1 && serverDate.hours === 0 && serverDate.minutes === 0
 }
 // The last day of every month at 23:59
 const shouldEndContest = () => {
-  const date = new Date()
+  const serverDate = getServerDate()
   return (
-    date.getUTCDate() === getLastDayOfMonth(date.getUTCFullYear(), date.getUTCMonth()) &&
-    date.getUTCHours() === 23 &&
-    date.getUTCMinutes() === 59
+    serverDate.day === getLastDayOfMonth(serverDate.year, serverDate.month) &&
+    serverDate.hours === 23 &&
+    serverDate.minutes === 59
   )
 }
 

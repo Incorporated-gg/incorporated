@@ -3,6 +3,7 @@ const { getMissions, getPersonnel, hasActiveMission } = require('../lib/db/users
 const { getUserAllianceID } = require('../lib/db/alliances')
 const { buildingsList } = require('shared-lib/buildingsUtils')
 const { calculateMissionTime } = require('shared-lib/missionsUtils')
+const { getInitialUnixTimestampOfServerDay } = require('shared-lib/serverTime')
 
 module.exports = app => {
   app.get('/v1/missions', async function(req, res) {
@@ -109,9 +110,7 @@ module.exports = app => {
 
         // Ensure daily attacks limit
         const MAX_DAILY_SABOTS = process.env.NODE_ENV === 'dev' ? 999 : 3
-        const now = new Date()
-        const dayStartDate = new Date(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate())
-        const dailyCountStartedAt = Math.floor(dayStartDate.getTime() / 1000)
+        const dailyCountStartedAt = Math.floor(getInitialUnixTimestampOfServerDay() / 1000)
         const [
           [{ count }],
         ] = await mysql.query(

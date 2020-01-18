@@ -22,7 +22,7 @@ module.exports = app => {
       return
     }
 
-    const activeWarBetweenBoth = await alliances.checkWarBetweenAlliances(userRank.alliance_id, attackedAllianceID)
+    const activeWarBetweenBoth = await alliances.getActiveWarBetweenAlliances(userRank.alliance_id, attackedAllianceID)
     if (activeWarBetweenBoth) {
       res.status(401).json({ error: 'Ya tenéis una guerra activa' })
       return

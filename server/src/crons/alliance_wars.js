@@ -1,16 +1,40 @@
 const mysql = require('../lib/mysql')
 const alliances = require('../lib/db/alliances')
 const { sendMessage } = require('../lib/db/users')
-const frequencyMs = 5 * 60 * 1000
+const { getServerDay, getInitialUnixTimestampOfServerDay } = require('shared-lib/serverTime')
 
-const run = async () => {
-  const activeWars = await getAllActiveWars()
-  await Promise.all(activeWars.map(executeNewDayForWar))
+const WAR_DAYS_DURATION = 5
+
+async function runOnce() {
+  // Run every server day reset
+  const tsStartOfTomorrow = getInitialUnixTimestampOfServerDay(getServerDay() + 1)
+
+  setTimeout(() => {
+    setTimeout(runOnce, 24 * 60 * 60 * 1000)
+    setTimeout(runNewDay, 500)
+  }, tsStartOfTomorrow - Date.now())
+}
+
+async function onNewWarAttack(warID) {
+  const [
+    [war],
+  ] = await mysql.query('SELECT id, created_at, alliance1_id, alliance2_id, data FROM alliances_wars WHERE id=?', [
+    warID,
+  ])
+  if (!war) return
+  war.data = JSON.parse(war.data)
+  const warDay = getServerDay() - getServerDay(war.created_at * 1000)
+  await updateWarDayData(war, warDay)
 }
 
 module.exports = {
-  run,
-  frequencyMs,
+  runOnce,
+  onNewWarAttack,
+}
+
+async function runNewDay() {
+  const activeWars = await getAllActiveWars()
+  await Promise.all(activeWars.map(executeDayFinishForWar))
 }
 
 async function getAllActiveWars() {
@@ -23,41 +47,30 @@ async function getAllActiveWars() {
   })
 }
 
-function getDayFirstTimestampFromDate(date) {
-  const dayStartDate = new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate())
-  const firstTimestamp = Math.floor(dayStartDate.getTime() / 1000)
-  return firstTimestamp
+async function executeDayFinishForWar(war) {
+  const warDayThatJustFinished = getServerDay() - getServerDay(war.created_at * 1000) - 1
+
+  // Run updateWarDayData just in case there were no attacks the warDay that just finished
+  await updateWarDayData(war, warDayThatJustFinished)
+
+  // End war if appropiate
+  if (warDayThatJustFinished >= WAR_DAYS_DURATION) {
+    await endWar(war)
+  }
 }
 
-const WAR_DAYS_DURATION = 5
-async function executeNewDayForWar(war) {
+async function updateWarDayData(war, warDay) {
+  if (warDay <= 0 || warDay > WAR_DAYS_DURATION) return
   if (!war.data) war.data = { days: {} }
-
-  const firstTsToday = getDayFirstTimestampFromDate(new Date())
-
-  const firstTsWarCreatedAt = getDayFirstTimestampFromDate(new Date(war.created_at * 1000))
-
-  const secondsElapsed = firstTsToday - firstTsWarCreatedAt
-  const warDay = Math.round(secondsElapsed / 60 / 60 / 24)
-
-  if (warDay === 0) {
-    // This day does not count, as the war was declared today
-    return
-  }
 
   // Get attacks today, calc scores, and save them
   const membersAlliance1 = (await alliances.getMembers(war.alliance1_id)).map(m => m.user.id)
   const membersAlliance2 = (await alliances.getMembers(war.alliance2_id)).map(m => m.user.id)
 
-  // End war if appropiate
-  if (warDay > WAR_DAYS_DURATION) {
-    await endWar(war, membersAlliance1, membersAlliance2)
-    return
-  }
-
   // Calc daily points
-  const attacksAlliance1 = await getAttacksFromUsers(membersAlliance1, membersAlliance2, firstTsToday)
-  const attacksAlliance2 = await getAttacksFromUsers(membersAlliance2, membersAlliance1, firstTsToday)
+  const firstTsOfDay = getInitialUnixTimestampOfServerDay(getServerDay(war.created_at * 1000) + warDay - 1) / 1000
+  const attacksAlliance1 = await getAttacksFromUsers(membersAlliance1, membersAlliance2, firstTsOfDay)
+  const attacksAlliance2 = await getAttacksFromUsers(membersAlliance2, membersAlliance1, firstTsOfDay)
 
   let dailyPointsAlliance1 = attacksAlliance1.map(attackToPoints).reduce((prev, curr) => prev + curr, 0)
   let dailyPointsAlliance2 = attacksAlliance2.map(attackToPoints).reduce((prev, curr) => prev + curr, 0)
@@ -76,12 +89,14 @@ async function executeNewDayForWar(war) {
   let warPointsAlliance1 = 50
   let warPointsAlliance2 = 50
   if (totalDailyPoints > 0) {
-    warPointsAlliance1 = Math.round(dailyPointsAlliance1 / totalDailyPoints * 100)
-    warPointsAlliance2 = Math.round(dailyPointsAlliance2 / totalDailyPoints * 100)
+    warPointsAlliance1 = Math.round((dailyPointsAlliance1 / totalDailyPoints) * 100)
+    warPointsAlliance2 = Math.round((dailyPointsAlliance2 / totalDailyPoints) * 100)
   }
 
   // Save war points
   war.data.days[warDay] = {
+    daily_points_alliance1: dailyPointsAlliance1,
+    daily_points_alliance2: dailyPointsAlliance2,
     war_points_alliance1: warPointsAlliance1,
     war_points_alliance2: warPointsAlliance2,
   }
@@ -94,7 +109,7 @@ async function getAttacksFromUsers(userIDs, attackedUserIDs, attacksMinTs) {
   const [
     attacks,
   ] = await mysql.query(
-    'SELECT target_user, result, profit, data FROM missions WHERE mission_type="attack" AND completed=1 AND will_finish_at>? AND will_finish_at<? AND user_id IN (?) AND target_user IN (?)',
+    'SELECT target_user, result, profit, data FROM missions WHERE mission_type="attack" AND completed=1 AND will_finish_at>=? AND will_finish_at<? AND user_id IN (?) AND target_user IN (?)',
     [attacksMinTs, attacksMaxTs, userIDs, attackedUserIDs]
   )
   return attacks.map(attack => {
@@ -114,7 +129,10 @@ function attackToPoints(attack) {
   return points
 }
 
-async function endWar(war, membersAlliance1, membersAlliance2) {
+async function endWar(war) {
+  const membersAlliance1 = (await alliances.getMembers(war.alliance1_id)).map(m => m.user.id)
+  const membersAlliance2 = (await alliances.getMembers(war.alliance2_id)).map(m => m.user.id)
+
   const warPointsAlliance1 = Object.values(war.data.days).reduce((prev, curr) => prev + curr.war_points_alliance1, 0)
   const warPointsAlliance2 = Object.values(war.data.days).reduce((prev, curr) => prev + curr.war_points_alliance2, 0)
 
