@@ -2,6 +2,10 @@ const mysql = require('../lib/mysql')
 const alliances = require('../lib/db/alliances')
 const { sendMessage } = require('../lib/db/users')
 const { getServerDay, getInitialUnixTimestampOfServerDay } = require('shared-lib/serverTime')
+const { personnelList } = require('shared-lib/personnelUtils')
+
+const sabotsInfo = personnelList.find(t => t.resource_id === 'sabots')
+const thiefsInfo = personnelList.find(t => t.resource_id === 'thiefs')
 
 const WAR_DAYS_DURATION = 5
 
@@ -10,9 +14,9 @@ async function runOnce() {
   const tsStartOfTomorrow = getInitialUnixTimestampOfServerDay(getServerDay() + 1)
 
   setTimeout(() => {
-    setTimeout(runOnce, 24 * 60 * 60 * 1000)
-    setTimeout(runNewDay, 500)
-  }, tsStartOfTomorrow - Date.now())
+    runOnce()
+    runNewDay()
+  }, tsStartOfTomorrow - Date.now() + 500)
 }
 
 async function onNewWarAttack(warID) {
@@ -48,13 +52,13 @@ async function getAllActiveWars() {
 }
 
 async function executeDayFinishForWar(war) {
-  const warDayThatJustFinished = getServerDay() - getServerDay(war.created_at * 1000) - 1
+  const warDay = getServerDay() - getServerDay(war.created_at * 1000)
 
   // Run updateWarDayData just in case there were no attacks the warDay that just finished
-  await updateWarDayData(war, warDayThatJustFinished)
+  await updateWarDayData(war, warDay)
 
   // End war if appropiate
-  if (warDayThatJustFinished >= WAR_DAYS_DURATION) {
+  if (warDay >= WAR_DAYS_DURATION) {
     await endWar(war)
   }
 }
@@ -93,12 +97,26 @@ async function updateWarDayData(war, warDay) {
     warPointsAlliance2 = Math.round((dailyPointsAlliance2 / totalDailyPoints) * 100)
   }
 
-  // Save war points
+  // Save misc data for end of war points
+  const attackWinsAlliance1 = attacksAlliance1.filter(attack => attack.result === 'win').length
+  const attackWinsAlliance2 = attacksAlliance2.filter(attack => attack.result === 'win').length
+  const profitAlliance1 = attacksAlliance1.map(attack => attack.profit).reduce((prev, curr) => prev + curr, 0)
+  const profitAlliance2 = attacksAlliance2.map(attack => attack.profit).reduce((prev, curr) => prev + curr, 0)
+  const attackSmacksAlliance1 = attacksAlliance2.filter(attack => attack.result === 'lose').length
+  const attackSmacksAlliance2 = attacksAlliance1.filter(attack => attack.result === 'lose').length
+
+  // Save day data
   war.data.days[warDay] = {
     daily_points_alliance1: dailyPointsAlliance1,
     daily_points_alliance2: dailyPointsAlliance2,
     war_points_alliance1: warPointsAlliance1,
     war_points_alliance2: warPointsAlliance2,
+    attack_wins_alliance1: attackWinsAlliance1,
+    attack_wins_alliance2: attackWinsAlliance2,
+    profit_alliance1: profitAlliance1,
+    profit_alliance2: profitAlliance2,
+    attack_smacks_alliance1: attackSmacksAlliance1,
+    attack_smacks_alliance2: attackSmacksAlliance2,
   }
 
   await mysql.query('UPDATE alliances_wars SET data=? WHERE id=?', [JSON.stringify(war.data), war.id])
@@ -122,9 +140,16 @@ function attackToPoints(attack) {
   let points = 0
   if (attack.result === 'win') points += 1
   if (attack.result === 'lose') points -= 3
-  // TODO: Implement actual points based on attack efficiency system
-  if (attack.profit > 0) points += 1
-  if (attack.attacker_total_income > 1000000) points += 1
+
+  const incomeFromBuildings = attack.data.report.income_from_buildings
+  if (incomeFromBuildings > 0) {
+    const moneyLostOnSabots = attack.data.report.killed_sabots * sabotsInfo.price
+    const moneyLostOnThiefs = attack.data.report.killed_thiefs * thiefsInfo.price
+    const moneyLostOnTroops = moneyLostOnSabots + moneyLostOnThiefs
+
+    const efficiencyRatio = (incomeFromBuildings - moneyLostOnTroops) / incomeFromBuildings
+    points += Math.floor(efficiencyRatio * 2 * 10) / 10
+  }
 
   return points
 }
@@ -133,8 +158,30 @@ async function endWar(war) {
   const membersAlliance1 = (await alliances.getMembers(war.alliance1_id)).map(m => m.user.id)
   const membersAlliance2 = (await alliances.getMembers(war.alliance2_id)).map(m => m.user.id)
 
-  const warPointsAlliance1 = Object.values(war.data.days).reduce((prev, curr) => prev + curr.war_points_alliance1, 0)
-  const warPointsAlliance2 = Object.values(war.data.days).reduce((prev, curr) => prev + curr.war_points_alliance2, 0)
+  const days = Object.values(war.data.days)
+
+  let warPointsAlliance1 = days.reduce((prev, curr) => prev + curr.war_points_alliance1, 0)
+  let warPointsAlliance2 = days.reduce((prev, curr) => prev + curr.war_points_alliance2, 0)
+
+  // Extra points
+  const attackWinsAlliance1 = days.reduce((prev, curr) => prev + curr.attack_wins_alliance1, 0)
+  const attackWinsAlliance2 = days.reduce((prev, curr) => prev + curr.attack_wins_alliance2, 0)
+  if (attackWinsAlliance1 !== attackWinsAlliance2) {
+    if (attackWinsAlliance1 > attackWinsAlliance2) warPointsAlliance1 += 40
+    else warPointsAlliance2 += 40
+  }
+  const profitAlliance1 = days.reduce((prev, curr) => prev + curr.profit_alliance1, 0)
+  const profitAlliance2 = days.reduce((prev, curr) => prev + curr.profit_alliance2, 0)
+  if (profitAlliance1 !== profitAlliance2) {
+    if (profitAlliance1 > profitAlliance2) warPointsAlliance1 += 40
+    else warPointsAlliance2 += 40
+  }
+  const attackSmacksAlliance1 = days.reduce((prev, curr) => prev + curr.attack_smacks_alliance1, 0)
+  const attackSmacksAlliance2 = days.reduce((prev, curr) => prev + curr.attack_smacks_alliance2, 0)
+  if (attackSmacksAlliance1 !== attackSmacksAlliance2) {
+    if (attackSmacksAlliance1 > attackSmacksAlliance2) warPointsAlliance1 += 40
+    else warPointsAlliance2 += 40
+  }
 
   const winner = warPointsAlliance1 > warPointsAlliance2 ? 1 : 2
   war.data.winner = winner

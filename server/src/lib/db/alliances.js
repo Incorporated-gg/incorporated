@@ -285,12 +285,15 @@ async function getAlliancePastWars(allianceID) {
 }
 
 async function parseWar(allianceID, war) {
-  const combatantID = war.alliance1_id === allianceID ? war.alliance2_id : war.alliance1_id
-  const combatant = await getBasicData(combatantID)
+  const alliance1 = await getBasicData(war.alliance1_id)
+  const alliance2 = await getBasicData(war.alliance2_id)
+  const combatant = war.alliance1_id === allianceID ? alliance2 : alliance1
   return {
     id: war.id,
     created_at: war.created_at,
     data: JSON.parse(war.data),
     combatant,
+    alliance1: alliance1,
+    alliance2: alliance2,
   }
 }

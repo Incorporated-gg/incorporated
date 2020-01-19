@@ -86,15 +86,18 @@ function MoneyBar({ className, style }) {
       <div className={styles.logoContainer}>
         <img src={require('./img/logo_expanded.png')} alt="" />
       </div>
-      <MoneyDisplay />
+      <div className={styles.rightContainer}>
+        <MoneyDisplay />
+      </div>
     </div>
   )
 }
-export default function MoneyDisplay() {
+
+function MoneyDisplay() {
   const userData = useUserData()
   if (!userData) return null
 
-  return <span style={{ textAlign: 'right' }}>{Math.floor(userData.money).toLocaleString()}€</span>
+  return <span>{Math.floor(userData.money).toLocaleString()}€</span>
 }
 
 function MessagesUnreadLabel() {
