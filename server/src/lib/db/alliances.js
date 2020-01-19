@@ -15,13 +15,25 @@ module.exports.getUserRank = getUserRank
 async function getUserRank(userID) {
   const [
     [allianceMember],
-  ] = await mysql.query('SELECT alliance_id, rank_name, is_admin FROM alliances_members WHERE user_id=?', [userID])
+  ] = await mysql.query(
+    'SELECT alliance_id, rank_name, \
+    permission_admin, permission_accept_and_kick_members, permission_extract_money, permission_extract_troops, \
+    permission_send_circular_msg, permission_activate_buffs, permission_declare_war \
+    FROM alliances_members WHERE user_id=?',
+    [userID]
+  )
   if (!allianceMember) return false
 
   return {
     alliance_id: allianceMember.alliance_id,
     rank_name: allianceMember.rank_name,
-    is_admin: Boolean(allianceMember.is_admin),
+    permission_admin: Boolean(allianceMember.permission_admin),
+    permission_accept_and_kick_members: Boolean(allianceMember.permission_accept_and_kick_members),
+    permission_extract_money: Boolean(allianceMember.permission_extract_money),
+    permission_extract_troops: Boolean(allianceMember.permission_extract_troops),
+    permission_send_circular_msg: Boolean(allianceMember.permission_send_circular_msg),
+    permission_activate_buffs: Boolean(allianceMember.permission_activate_buffs),
+    permission_declare_war: Boolean(allianceMember.permission_declare_war),
   }
 }
 
@@ -55,14 +67,16 @@ module.exports.getIDFromShortName = async shortName => {
 
 module.exports.getMembers = getMembers
 async function getMembers(allianceID) {
-  let [members] = await mysql.query('SELECT user_id, rank_name, is_admin FROM alliances_members WHERE alliance_id=?', [
+  let [
+    members,
+  ] = await mysql.query('SELECT user_id, rank_name, permission_admin FROM alliances_members WHERE alliance_id=?', [
     allianceID,
   ])
   members = await Promise.all(
     members.map(async member => ({
       user: await users.getData(member.user_id),
       rank_name: member.rank_name,
-      is_admin: Boolean(member.is_admin),
+      permission_admin: Boolean(member.permission_admin),
     }))
   )
   members = members.sort((a, b) => (a.user.income > b.user.income ? -1 : 1))
@@ -296,4 +310,19 @@ async function parseWar(allianceID, war) {
     alliance1: alliance1,
     alliance2: alliance2,
   }
+}
+
+module.exports.deleteAlliance = deleteAlliance
+async function deleteAlliance(allianceID) {
+  await Promise.all([
+    mysql.query('DELETE FROM alliances WHERE id=?', [allianceID]),
+    mysql.query('DELETE FROM alliances_member_requests WHERE alliance_id=?', [allianceID]),
+    mysql.query('DELETE FROM alliances_members WHERE alliance_id=?', [allianceID]),
+    mysql.query('DELETE FROM alliances_research WHERE alliance_id=?', [allianceID]),
+    mysql.query('DELETE FROM alliances_research_log WHERE alliance_id=?', [allianceID]),
+    mysql.query('DELETE FROM alliances_resources WHERE alliance_id=?', [allianceID]),
+    mysql.query('DELETE FROM alliances_resources_log WHERE alliance_id=?', [allianceID]),
+    mysql.query('DELETE FROM alliances_wars WHERE alliance1_id=? OR alliance2_id=?', [allianceID, allianceID]),
+    mysql.query('DELETE FROM ranking_alliances WHERE alliance_id=?', [allianceID]),
+  ])
 }

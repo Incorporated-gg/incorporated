@@ -80,10 +80,7 @@ export default function Ranking() {
             <div>
               <Username user={member.user} />
             </div>
-            <div>
-              {member.rank_name}
-              {member.is_admin ? ' (Líder)' : ''}
-            </div>
+            <div>{member.rank_name}</div>
           </RankItem>
         )
       })}
@@ -94,7 +91,7 @@ export default function Ranking() {
       ) : userData.alliance.id === alliance.id ? (
         <button onClick={leaveAlliance}>Salir</button>
       ) : (
-        userData.alliance_user_rank.is_admin && <button onClick={declareWar}>Declarar guerra</button>
+        userData.alliance_user_rank.permission_declare_war && <button onClick={declareWar}>Declarar guerra</button>
       )}
       <br />
       <h2>Guerras activas</h2>

@@ -48,8 +48,12 @@ export default function AllianceMissions({ alliance, reloadAllianceData }) {
         </thead>
         <tbody>
           {activeMissions.length ? (
-            activeMissions.map((mission, i) => (
-              <MissionRow key={i} mission={mission} reloadMissionsCallback={reloadAllianceData} />
+            activeMissions.map(mission => (
+              <MissionRow
+                key={`${mission.user.id}_${mission.started_at}`}
+                mission={mission}
+                reloadMissionsCallback={reloadAllianceData}
+              />
             ))
           ) : (
             <tr>
@@ -84,8 +88,12 @@ export default function AllianceMissions({ alliance, reloadAllianceData }) {
         </thead>
         <tbody>
           {receivedMissions.length ? (
-            receivedMissions.map((m, i) => (
-              <MissionRow key={i} mission={m} reloadMissionsCallback={reloadAllianceData} />
+            receivedMissions.map(mission => (
+              <MissionRow
+                key={`${mission.user.id}_${mission.started_at}`}
+                mission={mission}
+                reloadMissionsCallback={reloadAllianceData}
+              />
             ))
           ) : (
             <tr>

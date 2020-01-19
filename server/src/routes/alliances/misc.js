@@ -1,5 +1,6 @@
 const mysql = require('../../lib/mysql')
 const alliances = require('../../lib/db/alliances')
+const { sendMessage } = require('../../lib/db/users')
 const { CREATE_ALLIANCE_PRICE } = require('shared-lib/allianceUtils')
 
 const alphanumericRegexp = /^[a-z0-9]+$/i
@@ -66,7 +67,7 @@ module.exports = app => {
       [allianceCreatedAt, null, longName, shortName, description]
     )
     await mysql.query(
-      'INSERT INTO alliances_members (created_at, alliance_id, user_id, rank_name, is_admin) VALUES (?, ?, ?, ?, ?)',
+      'INSERT INTO alliances_members (created_at, alliance_id, user_id, rank_name, permission_admin) VALUES (?, ?, ?, ?, ?)',
       [allianceCreatedAt, newAllianceID, req.userData.id, 'Admin', true]
     )
 
@@ -80,62 +81,35 @@ module.exports = app => {
     }
 
     const userRank = await alliances.getUserRank(req.userData.id)
-    if (!userRank || !userRank.is_admin) {
+    if (!userRank || !userRank.permission_admin) {
       res.status(401).json({ error: 'No eres admin de una alianza' })
       return
     }
 
-    await Promise.all([
-      mysql.query('DELETE FROM alliances WHERE id=?', [userRank.alliance_id]),
-      mysql.query('DELETE FROM alliances_members WHERE alliance_id=?', [userRank.alliance_id]),
-      mysql.query('DELETE FROM alliances_research WHERE alliance_id=?', [userRank.alliance_id]),
-      mysql.query('DELETE FROM alliances_member_requests WHERE alliance_id=?', [userRank.alliance_id]),
-    ])
+    await alliances.deleteAlliance(userRank.alliance_id)
 
     res.json({ success: true })
   })
 
-  app.post('/v1/alliance/edit_rank', async function(req, res) {
+  app.post('/v1/alliance/leave', async function(req, res) {
     if (!req.userData) {
       res.status(401).json({ error: 'Necesitas estar conectado', error_code: 'not_logged_in' })
       return
     }
 
-    const newRankName = req.body.rank_name
-    const newIsLeader = Boolean(req.body.is_admin)
-
-    const isValidRankName = typeof newRankName === 'string' && newRankName.length >= 1 && newRankName.length <= 20
-    if (!isValidRankName) {
-      res.status(400).json({ error: 'Nombre de rango inválido' })
-      return
-    }
-
     const userRank = await alliances.getUserRank(req.userData.id)
-    if (!userRank || !userRank.is_admin) {
-      res.status(401).json({ error: 'No eres admin de una alianza' })
+    if (!userRank) {
+      res.status(401).json({ error: 'No eres miembro de una alianza' })
       return
     }
-    const allianceMembers = await alliances.getMembers(userRank.alliance_id)
-
-    const switchingUser = allianceMembers.find(member => member.user.username === req.body.username)
-    if (!switchingUser) {
-      res.status(401).json({ error: 'Nombre de usuario no encontrado' })
+    if (userRank.permission_admin) {
+      res.status(401).json({ error: 'No puedes salir de una alianza siendo admin' })
       return
     }
 
-    if (!newIsLeader) {
-      const adminsCount = allianceMembers.reduce((prev, curr) => prev + (curr.is_admin ? 1 : 0), 0)
-      if (adminsCount <= 1) {
-        res.status(401).json({ error: 'No puedes quitarle liderazgo al último líder' })
-        return
-      }
-    }
-
-    await mysql.query('UPDATE alliances_members SET is_admin=?, rank_name=? WHERE alliance_id=? AND user_id=?', [
-      newIsLeader,
-      newRankName,
+    await mysql.query('DELETE FROM alliances_members WHERE alliance_id=? AND user_id=?', [
       userRank.alliance_id,
-      switchingUser.user.id,
+      req.userData.id,
     ])
 
     res.json({ success: true })
@@ -148,8 +122,8 @@ module.exports = app => {
     }
 
     const userRank = await alliances.getUserRank(req.userData.id)
-    if (!userRank || !userRank.is_admin) {
-      res.status(401).json({ error: 'No eres admin de una alianza' })
+    if (!userRank || !userRank.permission_activate_buffs) {
+      res.status(401).json({ error: 'No tienes permiso para hacer esto' })
       return
     }
 
@@ -178,6 +152,57 @@ module.exports = app => {
 
     const msNow = Math.floor(Date.now() / 1000)
     await mysql.query('UPDATE alliances SET ??=? WHERE id=?', [`buff_${buffID}_last_used`, msNow, userRank.alliance_id])
+
+    res.json({ success: true })
+  })
+
+  app.post('/v1/alliance/declare_war', async function(req, res) {
+    if (!req.userData) {
+      res.status(401).json({ error: 'Necesitas estar conectado', error_code: 'not_logged_in' })
+      return
+    }
+
+    const attackedAllianceID = req.body.alliance_id
+    const allianceExists = await alliances.getBasicData(attackedAllianceID)
+    if (!allianceExists) {
+      res.status(401).json({ error: 'Esa alianza no existe' })
+      return
+    }
+
+    const userRank = await alliances.getUserRank(req.userData.id)
+    if (!userRank || !userRank.permission_declare_war) {
+      res.status(401).json({ error: 'No tienes permiso para hacer esto' })
+      return
+    }
+
+    const activeWarBetweenBoth = await alliances.getActiveWarBetweenAlliances(userRank.alliance_id, attackedAllianceID)
+    if (activeWarBetweenBoth) {
+      res.status(401).json({ error: 'Ya tenéis una guerra activa' })
+      return
+    }
+
+    const tsNow = Math.floor(Date.now() / 1000)
+    const [
+      { insertId: warID },
+    ] = await mysql.query('INSERT INTO alliances_wars (created_at, alliance1_id, alliance2_id) VALUES (?, ?, ?)', [
+      tsNow,
+      userRank.alliance_id,
+      attackedAllianceID,
+    ])
+
+    const attackedAllianceMembers = await alliances.getMembers(attackedAllianceID)
+    const myAllianceMembers = await alliances.getMembers(userRank.alliance_id)
+
+    await Promise.all(
+      [...attackedAllianceMembers, ...myAllianceMembers].map(member =>
+        sendMessage({
+          receiverID: member.user.id,
+          senderID: null,
+          type: 'war_started',
+          data: { war_id: warID },
+        })
+      )
+    )
 
     res.json({ success: true })
   })

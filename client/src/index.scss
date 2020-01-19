@@ -40,8 +40,12 @@ textarea {
   padding: 0.2em;
 }
 
-input {
+input[type="text"], input[type="number"] {
   width: 6em;
+}
+input[type="checkbox"] {
+  margin: 0.25em;
+  vertical-align: middle;
 }
 
 textarea {

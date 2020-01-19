@@ -7,6 +7,7 @@ MemberRequests.propTypes = {
 }
 
 export default function MemberRequests({ reloadAllianceData }) {
+  const [error, setError] = useState(null)
   const [memberRequests, setMemberRequests] = useState(null)
 
   const reloadMemberRequests = useCallback(() => {
@@ -15,7 +16,7 @@ export default function MemberRequests({ reloadAllianceData }) {
       .then(res => {
         setMemberRequests(res.member_requests)
       })
-      .catch(err => alert(err.message))
+      .catch(err => setError(err.message))
   }, [])
 
   useEffect(() => {
@@ -32,11 +33,13 @@ export default function MemberRequests({ reloadAllianceData }) {
       .catch(err => alert(err.message))
   }
 
+  if (error) return <p>{error}</p>
   return (
     <div>
+      <h3>Peticiones de miembro</h3>
       <table>
         <tbody>
-          {memberRequests &&
+          {memberRequests && memberRequests.length ? (
             memberRequests.map(memberRequest => {
               return (
                 <tr key={memberRequest.id}>
@@ -47,7 +50,10 @@ export default function MemberRequests({ reloadAllianceData }) {
                   </td>
                 </tr>
               )
-            })}
+            })
+          ) : (
+            <div>No hay nuevas peticiones</div>
+          )}
         </tbody>
       </table>
     </div>

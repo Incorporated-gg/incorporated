@@ -10,13 +10,13 @@ const thiefsInfo = personnelList.find(t => t.resource_id === 'thiefs')
 const WAR_DAYS_DURATION = 5
 
 async function runOnce() {
-  // Run every server day reset
+  // Run every server day just after reset
   const tsStartOfTomorrow = getInitialUnixTimestampOfServerDay(getServerDay() + 1)
 
   setTimeout(() => {
     runOnce()
-    runNewDay()
-  }, tsStartOfTomorrow - Date.now() + 500)
+    runJustAfterNewDay()
+  }, tsStartOfTomorrow - Date.now() + 100)
 }
 
 async function onNewWarAttack(warID) {
@@ -36,7 +36,7 @@ module.exports = {
   onNewWarAttack,
 }
 
-async function runNewDay() {
+async function runJustAfterNewDay() {
   const activeWars = await getAllActiveWars()
   await Promise.all(activeWars.map(executeDayFinishForWar))
 }
@@ -54,12 +54,11 @@ async function getAllActiveWars() {
 async function executeDayFinishForWar(war) {
   const warDay = getServerDay() - getServerDay(war.created_at * 1000)
 
-  // Run updateWarDayData just in case there were no attacks the warDay that just finished
-  await updateWarDayData(war, warDay)
-
-  // End war if appropiate
-  if (warDay >= WAR_DAYS_DURATION) {
+  if (warDay > WAR_DAYS_DURATION) {
     await endWar(war)
+  } else {
+    // Run updateWarDayData just in case there are no attacks today
+    await updateWarDayData(war, warDay)
   }
 }
 

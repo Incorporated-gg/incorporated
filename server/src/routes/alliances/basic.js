@@ -43,10 +43,17 @@ module.exports = app => {
     ])
 
     const missionHistory = await alliances.getMissionHistory(members)
+    const ranks = await Promise.all(
+      members.map(async member => ({
+        user: member.user,
+        rank: await alliances.getUserRank(member.user.id),
+      }))
+    )
 
     const alliance = {
       ...basicData,
       members,
+      ranks,
       researchs,
       resources,
       resources_log: resourcesLog,
@@ -136,15 +143,18 @@ module.exports = app => {
       res.status(401).json({ error: 'Necesitas estar conectado', error_code: 'not_logged_in' })
       return
     }
+    const userRank = await alliances.getUserRank(req.userData.id)
+    const allianceID = userRank.alliance_id
+    if (!userRank) {
+      res.status(401).json({ error: 'No tienes alianza' })
+      return
+    }
+
     if (!req.body.amount || !req.body.resource_id) {
       res.status(400).json({ error: 'Faltan datos' })
       return
     }
-    const allianceID = await alliances.getUserAllianceID(req.userData.id)
-    if (!allianceID) {
-      res.status(401).json({ error: 'No tienes una alianza' })
-      return
-    }
+
     const allianceResources = await alliances.getResources(allianceID)
     const allianceResearchs = await alliances.getResearchs(allianceID)
 
@@ -172,7 +182,10 @@ module.exports = app => {
     // Make sure the user has enough resources/space for them
     switch (resourceID) {
       case 'money':
-        // TODO: Make sure it doesn't exceed bank cap
+        if (resourceAmount < 0 && !userRank.permission_extract_money) {
+          res.status(401).json({ error: 'No tienes permiso para hacer esto' })
+          return
+        }
         if (resourceAmount > 0 && req.userData.money < resourceAmount) {
           res.status(401).json({ error: 'No tienes suficiente dinero' })
           return
@@ -184,7 +197,10 @@ module.exports = app => {
       case 'sabots':
       case 'guards':
       case 'thiefs':
-        // TODO: Make sure it doesn't exceed bank cap
+        if (resourceAmount < 0 && !userRank.permission_extract_troops) {
+          res.status(401).json({ error: 'No tienes permiso para hacer esto' })
+          return
+        }
         if (resourceAmount > 0 && req.userData.personnel[resourceID] < resourceAmount) {
           res.status(401).json({ error: 'No tienes suficientes recursos' })
           return
@@ -220,29 +236,5 @@ module.exports = app => {
     res.json({
       success: true,
     })
-  })
-
-  app.post('/v1/alliance/leave', async function(req, res) {
-    if (!req.userData) {
-      res.status(401).json({ error: 'Necesitas estar conectado', error_code: 'not_logged_in' })
-      return
-    }
-
-    const userRank = await alliances.getUserRank(req.userData.id)
-    if (!userRank) {
-      res.status(401).json({ error: 'No eres miembro de una alianza' })
-      return
-    }
-    if (userRank.is_admin) {
-      res.status(401).json({ error: 'No puedes salir de una alianza siendo admin' })
-      return
-    }
-
-    await mysql.query('DELETE FROM alliances_members WHERE alliance_id=? AND user_id=?', [
-      userRank.alliance_id,
-      req.userData.id,
-    ])
-
-    res.json({ success: true })
   })
 }

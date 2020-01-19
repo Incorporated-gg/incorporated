@@ -1,6 +1,5 @@
 module.exports = app => {
   require('./alliances/basic')(app)
-  require('./alliances/member_request')(app)
-  require('./alliances/admin')(app)
-  require('./alliances/wars')(app)
+  require('./alliances/manage_members')(app)
+  require('./alliances/misc')(app)
 }

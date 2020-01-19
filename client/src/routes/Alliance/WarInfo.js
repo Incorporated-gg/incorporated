@@ -57,7 +57,7 @@ export default function WarInfo({ war }) {
           <img
             className={styles.lineGraphImg}
             src={`https://quickchart.io/chart?c={type:'bar',data:${JSON.stringify(warLineGraphData)}}`}
-            alt="Puntos de guerra detallados por día"
+            alt="Gráfica de Puntos de guerra detallados por día"
           />
           <div>
             <p>

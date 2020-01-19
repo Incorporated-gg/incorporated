@@ -27,4 +27,19 @@ module.exports = app => {
       },
     })
   })
+
+  app.get('/v1/my_data/daily_log', async function(req, res) {
+    if (!req.userData) {
+      res.status(401).json({ error: 'Necesitas estar conectado', error_code: 'not_logged_in' })
+      return
+    }
+
+    const [dailyLogInfo] = await mysql.query('SELECT server_day, daily_income FROM users_daily_log WHERE user_id=?', [
+      req.userData.id,
+    ])
+
+    res.json({
+      daily_log: dailyLogInfo,
+    })
+  })
 }

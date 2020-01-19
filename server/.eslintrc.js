@@ -18,6 +18,7 @@ module.exports = {
   rules: {
     "prettier/prettier": "error",
     "no-shadow": "warn",
-    "no-return-await": "off"
+    "no-return-await": "off",
+    "no-multi-str": "off"
   }
 };

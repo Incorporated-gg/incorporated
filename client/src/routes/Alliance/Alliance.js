@@ -9,7 +9,7 @@ import AllianceMissions from './Missions'
 import AllianceHome from './Home'
 import AllianceWars from './Wars'
 import AllianceAdmin from './Admin/index.js'
-import { userData } from '../../lib/user'
+import { useUserData } from '../../lib/user'
 
 let lastAllianceData = null
 export default function Alliance() {
@@ -48,7 +48,7 @@ AllianceRouter.propTypes = {
   reloadAllianceData: PropTypes.func.isRequired,
 }
 function AllianceRouter({ alliance, reloadAllianceData }) {
-  const myMemberData = alliance.members.find(member => member.user.id === userData.id)
+  const userData = useUserData()
 
   return (
     <>
@@ -71,7 +71,9 @@ function AllianceRouter({ alliance, reloadAllianceData }) {
           <li>
             <NavLink to="/alliance/wars">Guerras</NavLink>
           </li>
-          {myMemberData && myMemberData.is_admin && (
+          {(userData.alliance_user_rank.permission_admin ||
+            userData.alliance_user_rank.permission_activate_buffs ||
+            userData.alliance_user_rank.permission_accept_and_kick_members) && (
             <li>
               <NavLink to="/alliance/admin">Admin</NavLink>
             </li>

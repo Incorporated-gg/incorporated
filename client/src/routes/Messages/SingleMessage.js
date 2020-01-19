@@ -233,11 +233,11 @@ export function SpyReportMsg({ mission }) {
           {buildingsList.map(buildingInfo => {
             const building = mission.report.buildings[buildingInfo.id]
             return (
-              <>
+              <React.Fragment key={buildingInfo.id}>
                 {buildingInfo.name}. Cantidad: {building.quantity.toLocaleString()}. Dinero:
                 {building.money.toLocaleString()}€.
                 <br />
-              </>
+              </React.Fragment>
             )
           })}
         </div>
@@ -248,10 +248,10 @@ export function SpyReportMsg({ mission }) {
           <br />
           {personnelList.map(personnelInfo => {
             return (
-              <>
+              <React.Fragment key={personnelInfo.resource_id}>
                 {personnelInfo.name}: {mission.report.personnel[personnelInfo.resource_id]}
                 <br />
-              </>
+              </React.Fragment>
             )
           })}
         </div>
@@ -262,10 +262,10 @@ export function SpyReportMsg({ mission }) {
           <br />
           {researchList.map(researchInfo => {
             return (
-              <>
+              <React.Fragment key={researchInfo.id}>
                 {researchInfo.name}: {mission.report.researchs[researchInfo.id]}
                 <br />
-              </>
+              </React.Fragment>
             )
           })}
         </div>

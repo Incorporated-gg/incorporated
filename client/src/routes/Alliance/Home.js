@@ -40,10 +40,7 @@ export default function AllianceHome({ alliance, reloadAllianceData }) {
             <div>
               <Username user={member.user} />
             </div>
-            <div>
-              {member.rank_name}
-              {member.is_admin ? ' (Líder)' : ''}
-            </div>
+            <div>{member.rank_name}</div>
           </RankItem>
         )
       })}
