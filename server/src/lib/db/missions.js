@@ -17,6 +17,7 @@ async function parseMissionFromDB(mission) {
       will_finish_at: mission.will_finish_at,
       completed: mission.completed,
       result: mission.result,
+      report: data.report,
     }
   } else if (mission.mission_type === 'attack') {
     const defensorData = await users.getData(mission.target_user)

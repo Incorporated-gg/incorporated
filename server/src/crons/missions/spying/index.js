@@ -49,10 +49,6 @@ async function completeSpyMission(mission) {
     spiesRemaining,
   })
 
-  // Update mission status
-  const result = spiesCaptured > 0 ? 'caught' : 'not_caught'
-  await mysql.query('UPDATE missions SET completed=1, result=? WHERE id=?', [result, mission.id])
-
   // Reduce spies if some were captured
   if (spiesCaptured > 0) {
     await mysql.query('UPDATE users_resources SET quantity=quantity-? WHERE user_id=? AND resource_id=?', [
@@ -79,10 +75,20 @@ async function completeSpyMission(mission) {
   await runUserMoneyUpdate(defender.id)
 
   // Generate report
-  const intelReport = {}
+  const intelReport = {
+    captured_spies: spiesCaptured,
+  }
   if (informationObtained.buildings) intelReport.buildings = await getBuildings(defender.id)
   if (informationObtained.personnel) intelReport.personnel = await getPersonnel(defender.id)
   if (informationObtained.research) intelReport.researchs = defensorResearchs
+
+  // Update mission status
+  const result = spiesCaptured > 0 ? 'caught' : 'not_caught'
+  const newData = JSON.stringify({
+    ...data,
+    report: intelReport,
+  })
+  await mysql.query('UPDATE missions SET completed=1, result=?, data=? WHERE id=?', [result, newData, mission.id])
 
   // Message intel report
   await sendMessage({
@@ -90,10 +96,7 @@ async function completeSpyMission(mission) {
     senderID: null,
     type: 'spy_report',
     data: {
-      defender_id: defender.id,
-      spies_count: spiesSent,
-      intel_report: intelReport,
-      captured_spies: spiesCaptured,
+      mission_id: mission.id,
     },
   })
 }

@@ -6,7 +6,7 @@ import { timestampFromEpoch } from 'shared-lib/commonUtils'
 import { buildingsList } from 'shared-lib/buildingsUtils'
 import { getTimeUntil } from '../../lib/utils'
 import { reloadUserData, userData } from '../../lib/user'
-import { AttackReportMsg } from '../Messages/SingleMessage'
+import { AttackReportMsg, SpyReportMsg } from '../Messages/SingleMessage'
 
 MissionRow.propTypes = {
   mission: PropTypes.object.isRequired,
@@ -93,7 +93,8 @@ export default function MissionRow({ mission, reloadMissionsCallback }) {
       {showDetails && (
         <tr>
           <td colSpan="99">
-            <AttackReportMsg mission={mission} showSender showTarget />
+            {mission.mission_type === 'attack' && <AttackReportMsg mission={mission} showSender showTarget />}
+            {mission.mission_type === 'spy' && <SpyReportMsg mission={mission} />}
           </td>
         </tr>
       )}

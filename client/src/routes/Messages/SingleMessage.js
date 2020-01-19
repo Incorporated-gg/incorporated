@@ -148,61 +148,14 @@ function parseMessage(message) {
       break
     }
     case 'spy_report':
+      const mission = message.data.mission
       messageElm = (
         <div>
           <div>
-            Resultado de espionaje a: <Username user={message.data.defender} />
+            Resultado de espionaje a: <Username user={mission.target_user} />
           </div>
-          {message.data.captured_spies > 0 && (
-            <div>
-              Durante la misión el enemigo fue alertado, y capturaron a {message.data.captured_spies.toLocaleString()}{' '}
-              de nuestros espías. Quizás deberíamos haber mandado menos espías, o invertido más en la investigación de
-              espionaje.
-            </div>
-          )}
-          {message.data.intel_report && Object.keys(message.data.intel_report).length > 0 ? (
-            <>
-              <div>Número de espías: {message.data.spies_count}</div>
-              {message.data.intel_report.buildings && (
-                <div>
-                  <b>{'Edificios: '}</b>
-                  {buildingsList
-                    .map(buildingInfo => {
-                      const building = message.data.intel_report.buildings[buildingInfo.id]
-                      return `${
-                        buildingInfo.name
-                      }. Cantidad: ${building.quantity.toLocaleString()}. Dinero: ${building.money.toLocaleString()}.`
-                    })
-                    .join('\n')}
-                </div>
-              )}
-              {message.data.intel_report.personnel && (
-                <div>
-                  <b>{'Personal: '}</b>
-                  {personnelList
-                    .map(personnelInfo => {
-                      return personnelInfo.name + ': ' + message.data.intel_report.personnel[personnelInfo.resource_id]
-                    })
-                    .join(', ')}
-                </div>
-              )}
-              {message.data.intel_report.researchs && (
-                <div>
-                  <b>{'Investigaciones: '}</b>
-                  {researchList
-                    .map(researchInfo => {
-                      return researchInfo.name + ': ' + message.data.intel_report.researchs[researchInfo.id]
-                    })
-                    .join(', ')}
-                </div>
-              )}
-            </>
-          ) : message.data.captured_spies === 0 ? (
-            <div>No hemos obtenido ninguna información! Tendremos que enviar más espías</div>
-          ) : (
-            <div>No hemos obtenido ninguna información! Nos han capturado a demasiados espías</div>
-          )}
-          <UserActionLinks user={message.data.defender} />
+          <SpyReportMsg mission={mission} />
+          <UserActionLinks user={mission.target_user} />
         </div>
       )
       break
@@ -255,6 +208,74 @@ export function AttackReportMsg({ mission, showSender, showTarget }) {
       <div>Dinero ganado por muertes: {mission.report.income_from_troops.toLocaleString()}€</div>
       <div>Dinero ganado por robo: {mission.report.income_from_robbed_money.toLocaleString()}€</div>
       <div>Beneficios netos: {mission.profit.toLocaleString()}€</div>
+    </div>
+  )
+}
+
+SpyReportMsg.propTypes = {
+  mission: PropTypes.object.isRequired,
+}
+export function SpyReportMsg({ mission }) {
+  return (
+    <div>
+      <div>Número de espías enviados: {mission.sent_spies}</div>
+      {mission.report.captured_spies > 0 && (
+        <div>
+          Durante la misión el enemigo fue alertado, y capturaron a {mission.report.captured_spies.toLocaleString()} de
+          nuestros espías. Quizás deberíamos haber mandado menos espías, o invertido más en la investigación de
+          espionaje.
+        </div>
+      )}
+      {mission.report.buildings && (
+        <div>
+          <b>{'Edificios'}:</b>
+          <br />
+          {buildingsList.map(buildingInfo => {
+            const building = mission.report.buildings[buildingInfo.id]
+            return (
+              <>
+                {buildingInfo.name}. Cantidad: {building.quantity.toLocaleString()}. Dinero:
+                {building.money.toLocaleString()}€.
+                <br />
+              </>
+            )
+          })}
+        </div>
+      )}
+      {mission.report.personnel && (
+        <div>
+          <b>{'Personal'}:</b>
+          <br />
+          {personnelList.map(personnelInfo => {
+            return (
+              <>
+                {personnelInfo.name}: {mission.report.personnel[personnelInfo.resource_id]}
+                <br />
+              </>
+            )
+          })}
+        </div>
+      )}
+      {mission.report.researchs && (
+        <div>
+          <b>{'Investigaciones'}:</b>
+          <br />
+          {researchList.map(researchInfo => {
+            return (
+              <>
+                {researchInfo.name}: {mission.report.researchs[researchInfo.id]}
+                <br />
+              </>
+            )
+          })}
+        </div>
+      )}
+      {!mission.report.buildings &&
+        (mission.report.captured_spies === 0 ? (
+          <div>No hemos obtenido ninguna información! Tendremos que enviar más espías</div>
+        ) : (
+          <div>No hemos obtenido ninguna información! Nos han capturado a demasiados espías</div>
+        ))}
     </div>
   )
 }

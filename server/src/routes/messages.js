@@ -104,6 +104,10 @@ async function parseMessage(msg) {
         break
       }
       case 'spy_report': {
+        const [[missionRaw]] = await mysql.query('SELECT * FROM missions WHERE id=?', [result.data.mission_id])
+        const mission = await missions.parseMissionFromDB(missionRaw)
+        delete result.data.mission_id
+        result.data.mission = mission
         result.data.defender = await users.getData(result.data.defender_id)
         delete result.data.defender_id
         break
