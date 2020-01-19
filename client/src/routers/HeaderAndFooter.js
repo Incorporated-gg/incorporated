@@ -2,8 +2,9 @@ import React from 'react'
 import Username from '../components/Username'
 import { NavLink } from 'react-router-dom'
 import styles from './LoggedIn.module.scss'
-import { useUserData } from '../lib/user'
+import { useUserData, reloadUserData } from '../lib/user'
 import PropTypes from 'prop-types'
+import api from '../lib/api'
 
 const DESKTOP_WIDTH_BREAKPOINT = 720
 
@@ -88,6 +89,7 @@ function MoneyBar({ className, style }) {
       </div>
       <div className={styles.rightContainer}>
         <MoneyDisplay />
+        <DeclareBankruptcy />
       </div>
     </div>
   )
@@ -98,6 +100,22 @@ function MoneyDisplay() {
   if (!userData) return null
 
   return <span>{Math.floor(userData.money).toLocaleString()}€</span>
+}
+
+function DeclareBankruptcy() {
+  const userData = useUserData()
+  if (!userData || userData.money > 0) return null
+
+  const declareBankruptcy = () => {
+    api
+      .post('/v1/declare_bankruptcy')
+      .then(() => {
+        reloadUserData()
+      })
+      .catch(err => alert(err.message))
+  }
+
+  return <button onClick={declareBankruptcy}>Declarar bancarrota</button>
 }
 
 function MessagesUnreadLabel() {
