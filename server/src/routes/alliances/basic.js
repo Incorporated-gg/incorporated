@@ -205,6 +205,10 @@ module.exports = app => {
           res.status(401).json({ error: 'No tienes suficientes recursos' })
           return
         }
+        if (req.userData.money < 0) {
+          res.status(401).json({ error: 'No puedes meter o sacar tropas con dinero negativo' })
+          return
+        }
         await personnel.updatePersonnelAmount(req, resourceID, -resourceAmount)
 
         break

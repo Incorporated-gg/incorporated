@@ -188,7 +188,7 @@ export function AttackReportMsg({ mission, showSender, showTarget }) {
     <div>
       {showSender && (
         <div>
-          Ataque recibido de <Username user={mission.user} />
+          Ataque enviado por <Username user={mission.user} />
         </div>
       )}
       {showTarget && (

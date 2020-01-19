@@ -1,5 +1,6 @@
 const mysql = require('../lib/mysql')
 const personnel = require('../lib/db/personnel')
+const { hasActiveMission } = require('../lib/db/users')
 const { personnelList } = require('shared-lib/personnelUtils')
 
 const handlePersonnelRequest = async (req, res, operationType) => {
@@ -9,6 +10,10 @@ const handlePersonnelRequest = async (req, res, operationType) => {
   }
   if (!req.body.amount || !req.body.resource_id) {
     res.status(400).json({ error: 'Faltan datos' })
+    return
+  }
+  if (await hasActiveMission(req.userData.id)) {
+    res.status(400).json({ error: 'Tienes una misión en curso' })
     return
   }
 

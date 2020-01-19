@@ -35,7 +35,7 @@ module.exports = {
   runOnce,
   onNewWarAttack,
 }
-runJustAfterNewDay()
+
 async function runJustAfterNewDay() {
   const activeWars = await getAllActiveWars()
   await Promise.all(activeWars.map(executeDayFinishForWar))
@@ -140,14 +140,14 @@ function attackToPoints(attack) {
   if (attack.result === 'win') points += 1
   if (attack.result === 'lose') points -= 3
 
+  // Extra point for efficiency
   const incomeFromBuildings = attack.data.report.income_from_buildings
-  if (incomeFromBuildings > 0) {
-    const moneyLostOnSabots = attack.data.report.killed_sabots * sabotsInfo.price
-    const moneyLostOnThiefs = attack.data.report.killed_thiefs * thiefsInfo.price
-    const moneyLostOnTroops = moneyLostOnSabots + moneyLostOnThiefs
-
+  const moneyLostOnSabots = attack.data.report.killed_sabots * sabotsInfo.price
+  const moneyLostOnThiefs = attack.data.report.killed_thiefs * thiefsInfo.price
+  const moneyLostOnTroops = moneyLostOnSabots + moneyLostOnThiefs
+  if (incomeFromBuildings > 0 && incomeFromBuildings > moneyLostOnTroops) {
     const efficiencyRatio = (incomeFromBuildings - moneyLostOnTroops) / incomeFromBuildings
-    points += Math.floor(efficiencyRatio * 2 * 10) / 10
+    points += Math.floor(efficiencyRatio * 10) / 10
   }
 
   return points
