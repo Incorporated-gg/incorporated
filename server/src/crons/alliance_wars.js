@@ -35,7 +35,7 @@ module.exports = {
   runOnce,
   onNewWarAttack,
 }
-
+runJustAfterNewDay()
 async function runJustAfterNewDay() {
   const activeWars = await getAllActiveWars()
   await Promise.all(activeWars.map(executeDayFinishForWar))
@@ -71,7 +71,7 @@ async function updateWarDayData(war, warDay) {
   const membersAlliance2 = (await alliances.getMembers(war.alliance2_id)).map(m => m.user.id)
 
   // Calc daily points
-  const firstTsOfDay = getInitialUnixTimestampOfServerDay(getServerDay(war.created_at * 1000) + warDay - 1) / 1000
+  const firstTsOfDay = getInitialUnixTimestampOfServerDay(getServerDay(war.created_at * 1000) + warDay) / 1000
   const attacksAlliance1 = await getAttacksFromUsers(membersAlliance1, membersAlliance2, firstTsOfDay)
   const attacksAlliance2 = await getAttacksFromUsers(membersAlliance2, membersAlliance1, firstTsOfDay)
 

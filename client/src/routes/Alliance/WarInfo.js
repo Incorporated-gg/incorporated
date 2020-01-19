@@ -61,7 +61,7 @@ export default function WarInfo({ war }) {
           />
           <div>
             <p>
-              <b>{war.alliance1.short_name}</b>: {extraData.points[0]} puntos de guerra
+              <b>{war.alliance1.short_name}</b>: {extraData.points[0]} puntos de guerra{' '}
             </p>
             <p>{extraData.wins[0].toLocaleString()} victorias</p>
             <p>{extraData.profit[0].toLocaleString()}€ beneficios</p>
@@ -69,11 +69,11 @@ export default function WarInfo({ war }) {
           </div>
           <div>
             <p>
-              <b>{war.alliance2.short_name}</b>: {extraData.points[1]} puntos de guerra
-              <p>{extraData.wins[1].toLocaleString()} victorias</p>
-              <p>{extraData.profit[1].toLocaleString()}€ beneficios</p>
-              <p>{extraData.smacks[1].toLocaleString()} estampadas</p>
+              <b>{war.alliance2.short_name}</b>: {extraData.points[1]} puntos de guerra{' '}
             </p>
+            <p>{extraData.wins[1].toLocaleString()} victorias</p>
+            <p>{extraData.profit[1].toLocaleString()}€ beneficios</p>
+            <p>{extraData.smacks[1].toLocaleString()} estampadas</p>
           </div>
 
           {war.data.winner && (

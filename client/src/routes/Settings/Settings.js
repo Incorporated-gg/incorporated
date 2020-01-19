@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import FinancialData from './FinancialData'
-import { getServerDate } from 'shared-lib/serverTime'
+import { getServerDate, getServerDay } from 'shared-lib/serverTime'
 import { logout } from '../../lib/user'
 import api from '../../lib/api'
 
@@ -63,7 +63,7 @@ function ServerTime() {
 
   return (
     <span>
-      Hora server: {pad(serverDate.hours)}:{pad(serverDate.minutes)}:{pad(serverDate.seconds)}
+      Día {getServerDay()}. Hora server: {pad(serverDate.hours)}:{pad(serverDate.minutes)}:{pad(serverDate.seconds)}
     </span>
   )
 }

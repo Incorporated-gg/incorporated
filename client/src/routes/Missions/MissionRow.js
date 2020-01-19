@@ -7,6 +7,7 @@ import { buildingsList } from 'shared-lib/buildingsUtils'
 import { getTimeUntil } from '../../lib/utils'
 import { reloadUserData, userData } from '../../lib/user'
 import { AttackReportMsg, SpyReportMsg } from '../Messages/SingleMessage'
+import { getServerDay } from 'shared-lib/serverTime'
 
 MissionRow.propTypes = {
   mission: PropTypes.object.isRequired,
@@ -69,7 +70,9 @@ export default function MissionRow({ mission, reloadMissionsCallback }) {
         </td>
         {isComplete ? (
           <>
-            <td>{timestampFromEpoch(mission.will_finish_at)}</td>
+            <td>
+              Día {getServerDay(mission.will_finish_at * 1000)}. {timestampFromEpoch(mission.will_finish_at)}
+            </td>
             <td style={{ color: resultColor }}>{displayResult}</td>
             <td>
               <button onClick={clickedShowDetails}>{showDetails ? 'Ocultar detalles' : 'Ver detalles'}</button>
