@@ -23,7 +23,7 @@ module.exports = app => {
     }
 
     await mysql.query(
-      'UPDATE users_resources SET quantity=0 WHERE resource_id IN ("thiefs", "guards", "sabots", "spies") AND user_id=?',
+      'UPDATE users_resources SET quantity=0 WHERE resource_id IN ("thieves", "guards", "sabots", "spies") AND user_id=?',
       [req.userData.id]
     )
     await mysql.query('UPDATE users SET last_bankrupcy_at=? WHERE id=?', [tsNow, req.userData.id])

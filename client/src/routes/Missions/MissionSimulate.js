@@ -15,7 +15,7 @@ export default function Mission() {
   const [buildingAmount, setBuildingAmount] = useState(0)
   const [storedMoney, setStoredMoney] = useState(0)
   const [attackerSabots, setAttackerSabots] = useState(userData.personnel.sabots)
-  const [attackerThiefs, setAttackerThiefs] = useState(userData.personnel.thiefs)
+  const [attackerThieves, setAttackerThieves] = useState(userData.personnel.thieves)
   const [targetBuilding, setTargetBuilding] = useState(1)
 
   useEffect(() => {
@@ -34,7 +34,7 @@ export default function Mission() {
   const simulation = simulateAttack({
     defensorGuards: guards,
     attackerSabots,
-    attackerThiefs,
+    attackerThieves,
     defensorSecurityLvl,
     attackerSabotageLvl,
     buildingID: targetBuilding,
@@ -56,7 +56,7 @@ export default function Mission() {
         <label>
           Ladrones
           {': '}
-          <input type="number" value={attackerThiefs} onChange={e => setAttackerThiefs(e.target.value)} />
+          <input type="number" value={attackerThieves} onChange={e => setAttackerThieves(e.target.value)} />
         </label>
       </div>
       <div>

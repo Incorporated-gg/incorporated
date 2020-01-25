@@ -3,7 +3,6 @@ const { getMissions, getPersonnel, hasActiveMission } = require('../lib/db/users
 const { getUserAllianceID } = require('../lib/db/alliances')
 const { buildingsList } = require('shared-lib/buildingsUtils')
 const { calculateMissionTime } = require('shared-lib/missionsUtils')
-const { getInitialUnixTimestampOfServerDay } = require('shared-lib/serverTime')
 
 module.exports = app => {
   app.get('/v1/missions', async function(req, res) {
@@ -71,17 +70,23 @@ module.exports = app => {
 
     const sentSpies = parseInt(req.body.sent_spies) || 0
     const sentSabots = parseInt(req.body.sent_sabots) || 0
-    const sentThiefs = parseInt(req.body.sent_thiefs) || 0
+    const sentThieves = parseInt(req.body.sent_thieves) || 0
     const targetBuilding = req.body.target_building ? parseInt(req.body.target_building) : undefined
 
     const userPersonnel = await getPersonnel(req.userData.id)
     switch (missionType) {
-      case 'attack':
+      case 'attack': {
         if (!buildingsList.find(b => b.id === targetBuilding)) {
           res.status(400).json({ error: 'El edificio enviado no existe' })
           return
         }
-        if (sentSabots + sentThiefs < 1) {
+        // Ensure daily defenses limit
+        const targetUserMissions = await getMissions(targetUser.id)
+        if (targetUserMissions.receivedToday >= targetUserMissions.maxDefenses) {
+          res.status(400).json({ error: `Este usuario ya ha sido atacado ${targetUserMissions.maxDefenses} veces hoy` })
+          return
+        }
+        if (sentSabots + sentThieves < 1) {
           res.status(400).json({
             error: 'Debes enviar algunos saboteadores o ladrones',
           })
@@ -93,7 +98,7 @@ module.exports = app => {
           })
           return
         }
-        if (userPersonnel.thiefs < sentThiefs) {
+        if (userPersonnel.thieves < sentThieves) {
           res.status(400).json({
             error: 'No tienes suficientes ladrones',
           })
@@ -109,19 +114,13 @@ module.exports = app => {
         }
 
         // Ensure daily attacks limit
-        const MAX_DAILY_SABOTS = process.env.NODE_ENV === 'dev' ? 999 : 3
-        const dailyCountStartedAt = Math.floor(getInitialUnixTimestampOfServerDay() / 1000)
-        const [
-          [{ count }],
-        ] = await mysql.query(
-          'SELECT COUNT(*) AS count FROM missions WHERE user_id=? AND mission_type=? AND started_at>?',
-          [req.userData.id, missionType, dailyCountStartedAt]
-        )
-        if (count >= MAX_DAILY_SABOTS) {
-          res.status(400).json({ error: `Ya has atacado ${MAX_DAILY_SABOTS} veces hoy` })
+        const userMissions = await getMissions(req.userData.id)
+        if (userMissions.sentToday >= userMissions.maxAttacks) {
+          res.status(400).json({ error: `Ya has atacado ${userMissions.maxAttacks} veces hoy` })
           return
         }
         break
+      }
       case 'spy':
         if (sentSpies < 1) {
           res.status(400).json({
@@ -152,7 +151,7 @@ module.exports = app => {
     } else if (missionType === 'attack') {
       data.building = targetBuilding
       data.sabots = sentSabots
-      data.thiefs = sentThiefs
+      data.thieves = sentThieves
     }
     await mysql.query(
       'INSERT INTO missions (user_id, mission_type, data, target_user, started_at, will_finish_at) VALUES (?, ?, ?, ?, ?, ?)',

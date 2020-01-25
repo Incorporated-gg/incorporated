@@ -5,7 +5,11 @@ const { personnelList } = require('./personnelUtils')
 
 const guardsInfo = personnelList.find(t => t.resource_id === 'guards')
 const sabotsInfo = personnelList.find(t => t.resource_id === 'sabots')
-const thiefsInfo = personnelList.find(t => t.resource_id === 'thiefs')
+const thievesInfo = personnelList.find(t => t.resource_id === 'thieves')
+
+module.exports.MAX_DAILY_ATTACKS = process.env.NODE_ENV === 'dev' ? 999 : 3
+module.exports.MAX_DAILY_DEFENSES = process.env.NODE_ENV === 'dev' ? 999 : 6
+module.exports.DAILY_DEFENSES_INCREASE = process.env.NODE_ENV === 'dev' ? 1000 : 10000000 // Puede recibir un ataque más cada DAILY_DEFENSES_INCREASE de ingresos
 
 module.exports.calculateMissionTime = calculateMissionTime
 function calculateMissionTime(missionType) {
@@ -24,7 +28,7 @@ function simulateCombat({
   buildingAmount,
   infraResearchLvl,
   attackerSabots,
-  attackerThiefs,
+  attackerThieves,
   defensorGuards,
   defensorSecurityLvl,
   attackerSabotageLvl,
@@ -33,15 +37,15 @@ function simulateCombat({
   const guardsDefensePower = 2 * guardsInfo.combatPower * defensorSecurityLvl
   const sabotAttackPower = 2 * sabotsInfo.combatPower * attackerSabotageLvl
   const sabotDefensePower = sabotsInfo.combatPower * attackerSabotageLvl
-  const thiefsAttackPower = 2 * thiefsInfo.combatPower * attackerSabotageLvl
-  const thiefsDefensePower = thiefsInfo.combatPower * attackerSabotageLvl
+  const thievesAttackPower = 2 * thievesInfo.combatPower * attackerSabotageLvl
+  const thievesDefensePower = thievesInfo.combatPower * attackerSabotageLvl
 
   // Simulamos lucha
   let deadSabots = 0
-  let deadThiefs = 0
+  let deadThieves = 0
   let deadGuards = 0
   let survivingSabots = attackerSabots
-  let survivingThiefs = attackerThiefs
+  let survivingThieves = attackerThieves
   let survivingGuards = defensorGuards
 
   if (survivingGuards > 0) {
@@ -56,20 +60,20 @@ function simulateCombat({
     survivingGuards = survivingGuards - deadGuards
   }
   if (survivingGuards > 0) {
-    // kill thiefs
-    const maxDeadThiefs = Math.floor((survivingGuards * guardsAttackPower) / thiefsDefensePower)
-    deadThiefs = Math.min(attackerThiefs, maxDeadThiefs)
-    survivingThiefs = attackerThiefs - deadThiefs
+    // kill thieves
+    const maxDeadThieves = Math.floor((survivingGuards * guardsAttackPower) / thievesDefensePower)
+    deadThieves = Math.min(attackerThieves, maxDeadThieves)
+    survivingThieves = attackerThieves - deadThieves
 
     // kill guards
-    const maxDeadGuardsFromThiefs = Math.floor((attackerThiefs * thiefsAttackPower) / guardsDefensePower)
-    deadGuards = Math.min(survivingGuards, maxDeadGuardsFromThiefs)
+    const maxDeadGuardsFromThieves = Math.floor((attackerThieves * thievesAttackPower) / guardsDefensePower)
+    deadGuards = Math.min(survivingGuards, maxDeadGuardsFromThieves)
     survivingGuards = survivingGuards - deadGuards
   }
 
   // Destroyed buildings
   const buildingResistance = calcBuildingResistance(attackedBuildingInfo.id, infraResearchLvl)
-  const attackPowerVsBuildings = Math.max(0, survivingSabots * sabotAttackPower + survivingThiefs * thiefsAttackPower)
+  const attackPowerVsBuildings = Math.max(0, survivingSabots * sabotAttackPower + survivingThieves * thievesAttackPower)
   const theoreticalDestroyedBuildings = Math.floor(attackPowerVsBuildings / buildingResistance)
   const destroyedBuildings = Math.min(
     attackedBuildingInfo.maximumDestroyedBuildings,
@@ -84,7 +88,7 @@ function simulateCombat({
     deadSabots,
     survivingSabots,
     survivingGuards,
-    survivingThiefs,
+    survivingThieves,
   }
 }
 
@@ -94,7 +98,7 @@ function simulateAttack({
   buildingAmount,
   defensorGuards,
   attackerSabots,
-  attackerThiefs,
+  attackerThieves,
   defensorSecurityLvl,
   attackerSabotageLvl,
   infraResearchLvl,
@@ -105,7 +109,7 @@ function simulateAttack({
     typeof buildingAmount === 'undefined' ||
     typeof defensorGuards === 'undefined' ||
     typeof attackerSabots === 'undefined' ||
-    typeof attackerThiefs === 'undefined' ||
+    typeof attackerThieves === 'undefined' ||
     typeof defensorSecurityLvl === 'undefined' ||
     typeof attackerSabotageLvl === 'undefined' ||
     typeof infraResearchLvl === 'undefined' ||
@@ -120,14 +124,14 @@ function simulateAttack({
     deadGuards,
     survivingSabots,
     survivingGuards,
-    survivingThiefs,
+    survivingThieves,
     destroyedBuildings,
   } = simulateCombat({
     buildingAmount,
     attackedBuildingInfo,
     infraResearchLvl,
     attackerSabots,
-    attackerThiefs,
+    attackerThieves,
     defensorGuards,
     defensorSecurityLvl,
     attackerSabotageLvl,
@@ -148,7 +152,7 @@ function simulateAttack({
   })
 
   // Robbing income
-  const maxRobbedMoney = survivingSabots * sabotsInfo.robbingPower + survivingThiefs * thiefsInfo.robbingPower
+  const maxRobbedMoney = survivingSabots * sabotsInfo.robbingPower + survivingThieves * thievesInfo.robbingPower
   const robbedMoney = Math.min(maxRobbedMoney, unprotectedMoney)
 
   // Misc calculations
@@ -160,7 +164,7 @@ function simulateAttack({
     result,
     survivingGuards,
     survivingSabots,
-    survivingThiefs,
+    survivingThieves,
     gainedFame,
     destroyedBuildings,
     incomeForDestroyedBuildings,

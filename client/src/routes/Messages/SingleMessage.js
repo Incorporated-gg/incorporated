@@ -197,12 +197,12 @@ export function AttackReportMsg({ mission, showSender, showTarget }) {
         </div>
       )}
       <div>Resultado: {displayResult}</div>
-      <div>Ladrones enviados: {mission.sent_thiefs.toLocaleString()}</div>
+      <div>Ladrones enviados: {mission.sent_thieves.toLocaleString()}</div>
       <div>Saboteadores enviados: {mission.sent_sabots.toLocaleString()}</div>
       <div>Edificio atacado: {buildingInfo.name}</div>
       <div>Guardias muertos: {mission.report.killed_guards.toLocaleString()}</div>
       <div>Saboteadores muertos: {mission.report.killed_sabots.toLocaleString()}</div>
-      <div>Ladrones muertos: {mission.report.killed_thiefs.toLocaleString()}</div>
+      <div>Ladrones muertos: {mission.report.killed_thieves.toLocaleString()}</div>
       <div>Edificios destruidos: {mission.report.destroyed_buildings}</div>
       <div>Dinero ganado por edificios: {mission.report.income_from_buildings.toLocaleString()}€</div>
       <div>Dinero ganado por muertes: {mission.report.income_from_troops.toLocaleString()}€</div>

@@ -3,6 +3,8 @@ const alliances = require('./alliances')
 const { parseMissionFromDB } = require('./missions')
 const { researchList } = require('shared-lib/researchUtils')
 const { personnelList } = require('shared-lib/personnelUtils')
+const { getInitialUnixTimestampOfServerDay } = require('shared-lib/serverTime')
+const { MAX_DAILY_ATTACKS, MAX_DAILY_DEFENSES, DAILY_DEFENSES_INCREASE } = require('shared-lib/missionsUtils')
 const { getIncomeTaxes } = require('shared-lib/taxes')
 const { calcBuildingDailyIncome, buildingsList, calcBuildingMaxMoney } = require('shared-lib/buildingsUtils')
 
@@ -112,15 +114,52 @@ async function getBuildings(userID) {
 
 module.exports.getMissions = getMissions
 async function getMissions(userID) {
+  const dailyCountStartedAt = Math.floor(getInitialUnixTimestampOfServerDay() / 1000)
   const [
-    missionsRaw,
+    sentMissionsRaw,
   ] = await mysql.query(
     'SELECT user_id, target_user, data, mission_type, started_at, will_finish_at, completed, result, profit FROM missions WHERE user_id=? ORDER BY will_finish_at DESC',
     [userID]
   )
-  const missions = Promise.all(missionsRaw.map(parseMissionFromDB))
+  const [
+    receivedMissionsRaw,
+  ] = await mysql.query(
+    'SELECT user_id, target_user, data, mission_type, started_at, will_finish_at, completed, result, profit FROM missions WHERE target_user=? ORDER BY will_finish_at DESC',
+    [userID]
+  )
+  const [
+    [{ receivedToday }],
+  ] = await mysql.query(
+    "SELECT COUNT(*) AS receivedToday FROM missions WHERE target_user=? AND mission_type='attack' AND started_at>? AND completed=1",
+    [userID, dailyCountStartedAt]
+  )
+  const [
+    [{ sentToday }],
+  ] = await mysql.query(
+    "SELECT COUNT(*) AS sentToday FROM missions WHERE user_id=? AND mission_type='attack' AND started_at>?",
+    [userID, dailyCountStartedAt]
+  )
+  const [sentMissions, receivedMissions] = await Promise.all([
+    Promise.all(sentMissionsRaw.map(parseMissionFromDB)),
+    Promise.all(receivedMissionsRaw.map(parseMissionFromDB)),
+  ])
+  const userMissionLimits = await getUserMissionLimits(userID)
 
-  return missions
+  console.log({
+    sent: sentMissions,
+    received: receivedMissions,
+    receivedToday,
+    sentToday,
+    ...userMissionLimits,
+  })
+
+  return {
+    sent: sentMissions,
+    received: receivedMissions,
+    receivedToday,
+    sentToday,
+    ...userMissionLimits,
+  }
 }
 
 module.exports.hasActiveMission = hasActiveMission
@@ -202,4 +241,13 @@ async function runUserMoneyUpdate(userID) {
   // Personnel Costs
   const personnelCosts = ((await getUserPersonnelCosts(userID)) / 24 / 60 / 60) * moneyUpdateElapsedS
   await mysql.query('UPDATE users SET money=money-? WHERE id=?', [personnelCosts, userID])
+}
+
+module.exports.getUserMissionLimits = getUserMissionLimits
+async function getUserMissionLimits(userID) {
+  const userDailyIncome = await getUserDailyIncome(userID)
+  return {
+    maxAttacks: MAX_DAILY_ATTACKS,
+    maxDefenses: MAX_DAILY_DEFENSES + Math.floor(userDailyIncome / DAILY_DEFENSES_INCREASE),
+  }
 }

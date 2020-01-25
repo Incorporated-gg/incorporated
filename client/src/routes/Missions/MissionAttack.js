@@ -16,9 +16,9 @@ export default function Mission({ reloadMissionsCallback }) {
   const { username: routeUsername } = useParams('username')
   const [toUser, setToUser] = useState(routeUsername || '')
   const [numSabots, setNumSabots] = useState(userData.personnel.sabots)
-  const [numThiefs, setNumThiefs] = useState(userData.personnel.thiefs)
+  const [numThieves, setNumThieves] = useState(userData.personnel.thieves)
   const [targetBuilding, setTargetBuilding] = useState(1)
-  const isFormReady = toUser && (numSabots > 0 || numThiefs > 0) && targetBuilding
+  const isFormReady = toUser && (numSabots > 0 || numThieves > 0) && targetBuilding
 
   useEffect(() => {
     setNumSabots(userData.personnel.sabots)
@@ -33,7 +33,7 @@ export default function Mission({ reloadMissionsCallback }) {
           missionType: 'attack',
           target_user: toUser,
           sent_sabots: numSabots,
-          sent_thiefs: numThiefs,
+          sent_thieves: numThieves,
           target_building: targetBuilding,
         })
         .then(() => {
@@ -42,7 +42,7 @@ export default function Mission({ reloadMissionsCallback }) {
         })
         .catch(error => alert(error))
     },
-    [isFormReady, numSabots, numThiefs, reloadMissionsCallback, targetBuilding, toUser]
+    [isFormReady, numSabots, numThieves, reloadMissionsCallback, targetBuilding, toUser]
   )
 
   const missionSeconds = calculateMissionTime('attack')
@@ -65,9 +65,9 @@ export default function Mission({ reloadMissionsCallback }) {
       </div>
       <div>
         <label>
-          {personnelList.find(p => p.resource_id === 'thiefs').name}
+          {personnelList.find(p => p.resource_id === 'thieves').name}
           {': '}
-          <input type="number" name="quantity" value={numThiefs} onChange={e => setNumThiefs(e.target.value)} />
+          <input type="number" name="quantity" value={numThieves} onChange={e => setNumThieves(e.target.value)} />
         </label>
       </div>
       <label>

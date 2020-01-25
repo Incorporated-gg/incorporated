@@ -81,7 +81,7 @@ export default function MissionRow({ mission, reloadMissionsCallback }) {
         ) : (
           <>
             <td>
-              Spies: {mission.sent_spies} Sabots: {mission.sent_sabots} Thiefs: {mission.sent_thiefs}
+              Spies: {mission.sent_spies} Sabots: {mission.sent_sabots} Thieves: {mission.sent_thieves}
             </td>
             <td>
               {mission.mission_type === 'attack' ? buildingsList.find(b => b.id === mission.target_building).name : ''}

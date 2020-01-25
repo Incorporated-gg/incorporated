@@ -92,7 +92,7 @@ async function completeAttackMission(mission) {
     result,
     survivingSabots,
     survivingGuards,
-    survivingThiefs,
+    survivingThieves,
     gainedFame,
     destroyedBuildings,
     incomeForDestroyedBuildings,
@@ -103,7 +103,7 @@ async function completeAttackMission(mission) {
   } = simulateAttack({
     defensorGuards: defenderPersonnel.guards,
     attackerSabots: data.sabots,
-    attackerThiefs: data.thiefs,
+    attackerThieves: data.thieves,
     defensorSecurityLvl: defenderSecurityLevel,
     attackerSabotageLvl: attackerSabotageLevel,
     buildingID: data.building,
@@ -112,14 +112,14 @@ async function completeAttackMission(mission) {
     unprotectedMoney,
   })
   const killedSabots = data.sabots - survivingSabots
-  const killedThiefs = data.thiefs - survivingThiefs
+  const killedThieves = data.thieves - survivingThieves
   const killedGuards = defenderPersonnel.guards - survivingGuards
 
   // Update mission state
   const attackReport = {
     killed_guards: killedGuards,
     killed_sabots: killedSabots,
-    killed_thiefs: killedThiefs,
+    killed_thieves: killedThieves,
     destroyed_buildings: destroyedBuildings,
     income_from_buildings: incomeForDestroyedBuildings,
     income_from_troops: incomeForKilledTroops,
@@ -156,11 +156,11 @@ async function completeAttackMission(mission) {
       'sabots',
     ])
   }
-  if (killedThiefs > 0) {
+  if (killedThieves > 0) {
     await mysql.query('UPDATE users_resources SET quantity=quantity-? WHERE user_id=? AND resource_id=?', [
-      killedThiefs,
+      killedThieves,
       attacker.id,
-      'thiefs',
+      'thieves',
     ])
   }
 

@@ -13,7 +13,7 @@ test('Combat normal win', () => {
     buildingID: 6,
     infraResearchLvl: 20,
     attackerSabots: 3150,
-    attackerThiefs: 0,
+    attackerThieves: 0,
     defensorGuards: 200,
     defensorSecurityLvl: 30,
     attackerSabotageLvl: 40,
@@ -30,7 +30,7 @@ test('Combat normal win', () => {
     robbedMoney: 0,
     survivingGuards: 0,
     survivingSabots: 3000,
-    survivingThiefs: 0,
+    survivingThieves: 0,
   })
 })
 
@@ -40,7 +40,7 @@ test('Combat win, but not max buildings destroyed', () => {
     buildingID: 6,
     infraResearchLvl: 20,
     attackerSabots: 950,
-    attackerThiefs: 0,
+    attackerThieves: 0,
     defensorGuards: 200,
     defensorSecurityLvl: 30,
     attackerSabotageLvl: 40,
@@ -57,7 +57,7 @@ test('Combat win, but not max buildings destroyed', () => {
     robbedMoney: 0,
     survivingGuards: 0,
     survivingSabots: 800,
-    survivingThiefs: 0,
+    survivingThieves: 0,
   })
 })
 
@@ -67,7 +67,7 @@ test('Combat little sabots', () => {
     buildingID: 1,
     infraResearchLvl: 20,
     attackerSabots: 1,
-    attackerThiefs: 0,
+    attackerThieves: 0,
     defensorGuards: 200,
     defensorSecurityLvl: 30,
     attackerSabotageLvl: 27,
@@ -84,7 +84,7 @@ test('Combat little sabots', () => {
     robbedMoney: 0,
     survivingGuards: 200,
     survivingSabots: 0,
-    survivingThiefs: 0,
+    survivingThieves: 0,
   })
 })
 
@@ -94,7 +94,7 @@ test('Combat no guards and little sabots', () => {
     buildingID: 4,
     infraResearchLvl: 30,
     attackerSabots: 50,
-    attackerThiefs: 0,
+    attackerThieves: 0,
     defensorGuards: 0,
     defensorSecurityLvl: 30,
     attackerSabotageLvl: 40,
@@ -111,7 +111,7 @@ test('Combat no guards and little sabots', () => {
     robbedMoney: 0,
     survivingGuards: 0,
     survivingSabots: 50,
-    survivingThiefs: 0,
+    survivingThieves: 0,
   })
 })
 
@@ -121,7 +121,7 @@ test('Combat high infra', () => {
     buildingID: 2,
     infraResearchLvl: 50,
     attackerSabots: 3000,
-    attackerThiefs: 0,
+    attackerThieves: 0,
     defensorGuards: 0,
     defensorSecurityLvl: 30,
     attackerSabotageLvl: 40,
@@ -138,17 +138,17 @@ test('Combat high infra', () => {
     robbedMoney: 0,
     survivingGuards: 0,
     survivingSabots: 3000,
-    survivingThiefs: 0,
+    survivingThieves: 0,
   })
 })
 
-test('Combat defeat with thiefs', () => {
+test('Combat defeat with thieves', () => {
   const attackResult = simulateAttack({
     buildingAmount: 100,
     buildingID: 2,
     infraResearchLvl: 27,
     attackerSabots: 300,
-    attackerThiefs: 1000,
+    attackerThieves: 1000,
     defensorGuards: 700,
     defensorSecurityLvl: 30,
     attackerSabotageLvl: 40,
@@ -165,17 +165,17 @@ test('Combat defeat with thiefs', () => {
     robbedMoney: 0,
     survivingGuards: 34,
     survivingSabots: 0,
-    survivingThiefs: 0,
+    survivingThieves: 0,
   })
 })
 
-test('Combat win with thiefs', () => {
+test('Combat win with thieves', () => {
   const attackResult = simulateAttack({
     buildingAmount: 100,
     buildingID: 1,
     infraResearchLvl: 27,
     attackerSabots: 300,
-    attackerThiefs: 5000,
+    attackerThieves: 5000,
     defensorGuards: 500,
     defensorSecurityLvl: 30,
     attackerSabotageLvl: 40,
@@ -192,7 +192,7 @@ test('Combat win with thiefs', () => {
     robbedMoney: 50000,
     survivingGuards: 0,
     survivingSabots: 0,
-    survivingThiefs: 4625,
+    survivingThieves: 4625,
   })
 })
 
@@ -202,7 +202,7 @@ test('Robbed less money than max', () => {
     buildingID: 1,
     infraResearchLvl: 1,
     attackerSabots: 7,
-    attackerThiefs: 13,
+    attackerThieves: 13,
     defensorGuards: 0,
     defensorSecurityLvl: 1,
     attackerSabotageLvl: 1,
@@ -217,7 +217,7 @@ test('Robbed max money with only thieves', () => {
     buildingID: 1,
     infraResearchLvl: 1,
     attackerSabots: 0,
-    attackerThiefs: 2000,
+    attackerThieves: 2000,
     defensorGuards: 0,
     defensorSecurityLvl: 1,
     attackerSabotageLvl: 1,

@@ -5,7 +5,7 @@ const { getServerDay, getInitialUnixTimestampOfServerDay } = require('shared-lib
 const { personnelList } = require('shared-lib/personnelUtils')
 
 const sabotsInfo = personnelList.find(t => t.resource_id === 'sabots')
-const thiefsInfo = personnelList.find(t => t.resource_id === 'thiefs')
+const thievesInfo = personnelList.find(t => t.resource_id === 'thieves')
 
 const WAR_DAYS_DURATION = 5
 
@@ -143,8 +143,8 @@ function attackToPoints(attack) {
   // Extra point for efficiency
   const incomeFromBuildings = attack.data.report.income_from_buildings
   const moneyLostOnSabots = attack.data.report.killed_sabots * sabotsInfo.price
-  const moneyLostOnThiefs = attack.data.report.killed_thiefs * thiefsInfo.price
-  const moneyLostOnTroops = moneyLostOnSabots + moneyLostOnThiefs
+  const moneyLostOnThieves = attack.data.report.killed_thieves * thievesInfo.price
+  const moneyLostOnTroops = moneyLostOnSabots + moneyLostOnThieves
   if (incomeFromBuildings > 0 && incomeFromBuildings > moneyLostOnTroops) {
     const efficiencyRatio = (incomeFromBuildings - moneyLostOnTroops) / incomeFromBuildings
     points += Math.floor(efficiencyRatio * 10) / 10

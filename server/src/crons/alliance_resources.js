@@ -44,7 +44,7 @@ const run = async () => {
         generateResource(alliance.id, 'money', resources, researchs),
         generateResource(alliance.id, 'guards', resources, researchs),
         generateResource(alliance.id, 'sabots', resources, researchs),
-        generateResource(alliance.id, 'thiefs', resources, researchs),
+        generateResource(alliance.id, 'thieves', resources, researchs),
       ])
     })
   )

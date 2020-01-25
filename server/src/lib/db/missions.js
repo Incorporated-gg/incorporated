@@ -29,7 +29,7 @@ async function parseMissionFromDB(mission) {
       target_building: data.building,
       mission_type: mission.mission_type,
       sent_sabots: data.sabots,
-      sent_thiefs: data.thiefs,
+      sent_thieves: data.thieves,
       started_at: mission.started_at,
       will_finish_at: mission.will_finish_at,
       completed: mission.completed,

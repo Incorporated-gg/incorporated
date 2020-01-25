@@ -196,7 +196,7 @@ module.exports = app => {
         break
       case 'sabots':
       case 'guards':
-      case 'thiefs':
+      case 'thieves':
         if (resourceAmount < 0 && !userRank.permission_extract_troops) {
           res.status(401).json({ error: 'No tienes permiso para hacer esto' })
           return

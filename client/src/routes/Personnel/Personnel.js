@@ -10,19 +10,19 @@ const personnelImages = {
   sabots: require('./img/sabot.png'),
   guards: require('./img/guard.png'),
   spies: require('./img/spy.png'),
-  thiefs: require('./img/thief.png'),
+  thieves: require('./img/thief.png'),
 }
 const personnelDesc = {
   sabots: 'Matan guardias y destruyen edificios',
   guards: 'Defienden contra ataques',
   spies: 'Obtienen información privada sobre otros jugadores',
-  thiefs: 'Roban dinero de edificios',
+  thieves: 'Roban dinero de edificios',
 }
 const personnelAccentColors = {
   sabots: '#EE5487',
   guards: '#612aab',
   spies: '#82BB30',
-  thiefs: '#333',
+  thieves: '#333',
 }
 
 export default function Personnel() {

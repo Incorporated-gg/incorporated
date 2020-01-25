@@ -6,8 +6,15 @@ import MissionRow from './MissionRow'
 import styles from './Missions.module.scss'
 
 export default function Missions() {
-  const [missions, setMissions] = useState([])
-  const activeMissions = missions.filter(m => !m.completed)
+  const [missions, setMissions] = useState({
+    sent: [],
+    received: [],
+    receivedToday: 0,
+    sentToday: 0,
+    maxAttacks: 0,
+    maxDefenses: 0,
+  })
+  const activeMissions = missions.sent.filter(m => !m.completed)
 
   const reloadMissionsCallback = useCallback(() => {
     api
@@ -68,7 +75,9 @@ export default function Missions() {
         </table>
       </div>
       <div className={styles.container}>
-        <h2>Completed missions</h2>
+        <h2>
+          Completed missions (today: {missions.sentToday}/{missions.maxAttacks})
+        </h2>
         <table>
           <thead>
             <tr>
@@ -80,13 +89,40 @@ export default function Missions() {
             </tr>
           </thead>
           <tbody>
-            {missions.filter(m => m.completed).length ? (
-              missions
+            {missions.sent.filter(m => m.completed).length ? (
+              missions.sent
                 .filter(m => m.completed)
                 .map((m, i) => <MissionRow key={i} mission={m} reloadMissionsCallback={reloadMissionsCallback} />)
             ) : (
               <tr>
                 <td colSpan="3">No has realizado ninguna misión todavía</td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+      <div className={styles.container}>
+        <h2>
+          Received (today: {missions.receivedToday}/{missions.maxDefenses})
+        </h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Tipo de misión</th>
+              <th>Usuario objetivo</th>
+              <th>Fecha</th>
+              <th>Resultado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {missions.received.filter(m => m.completed).length ? (
+              missions.received
+                .filter(m => m.completed)
+                .map((m, i) => <MissionRow key={i} mission={m} reloadMissionsCallback={reloadMissionsCallback} />)
+            ) : (
+              <tr>
+                <td colSpan="3">No has recibido ninguna misión todavía</td>
               </tr>
             )}
           </tbody>

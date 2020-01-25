@@ -25,7 +25,7 @@ const RESOURCES_LIST = [
     name: 'Guardias',
   },
   {
-    resource_id: 'thiefs',
+    resource_id: 'thieves',
     name: 'Ladrones',
   },
 ]
@@ -48,13 +48,13 @@ const mapResourceIDToResearchID = {
   money: 1,
   guards: 2,
   sabots: 3,
-  thiefs: 4,
+  thieves: 4,
 }
 const mapResearchIDToResourceID = {
   1: 'money',
   2: 'guards',
   3: 'sabots',
-  4: 'thiefs',
+  4: 'thieves',
 }
 
 // Resource max
@@ -62,7 +62,7 @@ const maxResourcesPerLevel = {
   money: 500000,
   guards: 2000,
   sabots: 2000,
-  thiefs: 500,
+  thieves: 500,
 }
 module.exports.calcResourceMax = calcResourceMax
 function calcResourceMax(resourceID, researchs) {
@@ -81,7 +81,7 @@ const genResourcesPerLevel = {
   money: 100000,
   guards: 200,
   sabots: 100,
-  thiefs: 50,
+  thieves: 50,
 }
 module.exports.calcResourceGeneration = calcResourceGeneration
 function calcResourceGeneration(resourceID, researchs) {
