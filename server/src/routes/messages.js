@@ -53,8 +53,38 @@ module.exports = app => {
       return
     }
 
-    const receiverID = await users.getIDFromUsername(req.body.to_username)
-    if (!receiverID) {
+    let receiversIDs
+    const allianceMessage = req.body.addressee.match(/(?:^alliance:)(.*)/)
+
+    if (allianceMessage) {
+      const allianceName = allianceMessage[1]
+      const allianceID = await alliances.getIDFromShortName(allianceName)
+
+      if (!allianceID) {
+        res.status(400).json({ error: 'No se ha encontrado la alianza' })
+        return
+      }
+
+      const members = await alliances.getMembers(allianceID)
+
+      if (!members.find(m => m.user.id === req.userData.id)) {
+        res.status(400).json({ error: 'No perteneces a esta alianza' })
+        return
+      }
+
+      const userPermissions = await alliances.getUserRank(req.userData.id)
+
+      if (!userPermissions.permission_send_circular_msg) {
+        res.status(400).json({ error: 'No tienes permiso para enviar mensajes circulares' })
+        return
+      }
+
+      receiversIDs = members.map(member => member.user.id)
+    } else {
+      receiversIDs = await users.getIDFromUsername(req.body.addressee)
+    }
+
+    if (!receiversIDs) {
       res.status(400).json({ error: 'Nombre de usuario inválido' })
       return
     }
@@ -65,22 +95,29 @@ module.exports = app => {
       return
     }
 
-    const encodedData = JSON.stringify({
-      message,
-    })
-
-    const createdAt = Math.floor(Date.now() / 1000)
-    await mysql.query('INSERT INTO messages (user_id, sender_id, created_at, type, data) VALUES (?, ?, ?, ?, ?)', [
-      receiverID,
-      req.userData.id,
-      createdAt,
-      'private_message',
-      encodedData,
-    ])
+    await sendMessage(message, receiversIDs, req.userData.id)
 
     res.json({
       success: true,
     })
+  })
+}
+
+async function sendMessage(message, receiversIDs, fromID) {
+  const encodedData = JSON.stringify({
+    message,
+  })
+
+  const createdAt = Math.floor(Date.now() / 1000)
+
+  await receiversIDs.forEach(async receiverID => {
+    await mysql.query('INSERT INTO messages (user_id, sender_id, created_at, type, data) VALUES (?, ?, ?, ?, ?)', [
+      receiverID,
+      fromID,
+      createdAt,
+      'private_message',
+      encodedData,
+    ])
   })
 }
 

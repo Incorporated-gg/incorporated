@@ -5,15 +5,15 @@ import { useParams } from 'react-router-dom'
 export default function NewMessage() {
   const { username: routeUsername } = useParams()
   const [message, setMessage] = useState('')
-  const [toUsername, setToUsername] = useState(routeUsername)
+  const [addressee, setAddressee] = useState(routeUsername)
 
   function sendClicked(e) {
     e.preventDefault()
     api
-      .post('/v1/messages/new', { message, to_username: toUsername })
+      .post('/v1/messages/new', { message, addressee })
       .then(() => {
         setMessage('')
-        setToUsername('')
+        setAddressee('')
       })
       .catch(err => {
         alert(err.message)
@@ -24,7 +24,7 @@ export default function NewMessage() {
     <form className="login-form">
       <div>
         <label>
-          Para: <input type="text" value={toUsername} onChange={e => setToUsername(e.target.value)} />
+          Para: <input type="text" value={addressee} onChange={e => setAddressee(e.target.value)} />
         </label>
       </div>
       <div>
