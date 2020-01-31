@@ -1,7 +1,7 @@
 {
   "name": "server",
   "scripts": {
-    "start": "nodemon -L index.js",
+    "start": "nodemon index.js",
     "migrate_prod": "npx db-migrate up --config migrations/database_prod.json",
     "migrate_dev_docker": "npx db-migrate up --config migrations/database_dev_docker.json",
     "undo_migration_dev_docker": "npx db-migrate down --config migrations/database_dev_docker.json",
@@ -12,6 +12,7 @@
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
     "dotenv": "^8.2.0",
+    "esm": "^3.2.25",
     "express": "^4.17.1",
     "mysql2": "^2.0.1",
     "shared-lib": "file:../shared-lib",
