@@ -146,6 +146,10 @@ async function parseMessage(msg) {
         delete result.data.attacker_id
         break
       }
+      case 'attack_cancelled': {
+        result.data.target_user = await users.getData(result.data.target_user_id)
+        break
+      }
       case 'war_started':
       case 'war_ended': {
         const [[war]] = await mysql.query('SELECT alliance1_id, alliance2_id, data FROM alliances_wars WHERE id=?', [

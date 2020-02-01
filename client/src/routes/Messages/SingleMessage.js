@@ -147,7 +147,7 @@ function parseMessage(message) {
       )
       break
     }
-    case 'spy_report':
+    case 'spy_report': {
       const mission = message.data.mission
       messageElm = (
         <div>
@@ -159,6 +159,18 @@ function parseMessage(message) {
         </div>
       )
       break
+    }
+    case 'attack_cancelled': {
+      messageElm = (
+        <div>
+          <div>
+            El ataque a <Username user={message.data.target_user} /> no se ha podido completar, ya que el usuario ya ha
+            recibido el máximo de ataques posibles por hoy. ¡Mañana tendremos otra oportunidad de darle caza!
+          </div>
+        </div>
+      )
+      break
+    }
     default:
       messageElm = (
         <div>

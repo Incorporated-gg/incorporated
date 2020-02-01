@@ -136,7 +136,7 @@ async function getMissions(userID) {
   const [
     [{ sentToday }],
   ] = await mysql.query(
-    "SELECT COUNT(*) AS sentToday FROM missions WHERE user_id=? AND mission_type='attack' AND started_at>?",
+    "SELECT COUNT(*) AS sentToday FROM missions WHERE user_id=? AND mission_type='attack' AND started_at>? AND completed=1",
     [userID, dailyCountStartedAt]
   )
   const [sentMissions, receivedMissions] = await Promise.all([
@@ -144,14 +144,6 @@ async function getMissions(userID) {
     Promise.all(receivedMissionsRaw.map(parseMissionFromDB)),
   ])
   const userMissionLimits = await getUserMissionLimits(userID)
-
-  console.log({
-    sent: sentMissions,
-    received: receivedMissions,
-    receivedToday,
-    sentToday,
-    ...userMissionLimits,
-  })
 
   return {
     sent: sentMissions,
