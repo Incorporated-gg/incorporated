@@ -5,7 +5,7 @@ const personnelList = [
     price: 100,
     firingCost: 50,
     combatPower: 1,
-    dailyMaintenanceCost: 1000,
+    dailyMaintenanceCost: 500,
   },
   {
     name: 'Saboteadores',
@@ -13,7 +13,6 @@ const personnelList = [
     price: 500,
     firingCost: 250,
     combatPower: 1,
-    robbingPower: 5,
     dailyMaintenanceCost: 500,
   },
   {

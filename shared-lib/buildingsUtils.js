@@ -107,7 +107,7 @@ function calcBuildingMaxMoney({ buildingID, buildingAmount, bankResearchLevel })
   return {
     maxSafe: maxSafePer * buildingAmount,
     maxTotal: maxTotalPer * buildingAmount,
-    maxRobbedPerAttack: maxSafePer * buildingAmount * 0.1,
+    maxRobbedPerAttack: maxSafePer * buildingAmount,
   }
 }
 module.exports.calcBuildingMaxMoney = calcBuildingMaxMoney
