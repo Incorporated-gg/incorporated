@@ -6,7 +6,14 @@ const {
 } = require('../../../lib/db/alliances')
 const { calcBuildingMaxMoney } = require('shared-lib/buildingsUtils')
 const { simulateAttack } = require('shared-lib/missionsUtils')
-const { getResearchs, getPersonnel, getBuildings, runUserMoneyUpdate } = require('../../../lib/db/users')
+const {
+  getResearchs,
+  getPersonnel,
+  getBuildings,
+  sendMessage,
+  runUserMoneyUpdate,
+  getMissions,
+} = require('../../../lib/db/users')
 const { onNewWarAttack } = require('../../alliance_wars')
 
 module.exports = {
@@ -60,6 +67,7 @@ async function completeAttackMission(mission) {
     defenderPersonnel,
     defenderBuildings,
     defenderAllianceID,
+    defenderMissions,
   ] = await Promise.all([
     getResearchs(attacker.id),
     getUserAllianceID(attacker.id),
@@ -67,7 +75,23 @@ async function completeAttackMission(mission) {
     getPersonnel(defender.id),
     getBuildings(defender.id),
     getUserAllianceID(defender.id),
+    getMissions(defender.id),
   ])
+
+  if (defenderMissions.receivedToday >= defenderMissions.maxDefenses) {
+    // User has received max attacks before the attack could be completed. Cancel attacks and inform attackers about it
+    await mysql.query('DELETE FROM missions WHERE id=?', [mission.id])
+    await sendMessage({
+      receiverID: attacker.id,
+      senderID: null,
+      type: 'attack_cancelled',
+      data: {
+        target_user_id: defender.id,
+      },
+    })
+    return false
+  }
+
   const [attackerResearchBonusFromBuffs, defenderResearchBonusFromBuffs] = await Promise.all([
     getResearchBonusFromBuffs(attackerAllianceID),
     getResearchBonusFromBuffs(defenderAllianceID),

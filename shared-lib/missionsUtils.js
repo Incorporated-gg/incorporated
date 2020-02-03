@@ -9,7 +9,7 @@ const thievesInfo = personnelList.find(t => t.resource_id === 'thieves')
 
 module.exports.MAX_DAILY_ATTACKS = process.env.NODE_ENV === 'dev' ? 999 : 3
 module.exports.MAX_DAILY_DEFENSES = process.env.NODE_ENV === 'dev' ? 999 : 6
-module.exports.DAILY_DEFENSES_INCREASE = process.env.NODE_ENV === 'dev' ? 1000 : 10000000 // Puede recibir un ataque más cada DAILY_DEFENSES_INCREASE de ingresos
+module.exports.DAILY_DEFENSES_INCREASE = process.env.NODE_ENV === 'dev' ? 1000 : 20000000 // Puede recibir un ataque más cada DAILY_DEFENSES_INCREASE de ingresos
 
 module.exports.calculateMissionTime = calculateMissionTime
 function calculateMissionTime(missionType) {
@@ -152,7 +152,7 @@ function simulateAttack({
   })
 
   // Robbing income
-  const maxRobbedMoney = survivingSabots * sabotsInfo.robbingPower + survivingThieves * thievesInfo.robbingPower
+  const maxRobbedMoney = survivingThieves * thievesInfo.robbingPower
   const robbedMoney = Math.min(maxRobbedMoney, unprotectedMoney)
 
   // Misc calculations

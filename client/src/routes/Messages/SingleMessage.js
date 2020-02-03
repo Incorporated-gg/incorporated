@@ -316,6 +316,17 @@ function getMessage(message) {
         </div>
       )
       break
+    case 'attack_cancelled': {
+      messageElm = (
+        <div>
+          <div>
+            El ataque a <Username user={message.data.target_user} /> no se ha podido completar, ya que el usuario ya ha
+            recibido el máximo de ataques posibles por hoy. ¡Mañana tendremos otra oportunidad de darle caza!
+          </div>
+        </div>
+      )
+      break
+    }
     default:
       messageElm = (
         <div>
@@ -351,6 +362,9 @@ function getMessageExcerpt(message) {
       break
     case 'loan_ended':
       messageElm = <div>Fin de préstamo</div>
+      break
+    case 'attack_cancelled':
+      messageElm = <div>Ataque cancelado</div>
       break
     default:
       messageElm = <div>Tipo &quot;{message.type}&quot; desconocido</div>

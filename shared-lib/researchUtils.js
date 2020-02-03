@@ -1,10 +1,10 @@
 const researchList = [
-  { id: 1, name: 'Espionaje', basePrice: 2000 },
-  { id: 2, name: 'Ataque', basePrice: 4000 },
-  { id: 3, name: 'Defensa', basePrice: 4000 },
-  { id: 4, name: 'Banco', basePrice: 10000 },
+  { id: 1, name: 'Espionaje', basePrice: 1200 },
+  { id: 2, name: 'Ataque', basePrice: 2500 },
+  { id: 3, name: 'Defensa', basePrice: 2500 },
+  { id: 4, name: 'Banco', basePrice: 1500 },
   { id: 5, name: 'Oficina Central', basePrice: 15000 },
-  { id: 6, name: 'Seguridad', basePrice: 3000 },
+  { id: 6, name: 'Seguridad', basePrice: 1800 },
 ]
 module.exports.researchList = researchList
 

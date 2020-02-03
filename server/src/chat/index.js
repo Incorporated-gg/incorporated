@@ -46,7 +46,6 @@ module.exports.setupChat = io => {
       socket.emit('chatRoomList', chatrooms)
 
       socket.on('message', ({ room, text }) => {
-        console.log('got this messg: ' + text + ' from user ' + socket.user.username + '. for room: ' + room)
         const thisRoom = chatrooms.find(ch => ch.name === room)
         if (!thisRoom) return
 
@@ -67,9 +66,6 @@ module.exports.setupChat = io => {
       socket.on('fetchMessages', ({ from, room }) => {
         const thisRoom = chatrooms.find(ch => ch.name === room)
         const previousMessages = thisRoom.messages.filter(m => m.id < from)
-        console.log(
-          'user wants 10 more messages older than id ' + from + ', we got this many: ' + previousMessages.length
-        )
         if (!previousMessages) return
 
         socket.emit('olderMessages', {
