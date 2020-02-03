@@ -5,8 +5,7 @@ services:
   game-nginx-proxy:
     image: jwilder/nginx-proxy:alpine
     ports:
-      - "80:80"
-      - "443:443"
+      - "3100:80"
     networks:
       - game-backend
       - default
@@ -65,7 +64,7 @@ services:
   account-nginx-proxy:
     image: jwilder/nginx-proxy:alpine
     ports:
-      - "3100:80"
+      - "3000:80"
     networks:
       - account-backend
       - default

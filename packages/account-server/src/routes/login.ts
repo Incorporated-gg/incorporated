@@ -1,9 +1,10 @@
-const mysql = require('../lib/mysql')
-const sessions = require('../lib/db/sessions')
-const bcrypt = require('bcryptjs')
+import mysql from '../lib/mysql'
+import { generateSession } from '../lib/db/sessions'
+import bcrypt from 'bcryptjs'
+import express from 'express'
 
-module.exports = app => {
-  app.post('/v1/login', async function(req, res) {
+export default (app: express.Application): void => {
+  app.post('/v1/login', async function(req: express.Request, res: express.Response) {
     if (!req.body.password || !req.body.username) {
       res.status(400).json({ error: 'Faltan datos' })
       return
@@ -23,7 +24,7 @@ module.exports = app => {
       return
     }
 
-    const sessionID = await sessions.generateSession(user.id)
-    res.json({ session_id: sessionID, success: true })
+    const sessionID = await generateSession(user.id)
+    res.json({ sessionID: sessionID, success: true })
   })
 }

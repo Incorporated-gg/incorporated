@@ -1,13 +1,14 @@
-const express = require('express')
-const app = express()
+import express from 'express'
+import authMiddleware from './auth-middleware'
+import { setupRoutes } from './routes'
+import bodyParser from 'body-parser'
+const app: express.Application = express()
 const server = require('http').Server(app)
-const { setupRoutes } = require('./routes')
 
 require('./express-async-errors-patch')
 app.disable('x-powered-by')
 
 // Parse application/json
-var bodyParser = require('body-parser')
 app.use(bodyParser.json())
 
 // CORS middleware
@@ -29,7 +30,7 @@ app.use((req, res, next) => {
 })
 
 // Auth middleware
-require('./auth-middleware')(app)
+authMiddleware(app)
 
 // Our routes
 setupRoutes(app)
@@ -40,11 +41,11 @@ app.all('*', function(req, res) {
 })
 
 // Errors middleware
-app.use(errorHandler)
-function errorHandler(err, req, res, next) {
+function errorHandler(err: Error, req: express.Request, res: express.Response): void {
   console.error(err.stack)
   res.status(500).json({ error: 'Error 500: Algo salió mal' })
 }
+app.use(errorHandler)
 
 server.listen(3001, () => {
   console.log('Server listening on port 3001!')

@@ -1,12 +1,13 @@
-const mysql = require('../lib/mysql')
-const sessions = require('../lib/db/sessions')
-const bcrypt = require('bcryptjs')
+import mysql from '../lib/mysql'
+import { generateSession } from '../lib/db/sessions'
+import bcrypt from 'bcryptjs'
+import express from 'express'
 
 const emailRegexp = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
 const alphanumericRegexp = /^[a-z0-9]+$/i
 const initialMoney = 450000
 
-module.exports = app => {
+export default (app: express.Application): void => {
   app.post('/v1/register', async function(req, res) {
     if (!req.body.password || !req.body.username || !req.body.email) {
       res.status(400).json({ error: 'Faltan datos' })
@@ -49,8 +50,8 @@ module.exports = app => {
       throw e
     }
 
-    const sessionID = await sessions.generateSession(userID)
+    const sessionID = await generateSession(userID)
 
-    res.json({ new_user_id: userID, session_id: sessionID, success: true })
+    res.json({ newUserID: userID, sessionID: sessionID, success: true })
   })
 }

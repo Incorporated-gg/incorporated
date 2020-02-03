@@ -1,8 +1,9 @@
+/* eslint-disable */
 module.exports = {
   server: [
     {
-      name: 'game-server',
-      script: './index.js',
+      name: 'account-server',
+      script: './build/index.js',
       node_args: '-r esm',
       watch: true,
       env: {

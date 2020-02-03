@@ -1,24 +1,43 @@
 module.exports = {
   env: {
     es6: true,
-    node: true,
-    jest: true,
+    node: true
   },
-  "parserOptions": {
-    "ecmaVersion": 2018,
-    'sourceType': 'module',
-    "ecmaFeatures": {
-      "jsx": true
-    }
+  extends: [
+    'standard',
+    'prettier',
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended"
+  ],
+  globals: {
+    Atomics: 'readonly',
+    SharedArrayBuffer: 'readonly'
   },
-  extends: ["standard", "prettier"],
+  parser: '@typescript-eslint/parser',
+  parserOptions: {
+    ecmaVersion: 2018,
+    sourceType: 'module'
+  },
   plugins: [
-    "prettier"
+    'prettier',
+    '@typescript-eslint'
   ],
   rules: {
     "prettier/prettier": "error",
     "no-shadow": "warn",
     "no-return-await": "off",
-    "no-multi-str": "off"
-  }
-};
+    "no-multi-str": "off",
+    "@typescript-eslint/no-var-requires": 0,
+    "@typescript-eslint/member-delimiter-style":  [2, {
+      "multiline": {
+        "delimiter": "none",
+        "requireLast": false
+      },
+      "singleline": {
+        "delimiter": "comma",
+        "requireLast": false
+      }
+    }]
+  },
+  ignorePatterns: ["node_modules/", "build/"],
+}

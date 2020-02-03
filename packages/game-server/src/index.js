@@ -54,8 +54,8 @@ function errorHandler(err, req, res, next) {
   res.status(500).json({ error: 'Error 500: Algo salió mal' })
 }
 
-server.listen(3001, () => {
-  console.log('Server listening on port 3001!')
+server.listen(3101, () => {
+  console.log('Server listening on port 3101!')
 })
 
 // Setup crons
