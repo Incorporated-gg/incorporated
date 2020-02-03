@@ -17,20 +17,20 @@ services:
       - ./nginx-conf/conf.d/dev:/etc/nginx/conf.d
       - ./nginx-conf/certs:/etc/nginx/certs:rw
 
-  client:
-    build: ./client
+  game-client:
+    build: ./packages/game-client
     networks:
       - default
     environment:
       - CHOKIDAR_USEPOLLING=true
     depends_on:
-      - db
+      - game-db
     volumes:
-      - ./client:/usr/src/client:rw
-      - ./shared-lib:/usr/src/shared-lib
+      - ./packages/game-client:/usr/src/client:rw
+      - ./packages/shared-lib:/usr/src/shared-lib
 
-  server:
-    build: ./server
+  game-server:
+    build: ./packages/game-server
     networks:
       - backend
     environment:
@@ -40,12 +40,12 @@ services:
       - DB_HOST
       - NODE_ENV=dev
     depends_on:
-      - db
+      - game-db
     volumes:
-      - ./server:/usr/src/server:rw
-      - ./shared-lib:/usr/src/shared-lib
+      - ./packages/game-server:/usr/src/server:rw
+      - ./packages/shared-lib:/usr/src/shared-lib
   
-  db:
+  game-db:
     image: mariadb:5.5.64
     networks:
       - backend

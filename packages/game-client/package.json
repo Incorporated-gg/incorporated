@@ -1,6 +1,5 @@
 {
-  "name": "ultraemprendedor",
-  "version": "0.1.0",
+  "name": "incorporated-game-client",
   "private": true,
   "dependencies": {
     "node-sass": "^4.13.0",

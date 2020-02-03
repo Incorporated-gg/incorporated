@@ -1,14 +1,11 @@
 INITIAL_PATH=$(pwd)
 # Update server
-cd $INITIAL_PATH/server
+cd $INITIAL_PATH/packages/game_server
 npm i
-pm2 reload all
 npm run migrate_prod
-# Run unit tests
-cd $INITIAL_PATH/shared-lib
-npm run test
+pm2 reload all
 # Update client
-cd $INITIAL_PATH/client
+cd $INITIAL_PATH/packages/game_client
 npm i
 npm run build
 mkdir -p build_nginx
