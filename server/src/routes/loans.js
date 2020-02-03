@@ -110,7 +110,9 @@ module.exports = app => {
       return
     }
 
-    const [loanData] = await mysql.query('SELECT money_amount FROM loans WHERE lender_id=? AND borrower_id IS NULL', [
+    const [
+      loanData,
+    ] = await mysql.query('SELECT money_amount, interest_rate FROM loans WHERE lender_id=? AND borrower_id IS NULL', [
       lenderID,
     ])
     if (!loanData) {
@@ -132,6 +134,26 @@ module.exports = app => {
       tsNow,
       lenderID,
     ])
+
+    // Send messages
+    const msgData = {
+      borrower_id: borrowerID,
+      lender_id: lenderID,
+      money_amount: loanData.money_amount,
+      interest_rate: loanData.interest_rate,
+    }
+    await users.sendMessage({
+      receiverID: borrowerID,
+      senderID: null,
+      type: 'loan_started',
+      data: msgData,
+    })
+    await users.sendMessage({
+      receiverID: lenderID,
+      senderID: null,
+      type: 'loan_started',
+      data: msgData,
+    })
 
     res.json({
       success: true,

@@ -5,6 +5,7 @@ import styles from './LoggedIn.module.scss'
 import { useUserData, reloadUserData } from '../lib/user'
 import PropTypes from 'prop-types'
 import api from '../lib/api'
+import MissionRow from '../routes/Messages/MissionRow'
 
 const DESKTOP_WIDTH_BREAKPOINT = 720
 
@@ -18,11 +19,17 @@ export function Header() {
         <div style={{ top: 0 }} className={`${styles.desktopHeader} ${styles.stickyFullwidthBar}`}>
           <MoneyBar className={`${styles.moneyBar}`} />
           <Menu className={`${styles.mainMenu}`} />
+          <ActiveMission />
         </div>
       </>
     )
 
-  return <MoneyBar style={{ top: 0 }} className={`${styles.moneyBar} ${styles.stickyFullwidthBar}`} />
+  return (
+    <>
+      <MoneyBar style={{ top: 0 }} className={`${styles.moneyBar} ${styles.stickyFullwidthBar}`} />
+      <ActiveMission />
+    </>
+  )
 }
 
 export function Footer() {
@@ -53,9 +60,6 @@ function Menu({ className, style }) {
         <NavLink to="/ranking">Ranking</NavLink>
       </li>
       <li>
-        <NavLink to="/missions">Misiones</NavLink>
-      </li>
-      <li>
         <NavLink to="/alliance">Alianza</NavLink>
       </li>
       <li>
@@ -72,6 +76,22 @@ function Menu({ className, style }) {
         </NavLink>
       </li>
     </ul>
+  )
+}
+
+function ActiveMission() {
+  const userData = useUserData()
+  if (!userData.active_mission) return null
+
+  return (
+    <div className={styles.activeMission}>
+      <h1>Misión activa</h1>
+      <table>
+        <tbody>
+          <MissionRow mission={userData.active_mission} reloadMissionsCallback={reloadUserData} />
+        </tbody>
+      </table>
+    </div>
   )
 }
 

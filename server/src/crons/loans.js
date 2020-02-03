@@ -1,4 +1,5 @@
 const mysql = require('../lib/mysql')
+const { sendMessage } = require('../lib/db/users')
 const frequencyMs = 60 * 1000
 
 const LOAN_DAYS_DURATION = 7
@@ -12,6 +13,25 @@ const run = async () => {
       // Loan end
       if (tsNow - loan.loan_started_at > 60 * 60 * 24 * LOAN_DAYS_DURATION) {
         await mysql.query('DELETE FROM loans WHERE borrower_id=?', [loan.borrower_id])
+        // Send messages
+        const msgData = {
+          borrower_id: loan.borrower_id,
+          lender_id: loan.lender_id,
+          money_amount: loan.money_amount,
+          interest_rate: loan.interest_rate,
+        }
+        await sendMessage({
+          receiverID: loan.borrower_id,
+          senderID: null,
+          type: 'loan_ended',
+          data: msgData,
+        })
+        await sendMessage({
+          receiverID: loan.lender_id,
+          senderID: null,
+          type: 'loan_ended',
+          data: msgData,
+        })
         return
       }
       // Money exchange

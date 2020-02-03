@@ -1,7 +1,6 @@
 const mysql = require('../lib/mysql')
 const users = require('../lib/db/users')
 const alliances = require('../lib/db/alliances')
-const missions = require('../lib/db/missions')
 
 module.exports = app => {
   app.get('/v1/messages', async function(req, res) {
@@ -79,7 +78,7 @@ module.exports = app => {
 
       receiversIDs = members.map(member => member.user.id)
     } else {
-      receiversIDs = await users.getIDFromUsername(req.body.addressee)
+      receiversIDs = [await users.getIDFromUsername(req.body.addressee)]
     }
 
     if (!receiversIDs) {
@@ -131,17 +130,17 @@ async function parseMessage(msg) {
   }
   try {
     switch (msg.type) {
-      case 'spy_report':
-      case 'attack_report': {
-        const [missionRaw] = await mysql.query('SELECT * FROM missions WHERE id=?', [result.data.mission_id])
-        const mission = await missions.parseMissionFromDB(missionRaw)
-        delete result.data.mission_id
-        result.data.mission = mission
-        break
-      }
       case 'caught_spies': {
         result.data.attacker = await users.getData(result.data.attacker_id)
         delete result.data.attacker_id
+        break
+      }
+      case 'loan_started':
+      case 'loan_ended': {
+        result.data.borrower = await users.getData(result.data.borrower_id)
+        result.data.lender = await users.getData(result.data.lender_id)
+        delete result.data.borrower_id
+        delete result.data.lender_id
         break
       }
       case 'war_started':

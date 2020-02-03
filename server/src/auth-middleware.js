@@ -6,6 +6,7 @@ const {
   getBuildings,
   runUserMoneyUpdate,
 } = require('./lib/db/users')
+const { parseMissionFromDB } = require('./lib/db/missions')
 
 module.exports = app => {
   app.use(authMiddleware)
@@ -48,9 +49,14 @@ function modifyResponseBody(req, res, next) {
   res.json = async function() {
     if (req.userData) {
       // Modify response to include extra data for logged in users
+      const [unreadMessagesCount, activeMission] = await Promise.all([
+        getUnreadMessagesCount(req.userData.id),
+        getActiveMission(req.userData.id),
+      ])
       const extraData = {
         money: req.userData.money,
-        unread_messages_count: await getUnreadMessagesCount(req.userData.id),
+        unread_messages_count: unreadMessagesCount,
+        active_mission: activeMission,
         personnel: req.userData.personnel,
         researchs: req.userData.researchs,
         buildings: req.userData.buildings,
@@ -60,4 +66,16 @@ function modifyResponseBody(req, res, next) {
     oldJson.apply(res, arguments)
   }
   next()
+}
+
+async function getActiveMission(userID) {
+  const [
+    mission,
+  ] = await mysql.query(
+    'SELECT user_id, target_user, data, mission_type, started_at, will_finish_at, completed, result, profit FROM missions WHERE user_id=? AND completed=0',
+    [userID]
+  )
+  if (!mission) return null
+
+  return await parseMissionFromDB(mission)
 }

@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react'
-import { Switch, Route, NavLink } from 'react-router-dom'
 import api from '../../lib/api'
-import Mission from './Mission'
 import MissionRow from './MissionRow'
-import styles from './Missions.module.scss'
+import styles from './Messages.module.scss'
+import MissionAttackModal from '../../components/missions/MissionAttack'
+import MissionSpyModal from '../../components/missions/MissionSpy'
+import MissionSimulateModal from '../../components/missions/MissionSimulate'
 
 export default function Missions() {
   const [missions, setMissions] = useState({
@@ -14,7 +15,6 @@ export default function Missions() {
     maxAttacks: 0,
     maxDefenses: 0,
   })
-  const activeMissions = missions.sent.filter(m => !m.completed)
 
   const reloadMissionsCallback = useCallback(() => {
     api
@@ -27,54 +27,20 @@ export default function Missions() {
 
   useEffect(() => reloadMissionsCallback(), [reloadMissionsCallback])
 
+  const [showAttackModal, setShowAttackModal] = useState(false)
+  const [showSpyModal, setShowSpyModal] = useState(false)
+  const [showSimulatorModal, setShowSimulatorModal] = useState(false)
+
   return (
     <div>
-      <nav className="sub-menu">
-        <ul>
-          <li>
-            <NavLink to="/missions/attack">Atacar</NavLink>
-          </li>
-          <li>
-            <NavLink to="/missions/spy">Espiar</NavLink>
-          </li>
-          <li>
-            <NavLink to="/missions/simulator">Simulador</NavLink>
-          </li>
-        </ul>
-      </nav>
-      <Switch>
-        <Route path="/missions/:missionType/:username?">
-          <Mission reloadMissionsCallback={reloadMissionsCallback} />
-        </Route>
-      </Switch>
+      <button onClick={() => setShowAttackModal(true)}>Atacar</button>
+      <button onClick={() => setShowSpyModal(true)}>Espiar</button>
+      <button onClick={() => setShowSimulatorModal(true)}>Simulador</button>
+      <MissionAttackModal isOpen={showAttackModal} onRequestClose={() => setShowAttackModal(false)} />
+      <MissionSpyModal isOpen={showSpyModal} onRequestClose={() => setShowSpyModal(false)} />
+      <MissionSimulateModal isOpen={showSimulatorModal} onRequestClose={() => setShowSimulatorModal(false)} />
 
-      <div className={styles.container}>
-        <h2>Active missions</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>Tipo de misión</th>
-              <th>Usuario objetivo</th>
-              <th>Tropas enviadas</th>
-              <th>Edificio objetivo</th>
-              <th>Fecha de finalización</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {activeMissions.length ? (
-              activeMissions.map((mission, i) => (
-                <MissionRow key={i} mission={mission} reloadMissionsCallback={reloadMissionsCallback} />
-              ))
-            ) : (
-              <tr>
-                <td colSpan="3">No hay misiones activas</td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
-      <div className={styles.container}>
+      <div className={styles.missionContainer}>
         <h2>
           Completed missions (today: {missions.sentToday}/{missions.maxAttacks})
         </h2>
@@ -101,7 +67,7 @@ export default function Missions() {
           </tbody>
         </table>
       </div>
-      <div className={styles.container}>
+      <div className={styles.missionContainer}>
         <h2>
           Received (today: {missions.receivedToday}/{missions.maxDefenses})
         </h2>

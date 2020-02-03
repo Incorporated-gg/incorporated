@@ -1,11 +1,11 @@
-import React from 'react'
+import React, { useState } from 'react'
 import PropTypes from 'prop-types'
-import { Link } from 'react-router-dom'
 import Username from '../../components/Username'
 import api from '../../lib/api'
 import RankItem from '../../components/RankItem'
 import styles from './Home.module.scss'
 import { useUserData, reloadUserData } from '../../lib/user'
+import NewMessageModal from '../Messages/NewMessageModal'
 
 AllianceHome.propTypes = {
   alliance: PropTypes.object.isRequired,
@@ -13,6 +13,7 @@ AllianceHome.propTypes = {
 }
 export default function AllianceHome({ alliance, reloadAllianceData }) {
   const userData = useUserData()
+  const [showMessageModal, setShowMessageModal] = useState(false)
   const leaveAlliance = () => {
     if (!window.confirm('Estás seguro de que quieres salir?')) return
     api
@@ -49,12 +50,17 @@ export default function AllianceHome({ alliance, reloadAllianceData }) {
       {userData.alliance_user_rank.permission_send_circular_msg && (
         <>
           <hr />
-          <Link className={styles.button} to={`/messages/new/alliance:${alliance.short_name}`}>
+          <button className={styles.button} onClick={() => setShowMessageModal(true)}>
             Enviar mensaje circular
-          </Link>
+          </button>
         </>
       )}
       <button onClick={leaveAlliance}>Salir</button>
+      <NewMessageModal
+        user={{ username: `alliance:${alliance.short_name}` }}
+        isOpen={showMessageModal}
+        onRequestClose={() => setShowMessageModal(false)}
+      />
     </div>
   )
 }

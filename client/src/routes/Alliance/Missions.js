@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import MissionRow from '../Missions/MissionRow'
+import MissionRow from '../Messages/MissionRow'
 import PropTypes from 'prop-types'
 import { NavLink, useParams } from 'react-router-dom'
 

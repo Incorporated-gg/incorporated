@@ -170,12 +170,21 @@ async function sendMessage({ receiverID, senderID, type, data }) {
 module.exports.getUnreadMessagesCount = getUnreadMessagesCount
 async function getUnreadMessagesCount(userID) {
   const [
-    { count },
+    { last_checked_messages_at: lastCheckedMessagesAt },
+  ] = await mysql.query('SELECT last_checked_messages_at FROM users WHERE id=?', [userID])
+  const [
+    { count: unreadMessagesCount },
+  ] = await mysql.query('SELECT COUNT(*) as count FROM messages WHERE user_id=? AND created_at>?', [
+    userID,
+    lastCheckedMessagesAt,
+  ])
+  const [
+    { count: unreadMissionsCount },
   ] = await mysql.query(
-    'SELECT COUNT(*) as count FROM messages WHERE user_id=? AND created_at>(SELECT last_checked_messages_at FROM users WHERE id=?)',
-    [userID, userID]
+    'SELECT COUNT(*) as count FROM missions WHERE completed=1 AND will_finish_at>? AND (user_id=? OR target_user=?)',
+    [lastCheckedMessagesAt, userID, userID]
   )
-  return count
+  return unreadMessagesCount + unreadMissionsCount
 }
 
 module.exports.runUserMoneyUpdate = runUserMoneyUpdate

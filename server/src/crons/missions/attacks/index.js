@@ -6,7 +6,7 @@ const {
 } = require('../../../lib/db/alliances')
 const { calcBuildingMaxMoney } = require('shared-lib/buildingsUtils')
 const { simulateAttack } = require('shared-lib/missionsUtils')
-const { getResearchs, getPersonnel, getBuildings, sendMessage, runUserMoneyUpdate } = require('../../../lib/db/users')
+const { getResearchs, getPersonnel, getBuildings, runUserMoneyUpdate } = require('../../../lib/db/users')
 const { onNewWarAttack } = require('../../alliance_wars')
 
 module.exports = {
@@ -39,7 +39,7 @@ async function doAttackMissions() {
 async function completeAttackMission(mission) {
   const data = JSON.parse(mission.data)
   // Complete the mission
-  const [[[defender]], [[attacker]]] = await Promise.all([
+  const [[defender], [attacker]] = await Promise.all([
     mysql.query('SELECT id FROM users WHERE id=?', [mission.target_user]),
     mysql.query('SELECT id FROM users WHERE id=?', [mission.user_id]),
   ])
@@ -172,20 +172,6 @@ async function completeAttackMission(mission) {
 
   // Give money to attacker
   await mysql.query('UPDATE users SET money=money+? WHERE id=?', [attackerTotalIncome, attacker.id])
-
-  // Send messages
-  await sendMessage({
-    receiverID: attacker.id,
-    senderID: null,
-    type: 'attack_report',
-    data: { mission_id: mission.id },
-  })
-  await sendMessage({
-    receiverID: defender.id,
-    senderID: null,
-    type: 'attack_report',
-    data: { mission_id: mission.id },
-  })
 
   // Update war data if there's one
   await checkAndUpdateActiveWar(attackerAllianceID, defenderAllianceID)

@@ -1,22 +1,25 @@
-import React from 'react'
+import React, { useState } from 'react'
 import api from '../../lib/api'
 import Username from '../../components/Username'
 import PropTypes from 'prop-types'
 import { userData } from '../../lib/user'
 import { buildingsList } from 'shared-lib/buildingsUtils'
-import { Link } from 'react-router-dom'
 import { personnelList } from 'shared-lib/personnelUtils'
 import { researchList } from 'shared-lib/researchUtils'
 import styles from './Messages.module.scss'
 import UserActionLinks from '../../components/UserActionLinks'
 import ErrorBoundary from '../../components/ErrorBoundary'
 import AllianceLink from '../../components/AllianceLink'
+import NewMessageModal from './NewMessageModal'
 
 SingleMessage.propTypes = {
   message: PropTypes.object.isRequired,
   reloadMessagesData: PropTypes.func.isRequired,
 }
 export default function SingleMessage({ reloadMessagesData, message }) {
+  const [showDetails, setShowDetails] = useState(false)
+  const [showMessageModal, setShowMessageModal] = useState(false)
+
   const deleteMessage = e => {
     e.preventDefault()
     api
@@ -29,9 +32,47 @@ export default function SingleMessage({ reloadMessagesData, message }) {
   const wasSentToMe = message.receiver && message.receiver.id === userData.id
   const dateFormatted = new Date(message.created_at * 1000).toLocaleString()
 
+  if (!showDetails) {
+    let messageElm
+    try {
+      messageElm = getMessageExcerpt(message)
+    } catch (err) {
+      console.error(err)
+      messageElm = (
+        <div>
+          <b>Error al intepretar mensaje</b>: {err.message}
+        </div>
+      )
+    }
+
+    return (
+      <div className={styles.messageContainer}>
+        <button onClick={() => setShowDetails(true)}>Mostrar detalles</button>
+        <div className={styles.msgInfo}>
+          <div>
+            {wasSentToMe && message.sender && (
+              <>
+                {'Enviado por: '}
+                <Username user={message.sender} />
+              </>
+            )}
+            {!wasSentToMe && message.receiver && (
+              <>
+                {'Enviado a: '}
+                <Username user={message.receiver} />
+              </>
+            )}
+          </div>
+          <div>{dateFormatted}</div>
+        </div>
+        <div className={styles.messageText}>{messageElm}</div>
+      </div>
+    )
+  }
+
   let messageElm
   try {
-    messageElm = parseMessage(message)
+    messageElm = getMessage(message)
   } catch (err) {
     console.error(err)
     messageElm = (
@@ -43,130 +84,42 @@ export default function SingleMessage({ reloadMessagesData, message }) {
 
   return (
     <div className={styles.messageContainer}>
-      {wasSentToMe && message.sender && (
+      <button onClick={() => setShowDetails(false)}>Ocultar detalles</button>
+      <div className={styles.msgInfo}>
         <div>
-          {'Enviado por: '}
-          <Username user={message.sender} />
+          {wasSentToMe && message.sender && (
+            <>
+              {'Enviado por: '}
+              <Username user={message.sender} />
+            </>
+          )}
+          {!wasSentToMe && message.receiver && (
+            <>
+              {'Enviado a: '}
+              <Username user={message.receiver} />
+            </>
+          )}
         </div>
-      )}
-      {!wasSentToMe && message.receiver && (
-        <div>
-          {'Enviado a: '}
-          <Username user={message.receiver} />
-        </div>
-      )}
-      <div>Fecha: {dateFormatted}</div>
+        <div>{dateFormatted}</div>
+      </div>
       <br />
       <ErrorBoundary>
         <div className={styles.messageText}>{messageElm}</div>
       </ErrorBoundary>
       <br />
       {wasSentToMe && message.sender && (
-        <button>
-          <Link to={`/messages/new/${message.sender.username}`}>Responder</Link>
-        </button>
+        <>
+          <button onClick={() => setShowMessageModal(true)}>Responder</button>
+          <NewMessageModal
+            user={message.sender}
+            isOpen={showMessageModal}
+            onRequestClose={() => setShowMessageModal(false)}
+          />
+        </>
       )}
       {wasSentToMe && <button onClick={deleteMessage}>Borrar</button>}
     </div>
   )
-}
-
-function parseMessage(message) {
-  let messageElm = null
-  switch (message.type) {
-    case 'private_message':
-      messageElm = (
-        <div>
-          <div>{message.data.message}</div>
-          <UserActionLinks user={message.sender} />
-        </div>
-      )
-      break
-    case 'monopoly_reward':
-      messageElm = (
-        <div>
-          Enhorabuena por ganar el monopolio semanal! Ganaste el monopolio de{' '}
-          {buildingsList.find(b => b.id === message.data.building_id).name} con {message.data.building_quantity}{' '}
-          edificios
-        </div>
-      )
-      break
-    case 'attack_report': {
-      const mission = message.data.mission
-      const wasIAttacked = mission.target_user && mission.target_user.id === userData.id
-      messageElm = (
-        <>
-          <AttackReportMsg mission={mission} showSender={wasIAttacked} showTarget={!wasIAttacked} />
-          <UserActionLinks user={wasIAttacked ? mission.user : mission.target_user} />
-        </>
-      )
-      break
-    }
-    case 'caught_spies':
-      messageElm = (
-        <div>
-          Hemos cazado a {message.data.captured_spies.toLocaleString()} espías de{' '}
-          <Username user={message.data.attacker} /> que nos intentaban robar información confidencial!
-          <UserActionLinks user={message.data.attacker} />
-        </div>
-      )
-      break
-    case 'war_started': {
-      const didWeDeclare =
-        userData.alliance &&
-        message.data.attacker_alliance &&
-        userData.alliance.id === message.data.attacker_alliance.id
-      messageElm = didWeDeclare ? (
-        <div>
-          Hemos declarado la guerra a la alianza <AllianceLink alliance={message.data.defender_alliance} />. Comenzará a
-          las 00:00 hora server
-        </div>
-      ) : (
-        <div>
-          Nos ha declarado la guerra la alianza <AllianceLink alliance={message.data.attacker_alliance} />. Comenzará a
-          las 00:00 hora server
-        </div>
-      )
-      break
-    }
-    case 'war_ended': {
-      const didWeDeclare =
-        userData.alliance &&
-        message.data.attacker_alliance &&
-        userData.alliance.id === message.data.attacker_alliance.id
-      messageElm = (
-        <div>
-          Ha terminado la guerra con la alianza{' '}
-          <AllianceLink alliance={didWeDeclare ? message.data.defender_alliance : message.data.attacker_alliance} />. Ha
-          ganado la alianza{' '}
-          <AllianceLink
-            alliance={message.data.winner === 1 ? message.data.attacker_alliance : message.data.defender_alliance}
-          />
-          .
-        </div>
-      )
-      break
-    }
-    case 'spy_report':
-      const mission = message.data.mission
-      messageElm = (
-        <div>
-          <div>
-            Resultado de espionaje a: <Username user={mission.target_user} />
-          </div>
-          <SpyReportMsg mission={mission} />
-          <UserActionLinks user={mission.target_user} />
-        </div>
-      )
-      break
-    default:
-      messageElm = (
-        <div>
-          <b>Tipo &quot;{message.type}&quot; desconocido</b>: {JSON.stringify(message)}
-        </div>
-      )
-  }
-  return messageElm
 }
 
 AttackReportMsg.propTypes = {
@@ -278,4 +231,129 @@ export function SpyReportMsg({ mission }) {
         ))}
     </div>
   )
+}
+
+function getMessage(message) {
+  let messageElm = null
+  switch (message.type) {
+    case 'private_message':
+      messageElm = (
+        <div>
+          <div>{message.data.message}</div>
+          <UserActionLinks user={message.sender} />
+        </div>
+      )
+      break
+    case 'monopoly_reward':
+      messageElm = (
+        <div>
+          Enhorabuena por ganar el monopolio semanal! Ganaste el monopolio de{' '}
+          {buildingsList.find(b => b.id === message.data.building_id).name} con {message.data.building_quantity}{' '}
+          edificios
+        </div>
+      )
+      break
+    case 'caught_spies':
+      messageElm = (
+        <div>
+          Hemos cazado a {message.data.captured_spies.toLocaleString()} espías de{' '}
+          <Username user={message.data.attacker} /> que nos intentaban robar información confidencial!
+          <UserActionLinks user={message.data.attacker} />
+        </div>
+      )
+      break
+    case 'war_started': {
+      const didWeDeclare =
+        userData.alliance &&
+        message.data.attacker_alliance &&
+        userData.alliance.id === message.data.attacker_alliance.id
+      messageElm = didWeDeclare ? (
+        <div>
+          Hemos declarado la guerra a la alianza <AllianceLink alliance={message.data.defender_alliance} />. Comenzará a
+          las 00:00 hora server
+        </div>
+      ) : (
+        <div>
+          Nos ha declarado la guerra la alianza <AllianceLink alliance={message.data.attacker_alliance} />. Comenzará a
+          las 00:00 hora server
+        </div>
+      )
+      break
+    }
+    case 'war_ended': {
+      const didWeDeclare =
+        userData.alliance &&
+        message.data.attacker_alliance &&
+        userData.alliance.id === message.data.attacker_alliance.id
+      messageElm = (
+        <div>
+          Ha terminado la guerra con la alianza{' '}
+          <AllianceLink alliance={didWeDeclare ? message.data.defender_alliance : message.data.attacker_alliance} />. Ha
+          ganado la alianza{' '}
+          <AllianceLink
+            alliance={message.data.winner === 1 ? message.data.attacker_alliance : message.data.defender_alliance}
+          />
+          .
+        </div>
+      )
+      break
+    }
+    case 'loan_started':
+      messageElm = (
+        <div>
+          <Username user={message.data.borrower} /> ha pedido un préstamo a <Username user={message.data.lender} /> de{' '}
+          <i>{message.data.money_amount.toLocaleString()}€</i> con un{' '}
+          <i>{message.data.interest_rate.toLocaleString()}%</i> de interés
+        </div>
+      )
+      break
+    case 'loan_ended':
+      messageElm = (
+        <div>
+          Ha finalizado el préstamo que <Username user={message.data.borrower} /> pidió a{' '}
+          <Username user={message.data.lender} /> de <i>{message.data.money_amount.toLocaleString()}€</i> con un{' '}
+          <i>{message.data.interest_rate.toLocaleString()}%</i> de interés
+        </div>
+      )
+      break
+    default:
+      messageElm = (
+        <div>
+          <b>Tipo &quot;{message.type}&quot; desconocido</b>: {JSON.stringify(message)}
+        </div>
+      )
+  }
+  return messageElm
+}
+
+function getMessageExcerpt(message) {
+  let messageElm = null
+  switch (message.type) {
+    case 'private_message':
+      messageElm = <div>Mensaje privado</div>
+      break
+    case 'monopoly_reward':
+      messageElm = <div>Ganaste un monopolio</div>
+      break
+    case 'caught_spies':
+      messageElm = <div>Espías enemigos cazados</div>
+      break
+    case 'war_started': {
+      messageElm = <div>Comienzo de guerra</div>
+      break
+    }
+    case 'war_ended': {
+      messageElm = <div>Fin de guerra</div>
+      break
+    }
+    case 'loan_started':
+      messageElm = <div>Comienzo de préstamo</div>
+      break
+    case 'loan_ended':
+      messageElm = <div>Fin de préstamo</div>
+      break
+    default:
+      messageElm = <div>Tipo &quot;{message.type}&quot; desconocido</div>
+  }
+  return messageElm
 }

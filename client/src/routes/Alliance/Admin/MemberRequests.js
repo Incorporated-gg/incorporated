@@ -52,7 +52,9 @@ export default function MemberRequests({ reloadAllianceData }) {
               )
             })
           ) : (
-            <div>No hay nuevas peticiones</div>
+            <tr>
+              <td colSpan="99">No hay nuevas peticiones</td>
+            </tr>
           )}
         </tbody>
       </table>

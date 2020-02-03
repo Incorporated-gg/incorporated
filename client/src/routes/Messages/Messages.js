@@ -1,9 +1,12 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Switch, Route, NavLink } from 'react-router-dom'
 import MessagesList from './MessagesList'
-import NewMessage from './NewMessage'
+import Missions from './Missions'
+import NewMessageModal from './NewMessageModal'
 
 export default function Messages() {
+  const [showNewMessageModal, setShowNewMessageModal] = useState(false)
+
   return (
     <>
       <nav className="sub-menu">
@@ -14,20 +17,32 @@ export default function Messages() {
             </NavLink>
           </li>
           <li>
+            <NavLink to="/messages/missions">Misiones</NavLink>
+          </li>
+          <li>
             <NavLink to="/messages/sent">Enviados</NavLink>
           </li>
           <li>
-            <NavLink to="/messages/new">Escribir</NavLink>
+            <a
+              href=" "
+              onClick={e => {
+                e.preventDefault()
+                setShowNewMessageModal(true)
+              }}>
+              Escribir
+            </a>
           </li>
         </ul>
       </nav>
 
+      <NewMessageModal isOpen={showNewMessageModal} onRequestClose={() => setShowNewMessageModal(false)} />
+
       <Switch>
-        <Route path="/messages/new/:username?">
-          <NewMessage />
-        </Route>
         <Route path="/messages/sent">
           <MessagesList type="sent" />
+        </Route>
+        <Route path="/messages/missions">
+          <Missions />
         </Route>
         <Route path="/messages">
           <MessagesList type="received" />

@@ -20,7 +20,7 @@ async function doSpyMissions() {
 async function completeSpyMission(mission) {
   const data = JSON.parse(mission.data)
   // Complete the mission
-  const [[[defender]], [[attacker]]] = await Promise.all([
+  const [[defender], [attacker]] = await Promise.all([
     mysql.query('SELECT id FROM users WHERE id=?', [mission.target_user]),
     mysql.query('SELECT id FROM users WHERE id=?', [mission.user_id]),
   ])
@@ -87,14 +87,4 @@ async function completeSpyMission(mission) {
     report: intelReport,
   })
   await mysql.query('UPDATE missions SET completed=1, result=?, data=? WHERE id=?', [result, newData, mission.id])
-
-  // Message intel report
-  await sendMessage({
-    receiverID: attacker.id,
-    senderID: null,
-    type: 'spy_report',
-    data: {
-      mission_id: mission.id,
-    },
-  })
 }

@@ -6,8 +6,9 @@ import { timestampFromEpoch } from 'shared-lib/commonUtils'
 import { buildingsList } from 'shared-lib/buildingsUtils'
 import { getTimeUntil } from '../../lib/utils'
 import { reloadUserData, userData } from '../../lib/user'
-import { AttackReportMsg, SpyReportMsg } from '../Messages/SingleMessage'
+import { AttackReportMsg, SpyReportMsg } from './SingleMessage'
 import { getServerDay } from 'shared-lib/serverTime'
+import ErrorBoundary from '../../components/ErrorBoundary'
 
 MissionRow.propTypes = {
   mission: PropTypes.object.isRequired,
@@ -75,7 +76,7 @@ export default function MissionRow({ mission, reloadMissionsCallback }) {
             </td>
             <td style={{ color: resultColor }}>{displayResult}</td>
             <td>
-              <button onClick={clickedShowDetails}>{showDetails ? 'Ocultar detalles' : 'Ver detalles'}</button>
+              <button onClick={clickedShowDetails}>{showDetails ? 'Ocultar detalles' : 'Mostrar detalles'}</button>
             </td>
           </>
         ) : (
@@ -96,8 +97,10 @@ export default function MissionRow({ mission, reloadMissionsCallback }) {
       {showDetails && (
         <tr>
           <td colSpan="99">
-            {mission.mission_type === 'attack' && <AttackReportMsg mission={mission} showSender showTarget />}
-            {mission.mission_type === 'spy' && <SpyReportMsg mission={mission} />}
+            <ErrorBoundary>
+              {mission.mission_type === 'attack' && <AttackReportMsg mission={mission} showSender showTarget />}
+              {mission.mission_type === 'spy' && <SpyReportMsg mission={mission} />}
+            </ErrorBoundary>
           </td>
         </tr>
       )}
