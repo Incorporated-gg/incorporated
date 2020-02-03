@@ -1,5 +1,5 @@
 module.exports = {
-  server: [
+  apps: [
     {
       name: 'game-server',
       script: './index.js',

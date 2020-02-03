@@ -10,6 +10,6 @@ export const setupRoutes = (app: express.Application): void => {
 
   // Require all routes available in this directory
   files.forEach((file: string) => {
-    require(`./${file}`)(app)
+    require(`./${file}`).default(app)
   })
 }

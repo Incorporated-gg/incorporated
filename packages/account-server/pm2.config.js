@@ -1,6 +1,6 @@
 /* eslint-disable */
 module.exports = {
-  server: [
+  apps: [
     {
       name: 'account-server',
       script: './build/index.js',

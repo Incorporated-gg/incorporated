@@ -1,8 +1,8 @@
 {
   "name": "incorporated-account-server",
   "scripts": {
-    "tsc": "tsc --watch",
-    "start": "npm run tsc & nodemon build/index.js",
+    "tsc": "tsc",
+    "start": "tsc --watch & nodemon build/index.js",
     "migrate_prod": "npx db-migrate up --config migrations/database_prod.json",
     "migrate_dev_docker": "npx db-migrate up --config migrations/database_dev_docker.json",
     "undo_migration_dev_docker": "npx db-migrate down --config migrations/database_dev_docker.json",
