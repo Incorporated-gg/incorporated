@@ -7,7 +7,7 @@ async function generateResource(allianceID, resourceID, resources, researchs) {
   const max = calcResourceMax(resourceID, researchs)
   if (resources[resourceID].quantity >= max) return
   if (resources[resourceID].quantity === 0) {
-    const [[rowExists]] = await mysql.query('SELECT 1 FROM alliances_resources WHERE alliance_id=? AND resource_id=?', [
+    const [rowExists] = await mysql.query('SELECT 1 FROM alliances_resources WHERE alliance_id=? AND resource_id=?', [
       allianceID,
       resourceID,
     ])
@@ -32,7 +32,7 @@ async function generateResource(allianceID, resourceID, resources, researchs) {
 }
 
 const run = async () => {
-  const [alliancesList] = await mysql.query('SELECT id FROM alliances')
+  const alliancesList = await mysql.query('SELECT id FROM alliances')
   await Promise.all(
     alliancesList.map(async alliance => {
       const [resources, researchs] = await Promise.all([

@@ -19,9 +19,7 @@ module.exports = app => {
       req.userData.id,
     ])
 
-    const [
-      messagesRaw,
-    ] = await mysql.query(
+    const messagesRaw = await mysql.query(
       'SELECT id, user_id, sender_id, created_at, type, data FROM messages WHERE ??=? ORDER BY created_at DESC LIMIT ?,?',
       [type === 'sent' ? 'sender_id' : 'user_id', req.userData.id, page * perPage, perPage]
     )
@@ -135,7 +133,7 @@ async function parseMessage(msg) {
     switch (msg.type) {
       case 'spy_report':
       case 'attack_report': {
-        const [[missionRaw]] = await mysql.query('SELECT * FROM missions WHERE id=?', [result.data.mission_id])
+        const [missionRaw] = await mysql.query('SELECT * FROM missions WHERE id=?', [result.data.mission_id])
         const mission = await missions.parseMissionFromDB(missionRaw)
         delete result.data.mission_id
         result.data.mission = mission
@@ -148,7 +146,7 @@ async function parseMessage(msg) {
       }
       case 'war_started':
       case 'war_ended': {
-        const [[war]] = await mysql.query('SELECT alliance1_id, alliance2_id, data FROM alliances_wars WHERE id=?', [
+        const [war] = await mysql.query('SELECT alliance1_id, alliance2_id, data FROM alliances_wars WHERE id=?', [
           result.data.war_id,
         ])
         result.data.attacker_alliance = await alliances.getBasicData(war.alliance1_id)

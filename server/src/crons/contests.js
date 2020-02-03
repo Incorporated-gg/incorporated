@@ -5,7 +5,7 @@ const fs = require('fs')
 const path = require('path')
 
 const getPreviousScoreboard = async contestID => {
-  const [scoreBoard] = await mysql.query('SELECT user_id, score, rank FROM contests_scoreboards WHERE contest_id = ?', [
+  const scoreBoard = await mysql.query('SELECT user_id, score, rank FROM contests_scoreboards WHERE contest_id = ?', [
     contestID,
   ])
   return scoreBoard
@@ -68,7 +68,7 @@ const updateOngoingContest = async contest => {
 
 const run = async () => {
   // Check cron dates and whether we need to run it or not
-  const [ongoingContests] = await mysql.query(
+  const ongoingContests = await mysql.query(
     'SELECT id, name, started_at FROM contests WHERE started_at IS NOT NULL AND ended_at IS NULL'
   )
 

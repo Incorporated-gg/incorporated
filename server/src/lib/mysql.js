@@ -6,4 +6,8 @@ const pool = mysql.createPool({
   database: process.env.DB_DATABASE,
 })
 
-module.exports = pool
+module.exports = {
+  query: (sql, args) => {
+    return pool.query(sql, args).then(res => res[0])
+  },
+}

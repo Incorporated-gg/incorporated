@@ -7,14 +7,14 @@ module.exports.MAX_MEMBERS = 10
 
 module.exports.getUserAllianceID = getUserAllianceID
 async function getUserAllianceID(userID) {
-  const [[memberQuery]] = await mysql.query('SELECT alliance_id FROM alliances_members WHERE user_id=?', [userID])
+  const [memberQuery] = await mysql.query('SELECT alliance_id FROM alliances_members WHERE user_id=?', [userID])
   return memberQuery ? memberQuery.alliance_id : false
 }
 
 module.exports.getUserRank = getUserRank
 async function getUserRank(userID) {
   const [
-    [allianceMember],
+    allianceMember,
   ] = await mysql.query(
     'SELECT alliance_id, rank_name, \
     permission_admin, permission_accept_and_kick_members, permission_extract_money, permission_extract_troops, \
@@ -42,7 +42,7 @@ async function getBasicData(allianceID) {
   if (!allianceID) return false
   // Get basic alliance data
   const [
-    [allianceQuery],
+    allianceQuery,
   ] = await mysql.query(
     'SELECT created_at, picture_url, long_name, short_name, description FROM alliances WHERE id=?',
     [allianceID]
@@ -61,17 +61,16 @@ async function getBasicData(allianceID) {
 }
 
 module.exports.getIDFromShortName = async shortName => {
-  const [[allianceData]] = await mysql.query('SELECT id FROM alliances WHERE short_name=?', [shortName])
+  const [allianceData] = await mysql.query('SELECT id FROM alliances WHERE short_name=?', [shortName])
   return allianceData ? allianceData.id : false
 }
 
 module.exports.getMembers = getMembers
 async function getMembers(allianceID) {
-  let [
-    members,
-  ] = await mysql.query('SELECT user_id, rank_name, permission_admin FROM alliances_members WHERE alliance_id=?', [
-    allianceID,
-  ])
+  let members = await mysql.query(
+    'SELECT user_id, rank_name, permission_admin FROM alliances_members WHERE alliance_id=?',
+    [allianceID]
+  )
   members = await Promise.all(
     members.map(async member => ({
       user: await users.getData(member.user_id),
@@ -85,9 +84,10 @@ async function getMembers(allianceID) {
 
 module.exports.getResearchs = getResearchs
 async function getResearchs(allianceID) {
-  const [
-    rawResearchs,
-  ] = await mysql.query('SELECT id, level, progress_money FROM alliances_research WHERE alliance_id=?', [allianceID])
+  const rawResearchs = await mysql.query(
+    'SELECT id, level, progress_money FROM alliances_research WHERE alliance_id=?',
+    [allianceID]
+  )
   const researchs = RESEARCHS_LIST.map(research => {
     const data = rawResearchs.find(raw => raw.id === research.id)
     const level = data ? data.level : 0
@@ -106,10 +106,9 @@ async function getResearchs(allianceID) {
 
 module.exports.getResources = getResources
 async function getResources(allianceID) {
-  const [rawResources] = await mysql.query(
-    'SELECT resource_id, quantity FROM alliances_resources WHERE alliance_id=?',
-    [allianceID]
-  )
+  const rawResources = await mysql.query('SELECT resource_id, quantity FROM alliances_resources WHERE alliance_id=?', [
+    allianceID,
+  ])
   const resources = RESOURCES_LIST.map(res => {
     const resData = rawResources.find(raw => raw.resource_id === res.resource_id)
     return {
@@ -150,11 +149,11 @@ async function getMissionHistory(members = []) {
   )
 
   const [
-    [activeMissionsRaw],
-    [sentAttackMissionsRaw],
-    [sentSpyMissionsRaw],
-    [receivedAttackMissionsRaw],
-    [receivedSpyMissionsRaw],
+    activeMissionsRaw,
+    sentAttackMissionsRaw,
+    sentSpyMissionsRaw,
+    receivedAttackMissionsRaw,
+    receivedSpyMissionsRaw,
   ] = await Promise.all([
     activeMissionsQuery,
     sentAttackMissionsQuery,
@@ -178,9 +177,7 @@ async function getMissionHistory(members = []) {
 
 module.exports.getResourcesLog = getResourcesLog
 async function getResourcesLog(allianceID) {
-  const [
-    rawLog,
-  ] = await mysql.query(
+  const rawLog = await mysql.query(
     'SELECT user_id, created_at, resource_id, quantity FROM alliances_resources_log WHERE alliance_id=? ORDER BY created_at DESC LIMIT 20',
     [allianceID]
   )
@@ -199,9 +196,7 @@ async function getResourcesLog(allianceID) {
 
 module.exports.getResearchShares = getResearchShares
 async function getResearchShares(allianceID) {
-  const [
-    rawShares,
-  ] = await mysql.query(
+  const rawShares = await mysql.query(
     'SELECT user_id, SUM(money) as total FROM alliances_research_log WHERE alliance_id=? GROUP BY user_id ORDER BY total DESC',
     [allianceID]
   )
@@ -219,7 +214,7 @@ async function getResearchShares(allianceID) {
 module.exports.getBuffsData = getBuffsData
 async function getBuffsData(allianceID) {
   const [
-    [buffsLastUsed],
+    buffsLastUsed,
   ] = await mysql.query('SELECT buff_attack_last_used, buff_defense_last_used FROM alliances WHERE id=?', [allianceID])
 
   const now = Math.floor(Date.now() / 1000)
@@ -260,7 +255,7 @@ async function getResearchBonusFromBuffs(allianceID) {
 module.exports.getActiveWarBetweenAlliances = getActiveWarBetweenAlliances
 async function getActiveWarBetweenAlliances(allianceID1, allianceID2) {
   const [
-    [war],
+    war,
   ] = await mysql.query(
     'SELECT id FROM alliances_wars WHERE completed=0 AND ((alliance1_id=? AND alliance2_id=?) OR (alliance2_id=? AND alliance1_id=?))',
     [allianceID1, allianceID2, allianceID1, allianceID2]
@@ -274,9 +269,7 @@ async function getActiveWarBetweenAlliances(allianceID1, allianceID2) {
 
 module.exports.getAllianceActiveWars = getAllianceActiveWars
 async function getAllianceActiveWars(allianceID) {
-  let [
-    activeWars,
-  ] = await mysql.query(
+  let activeWars = await mysql.query(
     'SELECT id, created_at, alliance1_id, alliance2_id, data FROM alliances_wars WHERE completed=0 AND (alliance1_id=? OR alliance2_id=?) ORDER BY created_at DESC',
     [allianceID, allianceID]
   )
@@ -287,9 +280,7 @@ async function getAllianceActiveWars(allianceID) {
 
 module.exports.getAlliancePastWars = getAlliancePastWars
 async function getAlliancePastWars(allianceID) {
-  let [
-    pastWars,
-  ] = await mysql.query(
+  let pastWars = await mysql.query(
     'SELECT id, created_at, alliance1_id, alliance2_id, data FROM alliances_wars WHERE completed=1 AND (alliance1_id=? OR alliance2_id=?) ORDER BY created_at DESC LIMIT 10',
     [allianceID, allianceID]
   )

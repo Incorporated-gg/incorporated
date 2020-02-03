@@ -8,7 +8,7 @@ module.exports = app => {
       return
     }
 
-    const [monopolyHolders] = await mysql.query('SELECT building_id, user_id, building_quantity FROM monopolies')
+    const monopolyHolders = await mysql.query('SELECT building_id, user_id, building_quantity FROM monopolies')
     const monopolies = await Promise.all(
       monopolyHolders.map(async monopoly => {
         return {

@@ -11,7 +11,7 @@ module.exports = app => {
 
     const extraInfoPromise = mysql.query('SELECT email FROM users WHERE id=?', [req.userData.id])
 
-    const [userData, [[extraInfo]], userRank] = await Promise.all([
+    const [userData, [extraInfo], userRank] = await Promise.all([
       users.getData(req.userData.id),
       extraInfoPromise,
       alliances.getUserRank(req.userData.id),
@@ -34,7 +34,7 @@ module.exports = app => {
       return
     }
 
-    const [dailyLogInfo] = await mysql.query('SELECT server_day, daily_income FROM users_daily_log WHERE user_id=?', [
+    const dailyLogInfo = await mysql.query('SELECT server_day, daily_income FROM users_daily_log WHERE user_id=?', [
       req.userData.id,
     ])
 

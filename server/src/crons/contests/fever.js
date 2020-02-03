@@ -34,9 +34,7 @@ const contestEnd = () => {}
 
 // Has to return an array of objects containing { score, user_id }
 const getScoreboard = async startDate => {
-  const [
-    topAttackers,
-  ] = await mysql.query(
+  const topAttackers = await mysql.query(
     "SELECT SUM(gained_fame) AS score, user_id FROM missions WHERE completed=1 AND mission_type='attack' AND will_finish_at >= ? AND gained_fame IS NOT NULL GROUP BY user_id ORDER BY score DESC LIMIT 30",
     [startDate]
   )

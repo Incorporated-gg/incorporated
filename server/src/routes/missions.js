@@ -24,7 +24,7 @@ module.exports = app => {
     }
 
     const [
-      [mission],
+      mission,
     ] = await mysql.query('SELECT id, mission_type FROM missions WHERE user_id=? AND completed=? AND started_at=?', [
       req.userData.id,
       false,
@@ -58,7 +58,7 @@ module.exports = app => {
       return
     }
 
-    const [[targetUser]] = await mysql.query('SELECT id FROM users WHERE username = ?', [req.body.target_user])
+    const [targetUser] = await mysql.query('SELECT id FROM users WHERE username = ?', [req.body.target_user])
     if (!targetUser) {
       res.status(400).json({
         error: 'El usuario indicado no existe',

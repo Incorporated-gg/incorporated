@@ -19,9 +19,7 @@ function onlyUnique(value, index, self) {
 
 async function doAttackMissions() {
   const tsNow = Math.floor(Date.now() / 1000)
-  const [
-    attackMissions,
-  ] = await mysql.query(
+  const attackMissions = await mysql.query(
     'SELECT id, user_id, target_user, data, mission_type, started_at, will_finish_at, completed FROM missions WHERE completed=? AND mission_type=? AND will_finish_at<=?',
     [false, 'attack', tsNow]
   )
@@ -203,7 +201,7 @@ async function calcAllianceGuardsRestock(killedGuards, defenderAllianceID) {
   if (!defenderAllianceID) return 0
 
   let [
-    [{ quantity: allianceGuardsCount }],
+    { quantity: allianceGuardsCount },
   ] = await mysql.query('SELECT quantity FROM alliances_resources WHERE alliance_id=? AND resource_id=?', [
     defenderAllianceID,
     'guards',

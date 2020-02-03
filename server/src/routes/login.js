@@ -12,7 +12,7 @@ module.exports = app => {
     const username = req.body.username
     const password = req.body.password
 
-    const [[user]] = await mysql.query('SELECT id, password FROM users WHERE username=? LIMIT 1', [username])
+    const [user] = await mysql.query('SELECT id, password FROM users WHERE username=?', [username])
     if (!user) {
       res.status(400).json({ error: 'Datos inválidos', success: false })
       return

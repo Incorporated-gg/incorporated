@@ -15,16 +15,14 @@ module.exports = app => {
       return
     }
 
-    let [loans] = await mysql.query(
+    let loans = await mysql.query(
       'SELECT created_at, lender_id, interest_rate, money_amount FROM loans WHERE borrower_id IS NULL ORDER BY money_amount DESC'
     )
     loans = await Promise.all(loans.map(parseLoan))
 
     let takenLoan = null
     let givenLoan = null
-    const [
-      myLoans,
-    ] = await mysql.query(
+    const myLoans = await mysql.query(
       'SELECT created_at, lender_id, interest_rate, money_amount, borrower_id, loan_started_at FROM loans WHERE borrower_id=? OR lender_id=?',
       [req.userData.id, req.userData.id]
     )
@@ -65,7 +63,7 @@ module.exports = app => {
       return
     }
 
-    const [[userHasLoan]] = await mysql.query('SELECT 1 FROM loans WHERE lender_id=?', [lenderID])
+    const [userHasLoan] = await mysql.query('SELECT 1 FROM loans WHERE lender_id=?', [lenderID])
     if (userHasLoan) {
       res.status(400).json({ error: 'Ya tienes un préstamo activo' })
       return
@@ -106,13 +104,13 @@ module.exports = app => {
       return
     }
 
-    const [[userHasLoan]] = await mysql.query('SELECT 1 FROM loans WHERE borrower_id=?', [borrowerID])
+    const [userHasLoan] = await mysql.query('SELECT 1 FROM loans WHERE borrower_id=?', [borrowerID])
     if (userHasLoan) {
       res.status(400).json({ error: 'Ya tienes un préstamo activo' })
       return
     }
 
-    const [[loanData]] = await mysql.query('SELECT money_amount FROM loans WHERE lender_id=? AND borrower_id IS NULL', [
+    const [loanData] = await mysql.query('SELECT money_amount FROM loans WHERE lender_id=? AND borrower_id IS NULL', [
       lenderID,
     ])
     if (!loanData) {
@@ -148,7 +146,7 @@ module.exports = app => {
 
     const lenderID = req.userData.id
 
-    const [[userLoan]] = await mysql.query('SELECT money_amount FROM loans WHERE lender_id=? AND borrower_id IS NULL', [
+    const [userLoan] = await mysql.query('SELECT money_amount FROM loans WHERE lender_id=? AND borrower_id IS NULL', [
       lenderID,
     ])
 

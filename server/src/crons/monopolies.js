@@ -12,13 +12,13 @@ const run = async () => {
   await Promise.all(
     buildingsList.map(async ({ id: buildingID }) => {
       const [
-        [monopolyHolder],
+        monopolyHolder,
       ] = await mysql.query('SELECT user_id, quantity FROM buildings WHERE id=? ORDER BY quantity DESC LIMIT 1', [
         buildingID,
       ])
       if (!monopolyHolder) return
 
-      const [[doesMonopolyRowExist]] = await mysql.query('SELECT 1 FROM monopolies WHERE building_id=?', [buildingID])
+      const [doesMonopolyRowExist] = await mysql.query('SELECT 1 FROM monopolies WHERE building_id=?', [buildingID])
       if (!doesMonopolyRowExist) {
         await mysql.query('INSERT INTO monopolies (building_id, user_id, building_quantity) VALUES (?, ?, ?)', [
           buildingID,
@@ -37,7 +37,7 @@ const run = async () => {
 
   // Send monopolies reward
   const messagesCreatedAt = Math.floor(Date.now() / 1000)
-  const [monopolyHolders] = await mysql.query('SELECT building_id, user_id, building_quantity FROM monopolies')
+  const monopolyHolders = await mysql.query('SELECT building_id, user_id, building_quantity FROM monopolies')
   await Promise.all(
     monopolyHolders.map(async monopoly => {
       await mysql.query('INSERT INTO messages (user_id, sender_id, created_at, type, data) VALUES (?, ?, ?, ?, ?)', [

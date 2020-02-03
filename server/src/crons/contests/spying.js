@@ -36,9 +36,7 @@ const contestWillUpdate = () => {}
 const contestEnd = () => {}
 
 const getScoreboard = async startDate => {
-  const [
-    topSpies,
-  ] = await mysql.query(
+  const topSpies = await mysql.query(
     "SELECT COUNT(id) AS score, user_id FROM missions WHERE completed=1 AND mission_type='spy' AND will_finish_at >= ? GROUP BY user_id ORDER BY score DESC LIMIT 30",
     [startDate]
   )

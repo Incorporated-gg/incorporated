@@ -14,7 +14,7 @@ module.exports = app => {
     let ranking = []
     switch (type) {
       case 'income': {
-        const [rankingData] = await mysql.query('SELECT user_id, rank, points FROM ranking_income ORDER BY rank ASC')
+        const rankingData = await mysql.query('SELECT user_id, rank, points FROM ranking_income ORDER BY rank ASC')
         ranking = await Promise.all(
           rankingData.map(async rankUser => ({
             rank: rankUser.rank,
@@ -25,7 +25,7 @@ module.exports = app => {
         break
       }
       case 'research': {
-        const [rankingData] = await mysql.query('SELECT user_id, rank, points FROM ranking_research ORDER BY rank ASC')
+        const rankingData = await mysql.query('SELECT user_id, rank, points FROM ranking_research ORDER BY rank ASC')
         ranking = await Promise.all(
           rankingData.map(async rankUser => ({
             rank: rankUser.rank,
@@ -36,7 +36,7 @@ module.exports = app => {
         break
       }
       case 'alliances': {
-        const [rankingData] = await mysql.query(
+        const rankingData = await mysql.query(
           'SELECT alliance_id, rank, points FROM ranking_alliances ORDER BY rank ASC'
         )
         ranking = await Promise.all(

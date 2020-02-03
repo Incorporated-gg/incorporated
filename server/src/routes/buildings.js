@@ -28,7 +28,7 @@ module.exports = app => {
       return
     }
 
-    const [[building]] = await mysql.query('SELECT quantity FROM buildings WHERE user_id=? and id=?', [
+    const [building] = await mysql.query('SELECT quantity FROM buildings WHERE user_id=? and id=?', [
       req.userData.id,
       buildingID,
     ])

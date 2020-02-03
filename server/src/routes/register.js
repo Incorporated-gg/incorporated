@@ -32,14 +32,15 @@ module.exports = app => {
       return
     }
 
-    let insertId
+    let userID
     try {
-      ;[
-        { insertId },
-      ] = await mysql.query(
+      const {
+        insertId,
+      } = await mysql.query(
         'INSERT INTO users (username, password, email, money, last_money_update) VALUES (?, ?, ?, ?, ?)',
         [username, encryptedPassword, email, initialMoney, initialUpdateDate]
       )
+      userID = insertId
     } catch (e) {
       if (e.code === 'ER_DUP_ENTRY') {
         res.status(400).json({ error: 'Este usuario o email ya existen' })
@@ -48,8 +49,8 @@ module.exports = app => {
       throw e
     }
 
-    const sessionID = await sessions.generateSession(insertId)
+    const sessionID = await sessions.generateSession(userID)
 
-    res.json({ new_user_id: insertId, session_id: sessionID, success: true })
+    res.json({ new_user_id: userID, session_id: sessionID, success: true })
   })
 }

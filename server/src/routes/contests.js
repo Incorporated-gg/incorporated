@@ -8,7 +8,7 @@ module.exports = app => {
       return
     }
 
-    const [contests] = await mysql.query(
+    const contests = await mysql.query(
       'SELECT id, name FROM contests WHERE started_at IS NOT NULL AND ended_at IS NULL'
     )
 
@@ -24,7 +24,7 @@ module.exports = app => {
     }
 
     const [
-      [contest],
+      contest,
     ] = await mysql.query(
       'SELECT id, name FROM contests WHERE name = ? AND started_at IS NOT NULL AND ended_at IS NULL',
       [req.params.contestName]
@@ -35,9 +35,7 @@ module.exports = app => {
       return
     }
 
-    const [
-      scoreboards,
-    ] = await mysql.query(
+    const scoreboards = await mysql.query(
       'SELECT user_id, score, rank FROM contests_scoreboards WHERE contest_id = ? ORDER BY rank ASC',
       [contest.id]
     )

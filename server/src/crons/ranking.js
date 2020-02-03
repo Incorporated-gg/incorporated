@@ -3,7 +3,7 @@ const frequencyMs = 30 * 60 * 1000
 const { getUserDailyIncome } = require('../lib/db/users')
 
 async function doIncomeRanking() {
-  const [users] = await mysql.query('SELECT id FROM users')
+  const users = await mysql.query('SELECT id FROM users')
   const parsedUsers = await Promise.all(
     users.map(async user => {
       // Fetch the user's income
@@ -21,7 +21,7 @@ async function doIncomeRanking() {
       .sort((a, b) => (a.points < b.points ? 1 : -1))
       .map(async (user, index) => {
         const rank = index + 1
-        const [[rowExists]] = await mysql.query('SELECT 1 FROM ranking_income WHERE user_id = ?', [user.user_id])
+        const [rowExists] = await mysql.query('SELECT 1 FROM ranking_income WHERE user_id = ?', [user.user_id])
         if (!rowExists) {
           await mysql.query('INSERT INTO ranking_income (user_id, points, rank) VALUES (?, ?, ?)', [
             user.user_id,
@@ -40,7 +40,7 @@ async function doIncomeRanking() {
 }
 
 async function doResearchRanking() {
-  const [researchs] = await mysql.query('SELECT user_id, level FROM research')
+  const researchs = await mysql.query('SELECT user_id, level FROM research')
   const parsedUsers = new Map()
   researchs.forEach(research => {
     let currPoints = 0
@@ -56,7 +56,7 @@ async function doResearchRanking() {
       .sort((a, b) => (a.points < b.points ? 1 : -1))
       .map(async (user, index) => {
         const rank = index + 1
-        const [[rowExists]] = await mysql.query('SELECT 1 FROM ranking_research WHERE user_id = ?', [user.user_id])
+        const [rowExists] = await mysql.query('SELECT 1 FROM ranking_research WHERE user_id = ?', [user.user_id])
         if (!rowExists) {
           await mysql.query('INSERT INTO ranking_research (user_id, points, rank) VALUES (?, ?, ?)', [
             user.user_id,
@@ -75,7 +75,7 @@ async function doResearchRanking() {
 }
 
 async function doAlliancesRanking() {
-  const [users] = await mysql.query('SELECT alliance_id, user_id FROM alliances_members')
+  const users = await mysql.query('SELECT alliance_id, user_id FROM alliances_members')
   const parsedAlliances = new Map()
 
   await Promise.all(
@@ -97,7 +97,7 @@ async function doAlliancesRanking() {
       .sort((a, b) => (a.points < b.points ? 1 : -1))
       .map(async (alliance, index) => {
         const rank = index + 1
-        const [[rowExists]] = await mysql.query('SELECT 1 FROM ranking_alliances WHERE alliance_id = ?', [
+        const [rowExists] = await mysql.query('SELECT 1 FROM ranking_alliances WHERE alliance_id = ?', [
           alliance.alliance_id,
         ])
         if (!rowExists) {

@@ -60,9 +60,9 @@ module.exports = app => {
     await mysql.query('UPDATE users SET money=money-? WHERE id=?', [CREATE_ALLIANCE_PRICE, req.userData.id])
 
     // Create alliance
-    const [
-      { insertId: newAllianceID },
-    ] = await mysql.query(
+    const {
+      insertId: newAllianceID,
+    } = await mysql.query(
       'INSERT INTO alliances (created_at, picture_url, long_name, short_name, description) VALUES (?, ?, ?, ?, ?)',
       [allianceCreatedAt, null, longName, shortName, description]
     )
@@ -182,9 +182,9 @@ module.exports = app => {
     }
 
     const tsNow = Math.floor(Date.now() / 1000)
-    const [
-      { insertId: warID },
-    ] = await mysql.query('INSERT INTO alliances_wars (created_at, alliance1_id, alliance2_id) VALUES (?, ?, ?)', [
+    const {
+      insertId: warID,
+    } = await mysql.query('INSERT INTO alliances_wars (created_at, alliance1_id, alliance2_id) VALUES (?, ?, ?)', [
       tsNow,
       userRank.alliance_id,
       attackedAllianceID,

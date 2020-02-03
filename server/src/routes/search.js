@@ -12,9 +12,7 @@ module.exports = app => {
       return
     }
 
-    const [
-      users,
-    ] = await mysql.query(
+    const users = await mysql.query(
       'SELECT users.id, users.username, ranking.income FROM users JOIN ranking_income ON ranking_income.user_id = users.id WHERE users.username=?',
       [req.params.username]
     )

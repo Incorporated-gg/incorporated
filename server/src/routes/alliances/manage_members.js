@@ -16,9 +16,7 @@ module.exports = app => {
       return
     }
 
-    const [
-      memberReqRaw,
-    ] = await mysql.query(
+    const memberReqRaw = await mysql.query(
       'SELECT user_id FROM alliances_member_requests WHERE alliance_id=? ORDER BY created_at DESC',
       [userRank.alliance_id]
     )
@@ -180,7 +178,7 @@ function memberRequestAction(action) {
     const userID = req.body.user_id
     const allianceMembers = await alliances.getMembers(userRank.alliance_id)
     const [
-      [requestExists],
+      requestExists,
     ] = await mysql.query('SELECT 1 FROM alliances_member_requests WHERE user_id=? AND alliance_id=?', [
       userID,
       userRank.alliance_id,

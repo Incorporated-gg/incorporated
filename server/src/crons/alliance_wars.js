@@ -21,7 +21,7 @@ async function runOnce() {
 
 async function onNewWarAttack(warID) {
   const [
-    [war],
+    war,
   ] = await mysql.query('SELECT id, created_at, alliance1_id, alliance2_id, data FROM alliances_wars WHERE id=?', [
     warID,
   ])
@@ -42,7 +42,7 @@ async function runJustAfterNewDay() {
 }
 
 async function getAllActiveWars() {
-  const [activeWars] = await mysql.query(
+  const activeWars = await mysql.query(
     'SELECT id, created_at, alliance1_id, alliance2_id, data FROM alliances_wars WHERE completed=0'
   )
   return activeWars.map(war => {
@@ -123,9 +123,7 @@ async function updateWarDayData(war, warDay) {
 
 async function getAttacksFromUsers(userIDs, attackedUserIDs, attacksMinTs) {
   const attacksMaxTs = attacksMinTs + 60 * 60 * 24
-  const [
-    attacks,
-  ] = await mysql.query(
+  const attacks = await mysql.query(
     'SELECT target_user, result, profit, data FROM missions WHERE mission_type="attack" AND completed=1 AND will_finish_at>=? AND will_finish_at<? AND user_id IN (?) AND target_user IN (?)',
     [attacksMinTs, attacksMaxTs, userIDs, attackedUserIDs]
   )

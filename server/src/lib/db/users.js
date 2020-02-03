@@ -13,7 +13,7 @@ async function getData(userID) {
   const userDataPromise = mysql.query('SELECT username FROM users WHERE id=?', [userID])
   const rankingDataPromise = mysql.query('SELECT rank, points FROM ranking_income WHERE user_id=?', [userID])
   const alliancePromise = alliances.getUserAllianceID(userID).then(alliances.getBasicData)
-  const [[[userData]], [[rankingData]], allianceData] = await Promise.all([
+  const [[userData], [rankingData], allianceData] = await Promise.all([
     userDataPromise,
     rankingDataPromise,
     alliancePromise,
@@ -30,7 +30,7 @@ async function getData(userID) {
 }
 
 module.exports.getIDFromUsername = async username => {
-  const [[userData]] = await mysql.query('SELECT id FROM users WHERE username=?', [username])
+  const [userData] = await mysql.query('SELECT id FROM users WHERE username=?', [username])
   return userData ? userData.id : null
 }
 
@@ -49,7 +49,7 @@ async function getUserPersonnelCosts(userID) {
 
 module.exports.getUserDailyIncome = getUserDailyIncome
 async function getUserDailyIncome(userID) {
-  let [[buildingsRaw], researchs] = await Promise.all([
+  let [buildingsRaw, researchs] = await Promise.all([
     mysql.query('SELECT id, quantity FROM buildings WHERE user_id=?', [userID]),
     getResearchs(userID),
   ])
@@ -68,7 +68,7 @@ async function getResearchs(userID) {
   const researchs = {}
   researchList.forEach(research => (researchs[research.id] = 1))
 
-  const [researchsRaw] = await mysql.query('SELECT id, level FROM research WHERE user_id=?', [userID])
+  const researchsRaw = await mysql.query('SELECT id, level FROM research WHERE user_id=?', [userID])
   if (researchsRaw) researchsRaw.forEach(research => (researchs[research.id] = research.level))
 
   return researchs
@@ -79,9 +79,7 @@ async function getPersonnel(userID) {
   const personnels = {}
   personnelList.forEach(personnel => (personnels[personnel.resource_id] = 0))
 
-  const [personnelRaw] = await mysql.query('SELECT resource_id, quantity FROM users_resources WHERE user_id=?', [
-    userID,
-  ])
+  const personnelRaw = await mysql.query('SELECT resource_id, quantity FROM users_resources WHERE user_id=?', [userID])
   if (personnelRaw) personnelRaw.forEach(personnel => (personnels[personnel.resource_id] = personnel.quantity))
 
   return personnels
@@ -104,7 +102,7 @@ async function getBuildings(userID) {
     return curr
   }, {})
 
-  const [buildingsRaw] = await mysql.query('SELECT id, quantity, money FROM buildings WHERE user_id=?', [userID])
+  const buildingsRaw = await mysql.query('SELECT id, quantity, money FROM buildings WHERE user_id=?', [userID])
   buildingsRaw.forEach(building => {
     buildings[building.id].quantity = building.quantity
     buildings[building.id].money = parseInt(building.money)
@@ -115,26 +113,22 @@ async function getBuildings(userID) {
 module.exports.getMissions = getMissions
 async function getMissions(userID) {
   const dailyCountStartedAt = Math.floor(getInitialUnixTimestampOfServerDay() / 1000)
-  const [
-    sentMissionsRaw,
-  ] = await mysql.query(
+  const sentMissionsRaw = await mysql.query(
     'SELECT user_id, target_user, data, mission_type, started_at, will_finish_at, completed, result, profit FROM missions WHERE user_id=? ORDER BY will_finish_at DESC',
     [userID]
   )
-  const [
-    receivedMissionsRaw,
-  ] = await mysql.query(
+  const receivedMissionsRaw = await mysql.query(
     'SELECT user_id, target_user, data, mission_type, started_at, will_finish_at, completed, result, profit FROM missions WHERE target_user=? ORDER BY will_finish_at DESC',
     [userID]
   )
   const [
-    [{ receivedToday }],
+    { receivedToday },
   ] = await mysql.query(
     "SELECT COUNT(*) AS receivedToday FROM missions WHERE target_user=? AND mission_type='attack' AND started_at>? AND completed=1",
     [userID, dailyCountStartedAt]
   )
   const [
-    [{ sentToday }],
+    { sentToday },
   ] = await mysql.query(
     "SELECT COUNT(*) AS sentToday FROM missions WHERE user_id=? AND mission_type='attack' AND started_at>?",
     [userID, dailyCountStartedAt]
@@ -144,14 +138,6 @@ async function getMissions(userID) {
     Promise.all(receivedMissionsRaw.map(parseMissionFromDB)),
   ])
   const userMissionLimits = await getUserMissionLimits(userID)
-
-  console.log({
-    sent: sentMissions,
-    received: receivedMissions,
-    receivedToday,
-    sentToday,
-    ...userMissionLimits,
-  })
 
   return {
     sent: sentMissions,
@@ -164,7 +150,7 @@ async function getMissions(userID) {
 
 module.exports.hasActiveMission = hasActiveMission
 async function hasActiveMission(userID) {
-  const [activeMissions] = await mysql.query('SELECT 1 FROM missions WHERE user_id=? AND completed=0', [userID])
+  const activeMissions = await mysql.query('SELECT 1 FROM missions WHERE user_id=? AND completed=0', [userID])
 
   return activeMissions.length > 0
 }
@@ -184,7 +170,7 @@ async function sendMessage({ receiverID, senderID, type, data }) {
 module.exports.getUnreadMessagesCount = getUnreadMessagesCount
 async function getUnreadMessagesCount(userID) {
   const [
-    [{ count }],
+    { count },
   ] = await mysql.query(
     'SELECT COUNT(*) as count FROM messages WHERE user_id=? AND created_at>(SELECT last_checked_messages_at FROM users WHERE id=?)',
     [userID, userID]
@@ -194,10 +180,9 @@ async function getUnreadMessagesCount(userID) {
 
 module.exports.runUserMoneyUpdate = runUserMoneyUpdate
 async function runUserMoneyUpdate(userID) {
-  const [[{ last_money_update: lastMoneyUpdate }]] = await mysql.query(
-    'SELECT last_money_update FROM users WHERE id=?',
-    [userID]
-  )
+  const [{ last_money_update: lastMoneyUpdate }] = await mysql.query('SELECT last_money_update FROM users WHERE id=?', [
+    userID,
+  ])
   const currentTimestamp = Math.floor(Date.now() / 1000)
   const moneyUpdateElapsedS = currentTimestamp - lastMoneyUpdate
   if (moneyUpdateElapsedS < 1) return
@@ -206,7 +191,7 @@ async function runUserMoneyUpdate(userID) {
   // Buildings Income
   const userResearchs = await getResearchs(userID)
 
-  const [buildings] = await mysql.query('SELECT id, quantity, money FROM buildings WHERE user_id=?', [userID])
+  const buildings = await mysql.query('SELECT id, quantity, money FROM buildings WHERE user_id=?', [userID])
   const buildingsIncomes = buildings.map(building => ({
     ...building,
     money: parseFloat(building.money),

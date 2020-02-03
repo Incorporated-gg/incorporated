@@ -14,9 +14,10 @@ module.exports = app => {
 
     const tsNow = Math.floor(Date.now() / 1000)
 
-    const [
-      [{ last_bankrupcy_at: lastBankrupcyAt }],
-    ] = await mysql.query('SELECT last_bankrupcy_at FROM users WHERE id=?', [req.userData.id])
+    const [{ last_bankrupcy_at: lastBankrupcyAt }] = await mysql.query(
+      'SELECT last_bankrupcy_at FROM users WHERE id=?',
+      [req.userData.id]
+    )
     if (lastBankrupcyAt && tsNow - lastBankrupcyAt < 60 * 60 * 24 * 7) {
       res.status(400).json({ error: 'Solo puedes declarar bancarrota una vez por semana' })
       return

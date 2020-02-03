@@ -31,7 +31,7 @@ async function runJustAfterNewDay() {
 }
 
 async function getAllUsers() {
-  const [users] = await mysql.query('SELECT user_id, points FROM ranking_income')
+  const users = await mysql.query('SELECT user_id, points FROM ranking_income')
   return users.map(rankUser => ({
     user_id: rankUser.user_id,
     daily_income: rankUser.points,

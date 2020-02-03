@@ -8,9 +8,7 @@ module.exports = {
 
 async function doSpyMissions() {
   const tsNow = Math.floor(Date.now() / 1000)
-  const [
-    spyMissions,
-  ] = await mysql.query(
+  const spyMissions = await mysql.query(
     'SELECT id, user_id, data, target_user, mission_type, started_at, will_finish_at, completed FROM missions WHERE completed=? AND mission_type=? AND will_finish_at<=?',
     [false, 'spy', tsNow]
   )

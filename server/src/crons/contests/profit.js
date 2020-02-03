@@ -36,9 +36,7 @@ const contestWillUpdate = () => {}
 const contestEnd = () => {}
 
 const getScoreboard = async startDate => {
-  const [
-    topProfiters,
-  ] = await mysql.query(
+  const topProfiters = await mysql.query(
     "SELECT SUM(profit) AS score, user_id FROM missions WHERE completed=1 AND mission_type='attack' AND will_finish_at >= ? GROUP BY user_id ORDER BY score DESC LIMIT 30",
     [startDate]
   )
