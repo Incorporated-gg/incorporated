@@ -1,4 +1,5 @@
 const mysql = require('../mysql')
+
 module.exports.generateSession = async userID => {
   const sessionID = await generateSessionID()
   const tsNow = Math.floor(Date.now() / 1000)

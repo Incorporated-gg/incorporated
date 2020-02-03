@@ -1,5 +1,5 @@
 {
-  "name": "incorporated-game-server",
+  "name": "incorporated-account-server",
   "scripts": {
     "start": "nodemon index.js",
     "migrate_prod": "npx db-migrate up --config migrations/database_prod.json",
@@ -14,9 +14,7 @@
     "dotenv": "^8.2.0",
     "esm": "^3.2.25",
     "express": "^4.17.1",
-    "mysql2": "^2.0.1",
-    "shared-lib": "file:../shared-lib",
-    "socket.io": "^2.3.0"
+    "mysql2": "^2.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.7.5",

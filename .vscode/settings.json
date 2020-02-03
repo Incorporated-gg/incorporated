@@ -1,6 +1,6 @@
 {
   "eslint.workingDirectories": [
-    "./packages/game-client", "./packages/game-server", "./packages/shared-lib"
+    "./packages/game-client", "./packages/game-server", "./packages/shared-lib", "./packages/account-server", "./packages/account-client"
   ],
   "files.watcherExclude": {
       "**/node_modules/*/**": true

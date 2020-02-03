@@ -2,7 +2,7 @@ module.exports = {
   server: [
     {
       name: 'server',
-      script: './worker.js',
+      script: './index.js',
       node_args: '-r esm',
       watch: true,
       env: {

@@ -2,19 +2,22 @@ version: '3'
 
 services:
 
-  nginx-proxy:
+  game-nginx-proxy:
     image: jwilder/nginx-proxy:alpine
     ports:
       - "80:80"
       - "443:443"
     networks:
-      - backend
+      - game-backend
       - default
+    depends_on:
+      - game-client
+      - game-server
     volumes:
       - /var/run/docker.sock:/tmp/docker.sock:ro
       - ./nginx-conf/logs:/var/log/nginx:rw
       - ./nginx-conf/vhost.d:/etc/nginx/vhost.d
-      - ./nginx-conf/conf.d/dev:/etc/nginx/conf.d
+      - ./nginx-conf/conf.d/game-dev:/etc/nginx/conf.d
       - ./nginx-conf/certs:/etc/nginx/certs:rw
 
   game-client:
@@ -32,7 +35,7 @@ services:
   game-server:
     build: ./packages/game-server
     networks:
-      - backend
+      - game-backend
     environment:
       - DB_DATABASE
       - DB_USER
@@ -48,7 +51,7 @@ services:
   game-db:
     image: mariadb:5.5.64
     networks:
-      - backend
+      - game-backend
     environment:
       - MYSQL_ROOT_PASSWORD=incorporated_dev
       - MYSQL_DATABASE=incorporated_dev
@@ -59,6 +62,64 @@ services:
     volumes:
       - ./.mariadb-docker:/var/lib/mysql
 
+  account-nginx-proxy:
+    image: jwilder/nginx-proxy:alpine
+    ports:
+      - "3100:80"
+    networks:
+      - account-backend
+      - default
+    depends_on:
+      - account-client
+      - account-server
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - ./nginx-conf/logs:/var/log/nginx:rw
+      - ./nginx-conf/vhost.d:/etc/nginx/vhost.d
+      - ./nginx-conf/conf.d/account-dev:/etc/nginx/conf.d
+      - ./nginx-conf/certs:/etc/nginx/certs:rw
+
+  account-client:
+    build: ./packages/account-client
+    networks:
+      - default
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    depends_on:
+      - account-db
+    volumes:
+      - ./packages/account-client:/usr/src/client:rw
+
+  account-server:
+    build: ./packages/account-server
+    networks:
+      - account-backend
+    environment:
+      - DB_DATABASE
+      - DB_USER
+      - DB_PASS
+      - DB_HOST
+      - NODE_ENV=dev
+    depends_on:
+      - account-db
+    volumes:
+      - ./packages/account-server:/usr/src/server:rw
+  
+  account-db:
+    image: mariadb:5.5.64
+    networks:
+      - account-backend
+    environment:
+      - MYSQL_ROOT_PASSWORD=incorporated_dev
+      - MYSQL_DATABASE=incorporated_dev
+      - MYSQL_USER=incorporated_dev
+      - MYSQL_PASSWORD=incorporated_dev
+    ports:
+      - 3308:3306 # remove in prod
+    volumes:
+      - ./.account-mariadb-docker:/var/lib/mysql
+
 networks:
   default:
-  backend:
+  game-backend:
+  account-backend:
