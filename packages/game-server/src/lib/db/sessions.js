@@ -22,7 +22,7 @@ module.exports.getUserIDFromSessionID = async sessionID => {
 }
 
 async function getAccount(sessionID) {
-  const ACCOUNT_API = process.env.NODE_ENV === 'development' ? 'http://account-server:3001' : 'https://localhost:3001'
+  const ACCOUNT_API = process.env.NODE_ENV === 'development' ? 'http://account-server:3001' : 'http://localhost:3001'
   let headers = {}
   headers.Accept = 'application/json, text/plain, */*'
   headers.Authorization = `Basic ${sessionID}`
