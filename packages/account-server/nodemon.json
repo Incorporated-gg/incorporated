@@ -2,7 +2,7 @@
     "legacyWatch": true,
     "ignoreRoot": [".git"],
     "watch"   : [
-        "./node_modules/shared-lib", "./src"
+        "./build"
     ],
     "execMap" : {
         "js": "node -r esm"

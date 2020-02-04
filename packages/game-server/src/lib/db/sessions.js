@@ -1,33 +1,31 @@
-const mysql = require('../mysql')
-module.exports.generateSession = async userID => {
-  const sessionID = await generateSessionID()
-  const tsNow = Math.floor(Date.now() / 1000)
-  await mysql.query('INSERT INTO sessions (id, user_id, created_at, last_used_at) VALUES (?, ?, ?, ?)', [
-    sessionID,
-    userID,
-    tsNow,
-    tsNow,
-  ])
-  return sessionID
-}
+import fetch from 'node-fetch'
+import mysql from '../mysql'
 
-const sessionValidChars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+/'.split('')
-async function generateSessionID() {
-  const randomSessionID = new Array(100)
-    .fill(null)
-    .map(() => sessionValidChars[Math.floor(Math.random() * sessionValidChars.length)])
-    .join('')
-
-  // Check that generated id doesn't exist, should be basically impossible
-  const [session] = await mysql.query('SELECT 1 FROM sessions WHERE id=?', [randomSessionID])
-  if (session) return await generateSessionID() // If it does, generate another
-
-  return randomSessionID
-}
+const initialMoney = 450000
 
 module.exports.getUserIDFromSessionID = async sessionID => {
   if (!sessionID) return
-  const [session] = await mysql.query('SELECT user_id FROM sessions WHERE id=?', [sessionID])
-  if (!session) return
-  return session.user_id
+  const accountData = await getAccount(sessionID)
+  if (!accountData) return
+  const [userExists] = await mysql.query('SELECT 1 FROM users WHERE id=?', [accountData.id])
+  if (!userExists) {
+    const initialUpdateDate = Math.floor(Date.now() / 1000)
+    // First time user uses this game server. Create user row
+    await mysql.query('INSERT INTO users (id, username, money, last_money_update) VALUES (?, ?, ?, ?)', [
+      accountData.id,
+      accountData.username,
+      initialMoney,
+      initialUpdateDate,
+    ])
+  }
+  return accountData.id
+}
+
+async function getAccount(sessionID) {
+  const ACCOUNT_API = process.env.NODE_ENV === 'development' ? 'http://account-server:3001' : 'https://localhost:3001'
+  let headers = {}
+  headers.Accept = 'application/json, text/plain, */*'
+  headers.Authorization = `Basic ${sessionID}`
+  const res = await fetch(`${ACCOUNT_API}/v1/my_data`, { method: 'GET', headers }).then(r => r.json())
+  return res.userData
 }

@@ -1,7 +1,7 @@
 {
   "name": "incorporated-game-server",
   "scripts": {
-    "start": "nodemon index.js",
+    "start": "NODE_ENV=development nodemon index.js",
     "migrate_prod": "npx db-migrate up --config migrations/database_prod.json",
     "migrate_dev_docker": "npx db-migrate up --config migrations/database_dev_docker.json",
     "undo_migration_dev_docker": "npx db-migrate down --config migrations/database_dev_docker.json",
@@ -15,6 +15,7 @@
     "esm": "^3.2.25",
     "express": "^4.17.1",
     "mysql2": "^2.0.1",
+    "node-fetch": "^2.6.0",
     "shared-lib": "file:../shared-lib",
     "socket.io": "^2.3.0"
   },

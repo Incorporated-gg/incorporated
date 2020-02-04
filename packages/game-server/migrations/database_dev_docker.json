@@ -3,8 +3,8 @@
   "prod": {
     "driver": "mysql",
     "multipleStatements": true,
-    "host": "game-db",
-    "port": "3306",
+    "host": "localhost",
+    "port": "3307",
     "user": "incorporated_dev",
     "password": "incorporated_dev",
     "database": "incorporated_dev"

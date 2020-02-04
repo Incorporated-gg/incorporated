@@ -7,7 +7,7 @@ services:
     ports:
       - "3100:80"
     networks:
-      - game-backend
+      - backend
       - default
     depends_on:
       - game-client
@@ -34,7 +34,7 @@ services:
   game-server:
     build: ./packages/game-server
     networks:
-      - game-backend
+      - backend
     environment:
       - DB_DATABASE
       - DB_USER
@@ -50,7 +50,7 @@ services:
   game-db:
     image: mariadb:5.5.64
     networks:
-      - game-backend
+      - backend
     environment:
       - MYSQL_ROOT_PASSWORD=incorporated_dev
       - MYSQL_DATABASE=incorporated_dev
@@ -66,7 +66,7 @@ services:
     ports:
       - "3000:80"
     networks:
-      - account-backend
+      - backend
       - default
     depends_on:
       - account-client
@@ -92,7 +92,7 @@ services:
   account-server:
     build: ./packages/account-server
     networks:
-      - account-backend
+      - backend
     environment:
       - DB_DATABASE
       - DB_USER
@@ -107,7 +107,7 @@ services:
   account-db:
     image: mariadb:5.5.64
     networks:
-      - account-backend
+      - backend
     environment:
       - MYSQL_ROOT_PASSWORD=incorporated_dev
       - MYSQL_DATABASE=incorporated_dev
@@ -120,5 +120,5 @@ services:
 
 networks:
   default:
-  game-backend:
-  account-backend:
+  backend:
+  backend:

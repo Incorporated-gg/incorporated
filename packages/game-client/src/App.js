@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import LoggedInRouter from './routers/LoggedInRouter'
-import { userData, loadUserDataFromStorage } from './lib/user'
-import LoginRouter from './routers/LoginRouter'
+import { userData, loadUserDataFromStorage, userLoggedIn } from './lib/user'
 import ErrorBoundary from './components/ErrorBoundary'
 
 export function reloadApp() {
@@ -19,12 +18,12 @@ function App() {
 
     loadUserDataFromStorage()
       .then(() => {
-        setLoading(false)
         setLoggedIn(Boolean(userData))
+        setLoading(false)
       })
       .catch(() => {
-        setLoading(false)
         setLoggedIn(false)
+        setLoading(false)
       })
   }, [loading])
 
@@ -34,3 +33,27 @@ function App() {
 }
 
 export default App
+
+function LoginRouter() {
+  const sessionID = getQueryVariable('sessionID')
+  if (!sessionID) {
+    // Redirect to account site
+    const ACCOUNT_LINK = process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : 'https://incorporated.gg'
+    window.location = ACCOUNT_LINK
+    return null
+  }
+  userLoggedIn(sessionID)
+  return <div>Loading</div>
+}
+
+function getQueryVariable(variable) {
+  var query = window.location.search.substring(1)
+  var vars = query.split('&')
+  for (var i = 0; i < vars.length; i++) {
+    var pair = vars[i].split('=')
+    if (decodeURIComponent(pair[0]) === variable) {
+      return decodeURIComponent(pair[1])
+    }
+  }
+  console.log('Query variable %s not found', variable)
+}

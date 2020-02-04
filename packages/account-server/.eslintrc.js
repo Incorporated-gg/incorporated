@@ -40,4 +40,15 @@ module.exports = {
     }]
   },
   ignorePatterns: ["node_modules/", "build/"],
+  overrides: [
+      {
+          "files": ["*.js", "*.jsx"],
+          "rules": {
+              "@typescript-eslint/*": "off",
+              "@typescript-eslint/explicit-function-return-type": "off",
+              "@typescript-eslint/camelcase": "off",
+              "@typescript-eslint/no-unused-vars": "off",
+          }
+      }
+  ]
 }

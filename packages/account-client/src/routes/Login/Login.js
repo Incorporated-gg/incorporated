@@ -39,11 +39,11 @@ function Login({ toggleActive }) {
     api
       .post('/v1/login', { username, password })
       .then(res => {
-        if (!res.session_id) {
+        if (!res.sessionID) {
           alert(JSON.stringify(res))
           return
         }
-        return userLoggedIn(res.session_id)
+        return userLoggedIn(res.sessionID)
       })
       .catch(err => {
         alert(err.message)
@@ -54,7 +54,7 @@ function Login({ toggleActive }) {
     <form className="login-form">
       <input type="text" placeholder="Username" value={username} onChange={e => setUsername(e.target.value)} />
       <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} />
-      <button onClick={loginClicked}>login</button>
+      <button onClick={loginClicked}>Login</button>
       <p className="message">
         No tienes cuenta?{' '}
         <button type="button" onClick={registerClicked}>
@@ -83,11 +83,11 @@ function Register({ toggleActive }) {
     api
       .post('/v1/register', { username, password, email })
       .then(res => {
-        if (!res.session_id) {
+        if (!res.sessionID) {
           alert(JSON.stringify(res))
           return
         }
-        return userLoggedIn(res.session_id)
+        return userLoggedIn(res.sessionID)
       })
       .catch(err => {
         alert(err.message)
@@ -99,7 +99,7 @@ function Register({ toggleActive }) {
       <input type="text" placeholder="Username" value={username} onChange={e => setUsername(e.target.value)} />
       <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} />
       <input type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} />
-      <button onClick={registerClicked}>Crear</button>
+      <button onClick={registerClicked}>Crear cuenta</button>
       <p className="message">
         Ya tienes cuenta?{' '}
         <button type="button" onClick={loginClicked}>

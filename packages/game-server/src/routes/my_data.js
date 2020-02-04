@@ -9,11 +9,8 @@ module.exports = app => {
       return
     }
 
-    const extraInfoPromise = mysql.query('SELECT email FROM users WHERE id=?', [req.userData.id])
-
-    const [userData, [extraInfo], userRank] = await Promise.all([
+    const [userData, userRank] = await Promise.all([
       users.getData(req.userData.id),
-      extraInfoPromise,
       alliances.getUserRank(req.userData.id),
     ])
 
@@ -21,7 +18,6 @@ module.exports = app => {
       user_data: {
         id: userData.id,
         username: userData.username,
-        email: extraInfo.email,
         alliance: userData.alliance,
         alliance_user_rank: userRank,
       },

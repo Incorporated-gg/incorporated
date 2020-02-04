@@ -7,6 +7,7 @@ const {
   runUserMoneyUpdate,
 } = require('./lib/db/users')
 const { parseMissionFromDB } = require('./lib/db/missions')
+const { getUserIDFromSessionID } = require('./lib/db/sessions')
 
 module.exports = app => {
   app.use(authMiddleware)
@@ -18,9 +19,9 @@ async function authMiddleware(req, res, next) {
 
   if (req.headers.authorization && req.headers.authorization.startsWith('Basic ')) {
     const sessionID = req.headers.authorization.replace('Basic ', '')
-    const [sessionData] = await mysql.query('SELECT user_id FROM sessions WHERE id=?', [sessionID])
-    if (sessionData) {
-      ;[req.userData] = await mysql.query('SELECT id, username, money FROM users WHERE id=?', [sessionData.user_id])
+    const userID = await getUserIDFromSessionID(sessionID)
+    if (userID) {
+      ;[req.userData] = await mysql.query('SELECT id, username, money FROM users WHERE id=?', [userID])
 
       await runUserMoneyUpdate(req.userData.id)
 

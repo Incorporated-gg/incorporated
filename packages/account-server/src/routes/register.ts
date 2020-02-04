@@ -5,7 +5,6 @@ import express from 'express'
 
 const emailRegexp = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
 const alphanumericRegexp = /^[a-z0-9]+$/i
-const initialMoney = 450000
 
 export default (app: express.Application): void => {
   app.post('/v1/register', async function(req, res) {
@@ -18,7 +17,7 @@ export default (app: express.Application): void => {
     const saltRounds = 10
     const encryptedPassword = await bcrypt.hash(req.body.password, saltRounds)
     const email = req.body.email
-    const initialUpdateDate = Math.floor(Date.now() / 1000)
+    const tsNow = Math.floor(Date.now() / 1000)
 
     const isValidEmail = typeof email === 'string' && emailRegexp.test(email)
     if (!isValidEmail) {
@@ -37,10 +36,12 @@ export default (app: express.Application): void => {
     try {
       const {
         insertId,
-      } = await mysql.query(
-        'INSERT INTO users (username, password, email, money, last_money_update) VALUES (?, ?, ?, ?, ?)',
-        [username, encryptedPassword, email, initialMoney, initialUpdateDate]
-      )
+      } = await mysql.query('INSERT INTO users (username, password, email, created_at) VALUES (?, ?, ?, ?)', [
+        username,
+        encryptedPassword,
+        email,
+        tsNow,
+      ])
       userID = insertId
     } catch (e) {
       if (e.code === 'ER_DUP_ENTRY') {
