@@ -16,15 +16,28 @@ function App() {
   useEffect(() => {
     if (!loading) return
 
-    loadUserDataFromStorage()
-      .then(() => {
-        setLoggedIn(Boolean(userData))
-        setLoading(false)
-      })
-      .catch(() => {
-        setLoggedIn(false)
-        setLoading(false)
-      })
+    const sessionID = getQueryVariable('sessionID')
+    if (sessionID) {
+      userLoggedIn(sessionID)
+        .then(() => {
+          setLoggedIn(Boolean(userData))
+          setLoading(false)
+        })
+        .catch(() => {
+          setLoggedIn(false)
+          setLoading(false)
+        })
+    } else {
+      loadUserDataFromStorage()
+        .then(() => {
+          setLoggedIn(Boolean(userData))
+          setLoading(false)
+        })
+        .catch(() => {
+          setLoggedIn(false)
+          setLoading(false)
+        })
+    }
   }, [loading])
 
   if (loading) return null
@@ -35,15 +48,10 @@ function App() {
 export default App
 
 function LoginRouter() {
-  const sessionID = getQueryVariable('sessionID')
-  if (!sessionID) {
-    // Redirect to account site
-    const ACCOUNT_LINK = process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : 'https://incorporated.gg'
-    window.location = ACCOUNT_LINK
-    return null
-  }
-  userLoggedIn(sessionID)
-  return <div>Loading</div>
+  // Redirect to account site
+  const ACCOUNT_LINK = process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : 'https://incorporated.gg'
+  window.location = ACCOUNT_LINK
+  return null
 }
 
 function getQueryVariable(variable) {

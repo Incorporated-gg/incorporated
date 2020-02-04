@@ -5,6 +5,7 @@ import styles from './style.module.scss'
 
 export default function Home() {
   const userData = useUserData()
+  if (!userData) return null
   return (
     <div className={styles.container}>
       <h1>{userData.username}</h1>
