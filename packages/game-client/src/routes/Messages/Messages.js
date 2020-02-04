@@ -17,7 +17,7 @@ export default function Messages() {
             </NavLink>
           </li>
           <li>
-            <NavLink to="/messages/missions">Misiones</NavLink>
+            <NavLink to="/messages/missions">Informes</NavLink>
           </li>
           <li>
             <NavLink to="/messages/sent">Enviados</NavLink>

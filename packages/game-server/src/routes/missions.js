@@ -1,8 +1,8 @@
 const mysql = require('../lib/mysql')
-const { getMissions, getPersonnel, hasActiveMission } = require('../lib/db/users')
+const { getMissions, getPersonnel, hasActiveMission, getData: getUserData } = require('../lib/db/users')
 const { getUserAllianceID } = require('../lib/db/alliances')
 const { buildingsList } = require('shared-lib/buildingsUtils')
-const { calculateMissionTime } = require('shared-lib/missionsUtils')
+const { calculateMissionTime, NEWBIE_ZONE_DAILY_INCOME } = require('shared-lib/missionsUtils')
 
 module.exports = app => {
   app.get('/v1/missions', async function(req, res) {
@@ -86,6 +86,13 @@ module.exports = app => {
           res.status(400).json({ error: `Este usuario ya ha sido atacado ${targetUserMissions.maxDefenses} veces hoy` })
           return
         }
+        const targetUserData = await getUserData(targetUser.id)
+        if (targetUserData.income < NEWBIE_ZONE_DAILY_INCOME) {
+          res.status(400).json({
+            error: 'No puedes atacar usuarios en la zona newbie',
+          })
+          return
+        }
         if (sentSabots + sentThieves < 1) {
           res.status(400).json({
             error: 'Debes enviar algunos saboteadores o ladrones',
@@ -106,7 +113,7 @@ module.exports = app => {
         }
         const attackedAllianceID = await getUserAllianceID(targetUser.id)
         const myAllianceID = await getUserAllianceID(req.userData.id)
-        if (attackedAllianceID === myAllianceID) {
+        if (myAllianceID && attackedAllianceID === myAllianceID) {
           res.status(400).json({
             error: 'No puedes atacar a alguien de tu alianza',
           })

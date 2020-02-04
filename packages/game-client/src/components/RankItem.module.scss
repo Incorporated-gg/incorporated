@@ -6,7 +6,7 @@
     margin: 0.75em 0;
     background: linear-gradient(hsl(222, 15%, 70%), hsl(222, 15%, 63%));
     border-radius: 0.3em;
-    padding: 0.5em;
+    padding: 0.3em 0.5em;
     box-shadow: 2px 2px 1px 2px #444;
 }
 
@@ -42,10 +42,10 @@
 
 .points {
     font-weight: 700;
-}
-
-.username,
-.points {
     text-align: center;
+    font-size: 1.15em;
+}
+.username {
+    margin-left: 1em;
     font-size: 1.15em;
 }

@@ -11,11 +11,13 @@ export default function Username({ user }) {
   return (
     <span className={styles.container}>
       {user.accountData && (
-        <Link to={`/ranking/user/${user.username}`}>
+        <Link className={styles.avatarLink} to={`/ranking/user/${user.username}`}>
           <img src={user.accountData.avatar} alt="" className={styles.avatar} />
         </Link>
       )}
-      <Link to={`/ranking/user/${user.username}`}>{user.username}</Link>{' '}
+      <Link className={styles.usernameLink} to={`/ranking/user/${user.username}`}>
+        {user.username}
+      </Link>
       {user.alliance && <Link to={`/ranking/alliance/${user.alliance.short_name}`}>[{user.alliance.short_name}]</Link>}
     </span>
   )

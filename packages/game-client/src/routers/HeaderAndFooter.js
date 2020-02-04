@@ -21,6 +21,7 @@ export function Header() {
           <Menu className={`${styles.mainMenu}`} />
           <ActiveMission />
         </div>
+        <TutorialTask />
       </>
     )
 
@@ -28,6 +29,7 @@ export function Header() {
     <>
       <MoneyBar style={{ top: 0 }} className={`${styles.moneyBar} ${styles.stickyFullwidthBar}`} />
       <ActiveMission />
+      <TutorialTask />
     </>
   )
 }
@@ -91,6 +93,27 @@ function ActiveMission() {
           <MissionRow mission={userData.active_mission} reloadMissionsCallback={reloadUserData} />
         </tbody>
       </table>
+    </div>
+  )
+}
+
+function TutorialTask() {
+  const userData = useUserData()
+  if (!userData.tutorialTask) return null
+  const completeTask = () => {
+    api.post('/v1/tutorial_tasks/complete').catch(() => {})
+  }
+
+  return (
+    <div className={styles.tutorialTask}>
+      <div className={styles.tutorialInfo}>
+        <p>{userData.tutorialTask.name}</p>
+        <p>{userData.tutorialTask.progressPercentage} / 100%</p>
+        <p>Recompensa: {userData.tutorialTask.reward.toLocaleString()}€</p>
+      </div>
+      <button disabled={!userData.tutorialTask.completed} onClick={completeTask}>
+        Completar
+      </button>
     </div>
   )
 }

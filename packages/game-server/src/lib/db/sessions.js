@@ -1,7 +1,7 @@
 import mysql from '../mysql'
 import { validateSessionID } from '../accountInternalApi'
 
-const initialMoney = 450000
+const initialMoney = 100000
 
 module.exports.getUserIDFromSessionID = async sessionID => {
   if (!sessionID) return

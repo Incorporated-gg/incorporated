@@ -53,7 +53,7 @@ async function getUserPersonnelCosts(userID) {
 }
 
 module.exports.getUserDailyIncome = getUserDailyIncome
-async function getUserDailyIncome(userID) {
+export async function getUserDailyIncome(userID) {
   let [buildingsRaw, researchs] = await Promise.all([
     mysql.query('SELECT id, quantity FROM buildings WHERE user_id=?', [userID]),
     getResearchs(userID),
@@ -69,6 +69,7 @@ async function getUserDailyIncome(userID) {
 }
 
 module.exports.getResearchs = getResearchs
+export const getUserResearchs = getResearchs
 async function getResearchs(userID) {
   const researchs = {}
   researchList.forEach(research => (researchs[research.id] = 1))
@@ -98,7 +99,7 @@ async function getTotalPersonnel(userID) {
 }
 
 module.exports.getBuildings = getBuildings
-async function getBuildings(userID) {
+export async function getBuildings(userID) {
   const buildings = buildingsList.reduce((curr, building) => {
     curr[building.id] = {
       quantity: 0,

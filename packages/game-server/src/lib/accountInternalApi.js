@@ -14,9 +14,10 @@ export async function getAccountUserData(userID) {
   if (result) {
     delete result.id
     delete result.username
+    delete result.avatarID
   }
 
-  cache.set(key, result)
+  cache.set(key, result, 10)
   return result
 }
 
@@ -29,7 +30,7 @@ export async function validateSessionID(sessionID) {
   const res = await accountInternalApiFetch('GET', '/validate_session', query)
   const result = res.sessionUser || null
 
-  cache.set(key, result)
+  cache.set(key, result, 600)
   return result
 }
 

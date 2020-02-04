@@ -5,6 +5,7 @@ import { useUserData } from '../lib/user'
 import MissionAttackModal from './missions/MissionAttack'
 import MissionSpyModal from './missions/MissionSpy'
 import NewMessageModal from '../routes/Messages/NewMessageModal'
+import { NEWBIE_ZONE_DAILY_INCOME } from 'shared-lib/missionsUtils'
 
 UserActionLinks.propTypes = {
   user: PropTypes.object.isRequired,
@@ -18,13 +19,17 @@ export default function UserActionLinks({ user }) {
   if (!user) return <span>Usuario desconocido</span>
 
   const isMe = userData.id === user.id
-  const shareAlliance = isMe || (userData.alliance && user.alliance && userData.alliance.id === user.alliance.id)
+  const shareAlliance = userData.alliance && user.alliance && userData.alliance.id === user.alliance.id
+  const isInNewbieZone = user.income < NEWBIE_ZONE_DAILY_INCOME
   return (
     <>
       <button className={styles.button} onClick={() => setShowMessageModal(true)} disabled={isMe}>
         Enviar mensaje
       </button>
-      <button className={styles.button} onClick={() => setShowAttackModal(true)} disabled={shareAlliance}>
+      <button
+        className={styles.button}
+        onClick={() => setShowAttackModal(true)}
+        disabled={isMe || shareAlliance || isInNewbieZone}>
         Atacar
       </button>
       <button className={styles.button} onClick={() => setShowSpyModal(true)} disabled={isMe}>

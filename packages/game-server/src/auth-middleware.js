@@ -1,3 +1,4 @@
+import { getUserActiveTutorialTask } from './lib/db/tutorialTasks'
 const mysql = require('./lib/mysql')
 const {
   getResearchs,
@@ -50,9 +51,10 @@ function modifyResponseBody(req, res, next) {
   res.json = async function() {
     if (req.userData) {
       // Modify response to include extra data for logged in users
-      const [unreadMessagesCount, activeMission] = await Promise.all([
+      const [unreadMessagesCount, activeMission, tutorialTask] = await Promise.all([
         getUnreadMessagesCount(req.userData.id),
         getActiveMission(req.userData.id),
+        getUserActiveTutorialTask(req.userData.id),
       ])
       const extraData = {
         money: req.userData.money,
@@ -61,6 +63,7 @@ function modifyResponseBody(req, res, next) {
         personnel: req.userData.personnel,
         researchs: req.userData.researchs,
         buildings: req.userData.buildings,
+        tutorialTask,
       }
       arguments[0]._extra = extraData
     }

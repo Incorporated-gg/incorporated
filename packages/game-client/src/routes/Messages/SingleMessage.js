@@ -15,9 +15,10 @@ import NewMessageModal from './NewMessageModal'
 SingleMessage.propTypes = {
   message: PropTypes.object.isRequired,
   reloadMessagesData: PropTypes.func.isRequired,
+  isFirstMsg: PropTypes.bool.isRequired,
 }
-export default function SingleMessage({ reloadMessagesData, message }) {
-  const [showDetails, setShowDetails] = useState(false)
+export default function SingleMessage({ reloadMessagesData, message, isFirstMsg }) {
+  const [showDetails, setShowDetails] = useState(isFirstMsg)
   const [showMessageModal, setShowMessageModal] = useState(false)
 
   const deleteMessage = e => {
