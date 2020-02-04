@@ -4,7 +4,7 @@ import bcrypt from 'bcryptjs'
 import express from 'express'
 
 export default (app: express.Application): void => {
-  app.post('/v1/login', async function(req: express.Request, res: express.Response) {
+  app.post('/v1/login', async function(req, res) {
     if (!req.body.password || !req.body.username) {
       res.status(400).json({ error: 'Faltan datos' })
       return

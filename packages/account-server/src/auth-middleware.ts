@@ -1,7 +1,7 @@
 import express from 'express'
 import mysql from './lib/mysql'
 
-type UserData = {
+type accountData = {
   id: number
   username: string
 }
@@ -10,21 +10,21 @@ declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace Express {
     interface Request {
-      userData: UserData | null
+      accountData: accountData | null
     }
   }
 }
 
 async function authMiddleware(req: express.Request, res: express.Response, next: express.NextFunction): Promise<void> {
-  req.userData = null
+  req.accountData = null
 
   if (req.headers.authorization && req.headers.authorization.startsWith('Basic ')) {
     const sessionID = req.headers.authorization.replace('Basic ', '')
     const [sessionData] = await mysql.query('SELECT user_id FROM sessions WHERE id=?', [sessionID])
     if (sessionData) {
-      ;[req.userData] = await mysql.query('SELECT id, username FROM users WHERE id=?', [sessionData.user_id])
+      ;[req.accountData] = await mysql.query('SELECT id, username FROM users WHERE id=?', [sessionData.user_id])
     }
-    if (!req.userData) {
+    if (!req.accountData) {
       res.status(400).json({ error: 'Sesión caducada', errorCode: 'invalid_session_id' })
       return
     }
@@ -39,7 +39,7 @@ function modifyResponseBody(req: express.Request, res: express.Response, next: e
   // eslint-disable-next-line
   // @ts-ignore I can't figure out how to fix this
   res.json = async function(...args): Promise<void> {
-    if (req.userData) {
+    if (req.accountData) {
       // Modify response to include extra data for logged in users
       const extraData = {}
       args[0]._extra = extraData

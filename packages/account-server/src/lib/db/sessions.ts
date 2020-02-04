@@ -26,7 +26,7 @@ export const generateSession = async (userID: number): Promise<string> => {
   return sessionID
 }
 
-export const getUserIDFromSessionID = async (sessionID: number): Promise<number | undefined> => {
+export const getUserIDFromSessionID = async (sessionID?: number): Promise<number | undefined> => {
   if (!sessionID) return
   const [session] = await mysql.query('SELECT user_id FROM sessions WHERE id=?', [sessionID])
   if (!session) return

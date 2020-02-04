@@ -1,3 +1,4 @@
+import { getAccountUserData } from '../accountInternalApi'
 const mysql = require('../mysql')
 const alliances = require('./alliances')
 const { parseMissionFromDB } = require('./missions')
@@ -10,13 +11,16 @@ const { calcBuildingDailyIncome, buildingsList, calcBuildingMaxMoney } = require
 
 module.exports.getData = getData
 async function getData(userID) {
-  const userDataPromise = mysql.query('SELECT username FROM users WHERE id=?', [userID])
-  const rankingDataPromise = mysql.query('SELECT rank, points FROM ranking_income WHERE user_id=?', [userID])
+  const userDataPromise = mysql.selectOne('SELECT username FROM users WHERE id=?', [userID])
+  const rankingDataPromise = mysql.selectOne('SELECT rank, points FROM ranking_income WHERE user_id=?', [userID])
   const alliancePromise = alliances.getUserAllianceID(userID).then(alliances.getBasicData)
-  const [[userData], [rankingData], allianceData] = await Promise.all([
+  const accountDataPromise = getAccountUserData(userID)
+
+  const [userData, rankingData, allianceData, accountData] = await Promise.all([
     userDataPromise,
     rankingDataPromise,
     alliancePromise,
+    accountDataPromise,
   ])
   if (!userData) return null
 
@@ -26,11 +30,12 @@ async function getData(userID) {
     rank_position: rankingData ? rankingData.rank : 0,
     income: rankingData ? rankingData.points : 0,
     alliance: allianceData,
+    accountData,
   }
 }
 
 module.exports.getIDFromUsername = async username => {
-  const [userData] = await mysql.query('SELECT id FROM users WHERE username=?', [username])
+  const userData = await mysql.selectOne('SELECT id FROM users WHERE username=?', [username])
   return userData ? userData.id : null
 }
 

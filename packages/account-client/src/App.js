@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import LoggedInRouter from './routers/LoggedInRouter'
-import { userData, loadUserDataFromStorage } from './lib/user'
+import { accountData, loadAcountDataFromStorage } from './lib/user'
 import LoginRouter from './routers/LoginRouter'
 import ErrorBoundary from './components/ErrorBoundary'
 
@@ -17,10 +17,10 @@ function App() {
   useEffect(() => {
     if (!loading) return
 
-    loadUserDataFromStorage()
+    loadAcountDataFromStorage()
       .then(() => {
         setLoading(false)
-        setLoggedIn(Boolean(userData))
+        setLoggedIn(Boolean(accountData))
       })
       .catch(() => {
         setLoading(false)

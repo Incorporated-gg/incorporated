@@ -1,4 +1,4 @@
-import { updateUserData, sessionID, logout } from './user'
+import { updateAccountData, sessionID, logout } from './user'
 
 export const API_URL = '/api'
 
@@ -26,7 +26,7 @@ function apiFetch(method, url, payload = {}) {
       url +
       '?' +
       Object.entries(payload)
-        .map(([key, val]) => `${key}=${val}`)
+        .map(([key, val]) => `${encodeURIComponent(key)}=${encodeURIComponent(val)}`)
         .join('&')
   }
 
@@ -42,7 +42,7 @@ async function parseApiResponse(apiCallID, res) {
     logout()
   }
   if (apiCallID === lastApiCallID && jsonResponse._extra) {
-    updateUserData({
+    updateAccountData({
       ...jsonResponse._extra,
       // Needed for the internal implementation of Buildings's bank auto update.
       // See src/routes/Buildings/Buildings.js -> setupBuildingsBankUpdater()

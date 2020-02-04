@@ -1,15 +1,17 @@
 import React from 'react'
-import { logout, useUserData } from '../../lib/user'
+import { logout, useAccountData } from '../../lib/user'
 import Play from './Play'
+import AvatarChange from './AvatarChange'
 import styles from './style.module.scss'
 
 export default function Home() {
-  const userData = useUserData()
-  if (!userData) return null
+  const accountData = useAccountData()
+  if (!accountData) return null
   return (
     <div className={styles.container}>
-      <h1>{userData.username}</h1>
+      <h1>{accountData.username}</h1>
       <Play />
+      <AvatarChange />
       <button onClick={logout}>Logout</button>
     </div>
   )

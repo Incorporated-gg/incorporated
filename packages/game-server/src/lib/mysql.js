@@ -10,4 +10,7 @@ module.exports = {
   query: (sql, args) => {
     return pool.query(sql, args).then(res => res[0])
   },
+  selectOne: (sql, args) => {
+    return pool.query(sql, args).then(res => res[0][0])
+  },
 }
