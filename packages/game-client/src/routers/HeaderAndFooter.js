@@ -3,6 +3,7 @@ import Username from '../components/Username'
 import { NavLink } from 'react-router-dom'
 import styles from './LoggedIn.module.scss'
 import { useUserData, reloadUserData } from '../lib/user'
+import { debounce } from '../lib/utils'
 import PropTypes from 'prop-types'
 import api from '../lib/api'
 import MissionRow from '../routes/Messages/MissionRow'
@@ -185,15 +186,4 @@ function useWindowSize({ debounceMs = 100 } = {}) {
     return () => window.removeEventListener('resize', debouncedHandleResize)
   })
   return dimensions
-}
-
-function debounce(fn, ms) {
-  let timer
-  return () => {
-    clearTimeout(timer)
-    timer = setTimeout(() => {
-      timer = null
-      fn.apply(this, arguments)
-    }, ms)
-  }
 }

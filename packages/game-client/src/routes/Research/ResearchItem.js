@@ -1,10 +1,17 @@
-import React, { useCallback } from 'react'
-import { calcResearchPrice, researchList } from 'shared-lib/researchUtils'
+import React, { useCallback, useState, useEffect } from 'react'
+import {
+  researchList,
+  calcResearchPrice,
+  calcResearchTime,
+  MANUALLY_FINISH_RESEARCH_UPGRADES_SECONDS,
+} from 'shared-lib/researchUtils'
 import PropTypes from 'prop-types'
-import { useUserData } from '../../lib/user'
+import { useUserData, reloadUserData } from '../../lib/user'
+import { getTimeUntil, debounce } from '../../lib/utils'
 import { buyResearch } from './buyResearch'
 import Card, { Stat } from '../../components/Card'
 import cardStyles from '../../components/Card.module.scss'
+import api from '../../lib/api'
 
 const researchImages = {
   1: require('./img/spy.png'),
@@ -33,8 +40,11 @@ ResearchItem.propTypes = {
 }
 export default function ResearchItem({ researchID }) {
   const userData = useUserData()
+  const isUpgrading = userData.activeResearchs.find(ar => ar.research_id === researchID)
   const research = researchList.find(r => r.id === researchID)
   const level = userData.researchs[researchID]
+  const researchTime = calcResearchTime(researchID, level)
+  const researchTimeParsed = getTimeUntil(Date.now() / 1000 + researchTime)
   const cost = Math.ceil(calcResearchPrice(research.id, level))
   const canAfford = userData.money > cost
   const buyResearchClicked = useCallback(() => buyResearch(researchID), [researchID])
@@ -48,14 +58,74 @@ export default function ResearchItem({ researchID }) {
       accentColor={researchAccentColors[researchID]}
       image={researchImages[researchID]}>
       <Stat img={require('./img/stat-price.png')} title={'Coste'} value={`${cost.toLocaleString()}€`} />
+      <p style={{ color: '#fff' }}>
+        {isUpgrading ? (
+          <UpgradingTimer finishesAt={isUpgrading.finishes_at} />
+        ) : (
+          <>Duración de mejora: {`${researchTimeParsed.minutes}:${researchTimeParsed.seconds}`}</>
+        )}
+      </p>
 
+      {isUpgrading && <UpgradeInstantlyButton finishesAt={isUpgrading.finishes_at} researchID={researchID} />}
       <button
         className={cardStyles.button}
         onClick={buyResearchClicked}
-        disabled={!canAfford}
+        disabled={!canAfford || isUpgrading}
         style={{ color: researchAccentColors[researchID] }}>
         MEJORAR
       </button>
     </Card>
+  )
+}
+
+UpgradingTimer.propTypes = {
+  finishesAt: PropTypes.number.isRequired,
+}
+function UpgradingTimer({ finishesAt }) {
+  const [timeLeft, setTimeLeft] = useState(getTimeUntil(finishesAt))
+  useEffect(() => {
+    const int = setInterval(() => setTimeLeft(getTimeUntil(finishesAt)), 1000)
+    return () => clearInterval(int)
+  }, [finishesAt])
+
+  if (Date.now() / 1000 > finishesAt) {
+    debouncedReloadUserData()
+    return <>Completando...</>
+  }
+  return <>Investigando... {`${timeLeft.minutes}:${timeLeft.seconds}`}</>
+}
+const debouncedReloadUserData = debounce(reloadUserData, 900)
+
+UpgradeInstantlyButton.propTypes = {
+  researchID: PropTypes.number.isRequired,
+  finishesAt: PropTypes.number.isRequired,
+}
+function UpgradeInstantlyButton({ researchID, finishesAt }) {
+  const [, _reload] = useState({})
+  useEffect(() => {
+    const int = setInterval(() => _reload({}), 1000)
+    return () => clearInterval(int)
+  }, [finishesAt])
+
+  const manuallyFinishResearch = useCallback(() => {
+    api
+      .post('/v1/research/manually_finish', { research_id: researchID })
+      .then(() => {
+        reloadUserData()
+      })
+      .catch(err => alert(err.message))
+  }, [researchID])
+
+  const secondsLeft = finishesAt - Math.floor(Date.now() / 1000)
+  if (secondsLeft > MANUALLY_FINISH_RESEARCH_UPGRADES_SECONDS) return null
+
+  return (
+    <button
+      className={cardStyles.button}
+      onClick={manuallyFinishResearch}
+      disabled={false}
+      style={{ color: researchAccentColors[researchID] }}>
+      TERMINAR MEJORA
+    </button>
   )
 }

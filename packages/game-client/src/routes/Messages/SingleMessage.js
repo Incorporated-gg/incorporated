@@ -320,10 +320,16 @@ function getMessage(message) {
     case 'attack_cancelled': {
       messageElm = (
         <div>
-          <div>
-            El ataque a <Username user={message.data.target_user} /> no se ha podido completar, ya que el usuario ya ha
-            recibido el máximo de ataques posibles por hoy. ¡Mañana tendremos otra oportunidad de darle caza!
-          </div>
+          El ataque a <Username user={message.data.target_user} /> no se ha podido completar, ya que el usuario ya ha
+          recibido el máximo de ataques posibles por hoy. ¡Mañana tendremos otra oportunidad de darle caza!
+        </div>
+      )
+      break
+    }
+    case 'new_alli_member_req': {
+      messageElm = (
+        <div>
+          Hemos recibido una nueva petición de miembro de <Username user={message.data.sender_user} />
         </div>
       )
       break
@@ -366,6 +372,9 @@ function getMessageExcerpt(message) {
       break
     case 'attack_cancelled':
       messageElm = <div>Ataque cancelado</div>
+      break
+    case 'new_alli_member_req':
+      messageElm = <div>Nueva petición de miembro</div>
       break
     default:
       messageElm = <div>Tipo &quot;{message.type}&quot; desconocido</div>

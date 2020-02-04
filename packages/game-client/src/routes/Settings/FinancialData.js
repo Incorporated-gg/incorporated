@@ -2,7 +2,6 @@ import React, { useCallback, useState, useEffect } from 'react'
 import { buildingsList, calcBuildingDailyIncome } from 'shared-lib/buildingsUtils'
 import { useUserData } from '../../lib/user'
 import api from '../../lib/api'
-import { getIncomeTaxes } from 'shared-lib/taxes'
 import { personnelList } from 'shared-lib/personnelUtils'
 
 export default function FinancialData() {
@@ -40,10 +39,6 @@ export default function FinancialData() {
   })
   const totalBuildingsIncome = buildingsIncome.reduce((prev, curr) => prev + curr.income, 0)
 
-  // Taxes
-  const taxesPercent = getIncomeTaxes(totalBuildingsIncome, userData.alliance)
-  const totalTaxes = Math.round(totalBuildingsIncome * taxesPercent)
-
   // Personnel maintenance
   let totalPersonnel = 0
   Object.entries(userData.personnel).forEach(([resourceID, quantity]) => {
@@ -54,7 +49,7 @@ export default function FinancialData() {
   })
 
   // Total
-  const totalTotal = totalBuildingsIncome - totalTaxes - totalPersonnel - lostFromLoans + gainedFromLoans
+  const totalTotal = totalBuildingsIncome - totalPersonnel - lostFromLoans + gainedFromLoans
 
   return (
     <div>
@@ -93,11 +88,6 @@ export default function FinancialData() {
             <td>Préstamos</td>
             <td>{gainedFromLoans.toLocaleString()}</td>
             <td>{lostFromLoans.toLocaleString()}</td>
-          </tr>
-          <tr>
-            <td>Impuestos ({(taxesPercent * 100).toLocaleString()}%)</td>
-            <td></td>
-            <td>{totalTaxes.toLocaleString()}</td>
           </tr>
           <tr>
             <td>Mantenimiento de personal</td>

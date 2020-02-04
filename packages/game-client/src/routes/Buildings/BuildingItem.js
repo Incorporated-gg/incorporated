@@ -40,15 +40,14 @@ const buildingAccentColors = {
 
 BuildingItem.propTypes = {
   buildingID: PropTypes.number.isRequired,
-  taxesPercent: PropTypes.number.isRequired,
   activeScreen: PropTypes.string.isRequired,
 }
-export default function BuildingItem({ buildingID, taxesPercent, activeScreen }) {
+export default function BuildingItem({ buildingID, activeScreen }) {
   const userData = useUserData()
   const buildingInfo = buildingsList.find(b => b.id === buildingID)
   const buildingCount = userData.buildings[buildingID].quantity
   const coste = calcBuildingPrice(buildingID, buildingCount)
-  const income = calcBuildingDailyIncome(buildingID, 1, userData.researchs[5]) * (1 - taxesPercent)
+  const income = calcBuildingDailyIncome(buildingID, 1, userData.researchs[5])
 
   const currentOptimizeLvl = userData.researchs[5]
   const hasEnoughOptimizeLvl = currentOptimizeLvl >= buildingInfo.requiredOptimizeResearchLevel

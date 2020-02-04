@@ -1,3 +1,4 @@
+import { sendMessage } from '../../lib/db/users'
 const mysql = require('../../lib/mysql')
 const alliances = require('../../lib/db/alliances')
 const users = require('../../lib/db/users')
@@ -47,8 +48,32 @@ module.exports = app => {
       res.status(401).json({ error: 'Esta alianza no puede tener más miembros' })
       return
     }
+    const alreadySent = await mysql.selectOne(
+      'SELECT 1 FROM alliances_member_requests WHERE user_id=? AND alliance_id=?',
+      [req.userData.id, allianceID]
+    )
+    if (alreadySent) {
+      res.status(401).json({ error: 'Ya has mandado una petición a esta alianza' })
+      return
+    }
 
-    await mysql.query('DELETE FROM alliances_member_requests WHERE user_id=?', [req.userData.id])
+    // Send message to those who can accept it
+    const usersWhoCanAcceptRequests = await mysql.query(
+      'SELECT user_id FROM alliances_members WHERE alliance_id=? AND permission_accept_and_kick_members=1',
+      [allianceID]
+    )
+
+    await Promise.all(
+      usersWhoCanAcceptRequests.map(member => {
+        sendMessage({
+          receiverID: member.user_id,
+          senderID: null,
+          type: 'new_alli_member_req',
+          data: { sender_id: req.userData.id },
+        })
+      })
+    )
+
     await mysql.query('INSERT INTO alliances_member_requests (alliance_id, user_id, created_at) VALUES (?, ?, ?)', [
       allianceID,
       req.userData.id,

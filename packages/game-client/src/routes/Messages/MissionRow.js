@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import Username from '../../components/Username'
 import api from '../../lib/api'
+import { debounce, getTimeUntil } from '../../lib/utils'
 import PropTypes from 'prop-types'
 import { timestampFromEpoch } from 'shared-lib/commonUtils'
 import { buildingsList } from 'shared-lib/buildingsUtils'
-import { getTimeUntil } from '../../lib/utils'
 import { reloadUserData, userData } from '../../lib/user'
 import { AttackReportMsg, SpyReportMsg } from './SingleMessage'
 import { getServerDay } from 'shared-lib/serverTime'
@@ -15,13 +15,7 @@ MissionRow.propTypes = {
   reloadMissionsCallback: PropTypes.func.isRequired,
 }
 export default function MissionRow({ mission, reloadMissionsCallback }) {
-  const [timeLeft, setTimeLeft] = useState(getTimeUntil(mission.will_finish_at))
   const [showDetails, setShowDetails] = useState(false)
-
-  useEffect(() => {
-    const int = setInterval(() => setTimeLeft(getTimeUntil(mission.will_finish_at)))
-    return () => clearInterval(int)
-  }, [mission.will_finish_at])
 
   const isComplete = mission.completed
   const isCompleting = !isComplete && new Date(mission.will_finish_at * 1000) <= new Date()
@@ -87,7 +81,9 @@ export default function MissionRow({ mission, reloadMissionsCallback }) {
             <td>
               {mission.mission_type === 'attack' ? buildingsList.find(b => b.id === mission.target_building).name : ''}
             </td>
-            <td>{isCompleting ? 'Completando...' : `${timeLeft.minutes}:${timeLeft.seconds}`}</td>
+            <td>
+              <MissionTimer finishesAt={mission.will_finish_at} />
+            </td>
             <td>
               {isCompleting || mission.user.id !== userData.id ? '' : <button onClick={cancelMission}>Cancelar</button>}
             </td>
@@ -107,3 +103,21 @@ export default function MissionRow({ mission, reloadMissionsCallback }) {
     </>
   )
 }
+
+MissionTimer.propTypes = {
+  finishesAt: PropTypes.number.isRequired,
+}
+function MissionTimer({ finishesAt }) {
+  const [timeLeft, setTimeLeft] = useState(getTimeUntil(finishesAt))
+  useEffect(() => {
+    const int = setInterval(() => setTimeLeft(getTimeUntil(finishesAt)), 1000)
+    return () => clearInterval(int)
+  }, [finishesAt])
+
+  if (Date.now() / 1000 > finishesAt) {
+    debouncedReloadUserData()
+    return <>Completando...</>
+  }
+  return <>{`${timeLeft.minutes}:${timeLeft.seconds}`}</>
+}
+const debouncedReloadUserData = debounce(reloadUserData, 900)

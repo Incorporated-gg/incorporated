@@ -1,5 +1,11 @@
-const mysql = require('../lib/mysql')
-const { researchList, calcResearchPrice } = require('shared-lib/researchUtils')
+import mysql from '../lib/mysql'
+import { upgradeUserResearch } from '../lib/db/researchs'
+import {
+  researchList,
+  calcResearchPrice,
+  calcResearchTime,
+  MANUALLY_FINISH_RESEARCH_UPGRADES_SECONDS,
+} from 'shared-lib/researchUtils'
 
 module.exports = app => {
   app.post('/v1/research/buy', async function(req, res) {
@@ -15,7 +21,8 @@ module.exports = app => {
     const count = 1 // TODO: Use req.body.count
     if (count > 1) throw new Error('Not implemented yet')
 
-    if (!researchList.find(b => b.id === researchID)) {
+    const researchInfo = researchList.find(b => b.id === researchID)
+    if (!researchInfo) {
       res.status(400).json({ error: 'Invalid research_id' })
       return
     }
@@ -29,12 +36,63 @@ module.exports = app => {
     await mysql.query('UPDATE users SET money=money-? WHERE id=?', [price, req.userData.id])
     req.userData.money -= price
 
-    const researchRowExists = req.userData.researchs[researchID] !== 1
-    if (!researchRowExists) {
-      await mysql.query('INSERT INTO research (user_id, id, level) VALUES (?, ?, ?)', [req.userData.id, researchID, 2])
-    } else {
-      await mysql.query('UPDATE research SET level=level+? WHERE user_id=? and id=?', [1, req.userData.id, researchID])
+    const activeResearchRowExists = await mysql.selectOne(
+      'SELECT 1 FROM research_active WHERE user_id=? and research_id=?',
+      [req.userData.id, researchID]
+    )
+    if (activeResearchRowExists) {
+      res.status(400).json({ error: 'Ya estás mejorando esta investigación' })
+      return
     }
+
+    const researchTime = calcResearchTime(researchID, req.userData.researchs[researchID])
+    if (researchTime === 0) {
+      await upgradeUserResearch(req.userData.id, researchID)
+      req.userData.researchs[researchID] += 1
+    } else {
+      const tsNow = Math.floor(Date.now() / 1000)
+      const finishesAt = tsNow + researchTime
+      await mysql.query('INSERT INTO research_active (user_id, research_id, finishes_at) VALUES (?, ?, ?)', [
+        req.userData.id,
+        researchID,
+        finishesAt,
+      ])
+    }
+
+    res.json({
+      success: true,
+    })
+  })
+
+  app.post('/v1/research/manually_finish', async function(req, res) {
+    if (!req.userData) {
+      res.status(401).json({ error: 'Necesitas estar conectado', error_code: 'not_logged_in' })
+      return
+    }
+    if (!req.body.research_id) {
+      res.status(400).json({ error: 'Faltan datos' })
+      return
+    }
+    const researchID = req.body.research_id
+
+    const activeResearch = await mysql.selectOne(
+      'SELECT finishes_at FROM research_active WHERE user_id=? and research_id=?',
+      [req.userData.id, researchID]
+    )
+    if (!activeResearch) {
+      res.status(400).json({ error: 'No estás mejorando esta investigación' })
+      return
+    }
+
+    const tsNow = Math.floor(Date.now() / 1000)
+    const secondsLeft = activeResearch.finishes_at - tsNow
+    if (secondsLeft > MANUALLY_FINISH_RESEARCH_UPGRADES_SECONDS) {
+      res.status(400).json({ error: 'Aún no puedes acabar esta mejora' })
+      return
+    }
+
+    await mysql.query('DELETE FROM research_active WHERE user_id=? and research_id=?', [req.userData.id, researchID])
+    await upgradeUserResearch(req.userData.id, researchID)
     req.userData.researchs[researchID] += 1
 
     res.json({

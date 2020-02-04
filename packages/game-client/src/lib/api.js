@@ -38,7 +38,7 @@ async function parseApiResponse(apiCallID, res) {
   const contentType = res.headers.get('content-type')
   const jsonResponse = contentType.startsWith('application/json;') ? await res.json() : await res.text()
 
-  if (jsonResponse.errorCode === 'invalid_session_id') {
+  if (jsonResponse.error_code === 'invalid_session_id') {
     logout()
   }
   if (apiCallID === lastApiCallID && jsonResponse._extra) {

@@ -1,17 +1,36 @@
 import api from '../../lib/api'
-import { userData, updateUserData } from '../../lib/user'
-import { calcResearchPrice } from 'shared-lib/researchUtils'
+import { userData, updateUserData, reloadUserData } from '../../lib/user'
+import { calcResearchPrice, calcResearchTime } from 'shared-lib/researchUtils'
 
 export async function buyResearch(researchID) {
-  const currentOptimizeLvl = userData.researchs[researchID]
-  const coste = calcResearchPrice(researchID, currentOptimizeLvl)
-  if (coste > userData.money) return
+  const currentLvl = userData.researchs[researchID]
+  const cost = calcResearchPrice(researchID, currentLvl)
+  if (cost > userData.money) return
   try {
-    updateUserData({
-      money: userData.money - coste,
-      researchs: Object.assign({}, userData.researchs, { [researchID]: currentOptimizeLvl + 1 }),
-    })
+    const tsNow = Math.floor(Date.now() / 1000)
+    const researchTime = calcResearchTime(researchID, currentLvl)
+
+    if (researchTime === 0) {
+      updateUserData({
+        money: userData.money - cost,
+        researchs: Object.assign({}, userData.researchs, { [researchID]: currentLvl + 1 }),
+      })
+    } else {
+      const finishesAt = tsNow + researchTime
+      updateUserData({
+        money: userData.money - cost,
+        activeResearchs: [
+          ...userData.activeResearchs,
+          {
+            research_id: researchID,
+            finishes_at: finishesAt,
+          },
+        ],
+      })
+    }
+
     await api.post('/v1/research/buy', { research_id: researchID, count: 1 })
+    if (researchTime !== 0) await reloadUserData()
   } catch (e) {
     alert(e.message)
   }

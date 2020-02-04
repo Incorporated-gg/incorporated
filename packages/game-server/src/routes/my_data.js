@@ -1,3 +1,4 @@
+import { getActiveResearchs } from '../lib/db/researchs'
 const users = require('../lib/db/users')
 const alliances = require('../lib/db/alliances')
 const mysql = require('../lib/mysql')
@@ -9,9 +10,10 @@ module.exports = app => {
       return
     }
 
-    const [userData, userRank] = await Promise.all([
+    const [userData, userRank, activeResearchs] = await Promise.all([
       users.getData(req.userData.id),
       alliances.getUserRank(req.userData.id),
+      getActiveResearchs(req.userData.id),
     ])
 
     res.json({
@@ -20,6 +22,7 @@ module.exports = app => {
         username: userData.username,
         alliance: userData.alliance,
         alliance_user_rank: userRank,
+        activeResearchs,
       },
     })
   })

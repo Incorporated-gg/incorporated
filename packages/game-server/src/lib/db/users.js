@@ -6,7 +6,6 @@ const { researchList } = require('shared-lib/researchUtils')
 const { personnelList } = require('shared-lib/personnelUtils')
 const { getInitialUnixTimestampOfServerDay } = require('shared-lib/serverTime')
 const { MAX_DAILY_ATTACKS, MAX_DAILY_DEFENSES, DAILY_DEFENSES_INCREASE } = require('shared-lib/missionsUtils')
-const { getIncomeTaxes } = require('shared-lib/taxes')
 const { calcBuildingDailyIncome, buildingsList, calcBuildingMaxMoney } = require('shared-lib/buildingsUtils')
 
 module.exports.getData = getData
@@ -162,7 +161,8 @@ async function hasActiveMission(userID) {
 }
 
 module.exports.sendMessage = sendMessage
-async function sendMessage({ receiverID, senderID, type, data }) {
+export async function sendMessage({ receiverID, senderID, type, data }) {
+  if (type.length > 20) throw new Error("Type can't be longer than 20 chars")
   const messageCreatedAt = Math.floor(Date.now() / 1000)
   await mysql.query('INSERT INTO messages (user_id, sender_id, created_at, type, data) VALUES (?, ?, ?, ?, ?)', [
     receiverID,
@@ -212,9 +212,6 @@ async function runUserMoneyUpdate(userID) {
     money: parseFloat(building.money),
     income: calcBuildingDailyIncome(building.id, building.quantity, userResearchs[5]),
   }))
-  const totalBuildingsIncome = buildingsIncomes.reduce((prev, curr) => prev + curr.income, 0)
-  const hasAlliance = await alliances.getUserAllianceID(userID)
-  const taxesPct = getIncomeTaxes(totalBuildingsIncome, hasAlliance)
 
   await Promise.all(
     buildingsIncomes.map(async building => {
@@ -225,7 +222,7 @@ async function runUserMoneyUpdate(userID) {
       })
       if (building.money >= maxMoney.maxTotal) return
 
-      const buildingRevenue = building.income * (1 - taxesPct)
+      const buildingRevenue = building.income
       let moneyGenerated = (buildingRevenue / 24 / 60 / 60) * moneyUpdateElapsedS
       const moneyOverTotal = Math.max(0, building.money + moneyGenerated - maxMoney.maxTotal)
       moneyGenerated = moneyGenerated - moneyOverTotal

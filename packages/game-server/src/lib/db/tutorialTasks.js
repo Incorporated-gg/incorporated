@@ -20,18 +20,17 @@ const tasks = {
 
 export async function getUserActiveTutorialTask(userID) {
   const taskData = await getTutorialTaskData(userID)
-  const activeTaskID = taskData ? taskData.task : 1
-  const activeTask = tasks[activeTaskID]
-  if (!activeTask) return null
+  const activeTask = tasks[taskData.task]
+  if (!activeTask) return null // Finished all tasks
 
-  const progressPercentage = await getTaskCompletionPercentage(userID, activeTask, taskData)
+  const progressPercentage = await getTaskCompletionPercentage(userID, taskData)
 
   return {
     id: activeTask.id,
     name: activeTask.name,
     reward: activeTask.reward,
-    completed: progressPercentage >= 100,
-    progressPercentage: Math.min(progressPercentage, 100),
+    completed: progressPercentage === 100,
+    progressPercentage: progressPercentage,
   }
 }
 
@@ -39,26 +38,26 @@ export async function completeCurrentTask(userID) {
   const task = await getUserActiveTutorialTask(userID)
   if (!task.completed) return // Not completed :(
   await mysql.query('UPDATE users SET money=money+? WHERE id=?', [task.reward, userID])
-  await updateTutorialData(userID, { task: task.id + 1 })
+  await updateTutorialTaskData(userID, { task: task.id + 1 })
 }
 
-async function updateTutorialData(userID, newTaskData) {
+async function updateTutorialTaskData(userID, newTaskData) {
   await mysql.query('UPDATE users SET tutorial_task_data=? WHERE id=?', [JSON.stringify(newTaskData), userID])
 }
 
 async function getTutorialTaskData(userID) {
-  const tutorialData = await mysql.selectOne('SELECT tutorial_task_data FROM users WHERE id=?', [userID])
-  if (!tutorialData.tutorial_task_data) return null
-  return JSON.parse(tutorialData.tutorial_task_data)
+  const rawTaskData = await mysql.selectOne('SELECT tutorial_task_data FROM users WHERE id=?', [userID])
+  if (!rawTaskData.tutorial_task_data) return { task: 1 }
+  return JSON.parse(rawTaskData.tutorial_task_data)
 }
 
 export async function tutorialTaskProgressHook(userID, type, data) {
-  const tutorialData = await getTutorialTaskData(userID)
+  const taskData = await getTutorialTaskData(userID)
   switch (type) {
     case 'extract_money': {
-      await updateTutorialData(userID, {
-        task: tutorialData.task,
-        money_extracted: (tutorialData.money_extracted || 0) + data,
+      await updateTutorialTaskData(userID, {
+        task: taskData.task,
+        money_extracted: (taskData.money_extracted || 0) + data,
       })
       break
     }
@@ -68,7 +67,9 @@ export async function tutorialTaskProgressHook(userID, type, data) {
   }
 }
 
-async function getTaskCompletionPercentage(userID, activeTask, taskData) {
+async function getTaskCompletionPercentage(userID, taskData) {
+  const activeTask = tasks[taskData.task]
+  if (!activeTask) return 0
   let progress = 0
 
   switch (activeTask.id) {
@@ -132,7 +133,7 @@ async function getTaskCompletionPercentage(userID, activeTask, taskData) {
       break
     }
   }
-  return progress
+  return Math.min(Math.floor(progress), 100)
 }
 
 async function getProgressBuildingCount(userID, buildingID, buildingObjectiveCount) {
