@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import Username from '../../components/Username'
 import api from '../../lib/api'
-import { debounce, getTimeUntil } from '../../lib/utils'
+import { throttle, getTimeUntil } from '../../lib/utils'
 import PropTypes from 'prop-types'
 import { timestampFromEpoch } from 'shared-lib/commonUtils'
 import { buildingsList } from 'shared-lib/buildingsUtils'
@@ -108,16 +108,16 @@ MissionTimer.propTypes = {
   finishesAt: PropTypes.number.isRequired,
 }
 function MissionTimer({ finishesAt }) {
-  const [timeLeft, setTimeLeft] = useState(getTimeUntil(finishesAt))
+  const [timeLeft, setTimeLeft] = useState(getTimeUntil(finishesAt, true))
   useEffect(() => {
-    const int = setInterval(() => setTimeLeft(getTimeUntil(finishesAt)), 1000)
+    const int = setInterval(() => setTimeLeft(getTimeUntil(finishesAt, true)), 1000)
     return () => clearInterval(int)
   }, [finishesAt])
 
   if (Date.now() / 1000 > finishesAt) {
-    debouncedReloadUserData()
+    throttledReloadUserData()
     return <>Completando...</>
   }
-  return <>{`${timeLeft.minutes}:${timeLeft.seconds}`}</>
+  return <>{timeLeft}</>
 }
-const debouncedReloadUserData = debounce(reloadUserData, 900)
+const throttledReloadUserData = throttle(reloadUserData, 2000)

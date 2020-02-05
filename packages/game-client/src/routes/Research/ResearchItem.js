@@ -7,7 +7,7 @@ import {
 } from 'shared-lib/researchUtils'
 import PropTypes from 'prop-types'
 import { useUserData, reloadUserData } from '../../lib/user'
-import { getTimeUntil, debounce } from '../../lib/utils'
+import { getTimeUntil, throttle } from '../../lib/utils'
 import { buyResearch } from './buyResearch'
 import Card, { Stat } from '../../components/Card'
 import cardStyles from '../../components/Card.module.scss'
@@ -44,7 +44,7 @@ export default function ResearchItem({ researchID }) {
   const research = researchList.find(r => r.id === researchID)
   const level = userData.researchs[researchID]
   const researchTime = calcResearchTime(researchID, level)
-  const researchTimeParsed = getTimeUntil(Date.now() / 1000 + researchTime)
+  const researchTimeParsed = getTimeUntil(Date.now() / 1000 + researchTime, true)
   const cost = Math.ceil(calcResearchPrice(research.id, level))
   const canAfford = userData.money > cost
   const buyResearchClicked = useCallback(() => buyResearch(researchID), [researchID])
@@ -62,7 +62,7 @@ export default function ResearchItem({ researchID }) {
         {isUpgrading ? (
           <UpgradingTimer finishesAt={isUpgrading.finishes_at} />
         ) : (
-          <>Duración de mejora: {`${researchTimeParsed.minutes}:${researchTimeParsed.seconds}`}</>
+          <>Duración de mejora: {researchTimeParsed}</>
         )}
       </p>
 
@@ -82,19 +82,19 @@ UpgradingTimer.propTypes = {
   finishesAt: PropTypes.number.isRequired,
 }
 function UpgradingTimer({ finishesAt }) {
-  const [timeLeft, setTimeLeft] = useState(getTimeUntil(finishesAt))
+  const [timeLeft, setTimeLeft] = useState(getTimeUntil(finishesAt, true))
   useEffect(() => {
-    const int = setInterval(() => setTimeLeft(getTimeUntil(finishesAt)), 1000)
+    const int = setInterval(() => setTimeLeft(getTimeUntil(finishesAt, true)), 1000)
     return () => clearInterval(int)
   }, [finishesAt])
 
   if (Date.now() / 1000 > finishesAt) {
-    debouncedReloadUserData()
+    throttledReloadUserData()
     return <>Completando...</>
   }
-  return <>Investigando... {`${timeLeft.minutes}:${timeLeft.seconds}`}</>
+  return <>Investigando... {timeLeft}</>
 }
-const debouncedReloadUserData = debounce(reloadUserData, 900)
+const throttledReloadUserData = throttle(reloadUserData, 900)
 
 UpgradeInstantlyButton.propTypes = {
   researchID: PropTypes.number.isRequired,

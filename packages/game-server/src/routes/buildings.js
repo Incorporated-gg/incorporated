@@ -1,4 +1,4 @@
-import { tutorialTaskProgressHook } from '../lib/db/tutorialTasks'
+import { tasksProgressHook } from '../lib/db/tasks'
 const mysql = require('../lib/mysql')
 const { buildingsList, calcBuildingPrice } = require('shared-lib/buildingsUtils')
 
@@ -87,7 +87,7 @@ module.exports = app => {
       req.userData.buildings[buildingID].money = 0
     }
 
-    tutorialTaskProgressHook(req.userData.id, 'extract_money', extractedMoney)
+    await tasksProgressHook(req.userData.id, 'extract_money', extractedMoney)
 
     res.json({
       success: true,

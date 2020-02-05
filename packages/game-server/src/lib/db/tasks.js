@@ -18,61 +18,79 @@ const tasks = {
   12: { id: 12, name: 'Sal de zona newbie (750k)', reward: 1000000 },
 }
 
-export async function getUserActiveTutorialTask(userID) {
+export async function getUserActiveTasks(userID) {
   const taskData = await getTutorialTaskData(userID)
-  const activeTask = tasks[taskData.task]
-  if (!activeTask) return null // Finished all tasks
 
-  const progressPercentage = await getTaskCompletionPercentage(userID, taskData)
+  const missingTasks = Object.values(tasks)
+    .filter(task => taskData.completed.indexOf(task.id) === -1)
+    .slice(0, 3)
 
-  return {
-    id: activeTask.id,
-    name: activeTask.name,
-    reward: activeTask.reward,
-    completed: progressPercentage === 100,
-    progressPercentage: progressPercentage,
-  }
+  return await Promise.all(
+    missingTasks.map(async task => {
+      const progressPercentage = await getTaskCompletionPercentage(userID, task, taskData[`task${task.id}`])
+
+      return {
+        id: task.id,
+        name: task.name,
+        reward: task.reward,
+        completed: progressPercentage === 100,
+        progressPercentage: progressPercentage,
+      }
+    })
+  )
 }
 
-export async function completeCurrentTask(userID) {
-  const task = await getUserActiveTutorialTask(userID)
+export async function completeTask(userID, taskID) {
+  const activeTasks = await getUserActiveTasks(userID)
+  const task = activeTasks.find(t => t.id === taskID)
+  if (!task) return // No active task found with that ID
   if (!task.completed) return // Not completed :(
   await mysql.query('UPDATE users SET money=money+? WHERE id=?', [task.reward, userID])
-  await updateTutorialTaskData(userID, { task: task.id + 1 })
-}
+  const taskData = await getTutorialTaskData(userID)
+  delete taskData[`task${task.id}`]
+  const newTaskData = { ...taskData, completed: [...taskData.completed, taskID] }
+  await mysql.query('UPDATE users SET task_data=? WHERE id=?', [JSON.stringify(newTaskData), userID])
 
-async function updateTutorialTaskData(userID, newTaskData) {
-  await mysql.query('UPDATE users SET tutorial_task_data=? WHERE id=?', [JSON.stringify(newTaskData), userID])
+  return {
+    moneyReward: task.reward,
+  }
 }
 
 async function getTutorialTaskData(userID) {
-  const rawTaskData = await mysql.selectOne('SELECT tutorial_task_data FROM users WHERE id=?', [userID])
-  if (!rawTaskData.tutorial_task_data) return { task: 1 }
-  return JSON.parse(rawTaskData.tutorial_task_data)
+  const rawTaskData = await mysql.selectOne('SELECT task_data FROM users WHERE id=?', [userID])
+  if (!rawTaskData.task_data) return { completed: [] }
+  return JSON.parse(rawTaskData.task_data)
 }
 
-export async function tutorialTaskProgressHook(userID, type, data) {
+export async function tasksProgressHook(userID, type, data) {
+  const activeTasks = await getUserActiveTasks(userID)
   const taskData = await getTutorialTaskData(userID)
+
   switch (type) {
     case 'extract_money': {
-      await updateTutorialTaskData(userID, {
-        task: taskData.task,
-        money_extracted: (taskData.money_extracted || 0) + data,
-      })
+      const hasTask5 = activeTasks.some(task => task.id === 5)
+      if (hasTask5) {
+        let thisTaskData = taskData.task5
+        if (!thisTaskData) thisTaskData = {}
+        const newTaskData = {
+          ...taskData,
+          task5: { money_extracted: (thisTaskData.money_extracted || 0) + data },
+        }
+        await mysql.query('UPDATE users SET task_data=? WHERE id=?', [JSON.stringify(newTaskData), userID])
+      }
       break
     }
     default: {
-      throw new Error(`Unknown tutorialTaskProgressHook type: ${type}`)
+      throw new Error(`Unknown tasksProgressHook type: ${type}`)
     }
   }
 }
 
-async function getTaskCompletionPercentage(userID, taskData) {
-  const activeTask = tasks[taskData.task]
-  if (!activeTask) return 0
+async function getTaskCompletionPercentage(userID, taskInfo, thisTaskData) {
+  if (!thisTaskData) thisTaskData = {}
   let progress = 0
 
-  switch (activeTask.id) {
+  switch (taskInfo.id) {
     case 1: {
       progress = await getProgressBuildingCount(userID, 1, 5)
       break
@@ -90,9 +108,9 @@ async function getTaskCompletionPercentage(userID, taskData) {
       break
     }
     case 5: {
-      if (!taskData.money_extracted) taskData.money_extracted = 0
+      if (!thisTaskData.money_extracted) thisTaskData.money_extracted = 0
       const moneyExtractedObjective = 1000
-      progress = (taskData.money_extracted / moneyExtractedObjective) * 100
+      progress = (thisTaskData.money_extracted / moneyExtractedObjective) * 100
       break
     }
     case 6: {

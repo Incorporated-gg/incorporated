@@ -8,14 +8,14 @@ const sabotsInfo = personnelList.find(t => t.resource_id === 'sabots')
 const thievesInfo = personnelList.find(t => t.resource_id === 'thieves')
 
 module.exports.NEWBIE_ZONE_DAILY_INCOME = 750000
-module.exports.MAX_DAILY_ATTACKS = process.env.NODE_ENV === 'dev' ? 999 : 3
-module.exports.MAX_DAILY_DEFENSES = process.env.NODE_ENV === 'dev' ? 999 : 6
-module.exports.DAILY_DEFENSES_INCREASE = process.env.NODE_ENV === 'dev' ? 1000 : 20000000 // Puede recibir un ataque más cada DAILY_DEFENSES_INCREASE de ingresos
+module.exports.MAX_DAILY_ATTACKS = process.env.NODE_ENV === 'development' ? 999 : 3
+module.exports.MAX_DAILY_DEFENSES = process.env.NODE_ENV === 'development' ? 999 : 6
+module.exports.DAILY_DEFENSES_INCREASE = process.env.NODE_ENV === 'development' ? 1000 : 20000000 // Puede recibir un ataque más cada DAILY_DEFENSES_INCREASE de ingresos
 
 module.exports.calculateMissionTime = calculateMissionTime
 function calculateMissionTime(missionType) {
-  if (missionType === 'attack') return process.env.NODE_ENV === 'dev' ? 10 : 300
-  if (missionType === 'spy') return process.env.NODE_ENV === 'dev' ? 10 : 120
+  if (missionType === 'attack') return process.env.NODE_ENV === 'development' ? 10 : 300
+  if (missionType === 'spy') return process.env.NODE_ENV === 'development' ? 10 : 120
   return 0
 }
 

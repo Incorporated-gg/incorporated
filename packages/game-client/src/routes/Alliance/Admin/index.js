@@ -4,6 +4,7 @@ import PropTypes from 'prop-types'
 import RankEdit from './RankEdit'
 import MemberRequests from './MemberRequests'
 import { useUserData, reloadUserData } from '../../../lib/user'
+import BadgeCreator from '../Badge/BadgeCreator'
 
 AllianceAdmin.propTypes = {
   alliance: PropTypes.object.isRequired,
@@ -52,6 +53,7 @@ export default function AllianceAdmin({ alliance, reloadAllianceData }) {
           </button>
         </div>
       )}
+      <BadgeCreator alliance={alliance} reloadAllianceData={reloadAllianceData} />
       {(userData.alliance_user_rank.permission_admin ||
         userData.alliance_user_rank.permission_accept_and_kick_members) && (
         <RankEdit alliance={alliance} reloadAllianceData={reloadAllianceData} />

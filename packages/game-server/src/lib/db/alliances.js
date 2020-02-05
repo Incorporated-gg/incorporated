@@ -44,7 +44,7 @@ async function getBasicData(allianceID) {
   const [
     allianceQuery,
   ] = await mysql.query(
-    'SELECT created_at, picture_url, long_name, short_name, description FROM alliances WHERE id=?',
+    'SELECT created_at, picture_url, long_name, short_name, description, badge_json FROM alliances WHERE id=?',
     [allianceID]
   )
 
@@ -57,6 +57,18 @@ async function getBasicData(allianceID) {
     long_name: allianceQuery.long_name,
     short_name: allianceQuery.short_name,
     description: allianceQuery.description,
+    badge: allianceQuery.badge_json
+      ? JSON.parse(allianceQuery.badge_json)
+      : {
+          shield: {
+            id: 1,
+            color: '#6b30c3',
+          },
+          icon: {
+            id: 1,
+            color: '#ffffff',
+          },
+        },
   }
 }
 

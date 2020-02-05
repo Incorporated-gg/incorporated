@@ -206,4 +206,28 @@ module.exports = app => {
 
     res.json({ success: true })
   })
+
+  app.post('/v1/alliance/change_badge', async function(req, res) {
+    if (!req.userData) {
+      res.status(401).json({ error: 'Necesitas estar conectado', error_code: 'not_logged_in' })
+      return
+    }
+
+    const userRank = await alliances.getUserRank(req.userData.id)
+    if (!userRank || !userRank.permission_admin) {
+      res.status(401).json({ error: 'No tienes permiso para hacer esto' })
+      return
+    }
+
+    if (!req.body.badge) {
+      res.status(400).json({ error: 'Faltan datos' })
+      return
+    }
+
+    const badge = req.body.badge
+    // TODO: Sanitize input. Make sure badge is correct
+    await mysql.query('UPDATE alliances SET badge_json=? WHERE id=?', [JSON.stringify(badge), userRank.alliance_id])
+
+    res.json({ success: true })
+  })
 }

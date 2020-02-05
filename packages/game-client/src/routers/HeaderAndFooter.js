@@ -22,7 +22,7 @@ export function Header() {
           <Menu className={`${styles.mainMenu}`} />
           <ActiveMission />
         </div>
-        <TutorialTask />
+        <Task />
       </>
     )
 
@@ -30,7 +30,7 @@ export function Header() {
     <>
       <MoneyBar style={{ top: 0 }} className={`${styles.moneyBar} ${styles.stickyFullwidthBar}`} />
       <ActiveMission />
-      <TutorialTask />
+      <Task />
     </>
   )
 }
@@ -98,25 +98,28 @@ function ActiveMission() {
   )
 }
 
-function TutorialTask() {
+function Task() {
   const userData = useUserData()
-  if (!userData.tutorialTask) return null
-  const completeTask = () => {
-    api.post('/v1/tutorial_tasks/complete').catch(() => {})
-  }
+  return userData.activeTasks.map(task => {
+    const completeTask = () => {
+      api.post('/v1/tasks/complete', { task_id: task.id }).catch(() => {})
+    }
 
-  return (
-    <div className={styles.tutorialTask}>
-      <div className={styles.tutorialInfo}>
-        <p>{userData.tutorialTask.name}</p>
-        <p>{userData.tutorialTask.progressPercentage} / 100%</p>
-        <p>Recompensa: {userData.tutorialTask.reward.toLocaleString()}€</p>
+    console.log(task)
+
+    return (
+      <div key={task.id} className={styles.tutorialTask}>
+        <div className={styles.tutorialInfo}>
+          <p>{task.name}</p>
+          <p>{task.progressPercentage} / 100%</p>
+          <p>Recompensa: {task.reward.toLocaleString()}€</p>
+        </div>
+        <button disabled={!task.completed} onClick={completeTask}>
+          Completar
+        </button>
       </div>
-      <button disabled={!userData.tutorialTask.completed} onClick={completeTask}>
-        Completar
-      </button>
-    </div>
-  )
+    )
+  })
 }
 
 MoneyBar.propTypes = {

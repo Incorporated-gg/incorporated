@@ -2,6 +2,7 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import styles from './Username.module.scss'
+import AllianceLink from './AllianceLink'
 
 Username.propTypes = {
   user: PropTypes.object,
@@ -18,7 +19,7 @@ export default function Username({ user }) {
       <Link className={styles.usernameLink} to={`/ranking/user/${user.username}`}>
         {user.username}
       </Link>
-      {user.alliance && <Link to={`/ranking/alliance/${user.alliance.short_name}`}>[{user.alliance.short_name}]</Link>}
+      {user.alliance && <AllianceLink alliance={user.alliance} type="shortNameInBraces" />}
     </span>
   )
 }

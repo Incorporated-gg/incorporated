@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import api from '../../lib/api'
 import Username from '../../components/Username'
-import { Link, useLocation } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import styles from './Ranking.module.scss'
 import RankItem from '../../components/RankItem'
+import AllianceLink from '../../components/AllianceLink'
 
 export default function Ranking() {
   const [ranking, setRanking] = useState([])
@@ -31,11 +32,7 @@ export default function Ranking() {
           rank={rankItem.rank}
           pointsString={rankItem.points.toLocaleString() + (type === 'income' ? '€' : '')}>
           {rankItem.user && <Username user={rankItem.user} />}
-          {rankItem.alliance && (
-            <Link to={`/ranking/alliance/${rankItem.alliance.short_name}`}>
-              {rankItem.alliance.long_name} ({rankItem.alliance.short_name})
-            </Link>
-          )}
+          {rankItem.alliance && <AllianceLink alliance={rankItem.alliance} type="shortAndLongName" />}
         </RankItem>
       ))}
     </div>
