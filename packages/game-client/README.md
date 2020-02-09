@@ -1,68 +1,126 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Incorporated Game Front-end Service
+## Development Guidelines
+This file sets the conventions and guidelines for front-end development with React for Incorporated.
 
-## Available Scripts
+### Naming conventions
 
-In the project directory, you can run:
+#### Files
+File names will be in `kebab-case`. This means they will be lowercase, will not include special characters and will have hyphens to separate words. Examples:
 
-### `yarn start`
+**Invalid names:**
 
-Runs the app in the development mode.<br />
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+- `HeaderMenu.js`
+- `headerMenu.js`
+- `header_menu.js`
+- `header_menú.js`
 
-The page will reload if you make edits.<br />
-You will also see any lint errors in the console.
+**Valid name:**
 
-### `yarn test`
+- `header-menu.js`
 
-Launches the test runner in the interactive watch mode.<br />
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+#### Route and Component Class Names
+It is important to distinguish class names for routes (pages) and components, because they help us quickly identify what we are working on and also what styles are allowed.
 
-### `yarn build`
+##### Routes (pages)
+Pages will have their classes start with the prefix `page-{route-name}`. For example, if we were to work on the `home.js` route, the class that would be applied to this route's main container would be `page-home`.
 
-Builds the app for production to the `build` folder.<br />
-It correctly bundles React in production mode and optimizes the build for the best performance.
+**NOTE: *a route should only be comprised of components, and nothing else. For more information, see [File structure for Pages](#pages).***
 
-The build is minified and the filenames include the hashes.<br />
-Your app is ready to be deployed!
+##### Components
+Components class names will start with the prefix `com-{component-name}`. For example, for the previously mentioned `header-menu.js` component, the class that would be applied to this component's main container would be `com-header-menu`. For children containers and classes, camelCase names should be used. The class names themselves should be easy to read, semantic and self-explanatory about what they are styling.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### Directory/File structure
+The `src` directory will be mainly comprised of two other directories:
 
-### `yarn eject`
+- `components`, where all non-pages will reside.
+- `routes`, where our pages will be.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+#### Components directory
+This directory will contain a folder for each component. Inside the directory of each component, we will have a maximum depth of **1**.
+This means that it can only contain one subdirectory for subcomponents.
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+For example, if we had a `header.js` component in the directory `src/components/header/header.js`, and we would need to have a scoped sub-component `header-mission.js` for this header, we would create a `components` folder inside of `src/components/header`, named `src/components/header/components/header-mission/header-mission.js`. There we would include the needed SCSS files as well.
 
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+But if we would need a `header-mission-timer.js` sub-component for `header-mission.js`, we would not create a `components` folder for it, because we already reached the maximum depth of **1**. What we would do is create a folder in the `src/components/header` directory, called `src/components/header/components/header-mission-timer`. Summarizing everything so far, the final directory and file structure would look like this:
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+```
+game-client
+└── src
+    └── components
+        └── header
+            ├── components
+            │   ├── header-mission
+            │   │   ├── header-mission.scss
+            │   │   ├── header-mission.js
+            │   │   └── index.js
+            │   ├── header-mission-timer
+            │   │   ├── header-mission-timer.scss
+            │   │   ├── header-mission-timer.js
+            │   │   └── index.js
+            │   └── index.js
+            ├── header.scss
+            ├── header.js
+            └── index.js
 
-## Learn More
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+#### File structures
+##### Pages
+Pages can **ONLY** contain a main container to wrap components around, and components that will make the page contents. No elements are allowed other than components. For example:
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+**Wrong**:
+```html
+<div class="page-home">
+  <section class="topBar">
+    <TopBarComponent />
+  </section>
+  <section class="usersTable">
+    <UsersTableComponent />
+  </section>
+</div>
+```
 
-### Code Splitting
+**Correct**:
+```html
+<div class="page-home">
+    <TopBarComponent />
+    <UsersTableComponent />
+</div>
+```
+##### Components
+Components *can* (and *should*) contain elements other than components. For example:
+```html
+<section class="com-top-bar">
+    <nav class="topBarMainMenu">
+      <li>Main menu item</li>
+    </nav>
+    <TopBarSubmenuComponent />
+</section>
+```
+Components should **never** have `margins` applied to its main container. Instead they should be applied by the page/component that implements it.
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
+**Wrong**:
+`top-bar.scss`
+```scss
+.com-top-bar {
+  margin: 15px 10px;
+  padding: 20px;
+}
+```
 
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `yarn build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+**Correct**:
+`home.scss`
+```scss
+.page-home {
+  .com-top-bar {
+    margin: 15px 10px;
+  }
+}
+```
+`top-bar.scss`
+```scss
+.com-top-bar {
+  padding: 20px;
+}
+```
+This will
