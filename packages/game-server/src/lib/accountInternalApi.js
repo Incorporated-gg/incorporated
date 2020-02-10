@@ -34,6 +34,7 @@ export async function validateSessionID(sessionID) {
   return result
 }
 
+const SECRET = 'c342[E$32C'
 function accountInternalApiFetch(method, url, payload = {}) {
   const ACCOUNT_API_BASE =
     process.env.NODE_ENV === 'development'
@@ -42,8 +43,8 @@ function accountInternalApiFetch(method, url, payload = {}) {
   let body
   let headers = {}
   headers.Accept = 'application/json, text/plain, */*'
+  headers.Authorization = `Bearer ${SECRET}`
 
-  payload.secret = 'c342[E$32C'
   if (method === 'POST') {
     body = JSON.stringify(payload)
     headers['Content-Type'] = 'application/json'

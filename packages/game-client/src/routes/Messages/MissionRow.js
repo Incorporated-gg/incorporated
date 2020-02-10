@@ -9,6 +9,7 @@ import { reloadUserData, userData } from '../../lib/user'
 import { AttackReportMsg, SpyReportMsg } from './SingleMessage'
 import { getServerDay } from 'shared-lib/serverTime'
 import ErrorBoundary from '../../components/ErrorBoundary'
+import { updateTabTitle } from '../../lib/tabTitle'
 
 MissionRow.propTypes = {
   mission: PropTypes.object.isRequired,
@@ -56,6 +57,8 @@ export default function MissionRow({ mission, reloadMissionsCallback }) {
       ? '#960000'
       : 'inherit'
 
+  const isMyMission = mission.user.id === userData.id
+
   return (
     <>
       <tr>
@@ -82,11 +85,9 @@ export default function MissionRow({ mission, reloadMissionsCallback }) {
               {mission.mission_type === 'attack' ? buildingsList.find(b => b.id === mission.target_building).name : ''}
             </td>
             <td>
-              <MissionTimer finishesAt={mission.will_finish_at} />
+              <MissionTimer finishesAt={mission.will_finish_at} isMyMission={isMyMission} />
             </td>
-            <td>
-              {isCompleting || mission.user.id !== userData.id ? '' : <button onClick={cancelMission}>Cancelar</button>}
-            </td>
+            <td>{isCompleting || !isMyMission ? '' : <button onClick={cancelMission}>Cancelar</button>}</td>
           </>
         )}
       </tr>
@@ -106,17 +107,21 @@ export default function MissionRow({ mission, reloadMissionsCallback }) {
 
 MissionTimer.propTypes = {
   finishesAt: PropTypes.number.isRequired,
+  isMyMission: PropTypes.bool.isRequired,
 }
-function MissionTimer({ finishesAt }) {
+function MissionTimer({ finishesAt, isMyMission }) {
   const [timeLeft, setTimeLeft] = useState(getTimeUntil(finishesAt, true))
   useEffect(() => {
     const int = setInterval(() => setTimeLeft(getTimeUntil(finishesAt, true)), 1000)
     return () => clearInterval(int)
   }, [finishesAt])
 
+  if (isMyMission) {
+    updateTabTitle({ missionTimeLeft: timeLeft })
+  }
+
   if (Date.now() / 1000 > finishesAt) {
     throttledReloadUserData()
-    return <>Completando...</>
   }
   return <>{timeLeft}</>
 }

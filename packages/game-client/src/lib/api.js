@@ -1,4 +1,5 @@
 import { updateUserData, sessionID, logout } from './user'
+import { updateTabTitle } from './tabTitle'
 
 export const API_URL = '/api'
 
@@ -42,6 +43,7 @@ async function parseApiResponse(apiCallID, res) {
     logout()
   }
   if (apiCallID === lastApiCallID && jsonResponse._extra) {
+    updateTabTitle({ unreadMessages: jsonResponse._extra.unread_messages_count })
     updateUserData({
       ...jsonResponse._extra,
       // Needed for the internal implementation of Buildings's bank auto update.

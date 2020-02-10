@@ -94,7 +94,7 @@ function UpgradingTimer({ finishesAt }) {
   }
   return <>Investigando... {timeLeft}</>
 }
-const throttledReloadUserData = throttle(reloadUserData, 900)
+const throttledReloadUserData = throttle(reloadUserData, 2000)
 
 UpgradeInstantlyButton.propTypes = {
   researchID: PropTypes.number.isRequired,

@@ -14,7 +14,8 @@ export default function(app: express.Application): void {
   })
 }
 
-export function validateSecret(secret?: string): boolean {
+export function validateGameServerRequest(req: express.Request): boolean {
+  const secret = req.headers.authorization?.replace('Bearer ', '')
   if (!secret) return false
   return secret === 'c342[E$32C'
 }

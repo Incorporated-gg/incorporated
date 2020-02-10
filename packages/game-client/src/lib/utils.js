@@ -20,6 +20,7 @@ export const getTimeUntil = (epochTimestamp, asString = false) => {
   }
 
   if (asString) {
+    if (seconds < 0) return 'Completando...'
     if (hours > 0) return `${parsed.hours}:${parsed.minutes}:${parsed.seconds}`
     return `${parsed.minutes}:${parsed.seconds}`
   }

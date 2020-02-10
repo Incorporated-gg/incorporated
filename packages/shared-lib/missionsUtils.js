@@ -143,7 +143,7 @@ function simulateAttack({
   // Killed troops income
   const killedGuardsPrice = deadGuards * guardsInfo.price
   const killedSabotsPrice = deadSabots * sabotsInfo.price
-  const incomeForKilledTroops = killedGuardsPrice * 0.1 + killedSabotsPrice * 0.1
+  const incomeForKilledTroops = killedGuardsPrice * 0.1
 
   // Destroyed buildings income
   const incomeForDestroyedBuildings = getBuildingDestroyedProfit({

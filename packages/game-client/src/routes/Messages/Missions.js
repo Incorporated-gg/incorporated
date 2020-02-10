@@ -2,9 +2,9 @@ import React, { useState, useEffect, useCallback } from 'react'
 import api from '../../lib/api'
 import MissionRow from './MissionRow'
 import styles from './Messages.module.scss'
-import MissionAttackModal from '../../components/missions/MissionAttack'
-import MissionSpyModal from '../../components/missions/MissionSpy'
-import MissionSimulateModal from '../../components/missions/MissionSimulate'
+import MissionAttackModal from '../../components/mission-modals/MissionAttack'
+import MissionSpyModal from '../../components/mission-modals/MissionSpy'
+import MissionSimulateModal from '../../components/mission-modals/MissionSimulate'
 
 export default function Missions() {
   const [missions, setMissions] = useState({

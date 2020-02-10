@@ -135,8 +135,8 @@ async function getAttacksFromUsers(userIDs, attackedUserIDs, attacksMinTs) {
 
 function attackToPoints(attack) {
   let points = 0
-  if (attack.result === 'win') points += 1
-  if (attack.result === 'lose') points -= 3
+  if (attack.result === 'win') points += 10
+  if (attack.result === 'lose') points -= 30
 
   // Extra point for efficiency
   const incomeFromBuildings = attack.data.report.income_from_buildings
@@ -145,7 +145,7 @@ function attackToPoints(attack) {
   const moneyLostOnTroops = moneyLostOnSabots + moneyLostOnThieves
   if (incomeFromBuildings > 0 && incomeFromBuildings > moneyLostOnTroops) {
     const efficiencyRatio = (incomeFromBuildings - moneyLostOnTroops) / incomeFromBuildings
-    points += Math.floor(efficiencyRatio * 10) / 10
+    points += Math.floor(efficiencyRatio * 10)
   }
 
   return points

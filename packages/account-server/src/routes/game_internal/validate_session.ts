@@ -1,11 +1,11 @@
 import express from 'express'
 import * as users from '../../lib/db/users'
 import { getUserIDFromSessionID } from '../../lib/db/sessions'
-import { validateSecret } from '.'
+import { validateGameServerRequest } from '.'
 
 export default (app: express.Application): void => {
   app.get('/v1/game_internal/validate_session', async function(req, res) {
-    if (!req.query.secret || !validateSecret(req.query.secret)) {
+    if (!validateGameServerRequest(req)) {
       res.status(401).json({ error: 'Invalid secret' })
       return
     }
