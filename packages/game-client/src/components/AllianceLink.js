@@ -19,7 +19,7 @@ export default function AllianceLink({ alliance, type = 'longName' }) {
   return (
     <Link to={`/ranking/alliance/${alliance.short_name}`}>
       <Badge badge={alliance.badge} />
-      <span>{text}</span>
+      <span style={{ verticalAlign: 'middle' }}>{text}</span>
     </Link>
   )
 }

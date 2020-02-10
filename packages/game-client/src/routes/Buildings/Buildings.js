@@ -55,6 +55,7 @@ function setupBuildingsBankUpdater() {
         buildingAmount: building.quantity,
         bankResearchLevel: userData.researchs[4],
       })
+      if (building.money > maxMoney.maxTotal) return
       building.money += intervalRevenue
       if (building.money > maxMoney.maxTotal) building.money = maxMoney.maxTotal
     })

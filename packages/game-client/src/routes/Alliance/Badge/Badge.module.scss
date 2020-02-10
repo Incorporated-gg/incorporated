@@ -1,16 +1,10 @@
 .container {
     display: inline-block;
     vertical-align: middle;
-    width: 1.5em;
-    height: 1.5em;
+    width: 1.3em;
+    height: 1.3em;
+    margin-right: 0.3em;
     position: relative;
-    path {
-        fill: currentColor;
-    }
-}
-.shield {
-    width: 100%;
-    height: 100%;
 }
 .icon {
     position: absolute;
@@ -19,6 +13,9 @@
     bottom: 0;
     right: 0;
     margin: auto;
-    width: 0.8em;
-    height: 0.8em;
+    width: 0.7em;
+    height: 0.7em;
+    path {
+        fill: currentColor;
+    }
 }

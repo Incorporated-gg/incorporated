@@ -60,10 +60,7 @@ async function getBasicData(allianceID) {
     badge: allianceQuery.badge_json
       ? JSON.parse(allianceQuery.badge_json)
       : {
-          shield: {
-            id: 1,
-            color: '#6b30c3',
-          },
+          backgroundColor: '#6b30c3',
           icon: {
             id: 1,
             color: '#ffffff',

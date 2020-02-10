@@ -108,7 +108,7 @@ async function completeAttackMission(mission) {
     bankResearchLevel: defenderBankLevel,
   })
   const storedMoney = Math.floor(defenderBuildings[data.building].money)
-  const unprotectedMoney = Math.min(Math.max(0, storedMoney - maxMoney.maxSafe), maxMoney.maxRobbedPerAttack)
+  const unprotectedMoney = Math.max(0, storedMoney - maxMoney.maxSafe)
 
   const {
     result,

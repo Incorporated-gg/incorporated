@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import api from '../../../lib/api'
 import PropTypes from 'prop-types'
 import Badge from '.'
+import { reloadUserData } from '../../../lib/user'
 
 BadgeCreator.propTypes = {
   alliance: PropTypes.object.isRequired,
@@ -16,6 +17,7 @@ export default function BadgeCreator({ alliance, reloadAllianceData }) {
       })
       .then(() => {
         reloadAllianceData()
+        reloadUserData()
       })
       .catch(err => {
         alert(err.message)
@@ -27,31 +29,22 @@ export default function BadgeCreator({ alliance, reloadAllianceData }) {
       <h3>Creador de emblema</h3>
       <h4>Fondo</h4>
       <div>
-        <select
-          value={badge.shield.id}
-          onChange={e => setBadge({ ...badge, shield: { ...badge.shield, id: e.target.value } })}>
-          <option value="1">1</option>
-          <option value="2">2</option>
-          <option value="3">3</option>
-          <option value="4">4</option>
-          <option value="5">5</option>
-        </select>
         <input
           type="color"
-          value={badge.shield.color}
-          onChange={e => setBadge({ ...badge, shield: { ...badge.shield, color: e.target.value } })}
+          value={badge.backgroundColor}
+          onChange={e => setBadge({ ...badge, backgroundColor: e.target.value })}
         />
       </div>
       <h4>Icono</h4>
       <div>
-        <select
+        <input
+          type="range"
+          min="1"
+          max="11"
+          step="1"
           value={badge.icon.id}
-          onChange={e => setBadge({ ...badge, icon: { ...badge.icon, id: e.target.value } })}>
-          <option value="1">1</option>
-          <option value="2">2</option>
-          <option value="3">3</option>
-          <option value="4">4</option>
-        </select>
+          onChange={e => setBadge({ ...badge, icon: { ...badge.icon, id: e.target.value } })}
+        />
         <input
           type="color"
           value={badge.icon.color}

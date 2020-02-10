@@ -34,7 +34,7 @@ export default function MissionSimulateModal({ isOpen, onRequestClose }) {
     buildingAmount,
     bankResearchLevel: bankResearchLvl,
   })
-  const unprotectedMoney = Math.min(Math.max(0, storedMoney - maxMoney.maxSafe), maxMoney.maxRobbedPerAttack)
+  const unprotectedMoney = Math.max(0, storedMoney - maxMoney.maxSafe)
 
   const simulation = simulateAttack({
     defensorGuards: guards,
