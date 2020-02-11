@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { Switch, Route, NavLink } from 'react-router-dom'
 import MessagesList from './MessagesList'
-import Missions from './Missions'
 import NewMessageModal from './NewMessageModal'
 
 export default function Messages() {
@@ -15,9 +14,6 @@ export default function Messages() {
             <NavLink to="/messages" exact>
               Recibidos
             </NavLink>
-          </li>
-          <li>
-            <NavLink to="/messages/missions">Informes</NavLink>
           </li>
           <li>
             <NavLink to="/messages/sent">Enviados</NavLink>
@@ -40,9 +36,6 @@ export default function Messages() {
       <Switch>
         <Route path="/messages/sent">
           <MessagesList type="sent" />
-        </Route>
-        <Route path="/messages/missions">
-          <Missions />
         </Route>
         <Route path="/messages">
           <MessagesList type="received" />

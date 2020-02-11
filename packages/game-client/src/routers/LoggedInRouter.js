@@ -16,6 +16,7 @@ import Finances from '../routes/Finances/Finances'
 import Loans from '../routes/Loans/Loans'
 import Map from '../routes/Map/Map'
 import Newspaper from '../routes/Newspaper/Newspaper'
+import Reports from '../routes/Reports/Reports'
 
 export default function LoggedInRouter() {
   return (
@@ -54,6 +55,9 @@ export default function LoggedInRouter() {
             </Route>
             <Route path="/newspaper">
               <Newspaper />
+            </Route>
+            <Route path="/reports">
+              <Reports />
             </Route>
             <Route path="/">
               <Home />

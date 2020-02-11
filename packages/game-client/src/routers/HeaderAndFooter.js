@@ -3,13 +3,14 @@ import styles from './LoggedIn.module.scss'
 import { useUserData, reloadUserData, logout } from '../lib/user'
 import { debounce } from '../lib/utils'
 import api from '../lib/api'
-import MissionRow from '../routes/Messages/MissionRow'
+import MissionRow from '../routes/Reports/MissionRow'
 import Menu from './Menu'
 import { Link } from 'react-router-dom'
 import { ReactComponent as SvgFinances } from './img/header-finances.svg'
 import { ReactComponent as SvgLogout } from './img/header-logout.svg'
 import { ReactComponent as SvgProfile } from './img/header-profile.svg'
-import { ReactComponent as SvgNews } from './img/header-news.svg'
+import { ReactComponent as SvgTasks } from './img/header-tasks.svg'
+import { IconMoney } from '../components/icons'
 
 const DESKTOP_WIDTH_BREAKPOINT = 720
 
@@ -28,8 +29,8 @@ export function Header() {
               <Link className={styles.headerButton} to="/finances">
                 <SvgFinances alt={'Finanzas'} />
               </Link>
-              <Link className={styles.headerButton} to="/messages">
-                <SvgNews alt={'Mensajes'} />
+              <Link className={styles.headerButton} to="/">
+                <SvgTasks alt={'Tareas'} />
               </Link>
             </div>
             <img className={styles.logo} src={require('./img/logo-full.png')} alt="" />
@@ -43,9 +44,15 @@ export function Header() {
             </div>
           </div>
           <div className={styles.headerStats}>
-            <div className={styles.stat}>{Math.floor(userData.money).toLocaleString()}€</div>
-            <div className={styles.stat}>{Math.floor(userData.money).toLocaleString()}€</div>
-            <div className={styles.stat}>{Math.floor(userData.money).toLocaleString()}€</div>
+            <div className={styles.stat}>
+              {Math.floor(userData.money).toLocaleString()} <IconMoney size={20} />
+            </div>
+            <div className={styles.stat}>
+              {Math.floor(userData.money).toLocaleString()} <IconMoney size={20} />
+            </div>
+            <div className={styles.stat}>
+              {Math.floor(userData.money).toLocaleString()} <IconMoney size={20} />
+            </div>
           </div>
           <DeclareBankruptcy />
         </div>

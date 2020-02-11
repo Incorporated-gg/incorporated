@@ -29,7 +29,7 @@ const menuGroups = [
         alt: 'Personal',
       },
       {
-        path: '/messages/missions',
+        path: '/reports',
         alt: 'Reportes',
       },
     ],
@@ -41,7 +41,11 @@ const menuGroups = [
     items: [
       {
         path: '/newspaper',
-        alt: 'Newspaper',
+        alt: 'Periódico',
+      },
+      {
+        path: '/messages',
+        alt: 'Mensajes',
       },
     ],
   },
@@ -106,7 +110,7 @@ const menuGroups = [
     items: [
       {
         path: '/map',
-        alt: 'Map',
+        alt: 'Mapa',
       },
     ],
   },
@@ -147,12 +151,21 @@ function MainMenu() {
 
 function SubMenu() {
   const isDesktop = useIsDesktop()
+  const windowDimensions = useWindowSize()
   const location = useLocation()
 
   const activeGroup = getActiveGroup(location.pathname)
-  if (!activeGroup) return null
+  if (!activeGroup || activeGroup.items.length <= 1) return null
+
+  const activeItemIndex = activeGroup.items.findIndex(item => item.path === location.pathname)
+  const markersTranslateX = (activeItemIndex + 0.5) / activeGroup.items.length
+  const markersStyle = {
+    transform: `translateX(${markersTranslateX * Math.min(DESKTOP_WIDTH_BREAKPOINT, windowDimensions.width)}px)`,
+  }
+
   return (
     <div className={`${styles.subMenu} ${isDesktop ? styles.desktop : ''}`}>
+      <div className={styles.subMenuMarkers} style={markersStyle} />
       {activeGroup.items.map(item => {
         return (
           <NavLink exact to={item.path} key={item.path}>
