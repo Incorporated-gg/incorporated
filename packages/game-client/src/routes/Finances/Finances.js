@@ -1,19 +1,16 @@
 import React, { useState, useEffect } from 'react'
 import FinancialData from './FinancialData'
 import { getServerDate, getServerDay } from 'shared-lib/serverTime'
-import { logout } from '../../lib/user'
 import api from '../../lib/api'
+import styles from './Finances.module.scss'
 
-export default function Settings() {
+export default function Finances() {
   return (
-    <>
+    <div className={styles.container}>
       <ServerTime />
       <FinancialData />
       <DailyLogGraphs />
-      <button type="button" onClick={logout}>
-        Logout
-      </button>
-    </>
+    </div>
   )
 }
 

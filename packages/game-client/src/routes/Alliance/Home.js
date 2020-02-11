@@ -50,9 +50,7 @@ export default function AllianceHome({ alliance, reloadAllianceData }) {
       {userData.alliance_user_rank.permission_send_circular_msg && (
         <>
           <hr />
-          <button className={styles.button} onClick={() => setShowMessageModal(true)}>
-            Enviar mensaje circular
-          </button>
+          <button onClick={() => setShowMessageModal(true)}>Enviar mensaje circular</button>
         </>
       )}
       <button onClick={leaveAlliance}>Salir</button>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import api from '../../lib/api'
 import Username from '../../components/Username'
 import { buildingsList } from 'shared-lib/buildingsUtils'
+import styles from './Ranking.module.scss'
 
 export default function Monopolies() {
   const [monopolies, setMonopolies] = useState([])
@@ -17,7 +18,7 @@ export default function Monopolies() {
   }, [])
 
   return (
-    <div>
+    <div className={styles.monopolies}>
       {error && <h4>{error}</h4>}
       <h2>Monopolies</h2>
       <table>

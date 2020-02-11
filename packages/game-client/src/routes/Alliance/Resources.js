@@ -3,6 +3,7 @@ import api from '../../lib/api'
 import { calcResourceMax } from 'shared-lib/allianceUtils'
 import PropTypes from 'prop-types'
 import { useUserData, reloadUserData } from '../../lib/user'
+import styles from './Home.module.scss'
 
 AllianceResources.propTypes = {
   alliance: PropTypes.object.isRequired,
@@ -12,7 +13,7 @@ export default function AllianceResources({ alliance, reloadAllianceData }) {
   const userData = useUserData()
 
   return (
-    <>
+    <div className={styles.container}>
       {Object.values(alliance.resources).map(resourceData => {
         return (
           <SingleResources
@@ -35,7 +36,7 @@ export default function AllianceResources({ alliance, reloadAllianceData }) {
           )
         })}
       </div>
-    </>
+    </div>
   )
 }
 

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import api from '../../lib/api'
 import PropTypes from 'prop-types'
-import { Switch, Route, NavLink } from 'react-router-dom'
+import { Switch, Route } from 'react-router-dom'
 import CreateAlliance from './CreateAlliance'
 import AllianceResearch from './Research'
 import AllianceResources from './Resources'
@@ -9,7 +9,6 @@ import AllianceMissions from './Missions'
 import AllianceHome from './Home'
 import AllianceWars from './Wars'
 import AllianceAdmin from './Admin/index.js'
-import { useUserData } from '../../lib/user'
 
 let lastAllianceData = null
 export default function Alliance() {
@@ -48,39 +47,8 @@ AllianceRouter.propTypes = {
   reloadAllianceData: PropTypes.func.isRequired,
 }
 function AllianceRouter({ alliance, reloadAllianceData }) {
-  const userData = useUserData()
-
   return (
     <>
-      <nav className="sub-menu">
-        <ul>
-          <li>
-            <NavLink to="/alliance" exact>
-              Home
-            </NavLink>
-          </li>
-          <li>
-            <NavLink to="/alliance/resources">Recursos</NavLink>
-          </li>
-          <li>
-            <NavLink to="/alliance/missions">Misiones</NavLink>
-          </li>
-          <li>
-            <NavLink to="/alliance/research">Investigaciones</NavLink>
-          </li>
-          <li>
-            <NavLink to="/alliance/wars">Guerras</NavLink>
-          </li>
-          {(userData.alliance_user_rank.permission_admin ||
-            userData.alliance_user_rank.permission_activate_buffs ||
-            userData.alliance_user_rank.permission_accept_and_kick_members) && (
-            <li>
-              <NavLink to="/alliance/admin">Admin</NavLink>
-            </li>
-          )}
-        </ul>
-      </nav>
-
       <Switch>
         <Route path="/alliance/resources">
           <AllianceResources alliance={alliance} reloadAllianceData={reloadAllianceData} />

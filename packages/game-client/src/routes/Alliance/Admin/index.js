@@ -5,6 +5,7 @@ import RankEdit from './RankEdit'
 import MemberRequests from './MemberRequests'
 import { useUserData, reloadUserData } from '../../../lib/user'
 import BadgeCreator from '../Badge/BadgeCreator'
+import styles from '../Home.module.scss'
 
 AllianceAdmin.propTypes = {
   alliance: PropTypes.object.isRequired,
@@ -40,7 +41,7 @@ export default function AllianceAdmin({ alliance, reloadAllianceData }) {
   }
 
   return (
-    <div>
+    <div className={styles.container}>
       <h2>Admin</h2>
       {userData.alliance_user_rank.permission_activate_buffs && (
         <div>

@@ -1,34 +1,56 @@
 import React from 'react'
-import Username from '../components/Username'
-import { NavLink } from 'react-router-dom'
 import styles from './LoggedIn.module.scss'
-import { useUserData, reloadUserData } from '../lib/user'
+import { useUserData, reloadUserData, logout } from '../lib/user'
 import { debounce } from '../lib/utils'
-import PropTypes from 'prop-types'
 import api from '../lib/api'
 import MissionRow from '../routes/Messages/MissionRow'
+import Menu from './Menu'
+import { Link } from 'react-router-dom'
+import { ReactComponent as SvgFinances } from './img/header-finances.svg'
+import { ReactComponent as SvgLogout } from './img/header-logout.svg'
+import { ReactComponent as SvgProfile } from './img/header-profile.svg'
+import { ReactComponent as SvgNews } from './img/header-news.svg'
 
 const DESKTOP_WIDTH_BREAKPOINT = 720
 
 export function Header() {
   const dimensions = useWindowSize()
+  const userData = useUserData()
+  if (!userData) return null
   const isDesktop = dimensions.width >= DESKTOP_WIDTH_BREAKPOINT
-
-  if (isDesktop)
-    return (
-      <>
-        <div style={{ top: 0 }} className={`${styles.desktopHeader} ${styles.stickyFullwidthBar}`}>
-          <MoneyBar className={`${styles.moneyBar}`} />
-          <Menu className={`${styles.mainMenu}`} />
-          <ActiveMission />
-        </div>
-        <Task />
-      </>
-    )
 
   return (
     <>
-      <MoneyBar style={{ top: 0 }} className={`${styles.moneyBar} ${styles.stickyFullwidthBar}`} />
+      <div style={{ top: 0 }} className={styles.stickyFullwidthBar}>
+        <div className={styles.headerContainer}>
+          <div className={styles.headerLinks}>
+            <div>
+              <Link className={styles.headerButton} to="/finances">
+                <SvgFinances alt={'Finanzas'} />
+              </Link>
+              <Link className={styles.headerButton} to="/messages">
+                <SvgNews alt={'Mensajes'} />
+              </Link>
+            </div>
+            <img className={styles.logo} src={require('./img/logo-full.png')} alt="" />
+            <div>
+              <div className={styles.headerButton} onClick={logout}>
+                <SvgLogout alt={'Logout'} />
+              </div>
+              <Link className={styles.headerButton} to={`/ranking/user/${userData.username}`}>
+                <SvgProfile alt={'Perfil'} />
+              </Link>
+            </div>
+          </div>
+          <div className={styles.headerStats}>
+            <div className={styles.stat}>{Math.floor(userData.money).toLocaleString()}€</div>
+            <div className={styles.stat}>{Math.floor(userData.money).toLocaleString()}€</div>
+            <div className={styles.stat}>{Math.floor(userData.money).toLocaleString()}€</div>
+          </div>
+          <DeclareBankruptcy />
+        </div>
+        {isDesktop && <Menu />}
+      </div>
       <ActiveMission />
       <Task />
     </>
@@ -40,45 +62,10 @@ export function Footer() {
   const isDesktop = dimensions.width >= DESKTOP_WIDTH_BREAKPOINT
 
   if (isDesktop) return null
-  return <Menu style={{ bottom: 0 }} className={`${styles.mainMenu} ${styles.stickyFullwidthBar}`} />
-}
-
-Menu.propTypes = {
-  className: PropTypes.string,
-  style: PropTypes.object,
-}
-function Menu({ className, style }) {
   return (
-    <ul style={style} className={className}>
-      <li>
-        <NavLink to="/personnel">Personal</NavLink>
-      </li>
-      <li>
-        <NavLink to="/buildings">Edificios</NavLink>
-      </li>
-      <li>
-        <NavLink to="/research">Invest</NavLink>
-      </li>
-      <li>
-        <NavLink to="/ranking">Ranking</NavLink>
-      </li>
-      <li>
-        <NavLink to="/alliance">Alianza</NavLink>
-      </li>
-      <li>
-        <NavLink to="/loans">Préstamos</NavLink>
-      </li>
-      <li>
-        <NavLink to="/messages">
-          Mensajes <MessagesUnreadLabel />
-        </NavLink>
-      </li>
-      <li>
-        <NavLink to="/settings" exact>
-          Opciones
-        </NavLink>
-      </li>
-    </ul>
+    <div style={{ bottom: 0 }} className={styles.stickyFullwidthBar}>
+      <Menu />
+    </div>
   )
 }
 
@@ -105,8 +92,6 @@ function Task() {
       api.post('/v1/tasks/complete', { task_id: task.id }).catch(() => {})
     }
 
-    console.log(task)
-
     return (
       <div key={task.id} className={styles.tutorialTask}>
         <div className={styles.tutorialInfo}>
@@ -120,33 +105,6 @@ function Task() {
       </div>
     )
   })
-}
-
-MoneyBar.propTypes = {
-  className: PropTypes.string,
-  style: PropTypes.object,
-}
-function MoneyBar({ className, style }) {
-  const userData = useUserData()
-  return (
-    <div style={style} className={className}>
-      <Username user={userData} />
-      <div className={styles.logoContainer}>
-        <img src={require('./img/logo_expanded.png')} alt="" />
-      </div>
-      <div className={styles.rightContainer}>
-        <MoneyDisplay />
-        <DeclareBankruptcy />
-      </div>
-    </div>
-  )
-}
-
-function MoneyDisplay() {
-  const userData = useUserData()
-  if (!userData) return null
-
-  return <span>{Math.floor(userData.money).toLocaleString()}€</span>
 }
 
 function DeclareBankruptcy() {
@@ -165,13 +123,7 @@ function DeclareBankruptcy() {
   return <button onClick={declareBankruptcy}>Declarar bancarrota</button>
 }
 
-function MessagesUnreadLabel() {
-  const userData = useUserData()
-  if (!userData || !userData.unread_messages_count) return null
-  return <span>({userData.unread_messages_count})</span>
-}
-
-function useWindowSize({ debounceMs = 100 } = {}) {
+export function useWindowSize({ debounceMs = 100 } = {}) {
   const [dimensions, setDimensions] = React.useState({
     height: window.innerHeight,
     width: window.innerWidth,

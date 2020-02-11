@@ -12,8 +12,10 @@ import Ranking from '../routes/Ranking/Router'
 import Alliance from '../routes/Alliance/Alliance'
 import Personnel from '../routes/Personnel/Personnel'
 import Messages from '../routes/Messages/Messages'
-import Settings from '../routes/Settings/Settings'
+import Finances from '../routes/Finances/Finances'
 import Loans from '../routes/Loans/Loans'
+import Map from '../routes/Map/Map'
+import Newspaper from '../routes/Newspaper/Newspaper'
 
 export default function LoggedInRouter() {
   return (
@@ -41,11 +43,17 @@ export default function LoggedInRouter() {
             <Route path="/messages">
               <Messages />
             </Route>
-            <Route path="/settings">
-              <Settings />
+            <Route path="/finances">
+              <Finances />
             </Route>
             <Route path="/loans">
               <Loans />
+            </Route>
+            <Route path="/map">
+              <Map />
+            </Route>
+            <Route path="/newspaper">
+              <Newspaper />
             </Route>
             <Route path="/">
               <Home />

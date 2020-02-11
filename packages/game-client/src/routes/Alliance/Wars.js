@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import WarInfo from './WarInfo'
+import styles from './WarInfo.module.scss'
 
 AllianceWars.propTypes = {
   alliance: PropTypes.object.isRequired,
@@ -8,7 +9,7 @@ AllianceWars.propTypes = {
 }
 export default function AllianceWars({ alliance, reloadAllianceData }) {
   return (
-    <>
+    <div className={styles.container}>
       <h2>Guerras activas</h2>
       {alliance.active_wars.map(war => {
         return <WarInfo war={war} key={war.id} />
@@ -17,6 +18,6 @@ export default function AllianceWars({ alliance, reloadAllianceData }) {
       {alliance.past_wars.map(war => {
         return <WarInfo war={war} key={war.id} />
       })}
-    </>
+    </div>
   )
 }

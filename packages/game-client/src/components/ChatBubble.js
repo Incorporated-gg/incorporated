@@ -185,7 +185,7 @@ export default function ChatBubble() {
         </div>
       )}
       <button type="button" className="chatToggleButton" onClick={() => toggleChat()}>
-        <span>chat</span>
+        <span>Chat</span>
       </button>
     </aside>
   )

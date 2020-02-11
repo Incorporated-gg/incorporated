@@ -3,6 +3,7 @@ import api from '../../lib/api'
 import Username from '../../components/Username'
 import GiveLoan from './GiveLoan'
 import { useUserData } from '../../lib/user'
+import styles from './Loans.module.scss'
 
 const LOAN_DAYS_DURATION = 7
 export default function Loans() {
@@ -122,7 +123,7 @@ export default function Loans() {
   )
 
   return (
-    <div>
+    <div className={styles.container}>
       {givenLoanElm}
       <hr />
       {takenLoanElm}

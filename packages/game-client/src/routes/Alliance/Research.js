@@ -23,7 +23,7 @@ export default function AllianceResearch({ alliance, reloadAllianceData }) {
   const chartImgUrl = `https://quickchart.io/chart?width=500&height=500&c=${JSON.stringify(chartData)}`
 
   return (
-    <>
+    <div className={styles.container}>
       <div>
         <h2>Research</h2>
         {Object.values(alliance.researchs).map(researchData => {
@@ -37,7 +37,7 @@ export default function AllianceResearch({ alliance, reloadAllianceData }) {
         <h2>Aportes</h2>
         <img className={styles.aportesImg} src={chartImgUrl} alt="" />
       </div>
-    </>
+    </div>
   )
 }
 

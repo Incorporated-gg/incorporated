@@ -1,0 +1,107 @@
+.mainMenu {
+    display: flex;
+    flex-direction: row;
+    max-width: 720px;
+    margin: auto;
+    background-color: #343434;
+
+    >a {
+        display: block;
+        flex-grow: 1;
+        flex-basis: 1;
+        text-align: center;
+        padding: 0.5em;
+        border-right: 2px solid #272727;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+
+        &:last-child {
+            border-right: none;
+        }
+
+        &.active {
+            flex-basis: 2;
+            background-color: #EAC953;
+
+            .svgText {
+                display: block;
+                margin: auto;
+            }
+        }
+    }
+
+
+    .svgIcon {
+        width: 2.5em;
+        height: 2.5em;
+    }
+
+    .svgText {
+        width: 100%;
+        height: 1em;
+        display: none;
+    }
+}
+
+.subMenu {
+    display: flex;
+    flex-direction: row;
+    max-width: 720px;
+    margin: auto;
+    background-color: #343434;
+    border-bottom: 15px solid #EAC953;
+    border-top: 3px solid #EAC953;
+
+    &.desktop {
+        border-top: 15px solid #EAC953;
+        border-bottom: 3px solid #EAC953;
+    }
+
+    >a {
+        position: relative;
+        flex-grow: 1;
+        padding: 0.5em;
+        text-align: center;
+        overflow: hidden;
+
+        .subMenuItem {
+            color: white;
+        }
+
+        &:global(.active) {
+            &::before {
+                display: block;
+                content: "";
+                width: 0.5em;
+                height: 0.5em;
+                background-color: #EAC953;
+                transform: rotate(45deg);
+                position: absolute;
+                left: 0;
+                right: 0;
+                top: -0.25em;
+                margin: auto;
+            }
+            &::after {
+                display: block;
+                content: "";
+                width: 0.5em;
+                height: 0.5em;
+                background-color: #EAC953;
+                transform: rotate(45deg);
+                position: absolute;
+                left: 0;
+                right: 0;
+                bottom: -0.25em;
+                margin: auto;
+            }
+
+            .subMenuItem {
+                color: #EAC953;
+            }
+        }
+    }
+
+}

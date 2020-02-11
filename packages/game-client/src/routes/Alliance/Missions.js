@@ -2,6 +2,7 @@ import React, { useEffect } from 'react'
 import MissionRow from '../Messages/MissionRow'
 import PropTypes from 'prop-types'
 import { NavLink, useParams } from 'react-router-dom'
+import styles from './Home.module.scss'
 
 AllianceMissions.propTypes = {
   alliance: PropTypes.object.isRequired,
@@ -33,7 +34,7 @@ export default function AllianceMissions({ alliance, reloadAllianceData }) {
   useEffect(() => reloadAllianceData(), [reloadAllianceData])
 
   return (
-    <div>
+    <div className={styles.container}>
       <h2>Active missions</h2>
       <table>
         <thead>
