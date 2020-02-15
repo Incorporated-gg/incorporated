@@ -5,7 +5,7 @@ import ReactDOM from 'react-dom'
 import Modal from 'react-modal'
 import './index.scss'
 import 'normalize.css'
-import App from './app'
+import App from 'app.js'
 import * as serviceWorker from './serviceWorker'
 
 Modal.defaultStyles = {}

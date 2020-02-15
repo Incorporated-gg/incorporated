@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import api from '../../lib/api'
+import { post } from '../../lib/api'
 import PropTypes from 'prop-types'
 
 const LOAN_DAYS_DURATION = 7
@@ -14,11 +14,10 @@ export default function CreateLoan({ refreshLoansList, givenLoan }) {
   const postLoan = () => {
     setMoneyAmount(0)
     setInterestRate(15)
-    api
-      .post('/v1/loans/create', {
-        money_amount: moneyAmount,
-        interest_rate: interestRate,
-      })
+    post('/v1/loans/create', {
+      money_amount: moneyAmount,
+      interest_rate: interestRate,
+    })
       .then(() => {
         refreshLoansList()
       })

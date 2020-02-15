@@ -2,7 +2,7 @@ import React, { useCallback } from 'react'
 import PropTypes from 'prop-types'
 import Username from '../Username'
 import { useUserData } from '../../lib/user'
-import api from '../../lib/api'
+import { post } from '../../lib/api'
 import { LOAN_DAYS_DURATION } from 'shared-lib/loansUtils'
 
 LoanListItem.propTypes = {
@@ -14,8 +14,7 @@ export default function LoanListItem({ loan, refreshLoansList }) {
   const isMine = loan.lender.id === userData.id
 
   const cancelLoan = useCallback(() => {
-    api
-      .post('/v1/loans/cancel')
+    post('/v1/loans/cancel')
       .then(res => {
         refreshLoansList()
       })
@@ -26,8 +25,7 @@ export default function LoanListItem({ loan, refreshLoansList }) {
 
   const takeLoan = useCallback(
     lenderID => () => {
-      api
-        .post('/v1/loans/take', { lender_id: lenderID })
+      post('/v1/loans/take', { lender_id: lenderID })
         .then(res => {
           refreshLoansList()
         })
