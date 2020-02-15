@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import LoggedInRouter from './routers/LoggedInRouter'
+import LoggedInRouter from 'routers/logged-in/logged-in'
+import LogInPage from 'routers/log-in/log-in'
 import { userData, loadUserDataFromStorage, userLoggedIn } from './lib/user'
 import ErrorBoundary from './components/ErrorBoundary'
 
@@ -42,17 +43,10 @@ function App() {
 
   if (loading) return null
 
-  return <ErrorBoundary>{loggedIn ? <LoggedInRouter /> : <LoginRouter />}</ErrorBoundary>
+  return <ErrorBoundary>{loggedIn ? <LoggedInRouter /> : <LogInPage />}</ErrorBoundary>
 }
 
 export default App
-
-function LoginRouter() {
-  // Redirect to account site
-  const ACCOUNT_LINK = process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : 'https://incorporated.gg'
-  window.location = ACCOUNT_LINK
-  return null
-}
 
 function getQueryVariable(variable) {
   var query = window.location.search.substring(1)

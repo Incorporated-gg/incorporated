@@ -1,10 +1,11 @@
 import React, { useCallback } from 'react'
 import { calcResearchPrice } from 'shared-lib/researchUtils'
 import { calcBuildingDailyIncome } from 'shared-lib/buildingsUtils'
-import { useUserData } from '../../lib/user'
-import Card, { Stat } from '../../components/Card'
+import { useUserData } from 'lib/user'
+import Card from 'components/card'
+import Stat from 'components/stat'
 import { buyResearch } from '../Research/buyResearch'
-import cardStyles from '../../components/Card.module.scss'
+import cardStyles from 'components/card/card.module.scss'
 import PropTypes from 'prop-types'
 
 OptimizeResearch.propTypes = {

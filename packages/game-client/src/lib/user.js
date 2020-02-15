@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import asyncStorage from './asyncStorage'
 import api from './api'
-import { reloadApp } from '../App'
+import { reloadApp } from '../app'
 
 export let sessionID = null
 export let userData = null

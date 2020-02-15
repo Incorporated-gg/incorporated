@@ -69,8 +69,8 @@ module.exports = app => {
       return
     }
 
-    const lender = await users.getData(lenderID)
-    const loanIncomeRatio = moneyAmount / lender.income
+    const lenderIncome = await users.getUserDailyIncome(lenderID)
+    const loanIncomeRatio = moneyAmount / lenderIncome
     if (loanIncomeRatio > 4) {
       res.status(400).json({ error: 'Necesitas más ingresos para anunciar este préstamo' })
       return

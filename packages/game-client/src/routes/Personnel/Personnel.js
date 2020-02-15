@@ -1,10 +1,12 @@
 import React, { useState } from 'react'
-import api from '../../lib/api'
+import { post } from 'lib/api'
 import { personnelList } from 'shared-lib/personnelUtils'
 import PropTypes from 'prop-types'
-import { useUserData, reloadUserData } from '../../lib/user'
-import { Card, Stat, cardStyles } from '../../components/Card'
-import CardList from '../../components/CardList'
+import { useUserData, reloadUserData } from 'lib/user'
+import Card from 'components/card'
+import Stat from 'components/stat'
+import cardStyles from 'components/card/card.module.scss'
+import CardList from 'components/CardList'
 
 const personnelImages = {
   sabots: require('./img/sabot.png'),
@@ -51,8 +53,7 @@ function PersonnelType({ personnelInfo, resourceAmount }) {
 
   const hireClicked = e => {
     e.preventDefault()
-    api
-      .post(`/v1/personnel/hire`, { resource_id: personnelInfo.resource_id, amount: hireAmount })
+    post(`/v1/personnel/hire`, { resource_id: personnelInfo.resource_id, amount: hireAmount })
       .then(() => reloadUserData())
       .catch(err => {
         alert(err.message)
@@ -60,8 +61,7 @@ function PersonnelType({ personnelInfo, resourceAmount }) {
   }
   const fireClicked = e => {
     e.preventDefault()
-    api
-      .post(`/v1/personnel/fire`, { resource_id: personnelInfo.resource_id, amount: fireAmount })
+    post(`/v1/personnel/fire`, { resource_id: personnelInfo.resource_id, amount: fireAmount })
       .then(() => reloadUserData())
       .catch(err => {
         alert(err.message)

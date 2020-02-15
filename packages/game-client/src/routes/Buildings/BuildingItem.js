@@ -6,12 +6,13 @@ import {
   calcBuildingMaxMoney,
 } from 'shared-lib/buildingsUtils'
 import PropTypes from 'prop-types'
-import { userData as userDataRaw, useUserData, updateUserData } from '../../lib/user'
-import api from '../../lib/api'
-import Card, { Stat } from '../../components/Card'
-import cardStyles from '../../components/Card.module.scss'
+import { userData as userDataRaw, useUserData, updateUserData } from 'lib/user'
+import { post } from 'lib/api'
+import Card from 'components/card'
+import Stat from 'components/stat'
+import cardStyles from 'components/card/card.module.scss'
 import { buyBuilding } from './buyBuilding'
-import useHoldPress from '../../lib/useHoldPress'
+import useHoldPress from 'lib/useHoldPress'
 
 const buildingImages = {
   1: require('./img/b1.png'),
@@ -98,7 +99,7 @@ function BuyScreen({ buildingID, coste, income, hasEnoughOptimizeLvl }) {
 
       <button
         {...buyHoldPress}
-        className={cardStyles.button}
+        className={'button'}
         disabled={!canBuy}
         style={{ color: buildingAccentColors[buildingID] }}>
         COMPRAR
@@ -136,7 +137,7 @@ function ExtractScreen({ buildingID, income }) {
           [buildingID]: { ...userDataRaw.buildings[buildingID], money: 0 },
         },
       })
-      await api.post('/v1/buildings/extract_money', { building_id: buildingID })
+      await post('/v1/buildings/extract_money', { building_id: buildingID })
     } catch (e) {
       alert(e.message)
     }

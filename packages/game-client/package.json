@@ -10,6 +10,7 @@
     "react-modal": "^3.11.1",
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.2.0",
+    "react-svg": "^11.0.10",
     "react-transition-group": "^4.3.0",
     "shared-lib": "file:../shared-lib",
     "socket.io-client": "^2.3.0"

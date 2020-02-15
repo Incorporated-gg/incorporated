@@ -1,3 +1,5 @@
+export const DESKTOP_WIDTH_BREAKPOINT = 720
+
 export const getTimeUntil = (epochTimestamp, asString = false) => {
   // Set the date we're counting down to
   const countDownDate = new Date(epochTimestamp * 1000).getTime()

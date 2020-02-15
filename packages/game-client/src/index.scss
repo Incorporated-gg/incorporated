@@ -1,5 +1,5 @@
 @import url('https://fonts.googleapis.com/css?family=Lato:100,300,400,400i,700,700i,900&display=swap&subset=latin-ext');
-@import url('https://fonts.googleapis.com/css?family=Roboto:400,500&display=swap');
+@import './variables';
 
 body {
   font-family: 'Lato', Arial, sans-serif;
@@ -143,4 +143,33 @@ a {
   background-color: #7A7A7A;
   -webkit-overflow-scrolling: touch;
   outline: none;
+}
+
+.stickyFullwidthBar {
+  position: sticky;
+  left: 0;
+  right: 0;
+  width: 100%;
+  margin: 0 auto;
+  z-index: 100;
+}
+
+.button {
+  display: block;
+  border: none;
+  border-radius: 0.3em;
+  font-size: 1.2em;
+  padding: 0.3em 0.75em;
+  line-height: 1;
+  background-color: #fafafa;
+  color: $accent-color;
+  font-weight: 900;
+  margin: 0.5em auto;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.4);
+  letter-spacing: 0.05em;
+  user-select: none;
+
+  &:disabled {
+    opacity: 0.4;
+  }
 }

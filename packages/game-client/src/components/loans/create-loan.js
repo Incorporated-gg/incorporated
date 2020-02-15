@@ -3,10 +3,11 @@ import api from '../../lib/api'
 import PropTypes from 'prop-types'
 
 const LOAN_DAYS_DURATION = 7
-Loans.propTypes = {
+CreateLoan.propTypes = {
+  givenLoan: PropTypes.object,
   refreshLoansList: PropTypes.func.isRequired,
 }
-export default function Loans({ refreshLoansList }) {
+export default function CreateLoan({ refreshLoansList, givenLoan }) {
   const [moneyAmount, setMoneyAmount] = useState(0)
   const [interestRate, setInterestRate] = useState(15)
 
@@ -28,7 +29,23 @@ export default function Loans({ refreshLoansList }) {
       })
   }
 
-  return (
+  return givenLoan ? (
+    <div>
+      Has dado un préstamo.
+      {givenLoan.borrower && (
+        <>
+          {' '}
+          Quedan{' '}
+          {Math.ceil(
+            givenLoan.loan_started_at +
+              60 * 60 * 24 * LOAN_DAYS_DURATION -
+              Math.floor(Date.now() / 1000) / (60 * 60 * 24)
+          )}{' '}
+          días
+        </>
+      )}
+    </div>
+  ) : (
     <div>
       <p>
         Cantidad de dinero:

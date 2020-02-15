@@ -1,10 +1,10 @@
 {
-    "legacyWatch": true,
-    "ignoreRoot": [".git"],
-    "watch"   : [
-        "./node_modules/shared-lib", "./src"
-    ],
-    "execMap" : {
-        "js": "node -r esm"
-    }
+  "legacyWatch": true,
+  "ignoreRoot": [".git"],
+  "watch"   : [
+    "./src"
+  ],
+  "execMap" : {
+    "js": "node -r esm"
+  }
 }

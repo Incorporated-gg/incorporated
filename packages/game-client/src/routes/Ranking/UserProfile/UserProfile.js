@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react'
-import api from '../../../lib/api'
+import { get } from 'lib/api'
 import { useParams } from 'react-router-dom'
-import UserActionLinks from '../../../components/UserActionLinks'
+import UserActionLinks from 'components/UserActionLinks'
 import styles from './UserProfile.module.scss'
-import { Stat } from '../../../components/Card'
-import Username from '../../../components/Username'
+import Stat from 'components/stat'
+import Username from 'components/Username'
 
 export default function Ranking() {
   const { username: routeUsername } = useParams()
@@ -12,8 +12,7 @@ export default function Ranking() {
   const [error, setError] = useState()
 
   useEffect(() => {
-    api
-      .get('/v1/ranking/user', { username: routeUsername })
+    get('/v1/ranking/user', { username: routeUsername })
       .then(res => {
         setUser(res.user)
       })

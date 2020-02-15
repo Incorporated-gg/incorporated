@@ -6,12 +6,13 @@ import {
   MANUALLY_FINISH_RESEARCH_UPGRADES_SECONDS,
 } from 'shared-lib/researchUtils'
 import PropTypes from 'prop-types'
-import { useUserData, reloadUserData } from '../../lib/user'
-import { getTimeUntil, throttle } from '../../lib/utils'
+import { useUserData, reloadUserData } from 'lib/user'
+import { getTimeUntil, throttle } from 'lib/utils'
 import { buyResearch } from './buyResearch'
-import Card, { Stat } from '../../components/Card'
-import cardStyles from '../../components/Card.module.scss'
-import api from '../../lib/api'
+import Card from 'components/card'
+import Stat from 'components/stat'
+import cardStyles from 'components/card/card.module.scss'
+import { post } from 'lib/api'
 
 const researchImages = {
   1: require('./img/spy.png'),
@@ -108,8 +109,7 @@ function UpgradeInstantlyButton({ researchID, finishesAt }) {
   }, [finishesAt])
 
   const manuallyFinishResearch = useCallback(() => {
-    api
-      .post('/v1/research/manually_finish', { research_id: researchID })
+    post('/v1/research/manually_finish', { research_id: researchID })
       .then(() => {
         reloadUserData()
       })

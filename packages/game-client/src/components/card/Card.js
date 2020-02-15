@@ -1,8 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import styles from './Card.module.scss'
-
-export const cardStyles = styles
+import styles from './card.module.scss'
 
 Card.propTypes = {
   image: PropTypes.string.isRequired,
@@ -13,8 +11,7 @@ Card.propTypes = {
   children: PropTypes.node,
 }
 
-export default Card
-export function Card({ image, title, subtitle, desc, accentColor, children }) {
+export default function Card({ image, title, subtitle, desc, accentColor, children }) {
   return (
     <div className={styles.cardContainer}>
       <div className={styles.card}>
@@ -28,25 +25,6 @@ export function Card({ image, title, subtitle, desc, accentColor, children }) {
         <div className={styles.accentBg} style={{ backgroundColor: accentColor }}>
           {children}
         </div>
-      </div>
-    </div>
-  )
-}
-
-Stat.propTypes = {
-  img: PropTypes.string.isRequired,
-  title: PropTypes.string.isRequired,
-  value: PropTypes.oneOfType([PropTypes.string, PropTypes.node]).isRequired,
-}
-export function Stat({ img, title, value }) {
-  return (
-    <div className={styles.statContainer}>
-      <div className={styles.statIcon}>
-        <img src={img} alt="" />
-      </div>
-      <div className={styles.statsText}>
-        <div className={styles.statTitle}>{title}</div>
-        <div className={styles.statValue}>{value}</div>
       </div>
     </div>
   )

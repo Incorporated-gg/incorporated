@@ -3,8 +3,8 @@
   "prod": {
     "driver": "mysql",
     "multipleStatements": true,
-    "host": "localhost",
-    "port": "3308",
+    "host": "account-db",
+    "port": "3306",
     "user": "incorporated_dev",
     "password": "incorporated_dev",
     "database": "incorporated_dev"
