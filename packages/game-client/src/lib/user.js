@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import asyncStorage from './asyncStorage'
-import api from './api'
-import { reloadApp } from '../app'
+import { get } from './api'
+import { reloadApp } from '../App'
 
 export let sessionID = null
 export let userData = null
@@ -14,7 +14,7 @@ export async function userLoggedIn(newSessionID) {
 }
 
 export async function reloadUserData() {
-  const userDataFromAPI = await api.get('/v1/my_data')
+  const userDataFromAPI = await get('/v1/my_data')
   userData = Object.assign(userDataFromAPI.user_data, userDataFromAPI._extra)
   fireUserDataListeners()
 }
