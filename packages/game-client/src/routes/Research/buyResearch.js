@@ -1,5 +1,5 @@
-import api from '../../lib/api'
-import { userData, updateUserData, reloadUserData } from '../../lib/user'
+import { post } from 'lib/api'
+import { userData, updateUserData, reloadUserData } from 'lib/user'
 import { calcResearchPrice, calcResearchTime } from 'shared-lib/researchUtils'
 
 export async function buyResearch(researchID) {
@@ -29,7 +29,7 @@ export async function buyResearch(researchID) {
       })
     }
 
-    await api.post('/v1/research/buy', { research_id: researchID, count: 1 })
+    await post('/v1/research/buy', { research_id: researchID, count: 1 })
     if (researchTime !== 0) await reloadUserData()
   } catch (e) {
     alert(e.message)

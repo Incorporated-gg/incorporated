@@ -1,0 +1,21 @@
+.container {
+  display: inline-block;
+  vertical-align: middle;
+  width: 1.3em;
+  height: 1.3em;
+  margin-right: 0.3em;
+  position: relative;
+}
+.icon {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  margin: auto;
+  width: 0.7em;
+  height: 0.7em;
+  path {
+    fill: currentColor;
+  }
+}

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
-import { API_URL } from '../lib/api'
-import { sessionID } from '../lib/user'
+import { API_URL } from 'lib/api'
+import { sessionID } from 'lib/user'
 import Username from './Username'
 import { timestampFromEpoch } from 'shared-lib/commonUtils'
 import io from 'socket.io-client'

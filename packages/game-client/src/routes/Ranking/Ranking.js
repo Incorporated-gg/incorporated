@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react'
-import api from '../../lib/api'
+import { get } from '../../lib/api'
 import Username from '../../components/Username'
 import { useLocation } from 'react-router-dom'
 import styles from './Ranking.module.scss'
 import RankItem from '../../components/RankItem'
-import AllianceLink from '../../components/AllianceLink'
+import AllianceLink from 'components/alliance/alliance-link'
 import { debounce } from '../../lib/utils'
 
 export default function Ranking() {
@@ -16,8 +16,7 @@ export default function Ranking() {
   const rankingItemType = type === 'income' || type === 'research' ? 'users' : 'alliances'
 
   useEffect(() => {
-    api
-      .get('/v1/ranking', { type })
+    get('/v1/ranking', { type })
       .then(res => {
         setRanking(res.ranking)
       })
@@ -51,8 +50,7 @@ function SearchUsers() {
 
   const doSearch = useCallback(
     debounce(username => {
-      api
-        .get('/v1/search', { username })
+      get('/v1/search', { username })
         .then(res => {
           setUsers(res.users)
           setLoading(false)
