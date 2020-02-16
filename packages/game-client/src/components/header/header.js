@@ -23,19 +23,21 @@ export default function Header() {
           <div className={styles.headerLinks}>
             <div>
               <Link className={styles.headerButton} to="/finances">
-                <Icon className={styles.headerIcon} iconName="finances" alt="Finances" />
+                <Icon className={styles.headerIcon} svg={require('./img/finances.svg')} alt="Finances" />
               </Link>
               <Link className={styles.headerButton} to="/">
-                <Icon className={styles.headerIcon} iconName="tasks" alt="Tareas" />
+                <Icon className={styles.headerIcon} svg={require('./img/tasks.svg')} alt="Tareas" />
               </Link>
             </div>
-            <img className={styles.logo} src={'/img/logo-full.png'} alt="" />
+            <div className={styles.logo}>
+              <Icon svg={require('./img/logo.svg')} alt="" />
+            </div>
             <div>
               <div className={styles.headerButton} onClick={logout}>
-                <Icon className={styles.headerIcon} iconName="logout" alt="Logout" />
+                <Icon className={styles.headerIcon} svg={require('./img/logout.svg')} alt="Logout" />
               </div>
               <Link className={styles.headerButton} to={`/ranking/user/${userData.username}`}>
-                <Icon className={styles.headerIcon} iconName="profile" alt="Perfil" />
+                <Icon className={styles.headerIcon} svg={require('./img/profile.svg')} alt="Perfil" />
               </Link>
             </div>
           </div>

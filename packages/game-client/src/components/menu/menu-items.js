@@ -1,8 +1,8 @@
 export default [
   {
     mainPath: '/ranking',
-    svgIcon: 'missions',
-    svgText: 'text-misiones',
+    svgIcon: require('./img/icon-missions.svg'),
+    svgText: require('./img/text-missions.svg'),
     extra: ['unread_reports'],
     items: [
       {
@@ -28,8 +28,8 @@ export default [
   },
   {
     mainPath: '/newspaper',
-    svgIcon: 'inversion',
-    svgText: 'text-periodico',
+    svgIcon: require('./img/icon-newspaper.svg'),
+    svgText: require('./img/text-newspaper.svg'),
     extra: ['unread_messages'],
     items: [
       {
@@ -46,8 +46,8 @@ export default [
   },
   {
     mainPath: '/buildings',
-    svgIcon: 'inversion',
-    svgText: 'text-inversion',
+    svgIcon: require('./img/icon-inversion.svg'),
+    svgText: require('./img/text-inversion.svg'),
     items: [
       {
         path: '/buildings',
@@ -69,8 +69,8 @@ export default [
   },
   {
     mainPath: '/alliance',
-    svgIcon: 'inversion',
-    svgText: 'text-corporacion',
+    svgIcon: require('./img/icon-corp.svg'),
+    svgText: require('./img/text-corp.svg'),
     items: [
       {
         path: '/alliance',
@@ -100,8 +100,8 @@ export default [
   },
   {
     mainPath: '/map',
-    svgIcon: 'inversion',
-    svgText: 'text-mapa',
+    svgIcon: require('./img/icon-map.svg'),
+    svgText: require('./img/text-map.svg'),
     items: [
       {
         path: '/map',

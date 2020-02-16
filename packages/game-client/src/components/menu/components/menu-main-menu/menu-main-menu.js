@@ -21,9 +21,9 @@ export default function MainMenu({ menuItems, getActiveGroup }) {
         const extra = group.extra || []
         return (
           <Link to={group.mainPath} key={group.mainPath} className={isActive ? styles.active : ''}>
-            <Icon iconName={group.svgIcon} className={styles.svgIcon} alt={mainPathAlt} />
+            <Icon svg={group.svgIcon} className={styles.svgIcon} alt={mainPathAlt} />
             <div>
-              <Icon iconName={group.svgText} className={styles.svgText} />
+              <Icon svg={group.svgText} className={styles.svgText} />
               {extra.includes('unread_messages') && <UnreadCountBubble type="messages" />}
               {extra.includes('unread_reports') && <UnreadCountBubble type="reports" />}
             </div>

@@ -17,10 +17,12 @@ export default function Username({ user }) {
           <img src={user.accountData.avatar} alt="" className={styles.avatar} />
         </Link>
       )}
-      <Link className={styles.usernameLink} to={`/ranking/user/${user.username}`}>
-        {user.username}
-      </Link>
-      {user.alliance && <AllianceLink alliance={user.alliance} type="shortNameInBraces" />}
+      <div>
+        <Link className={styles.usernameLink} to={`/ranking/user/${user.username}`}>
+          {user.username}
+        </Link>
+        {user.alliance && <AllianceLink alliance={user.alliance} type="shortNameInBraces" />}
+      </div>
     </span>
   )
 }

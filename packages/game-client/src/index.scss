@@ -1,6 +1,15 @@
 @import url('https://fonts.googleapis.com/css?family=Lato:100,300,400,400i,700,700i,900&display=swap&subset=latin-ext');
-@import url('https://db.onlinewebfonts.com/c/a3d2d7adb41565d115e575095746be74?family=Engebrechtre+Bold');
 @import './variables';
+
+@font-face {
+  font-family: "Engebrechtre Bold";
+  src: url("https://db.onlinewebfonts.com/t/a3d2d7adb41565d115e575095746be74.eot"); /* IE9*/
+  src: url("https://db.onlinewebfonts.com/t/a3d2d7adb41565d115e575095746be74.eot?#iefix") format("embedded-opentype"), /* IE6-IE8 */
+  url("https://db.onlinewebfonts.com/t/a3d2d7adb41565d115e575095746be74.woff2") format("woff2"), /* chrome firefox */
+  url("https://db.onlinewebfonts.com/t/a3d2d7adb41565d115e575095746be74.woff") format("woff"), /* chrome firefox */
+  url("https://db.onlinewebfonts.com/t/a3d2d7adb41565d115e575095746be74.ttf") format("truetype"), /* chrome firefox opera Safari, Android, iOS 4.2+*/
+  url("https://db.onlinewebfonts.com/t/a3d2d7adb41565d115e575095746be74.svg#Engebrechtre+Bold") format("svg"); /* iOS 4.1- */
+}
 
 body {
   font-family: 'Lato', Arial, sans-serif;

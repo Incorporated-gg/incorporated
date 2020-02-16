@@ -4,58 +4,59 @@
   font-weight: 600;
   font-size: 1.2em;
   color: #fafafa;
-  background-color: #000;
+  background-color: #343434;
   border-bottom: 8px solid #EECF82;
   padding: 0.5em;
 
   .headerLinks {
+    display: flex;
+
+    .headerButton {
+      background-color: #EECF82;
+      border: 2px solid #A38F5B;
+      text-align: center;
+      margin: 0.5em 0;
+      padding: 0.2em 1.75em;
       display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
 
-      .headerButton {
-          background-color: #EECF82;
-          border: 2px solid #A38F5B;
-          text-align: center;
-          margin: 0.5em 0;
-          padding: 0.2em 1.75em;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          cursor: pointer;
-
-          .headerIcon svg {
-            width: 1.3em;
-            height: 1.3em;
-          }
+      .headerIcon svg {
+        width: 1.3em;
+        height: 1.3em;
       }
+    }
 
-      .logo {
-          display: block;
-          margin: auto;
-          max-height: 4em;
-          width: 8em;
-          max-width: 30vw;
+    .logo  {
+      margin: auto;
+      svg {
+        max-height: 4em;
+        width: 8em;
+        max-width: 30vw;
       }
+    }
   }
 
   .headerStats {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    font-size: 0.7em;
+
+    .stat {
+      background-color: #343434;
+      border: 4px solid #A38F5B;
+      padding: 0.2em;
+      line-height: 1;
       display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      font-size: 0.7em;
+      align-items: center;
+      justify-content: center;
+    }
 
-      .stat {
-          background-color: #343434;
-          border: 4px solid #A38F5B;
-          padding: 0.2em;
-          line-height: 1;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-      }
-
-      .headerStatIcon svg {
-        width: 20px;
-        height: 20px;
-      }
+    .headerStatIcon svg {
+      width: 20px;
+      height: 20px;
+    }
   }
 }

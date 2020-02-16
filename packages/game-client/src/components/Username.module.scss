@@ -3,16 +3,22 @@
     align-items: center;
     vertical-align: middle;
 }
+
 .avatarLink {
     line-height: 0;
 }
+
 .avatar {
-    border-radius: 0.3em;
-    width: 2em;
-    height: 2em;
-    margin: 0.3em;
+    border: 5px solid #EECF82;
+    width: 2.5em;
+    height: 2.5em;
+    margin: 0.5em;
     margin-left: 0;
 }
+
 .usernameLink {
-    margin-right: 0.3em;
+    color: #FFF8E6;
+    font-size: 1.2em;
+    margin: 0.1em 0;
+    display: block;
 }
