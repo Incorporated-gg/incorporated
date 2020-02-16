@@ -20,12 +20,6 @@ const personnelDesc = {
   spies: 'Obtienen información privada sobre otros jugadores',
   thieves: 'Roban dinero de edificios',
 }
-const personnelAccentColors = {
-  sabots: '#EE5487',
-  guards: '#612aab',
-  spies: '#82BB30',
-  thieves: '#333',
-}
 
 export default function Personnel() {
   const userData = useUserData()
@@ -72,9 +66,8 @@ function PersonnelType({ personnelInfo, resourceAmount }) {
     <Card
       image={personnelImages[personnelInfo.resource_id]}
       title={personnelInfo.name}
-      subtitle={resourceAmount.toLocaleString()}
-      desc={personnelDesc[personnelInfo.resource_id]}
-      accentColor={personnelAccentColors[personnelInfo.resource_id]}>
+      ribbon={resourceAmount.toLocaleString()}
+      desc={personnelDesc[personnelInfo.resource_id]}>
       <Stat
         img={require('./img/stat-price.png')}
         title={'Coste de compra'}
@@ -93,10 +86,7 @@ function PersonnelType({ personnelInfo, resourceAmount }) {
         value={hireAmount}
         onChange={e => setHireAmount(e.target.value)}
       />
-      <button
-        className={cardStyles.button}
-        onClick={hireClicked}
-        style={{ color: personnelAccentColors[personnelInfo.resource_id] }}>
+      <button className={cardStyles.button} onClick={hireClicked}>
         CONTRATAR
       </button>
       <Stat
@@ -112,10 +102,7 @@ function PersonnelType({ personnelInfo, resourceAmount }) {
         value={fireAmount}
         onChange={e => setFireAmount(e.target.value)}
       />
-      <button
-        className={cardStyles.button}
-        onClick={fireClicked}
-        style={{ color: personnelAccentColors[personnelInfo.resource_id] }}>
+      <button className={cardStyles.button} onClick={fireClicked}>
         DESPEDIR
       </button>
       <Stat

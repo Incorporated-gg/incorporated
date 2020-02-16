@@ -3,40 +3,26 @@
     grid-template-columns: auto 1fr 0.7fr;
     align-items: center;
     width: 100%;
-    margin: 0.75em 0;
-    background: linear-gradient(hsl(222, 15%, 70%), hsl(222, 15%, 63%));
-    border-radius: 0.3em;
-    padding: 0.3em 0.5em;
-    box-shadow: 2px 2px 1px 2px #444;
+    padding: 0.5em;
+    color: #FFF8E6;
 }
 
 .rankPosition {
-    border-radius: 0.3em;
-    font-size: 1.3em;
-    color: #fff;
-    text-shadow: 1px 1px 1px #000;
-    width: 1.8em;
-    height: 1.8em;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    background-color: #5a626d;
-    box-shadow: 1px 1px 1px 1px #222;
+    font-size: 1.5em;
+    font-weight: bold;
+    padding: 0.25em;
+    color: #FFF8E6;
 
     &:global(.pos1) {
-        background: linear-gradient(#ead181, #bb992b);
-        box-shadow: 1px 1px 1px 1px #5d4d19;
+        color: #EECF82;
     }
 
     &:global(.pos2) {
-        background: linear-gradient(#cecece, #8c8c8c);
-        box-shadow: 1px 1px 1px 1px #5d5d5d;
+        color: #DDDDDD;
     }
 
     &:global(.pos3) {
-        background: linear-gradient(#ca7151, #904933);
-        box-shadow: 1px 1px 1px 1px #652710
+        color: #CC8C20;
     }
 }
 

@@ -21,13 +21,6 @@ const researchImages = {
   4: require('./img/bank.png'),
   6: require('./img/security.png'),
 }
-const researchAccentColors = {
-  1: '#EE5487',
-  2: '#612aab',
-  3: '#82BB30',
-  4: '#378cd8',
-  6: '#A13647',
-}
 const researchDescriptions = {
   1: `Mejora tus espías`,
   2: `Mejora tus saboteadores y ladrones`,
@@ -54,9 +47,8 @@ export default function ResearchItem({ researchID }) {
     <Card
       cost={cost.toLocaleString()}
       title={research.name}
-      subtitle={`Lvl. ${level.toLocaleString()}`}
+      ribbon={`Lvl. ${level.toLocaleString()}`}
       desc={researchDescriptions[researchID]}
-      accentColor={researchAccentColors[researchID]}
       image={researchImages[researchID]}>
       <Stat img={require('./img/stat-price.png')} title={'Coste'} value={`${cost.toLocaleString()}€`} />
       <p style={{ color: '#fff' }}>
@@ -68,11 +60,7 @@ export default function ResearchItem({ researchID }) {
       </p>
 
       {isUpgrading && <UpgradeInstantlyButton finishesAt={isUpgrading.finishes_at} researchID={researchID} />}
-      <button
-        className={cardStyles.button}
-        onClick={buyResearchClicked}
-        disabled={!canAfford || isUpgrading}
-        style={{ color: researchAccentColors[researchID] }}>
+      <button className={cardStyles.button} onClick={buyResearchClicked} disabled={!canAfford || isUpgrading}>
         MEJORAR
       </button>
     </Card>
@@ -120,11 +108,7 @@ function UpgradeInstantlyButton({ researchID, finishesAt }) {
   if (secondsLeft > MANUALLY_FINISH_RESEARCH_UPGRADES_SECONDS) return null
 
   return (
-    <button
-      className={cardStyles.button}
-      onClick={manuallyFinishResearch}
-      disabled={false}
-      style={{ color: researchAccentColors[researchID] }}>
+    <button className={cardStyles.button} onClick={manuallyFinishResearch} disabled={false}>
       TERMINAR MEJORA
     </button>
   )

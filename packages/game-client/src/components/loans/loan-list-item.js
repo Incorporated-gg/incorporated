@@ -58,7 +58,6 @@ export default function LoanListItem({ loan, refreshLoansList }) {
           Coger préstamo
         </button>
       )}
-      <hr />
     </div>
   )
 }

@@ -72,7 +72,13 @@ function SearchUsers() {
 
   return (
     <>
-      <input type="text" value={search} onChange={e => setSearch(e.target.value)} placeholder={'Buscar usuario'} />
+      <input
+        className={styles.searchUser}
+        type="text"
+        value={search}
+        onChange={e => setSearch(e.target.value)}
+        placeholder={'Buscar usuario'}
+      />
       {loading && <div>Cargando...</div>}
       {users && (
         <>

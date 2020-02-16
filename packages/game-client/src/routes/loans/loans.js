@@ -30,12 +30,10 @@ export default function Loans() {
   if (!loans) return <div>Cargando...</div>
 
   return (
-    <div>
+    <>
       <CreateLoan givenLoan={givenLoan} refreshLoansList={refreshLoansList} />
-      <hr />
       {takenLoan && <TakenLoan takenLoan={takenLoan} />}
-      <hr />
       <LoanList loans={loans} refreshLoansList={refreshLoansList} />
-    </div>
+    </>
   )
 }

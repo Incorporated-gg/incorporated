@@ -9,6 +9,7 @@ Username.propTypes = {
 }
 export default function Username({ user }) {
   if (!user) return <span>Usuario desconocido</span>
+
   return (
     <span className={styles.container}>
       {user.accountData && (

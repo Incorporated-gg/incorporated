@@ -30,14 +30,6 @@ const buildingDescriptions = {
   5: `Compra palomitas!`,
   6: `A veces limpiamos las habitaciones!`,
 }
-const buildingAccentColors = {
-  1: '#EE5487',
-  2: '#612aab',
-  3: '#82BB30',
-  4: '#378cd8',
-  5: '#d0ac29',
-  6: '#A13647',
-}
 
 BuildingItem.propTypes = {
   buildingID: PropTypes.number.isRequired,
@@ -61,9 +53,8 @@ export default function BuildingItem({ buildingID, activeScreen }) {
     <Card
       image={buildingImages[buildingID]}
       title={buildingInfo.name}
-      subtitle={buildingCount.toLocaleString()}
-      desc={desc}
-      accentColor={buildingAccentColors[buildingID]}>
+      ribbon={buildingCount.toLocaleString()}
+      desc={desc}>
       {activeScreen === 'buy' && (
         <BuyScreen buildingID={buildingID} income={income} coste={coste} hasEnoughOptimizeLvl={hasEnoughOptimizeLvl} />
       )}
@@ -97,11 +88,7 @@ function BuyScreen({ buildingID, coste, income, hasEnoughOptimizeLvl }) {
       <Stat img={require('./img/stat-price.png')} title={'Coste'} value={`${coste.toLocaleString()}€`} />
       <Stat img={require('./img/stat-pri.png')} title={'PRI'} value={`${timeToRecoverInvestment} días`} />
 
-      <button
-        {...buyHoldPress}
-        className={'button'}
-        disabled={!canBuy}
-        style={{ color: buildingAccentColors[buildingID] }}>
+      <button {...buyHoldPress} className={cardStyles.button} disabled={!canBuy}>
         COMPRAR
       </button>
     </>
@@ -161,10 +148,7 @@ function ExtractScreen({ buildingID, income }) {
           </>
         }
       />
-      <button
-        className={cardStyles.button}
-        onClick={onExtractMoney}
-        style={{ color: buildingAccentColors[buildingID] }}>
+      <button className={cardStyles.button} onClick={onExtractMoney}>
         SACAR
       </button>
     </>

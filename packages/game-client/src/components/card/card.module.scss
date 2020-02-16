@@ -2,108 +2,130 @@
 
 $border-radius-size: 14px;
 
-.cardContainer {
-  width: 100%;
-}
-
 .card {
   position: relative;
-  background: #fafafa;
   text-align: center;
-  border-radius: $border-radius-size + 5;
-  box-shadow: -1px 15px 30px -12px black;
   height: 100%;
   display: flex;
   flex-direction: column;
   font-size: 0.85em;
 
-  .image {
-    position: relative;
-    height: 7em;
-    margin-bottom: 1em;
+  .cardHeader {
     border-top-left-radius: $border-radius-size;
     border-top-right-radius: $border-radius-size;
-    background: url('./img/card-bg.jpg');
-    background-size: cover;
+    background: linear-gradient(#CC8C20, #EECF82);
 
-    img {
-      width: 100%;
-      max-width: 13em;
+    .image {
+      position: relative;
+      height: 7em;
+      margin-bottom: 1em;
+      border-top-left-radius: $border-radius-size;
+      border-top-right-radius: $border-radius-size;
+
+      img {
+        width: 100%;
+        max-width: 13em;
+        position: absolute;
+        top: -3.4em;
+        left: 0;
+        right: 0;
+        margin: auto;
+        filter: drop-shadow(12px 12px 25px rgba(0, 0, 0, 0.5));
+      }
+    }
+
+    .ribbon {
       position: absolute;
-      top: -3.4em;
-      left: 0;
+      top: 0;
       right: 0;
-      margin: auto;
-      filter: drop-shadow(12px 12px 25px rgba(0, 0, 0, 0.5));
+      width: 5em;
+      height: 5em;
+      background: linear-gradient(225deg, #343434 0%, #000000 100%);
+      clip-path: polygon(0% 0%, 100% 0%, 100% 100%);
+      border-top-right-radius: $border-radius-size;
+
+      span {
+        position: absolute;
+        top: 6px;
+        right: 6px;
+        font-size: 1.6em;
+        font-family: "Engebrechtre Bold";
+        text-align: right;
+        color: rgba(255, 255, 255, 0.6);
+        padding-left: 40%; // for word break
+      }
+
+      &.moreThan2Chars span {
+        font-size: 1.3em;
+      }
+
+      &.moreThan3Chars span {
+        font-size: 1.2em;
+      }
     }
-  }
 
-  .name {
-    font-size: 1.7em;
-    font-weight: 900;
-    padding: 0 0.35em;
-  }
-
-  .subtitle {
-    font-size: 1.4em;
-    font-weight: 900;
-    opacity: 0.97;
-    text-shadow: 1px 2px 5px rgba(0, 0, 0, 0.08);
-  }
-
-  .description {
-    padding: 0.5em;
-    flex-grow: 1;
-    white-space: pre-wrap;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .input {
-    display: block;
-    border: none;
-    border-radius: 0.3em;
-    font-size: 1.2em;
-    padding: 0.3em 0.75em;
-    line-height: 1;
-    background-color: #fafafa;
-    color: $accent-color;
-    font-weight: 900;
-    margin: 0.5em auto;
-    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.4);
-    letter-spacing: 0.05em;
-    width: 80%;
-
-    &:disabled {
-      opacity: 0.4;
-    }
-  }
-
-  .button {
-    display: block;
-    border: none;
-    border-radius: 0.3em;
-    font-size: 1.2em;
-    padding: 0.3em 0.75em;
-    line-height: 1;
-    background-color: #fafafa;
-    color: $accent-color;
-    font-weight: 900;
-    margin: 0.5em auto;
-    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.4);
-    letter-spacing: 0.05em;
-    user-select: none;
-
-    &:disabled {
-      opacity: 0.4;
-    }
   }
 
   .accentBg {
-    font-weight: 700;
-    border-bottom-left-radius: $border-radius-size;
-    border-bottom-right-radius: $border-radius-size;
-    background: $accent-color;
+    font-weight: bold;
+    background: #343434 0% 0% no-repeat padding-box;
+    color: #fff;
+    border: 7px solid #EECF82;
+    flex-grow: 1;
+
+    .name {
+      font-size: 1.7em;
+      font-weight: 900;
+      padding: 0 0.35em;
+    }
+
+    .description {
+      padding: 0.5em;
+      flex-grow: 1;
+      white-space: pre-wrap;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .input {
+      display: block;
+      border: none;
+      border-radius: 0.3em;
+      font-size: 1.2em;
+      padding: 0.3em 0.75em;
+      line-height: 1;
+      background-color: #000;
+      color: #fafafa;
+      font-weight: 900;
+      margin: 0.5em auto;
+      box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.4);
+      letter-spacing: 0.05em;
+      width: 80%;
+
+      &:disabled {
+        opacity: 0.4;
+      }
+    }
+
+    .button {
+      display: block;
+      border: none;
+      border-radius: 0.3em;
+      font-size: 1.2em;
+      padding: 0.3em 0.75em;
+      line-height: 1;
+      background-color: #000;
+      color: #fafafa;
+      font-weight: 900;
+      margin: 0.5em auto;
+      box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.4);
+      letter-spacing: 0.05em;
+      user-select: none;
+
+      &:disabled {
+        opacity: 0.4;
+      }
+    }
   }
 }

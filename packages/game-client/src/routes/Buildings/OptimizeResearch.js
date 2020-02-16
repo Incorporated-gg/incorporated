@@ -25,19 +25,14 @@ export default function OptimizeResearch({ activeScreen }) {
     <Card
       image={require('./img/central-office.png')}
       title={'Oficina Central'}
-      subtitle={`Lvl. ${currentOptimizeLvl.toLocaleString()}`}
-      desc={'Al subir de nivel, el resto de edificios darán más dinero.'}
-      accentColor={'#F6901A'}>
+      ribbon={`Lvl. ${currentOptimizeLvl.toLocaleString()}`}
+      desc={'Al subir de nivel, el resto de edificios darán más dinero.'}>
       {activeScreen === 'buy' && (
         <>
           <Stat img={require('./img/stat-price.png')} title={'Coste'} value={`${coste.toLocaleString()}€`} />
           <Stat img={require('./img/stat-pri.png')} title={'PRI'} value={`${timeToRecoverInvestment} días`} />
 
-          <button
-            className={cardStyles.button}
-            onClick={buyResearchClicked}
-            disabled={coste >= userData.money}
-            style={{ color: '#F6901A' }}>
+          <button className={cardStyles.button} onClick={buyResearchClicked} disabled={coste >= userData.money}>
             MEJORAR
           </button>
         </>

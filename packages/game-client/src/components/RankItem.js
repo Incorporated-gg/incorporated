@@ -10,7 +10,7 @@ RankItem.propTypes = {
 export default function RankItem({ rank, children, pointsString }) {
   return (
     <div className={styles.rankingItem}>
-      <div className={`${styles.rankPosition} pos${rank}`}>{rank.toLocaleString()}</div>
+      <div className={`${styles.rankPosition} pos${rank}`}>{rank.toLocaleString()}.</div>
       <div className={styles.username}>{children}</div>
       <div className={styles.points}>{pointsString}</div>
     </div>

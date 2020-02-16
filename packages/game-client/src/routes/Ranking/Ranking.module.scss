@@ -1,7 +1,16 @@
 .rankingContainer {
-    width: 100%;
-    padding: 0 0.5em;
+    width: 96%;
+    margin: 0.5em auto;
+    border: #E7C97D solid 7px;
+    background-color: #343434;
 }
+
 .monopolies {
     background: linear-gradient(#a7aebe, #929baf);
+}
+
+input.searchUser {
+    display: block;
+    width: 96%;
+    margin: 0.5em auto;
 }
