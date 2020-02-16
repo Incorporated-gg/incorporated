@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
-import Badge from 'routes/alliance/Badge'
+import AllianceBadge from 'components/alliance/alliance-badge'
 
 AllianceLink.propTypes = {
   alliance: PropTypes.object,
@@ -18,7 +18,7 @@ export default function AllianceLink({ alliance, type = 'longName' }) {
 
   return (
     <Link to={`/ranking/alliance/${alliance.short_name}`}>
-      <Badge badge={alliance.badge} />
+      <AllianceBadge badge={alliance.badge} />
       <span style={{ verticalAlign: 'middle' }}>{text}</span>
     </Link>
   )

@@ -1,0 +1,46 @@
+.mainMenu {
+    display: flex;
+    flex-direction: row;
+    max-width: 720px;
+    margin: auto;
+    background-color: #343434;
+
+    > a {
+        display: block;
+        flex-grow: 1;
+        text-align: center;
+        padding: 0.3em 0.5em;
+        border-right: 2px solid #272727;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+
+        &:last-child {
+            border-right: none;
+        }
+
+        &.active {
+            background: linear-gradient(0deg, #CC8C20 0%, #EECF82 100%);
+
+            .svgText svg {
+                opacity: 1;
+                width: 3.5em;
+            }
+        }
+    }
+
+
+    .svgIcon svg {
+        width: 2.5em;
+        height: 2.5em;
+    }
+
+    .svgText svg {
+        margin-top: 0.2em;
+        transition: width linear .2s, opacity linear .2s;
+        width: 2.5em;
+        height: 1.3em;
+        opacity: 0;
+    }
+}
