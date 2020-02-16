@@ -9,7 +9,7 @@ Icon.propTypes = {
   className: PropTypes.string,
 }
 
-function Icon({ iconName = 'money', size, className = '', ...props }) {
+function Icon({ iconName, size, className = '', ...props }) {
   if (size) {
     props.width = size
     props.height = size

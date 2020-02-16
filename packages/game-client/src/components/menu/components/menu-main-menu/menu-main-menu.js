@@ -3,6 +3,7 @@ import { useLocation, Link } from 'react-router-dom'
 import styles from './menu-main-menu.module.scss'
 import PropTypes from 'prop-types'
 import Icon from 'components/icon'
+import UnreadCountBubble from '../unread-count-bubble'
 
 MainMenu.propTypes = {
   menuItems: PropTypes.array.isRequired,
@@ -16,13 +17,16 @@ export default function MainMenu({ menuItems, getActiveGroup }) {
     <div className={styles.mainMenu}>
       {menuItems.map(group => {
         const mainPathAlt = group.items.find(item => item.path === group.mainPath).alt
-        const svgIcon = group.svgIcon
-        const svgText = group.svgText
         const isActive = group === activeGroup
+        const extra = group.extra || []
         return (
           <Link to={group.mainPath} key={group.mainPath} className={isActive ? styles.active : ''}>
-            <Icon iconName={svgIcon} className={styles.svgIcon} alt={mainPathAlt} />
-            <Icon iconName={svgText} className={styles.svgText} />
+            <Icon iconName={group.svgIcon} className={styles.svgIcon} alt={mainPathAlt} />
+            <div>
+              <Icon iconName={group.svgText} className={styles.svgText} />
+              {extra.includes('unread_messages') && <UnreadCountBubble type="messages" />}
+              {extra.includes('unread_reports') && <UnreadCountBubble type="reports" />}
+            </div>
           </Link>
         )
       })}

@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { CSSTransition } from 'react-transition-group'
-import './Login.scss'
+import './login.scss'
 import PropTypes from 'prop-types'
 import api from '../../lib/api'
 import { userLoggedIn } from '../../lib/user'

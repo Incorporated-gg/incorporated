@@ -1,6 +1,6 @@
 import React from 'react'
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
-import Login from '../routes/Login/Login'
+import Login from '../routes/login/login'
 import ScrollToTop from './ScrollToTop'
 
 export default function LoginRouter() {

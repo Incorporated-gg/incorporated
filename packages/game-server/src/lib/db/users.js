@@ -182,15 +182,23 @@ async function getUnreadMessagesCount(userID) {
     { count: unreadMessagesCount },
   ] = await mysql.query('SELECT COUNT(*) as count FROM messages WHERE user_id=? AND created_at>?', [
     userID,
-    lastCheckedMessagesAt,
+    lastCheckedMessagesAt || 0,
   ])
+  return unreadMessagesCount
+}
+
+module.exports.getUnreadReportsCount = getUnreadReportsCount
+async function getUnreadReportsCount(userID) {
+  const [
+    { last_checked_reports_at: lastCheckedReportsAt },
+  ] = await mysql.query('SELECT last_checked_reports_at FROM users WHERE id=?', [userID])
   const [
     { count: unreadMissionsCount },
   ] = await mysql.query(
     'SELECT COUNT(*) as count FROM missions WHERE completed=1 AND will_finish_at>? AND (user_id=? OR target_user=?)',
-    [lastCheckedMessagesAt, userID, userID]
+    [lastCheckedReportsAt || 0, userID, userID]
   )
-  return unreadMessagesCount + unreadMissionsCount
+  return unreadMissionsCount
 }
 
 module.exports.runUserMoneyUpdate = runUserMoneyUpdate

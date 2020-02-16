@@ -41,13 +41,13 @@ export default function Header() {
           </div>
           <div className={styles.headerStats}>
             <div className={styles.stat}>
-              {Math.floor(userData.money).toLocaleString()} <Icon className={styles.headerStatIcon} />
+              {Math.floor(userData.money).toLocaleString()} <Icon iconName="money" className={styles.headerStatIcon} />
             </div>
             <div className={styles.stat}>
-              {Math.floor(userData.money).toLocaleString()} <Icon className={styles.headerStatIcon} />
+              {Math.floor(userData.money).toLocaleString()} <Icon iconName="money" className={styles.headerStatIcon} />
             </div>
             <div className={styles.stat}>
-              {Math.floor(userData.money).toLocaleString()} <Icon className={styles.headerStatIcon} />
+              {Math.floor(userData.money).toLocaleString()} <Icon iconName="money" className={styles.headerStatIcon} />
             </div>
           </div>
           <DeclareBankruptcy />

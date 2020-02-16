@@ -15,6 +15,9 @@ services:
       - ./nginx-conf/vhost.d:/etc/nginx/vhost.d
       - ./nginx-conf/conf.d/game-dev/proxy.conf:/etc/nginx/conf.d/my_proxy.conf:rw
       - ./nginx-conf/certs:/etc/nginx/certs:rw
+    depends_on:
+      - game-server
+      - game-client
 
   game-client:
     build: ./packages/game-client
@@ -70,6 +73,9 @@ services:
       - ./nginx-conf/vhost.d:/etc/nginx/vhost.d
       - ./nginx-conf/conf.d/account-dev/proxy.conf:/etc/nginx/conf.d/my_proxy.conf:rw
       - ./nginx-conf/certs:/etc/nginx/certs:rw
+    depends_on:
+      - account-server
+      - account-client
 
   account-client:
     build: ./packages/account-client

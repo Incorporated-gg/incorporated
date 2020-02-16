@@ -3,6 +3,7 @@ export default [
     mainPath: '/ranking',
     svgIcon: 'missions',
     svgText: 'text-misiones',
+    extra: ['unread_reports'],
     items: [
       {
         path: '/ranking',
@@ -19,6 +20,7 @@ export default [
       {
         path: '/reports',
         alt: 'Reportes',
+        extra: ['unread_reports'],
       },
     ],
   },
@@ -26,6 +28,7 @@ export default [
     mainPath: '/newspaper',
     svgIcon: 'inversion',
     svgText: 'text-periodico',
+    extra: ['unread_messages'],
     items: [
       {
         path: '/newspaper',
@@ -34,6 +37,7 @@ export default [
       {
         path: '/messages',
         alt: 'Mensajes',
+        extra: ['unread_messages'],
       },
     ],
   },

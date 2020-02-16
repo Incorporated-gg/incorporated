@@ -4,6 +4,7 @@ const {
   getResearchs,
   getPersonnel,
   getUnreadMessagesCount,
+  getUnreadReportsCount,
   getBuildings,
   runUserMoneyUpdate,
 } = require('./lib/db/users')
@@ -51,14 +52,16 @@ function modifyResponseBody(req, res, next) {
   res.json = async function() {
     if (req.userData) {
       // Modify response to include extra data for logged in users
-      const [unreadMessagesCount, activeMission, activeTasks] = await Promise.all([
+      const [unreadMessagesCount, unreaReportsCount, activeMission, activeTasks] = await Promise.all([
         getUnreadMessagesCount(req.userData.id),
+        getUnreadReportsCount(req.userData.id),
         getActiveMission(req.userData.id),
         getUserActiveTasks(req.userData.id),
       ])
       const extraData = {
         money: req.userData.money,
         unread_messages_count: unreadMessagesCount,
+        unread_reports_count: unreaReportsCount,
         active_mission: activeMission,
         personnel: req.userData.personnel,
         researchs: req.userData.researchs,

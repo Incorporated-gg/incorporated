@@ -5,6 +5,7 @@ import PropTypes from 'prop-types'
 import useIsDesktop from 'lib/useIsDesktop'
 import useWindowSize from 'lib/useWindowSize'
 import { DESKTOP_WIDTH_BREAKPOINT } from 'lib/utils'
+import UnreadCountBubble from '../unread-count-bubble'
 
 SubMenu.propTypes = {
   getActiveGroup: PropTypes.func.isRequired,
@@ -27,9 +28,12 @@ export default function SubMenu({ getActiveGroup }) {
     <div className={`${styles.subMenu} ${isDesktop ? styles.desktop : ''}`}>
       <div className={styles.subMenuMarkers} style={markersStyle} />
       {activeGroup.items.map(item => {
+        const extra = item.extra || []
         return (
           <NavLink exact to={item.path} key={item.path}>
             <div className={styles.subMenuItem}>{item.alt}</div>
+            {extra.includes('unread_messages') && <UnreadCountBubble type="messages" />}
+            {extra.includes('unread_reports') && <UnreadCountBubble type="reports" />}
           </NavLink>
         )
       })}
