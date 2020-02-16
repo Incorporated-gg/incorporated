@@ -5,7 +5,7 @@ import PropTypes from 'prop-types'
 import useIsDesktop from 'lib/useIsDesktop'
 import useWindowSize from 'lib/useWindowSize'
 import { DESKTOP_WIDTH_BREAKPOINT } from 'lib/utils'
-import UnreadCountBubble from '../unread-count-bubble'
+import UnreadCountBubble from '../menu-unread-count-bubble'
 
 SubMenu.propTypes = {
   getActiveGroup: PropTypes.func.isRequired,

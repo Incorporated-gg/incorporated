@@ -1,10 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react'
-import api from '../../lib/api'
+import api from 'lib/api'
 import MissionRow from './MissionRow'
 import styles from './Reports.module.scss'
-import MissionAttackModal from '../../components/mission-modals/MissionAttack'
-import MissionSpyModal from '../../components/mission-modals/MissionSpy'
-import MissionSimulateModal from '../../components/mission-modals/MissionSimulate'
+import MissionModal from 'components/mission-modal'
 
 export default function Reports() {
   const [missions, setMissions] = useState({
@@ -36,9 +34,13 @@ export default function Reports() {
       <button onClick={() => setShowAttackModal(true)}>Atacar</button>
       <button onClick={() => setShowSpyModal(true)}>Espiar</button>
       <button onClick={() => setShowSimulatorModal(true)}>Simulador</button>
-      <MissionAttackModal isOpen={showAttackModal} onRequestClose={() => setShowAttackModal(false)} />
-      <MissionSpyModal isOpen={showSpyModal} onRequestClose={() => setShowSpyModal(false)} />
-      <MissionSimulateModal isOpen={showSimulatorModal} onRequestClose={() => setShowSimulatorModal(false)} />
+      <MissionModal missionType="attack" isOpen={showAttackModal} onRequestClose={() => setShowAttackModal(false)} />
+      <MissionModal missionType="spy" isOpen={showSpyModal} onRequestClose={() => setShowSpyModal(false)} />
+      <MissionModal
+        missionType="simulate"
+        isOpen={showSimulatorModal}
+        onRequestClose={() => setShowSimulatorModal(false)}
+      />
 
       <div className={styles.missionContainer}>
         <h2>

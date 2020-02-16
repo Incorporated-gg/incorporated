@@ -1,11 +1,10 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import styles from './UserActionLinks.module.scss'
-import { useUserData } from '../lib/user'
-import MissionAttackModal from './mission-modals/MissionAttack'
-import MissionSpyModal from './mission-modals/MissionSpy'
-import NewMessageModal from '../routes/Messages/NewMessageModal'
+import { useUserData } from 'lib/user'
+import NewMessageModal from 'routes/Messages/NewMessageModal'
 import { NEWBIE_ZONE_DAILY_INCOME } from 'shared-lib/missionsUtils'
+import MissionModal from './mission-modal'
 
 UserActionLinks.propTypes = {
   user: PropTypes.object.isRequired,
@@ -36,8 +35,13 @@ export default function UserActionLinks({ user }) {
         Espiar
       </button>
       <NewMessageModal user={user} isOpen={showMessageModal} onRequestClose={() => setShowMessageModal(false)} />
-      <MissionAttackModal user={user} isOpen={showAttackModal} onRequestClose={() => setShowAttackModal(false)} />
-      <MissionSpyModal user={user} isOpen={showSpyModal} onRequestClose={() => setShowSpyModal(false)} />
+      <MissionModal
+        missionType="attack"
+        user={user}
+        isOpen={showAttackModal}
+        onRequestClose={() => setShowAttackModal(false)}
+      />
+      <MissionModal missionType="spy" user={user} isOpen={showSpyModal} onRequestClose={() => setShowSpyModal(false)} />
     </>
   )
 }

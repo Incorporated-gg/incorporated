@@ -1,18 +1,15 @@
 import React, { useState, useCallback, useEffect } from 'react'
-import api from '../../lib/api'
-import { useUserData } from '../../lib/user'
+import api from 'lib/api'
+import { useUserData } from 'lib/user'
 import { personnelList } from 'shared-lib/personnelUtils'
 import { calculateMissionTime } from 'shared-lib/missionsUtils'
 import PropTypes from 'prop-types'
-import styles from './Missions.module.scss'
-import Modal from 'react-modal'
 
-MissionSpyModal.propTypes = {
+MissionModalSpy.propTypes = {
   user: PropTypes.object,
-  isOpen: PropTypes.bool.isRequired,
   onRequestClose: PropTypes.func.isRequired,
 }
-export default function MissionSpyModal({ user, isOpen, onRequestClose }) {
+export default function MissionModalSpy({ user, onRequestClose }) {
   const userData = useUserData()
   const [toUser, setToUser] = useState((user && user.username) || '')
   const [numTroops, setNumTroops] = useState(() => {
@@ -47,29 +44,27 @@ export default function MissionSpyModal({ user, isOpen, onRequestClose }) {
   const missionSeconds = calculateMissionTime('spy')
 
   return (
-    <Modal isOpen={isOpen} onRequestClose={onRequestClose}>
-      <form className={styles.startNewMission}>
-        <div>
-          <label>
-            Usuario a espiar
-            {': '}
-            <input type="text" name="" value={toUser} onChange={e => setToUser(e.target.value)} />
-          </label>
-        </div>
-        <div>
-          <label>
-            {troopName}
-            {': '}
-            <input type="number" name="quantity" value={numTroops} onChange={e => setNumTroops(e.target.value)} />
-          </label>
-        </div>
-        <div>Tiempo de mision: {missionSeconds}s</div>
-        <div>
-          <button onClick={startMission} disabled={!isFormReady}>
-            Enviar
-          </button>
-        </div>
-      </form>
-    </Modal>
+    <>
+      <div>
+        <label>
+          Usuario a espiar
+          {': '}
+          <input type="text" name="" value={toUser} onChange={e => setToUser(e.target.value)} />
+        </label>
+      </div>
+      <div>
+        <label>
+          {troopName}
+          {': '}
+          <input type="number" name="quantity" value={numTroops} onChange={e => setNumTroops(e.target.value)} />
+        </label>
+      </div>
+      <div>Tiempo de mision: {missionSeconds}s</div>
+      <div>
+        <button onClick={startMission} disabled={!isFormReady}>
+          Enviar
+        </button>
+      </div>
+    </>
   )
 }

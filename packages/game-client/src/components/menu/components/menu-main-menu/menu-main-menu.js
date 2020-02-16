@@ -3,7 +3,7 @@ import { useLocation, Link } from 'react-router-dom'
 import styles from './menu-main-menu.module.scss'
 import PropTypes from 'prop-types'
 import Icon from 'components/icon'
-import UnreadCountBubble from '../unread-count-bubble'
+import UnreadCountBubble from '../menu-unread-count-bubble'
 
 MainMenu.propTypes = {
   menuItems: PropTypes.array.isRequired,
