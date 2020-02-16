@@ -8,10 +8,12 @@ export default [
       {
         path: '/ranking',
         alt: 'Ranking',
+        alternativePaths: ['/ranking/research', '/ranking/alliances'],
       },
       {
-        path: '/ranking/monopolies',
+        path: '/contests/monopolies',
         alt: 'Competiciones',
+        alternativePaths: ['/contests', '/contests/fever', '/contests/profit', '/contests/spy'],
       },
       {
         path: '/personnel',
@@ -36,6 +38,7 @@ export default [
       },
       {
         path: '/messages',
+        alternativePaths: ['/messages/sent'],
         alt: 'Mensajes',
         extra: ['unread_messages'],
       },

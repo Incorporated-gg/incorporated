@@ -27,6 +27,7 @@ module.exports = {
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "warn",
     "no-shadow": "warn",
-    "no-return-await": "off"
+    "no-return-await": "off",
+    "import/no-named-as-default-member": "off"
   }
 };

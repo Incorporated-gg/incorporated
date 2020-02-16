@@ -11,6 +11,7 @@ import Home from 'routes/home'
 import Buildings from 'routes/Buildings/Buildings'
 import Research from 'routes/Research/Research'
 import Ranking from 'routes/Ranking/Router'
+import Contests from 'routes/Contests/Router'
 import Alliance from 'routes/Alliance/Alliance'
 import Personnel from 'routes/Personnel/Personnel'
 import Messages from 'routes/Messages/Messages'
@@ -36,6 +37,9 @@ export default function LoggedInRouter() {
             </Route>
             <Route path="/ranking">
               <Ranking />
+            </Route>
+            <Route path="/contests">
+              <Contests />
             </Route>
             <Route path="/alliance">
               <Alliance />

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import api from '../../lib/api'
 import Username from '../../components/Username'
 import { buildingsList } from 'shared-lib/buildingsUtils'
-import styles from './Ranking.module.scss'
+import styles from './contests.module.scss'
 
 export default function Monopolies() {
   const [monopolies, setMonopolies] = useState([])
