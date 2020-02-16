@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react'
-import api from '../../../lib/api'
-import Username from '../../../components/Username'
+import { get, post } from 'lib/api'
+import Username from 'components/Username'
 import { useParams } from 'react-router-dom'
-import { useUserData, reloadUserData } from '../../../lib/user'
+import { useUserData, reloadUserData } from 'lib/user'
 import styles from './AllianceProfile.module.scss'
-import RankItem from '../../../components/RankItem'
-import WarInfo from '../../Alliance/WarInfo'
+import RankItem from 'components/RankItem'
+import WarInfo from 'components/alliance/alliance-war-info'
 
 export default function Ranking() {
   const { allianceShortName } = useParams()
@@ -14,8 +14,7 @@ export default function Ranking() {
   const userData = useUserData()
 
   const reloadAllianceData = useCallback(() => {
-    api
-      .get(`/v1/ranking/alliance/${allianceShortName}`)
+    get(`/v1/ranking/alliance/${allianceShortName}`)
       .then(res => {
         setAlliance(res.alliance)
       })
@@ -27,16 +26,14 @@ export default function Ranking() {
   }, [allianceShortName, reloadAllianceData])
 
   const createMemberRequest = () => {
-    api
-      .post('/v1/alliance/member_request/create', { alliance_id: alliance.id })
+    post('/v1/alliance/member_request/create', { alliance_id: alliance.id })
       .then(() => alert('Petición enviada'))
       .catch(err => alert(err.message))
   }
 
   const leaveAlliance = () => {
     if (!window.confirm('Estás seguro de que quieres salir?')) return
-    api
-      .post('/v1/alliance/leave')
+    post('/v1/alliance/leave')
       .then(() => {
         reloadAllianceData()
         reloadUserData()
@@ -47,10 +44,9 @@ export default function Ranking() {
   }
   const declareWar = () => {
     if (!window.confirm('Estás seguro de que quieres declarar guerra a esta alianza?')) return
-    api
-      .post('/v1/alliance/declare_war', {
-        alliance_id: alliance.id,
-      })
+    post('/v1/alliance/declare_war', {
+      alliance_id: alliance.id,
+    })
       .then(() => {
         reloadAllianceData()
         reloadUserData()

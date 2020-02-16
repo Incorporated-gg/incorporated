@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import api from '../../lib/api'
+import { post } from '../../lib/api'
 import Username from '../../components/Username'
 import PropTypes from 'prop-types'
 import { userData } from '../../lib/user'
@@ -9,7 +9,7 @@ import { researchList } from 'shared-lib/researchUtils'
 import styles from './Messages.module.scss'
 import UserActionLinks from '../../components/UserActionLinks'
 import ErrorBoundary from '../../components/ErrorBoundary'
-import AllianceLink from '../../components/AllianceLink'
+import AllianceLink from 'components/alliance/alliance-link'
 import NewMessageModal from './NewMessageModal'
 
 SingleMessage.propTypes = {
@@ -23,8 +23,7 @@ export default function SingleMessage({ reloadMessagesData, message, isFirstMsg 
 
   const deleteMessage = e => {
     e.preventDefault()
-    api
-      .post(`/v1/messages/delete`, { message_id: message.id })
+    post(`/v1/messages/delete`, { message_id: message.id })
       .then(() => reloadMessagesData())
       .catch(err => {
         alert(err.message)

@@ -1,7 +1,7 @@
 import React from 'react'
 import { ReactSVG } from 'react-svg'
 import PropTypes from 'prop-types'
-import styles from './style.module.scss'
+import styles from './icon.module.scss'
 
 Icon.propTypes = {
   iconName: PropTypes.string,
