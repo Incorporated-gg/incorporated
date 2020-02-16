@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useCallback } from 'react'
-import api from '../../lib/api'
-import CreateLoan from '../../components/loans/create-loan'
-import LoanList from '../../components/loans/loan-list'
-import TakenLoan from '../../components/loans/taken-loan'
+import { get } from 'lib/api'
+import CreateLoan from 'components/loans/create-loan'
+import LoanList from 'components/loans/loan-list'
+import TakenLoan from 'components/loans/taken-loan'
 
 export default function Loans() {
   const [error, setError] = useState(null)
@@ -11,8 +11,7 @@ export default function Loans() {
   const [takenLoan, setTakenLoan] = useState(null)
 
   const refreshLoansList = useCallback(() => {
-    api
-      .get('/v1/loans')
+    get('/v1/loans')
       .then(res => {
         setLoans(res.loans)
         setGivenLoan(res.given_loan)
