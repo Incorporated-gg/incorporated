@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import api from '../../lib/api'
-import Username from '../../components/Username'
-import UserActionLinks from '../../components/UserActionLinks'
+import Username from '../../components/UI/Username'
+import UserActionLinks from '../../components/UI/UserActionLinks'
 
 export default function Monopolies() {
   const { contestName } = useParams()

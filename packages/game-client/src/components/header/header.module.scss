@@ -1,35 +1,37 @@
-.headerContainer {
+.container {
   margin: 0 auto;
   max-width: 720px;
   font-weight: 600;
-  font-size: 1.2em;
+  font-size: 1em;
   color: #fafafa;
   background-color: #343434;
   border-bottom: 8px solid #EECF82;
   padding: 0.5em;
+  padding-top: 0;
 
   .headerLinks {
     display: flex;
 
-    .headerButton {
-      background-color: #EECF82;
-      border: 2px solid #A38F5B;
-      text-align: center;
+    .headerOuterContainer {
       margin: 0.5em 0;
+      cursor: pointer;
+    }
+
+    .headerContainer {
       padding: 0.2em 1.75em;
       display: flex;
       align-items: center;
       justify-content: center;
-      cursor: pointer;
-
-      .headerIcon svg {
-        width: 1.3em;
-        height: 1.3em;
-      }
     }
 
-    .logo  {
+    .headerIcon svg {
+      width: 1.1em;
+      height: 1.1em;
+    }
+
+    .logo {
       margin: auto;
+
       svg {
         max-height: 4em;
         width: 8em;
@@ -42,21 +44,36 @@
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    font-size: 0.7em;
+    font-size: 0.9em;
+
+    .statContainer {
+      flex-grow: 1;
+
+      &:not(:last-child) {
+        margin-right: 0.25em;
+      }
+    }
 
     .stat {
-      background-color: #343434;
-      border: 4px solid #A38F5B;
-      padding: 0.2em;
-      line-height: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: inline-block;
+      width: 100%;
+      padding-top: 2px;
+      line-height: 1.4;
+      text-align: center;
+      &.statMission1 {
+        width: calc(100% - 25px);
+      }
+      &.statMission2 {
+        width: 20px;
+        margin-left: 5px;
+      }
     }
 
     .headerStatIcon svg {
+      margin-left: 2px;
       width: 20px;
-      height: 20px;
+      height: 16px;
+      vertical-align: middle;
     }
   }
 }

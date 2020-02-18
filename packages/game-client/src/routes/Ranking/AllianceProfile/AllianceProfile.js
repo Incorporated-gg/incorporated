@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { get, post } from 'lib/api'
-import Username from 'components/Username'
+import Username from 'components/UI/Username'
 import { useParams } from 'react-router-dom'
 import { useUserData, reloadUserData } from 'lib/user'
 import styles from './AllianceProfile.module.scss'
-import RankItem from 'components/RankItem'
+import RankItem from 'components/UI/RankItem'
 import WarInfo from 'components/alliance/alliance-war-info'
 
 export default function Ranking() {

@@ -1,33 +1,22 @@
-import React, { useEffect, useState } from 'react'
-import styles from './Buildings.module.scss'
+import React, { useEffect } from 'react'
 import BuildingItem from './BuildingItem'
 import OptimizeResearch from './OptimizeResearch'
 import { buildingsList, calcBuildingDailyIncome, calcBuildingMaxMoney } from 'shared-lib/buildingsUtils'
 import { userData as userDataRaw, fireUserDataListeners } from '../../lib/user'
-import CardList, { cardListStyles } from '../../components/CardList'
+import CardList, { cardListStyles } from '../../components/UI/CardList'
 
 export default function Buildings() {
-  const [activeScreen, setActiveScreen] = useState('bank')
-
   useEffect(() => {
     const interval = setupBuildingsBankUpdater()
     return () => clearInterval(interval)
   }, [])
 
-  const switchBuyAndBank = () => {
-    setActiveScreen(activeScreen === 'bank' ? 'buy' : 'bank')
-  }
-
   return (
     <CardList noGrid>
-      <button className={styles.switchBuyAndBank} onClick={switchBuyAndBank}>
-        CAMBIAR A {activeScreen === 'bank' ? 'COMPRAR' : 'BANCO'}
-      </button>
-      <br />
       <div className={cardListStyles.grid}>
-        <OptimizeResearch activeScreen={activeScreen} />
+        <OptimizeResearch />
         {buildingsList.map(buildingInfo => (
-          <BuildingItem key={buildingInfo.id} buildingID={buildingInfo.id} activeScreen={activeScreen} />
+          <BuildingItem key={buildingInfo.id} buildingID={buildingInfo.id} />
         ))}
       </div>
     </CardList>

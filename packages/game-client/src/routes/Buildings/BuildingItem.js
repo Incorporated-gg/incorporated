@@ -1,18 +1,15 @@
-import React, { useCallback, useMemo } from 'react'
-import {
-  calcBuildingPrice,
-  calcBuildingDailyIncome,
-  buildingsList,
-  calcBuildingMaxMoney,
-} from 'shared-lib/buildingsUtils'
+import React, { useCallback } from 'react'
+import { calcBuildingPrice, calcBuildingDailyIncome, buildingsList } from 'shared-lib/buildingsUtils'
 import PropTypes from 'prop-types'
 import { userData as userDataRaw, useUserData, updateUserData } from 'lib/user'
 import { post } from 'lib/api'
 import Card from 'components/card'
-import Stat from 'components/stat'
-import cardStyles from 'components/card/card.module.scss'
 import { buyBuilding } from './buyBuilding'
 import useHoldPress from 'lib/useHoldPress'
+import styles from './Buildings.module.scss'
+import Icon from 'components/icon'
+import { numberToAbbreviation } from 'lib/utils'
+import Container from 'components/UI/container'
 
 const buildingImages = {
   1: require('./img/b1.png'),
@@ -33,9 +30,8 @@ const buildingDescriptions = {
 
 BuildingItem.propTypes = {
   buildingID: PropTypes.number.isRequired,
-  activeScreen: PropTypes.string.isRequired,
 }
-export default function BuildingItem({ buildingID, activeScreen }) {
+export default function BuildingItem({ buildingID }) {
   const userData = useUserData()
   const buildingInfo = buildingsList.find(b => b.id === buildingID)
   const buildingCount = userData.buildings[buildingID].quantity
@@ -49,16 +45,31 @@ export default function BuildingItem({ buildingID, activeScreen }) {
   if (!hasEnoughOptimizeLvl)
     desc = `${desc}\nNecesitas oficina central nivel ${buildingInfo.requiredOptimizeResearchLevel}.`
 
+  const timeToRecoverInvestment = (Math.round((coste / income) * 10) / 10).toLocaleString()
+
   return (
     <Card
       image={buildingImages[buildingID]}
       title={buildingInfo.name}
       ribbon={buildingCount.toLocaleString()}
       desc={desc}>
-      {activeScreen === 'buy' && (
-        <BuyScreen buildingID={buildingID} income={income} coste={coste} hasEnoughOptimizeLvl={hasEnoughOptimizeLvl} />
-      )}
-      {activeScreen === 'bank' && <ExtractScreen buildingID={buildingID} income={income} />}
+      <div className={styles.cardContainer}>
+        <div className={styles.statContainer}>
+          <div>
+            <div>PRI</div>
+            <div>{timeToRecoverInvestment} días</div>
+          </div>
+          <div>
+            <div>Bºs / día</div>
+            <div>
+              {numberToAbbreviation(income * buildingCount)}{' '}
+              <Icon iconName="money" style={{ marginLeft: 3 }} size={20} />
+            </div>
+          </div>
+        </div>
+        <ExtractScreen buildingID={buildingID} />
+        <BuyScreen buildingID={buildingID} coste={coste} hasEnoughOptimizeLvl={hasEnoughOptimizeLvl} />
+      </div>
     </Card>
   )
 }
@@ -66,14 +77,11 @@ export default function BuildingItem({ buildingID, activeScreen }) {
 BuyScreen.propTypes = {
   buildingID: PropTypes.number.isRequired,
   coste: PropTypes.number.isRequired,
-  income: PropTypes.number.isRequired,
   hasEnoughOptimizeLvl: PropTypes.bool.isRequired,
 }
-function BuyScreen({ buildingID, coste, income, hasEnoughOptimizeLvl }) {
+function BuyScreen({ buildingID, coste, hasEnoughOptimizeLvl }) {
   const canAfford = userDataRaw.money > coste
   const canBuy = hasEnoughOptimizeLvl && canAfford
-
-  const timeToRecoverInvestment = (Math.round((coste / income) * 10) / 10).toLocaleString()
 
   const onBuyBuildingPressed = useCallback(() => buyBuilding(buildingID), [buildingID])
   const buyHoldPress = useHoldPress({
@@ -84,35 +92,20 @@ function BuyScreen({ buildingID, coste, income, hasEnoughOptimizeLvl }) {
   })
 
   return (
-    <>
-      <Stat img={require('./img/stat-price.png')} title={'Coste'} value={`${coste.toLocaleString()}€`} />
-      <Stat img={require('./img/stat-pri.png')} title={'PRI'} value={`${timeToRecoverInvestment} días`} />
-
-      <button {...buyHoldPress} className={cardStyles.button} disabled={!canBuy}>
-        COMPRAR
-      </button>
-    </>
+    <Container {...buyHoldPress} outerClassName={`${styles.button} ${canBuy ? '' : styles.canNotBuy}`}>
+      <div className={styles.buttonNumberContainer}>
+        {numberToAbbreviation(coste)} <Icon iconName="money" style={{ marginLeft: 3 }} size={20} />
+      </div>
+      <h2>{'CONSTRUIR'}</h2>
+    </Container>
   )
 }
 
 ExtractScreen.propTypes = {
   buildingID: PropTypes.number.isRequired,
-  income: PropTypes.number.isRequired,
 }
-function ExtractScreen({ buildingID, income }) {
-  const buildingCount = userDataRaw.buildings[buildingID].quantity
+function ExtractScreen({ buildingID }) {
   const accumulatedMoney = userDataRaw.buildings[buildingID].money
-
-  const maxMoney = useMemo(
-    () =>
-      calcBuildingMaxMoney({
-        buildingID: buildingID,
-        buildingAmount: buildingCount,
-        bankResearchLevel: userDataRaw.researchs[4],
-      }),
-    [buildingID, buildingCount]
-  )
-  const moneyClassName = `${accumulatedMoney > maxMoney.maxSafe ? cardStyles.unsafe : ''}`
 
   const onExtractMoney = useCallback(async () => {
     try {
@@ -131,26 +124,11 @@ function ExtractScreen({ buildingID, income }) {
   }, [buildingID])
 
   return (
-    <>
-      <Stat
-        img={require('./img/stat-income.png')}
-        title={'Bºs / día'}
-        value={`${Math.round(income * buildingCount).toLocaleString()}€`}
-      />
-      <Stat
-        img={require('./img/stat-price.png')}
-        title={'Banco'}
-        value={
-          <>
-            <span className={moneyClassName}>{Math.floor(accumulatedMoney).toLocaleString()}€</span>
-            <span> / </span>
-            <span>{maxMoney.maxTotal.toLocaleString()}€</span>
-          </>
-        }
-      />
-      <button className={cardStyles.button} onClick={onExtractMoney}>
-        SACAR
-      </button>
-    </>
+    <Container outerClassName={styles.button} onClick={onExtractMoney}>
+      <div className={styles.buttonNumberContainer}>
+        {numberToAbbreviation(accumulatedMoney)} <Icon iconName="money" style={{ marginLeft: 3 }} size={20} />
+      </div>
+      <h2>{'RECOGER'}</h2>
+    </Container>
   )
 }

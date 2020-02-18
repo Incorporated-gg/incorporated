@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import Username from '../../components/Username'
+import Username from '../../components/UI/Username'
 import api from '../../lib/api'
 import { throttle, getTimeUntil } from '../../lib/utils'
 import PropTypes from 'prop-types'
@@ -8,7 +8,7 @@ import { buildingsList } from 'shared-lib/buildingsUtils'
 import { reloadUserData, userData } from '../../lib/user'
 import { AttackReportMsg, SpyReportMsg } from '../Messages/SingleMessage'
 import { getServerDay } from 'shared-lib/serverTime'
-import ErrorBoundary from '../../components/ErrorBoundary'
+import ErrorBoundary from '../../components/UI/ErrorBoundary'
 import { updateTabTitle } from '../../lib/tabTitle'
 
 MissionRow.propTypes = {

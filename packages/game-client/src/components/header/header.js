@@ -1,7 +1,7 @@
 import React from 'react'
 import styles from './header.module.scss'
 import { useUserData, logout } from 'lib/user'
-import { DESKTOP_WIDTH_BREAKPOINT } from 'lib/utils'
+import { DESKTOP_WIDTH_BREAKPOINT, numberToAbbreviation } from 'lib/utils'
 import { Link } from 'react-router-dom'
 import Icon from 'components/icon'
 import DeclareBankruptcy from 'components/header/components/header-declare-bankruptcy'
@@ -9,48 +9,62 @@ import ActiveMission from 'components/header/components/header-active-mission'
 import Task from 'components/header/components/header-task'
 import useWindowSize from 'lib/useWindowSize'
 import Menu from '../menu/menu'
+import Container from 'components/UI/container'
 
 export default function Header() {
   const dimensions = useWindowSize()
-  const userData = useUserData()
-  if (!userData) return null
   const isDesktop = dimensions.width >= DESKTOP_WIDTH_BREAKPOINT
 
   return (
     <>
       <div style={{ top: 0 }} className={'stickyFullwidthBar'}>
-        <div className={styles.headerContainer}>
+        <div className={styles.container}>
           <div className={styles.headerLinks}>
             <div>
-              <Link className={styles.headerButton} to="/finances">
-                <Icon className={styles.headerIcon} svg={require('./img/finances.svg')} alt="Finances" />
+              <Link to="/finances">
+                <Container outerClassName={styles.headerOuterContainer} className={styles.headerContainer}>
+                  <Icon className={styles.headerIcon} svg={require('./img/finances.svg')} alt="Finances" />
+                </Container>
               </Link>
-              <Link className={styles.headerButton} to="/">
-                <Icon className={styles.headerIcon} svg={require('./img/tasks.svg')} alt="Tareas" />
+              <Link to="/">
+                <Container outerClassName={styles.headerOuterContainer} className={styles.headerContainer}>
+                  <Icon className={styles.headerIcon} svg={require('./img/tasks.svg')} alt="Tareas" />
+                </Container>
               </Link>
             </div>
             <div className={styles.logo}>
               <Icon svg={require('./img/logo.svg')} alt="" />
             </div>
             <div>
-              <div className={styles.headerButton} onClick={logout}>
-                <Icon className={styles.headerIcon} svg={require('./img/logout.svg')} alt="Logout" />
+              <div onClick={logout}>
+                <Container outerClassName={styles.headerOuterContainer} className={styles.headerContainer}>
+                  <Icon className={styles.headerIcon} svg={require('./img/logout.svg')} alt="Logout" />
+                </Container>
               </div>
-              <Link className={styles.headerButton} to={`/ranking/user/${userData.username}`}>
-                <Icon className={styles.headerIcon} svg={require('./img/profile.svg')} alt="Perfil" />
-              </Link>
+              <LinkToMyProfile>
+                <Container outerClassName={styles.headerOuterContainer} className={styles.headerContainer}>
+                  <Icon className={styles.headerIcon} svg={require('./img/profile.svg')} alt="Perfil" />
+                </Container>
+              </LinkToMyProfile>
             </div>
           </div>
           <div className={styles.headerStats}>
-            <div className={styles.stat}>
-              {Math.floor(userData.money).toLocaleString()} <Icon iconName="money" className={styles.headerStatIcon} />
-            </div>
-            <div className={styles.stat}>
-              {Math.floor(userData.money).toLocaleString()} <Icon iconName="money" className={styles.headerStatIcon} />
-            </div>
-            <div className={styles.stat}>
-              {Math.floor(userData.money).toLocaleString()} <Icon iconName="money" className={styles.headerStatIcon} />
-            </div>
+            <Container darkBg outerClassName={styles.statContainer}>
+              <div className={styles.stat}>
+                <MyMoney /> <Icon iconName="money" className={styles.headerStatIcon} />
+              </div>
+            </Container>
+            <Container darkBg outerClassName={styles.statContainer}>
+              <div className={styles.stat}>
+                {numberToAbbreviation(12345)} <Icon iconName="gold" className={styles.headerStatIcon} />
+              </div>
+            </Container>
+            <Container darkBg outerClassName={styles.statContainer}>
+              <div className={`${styles.stat} ${styles.statMission1}`}>
+                {'3:30'} <Icon iconName="dynamite" className={styles.headerStatIcon} />
+              </div>
+              <div className={`${styles.stat} ${styles.statMission2}`}>+</div>
+            </Container>
           </div>
           <DeclareBankruptcy />
         </div>
@@ -60,4 +74,19 @@ export default function Header() {
       <Task />
     </>
   )
+}
+
+// eslint-disable-next-line react/prop-types
+function LinkToMyProfile({ children }) {
+  const userData = useUserData()
+  if (!userData) return null
+
+  return <Link to={`/ranking/user/${userData.username}`}>{children}</Link>
+}
+
+function MyMoney() {
+  const userData = useUserData()
+  if (!userData) return null
+
+  return numberToAbbreviation(userData.money)
 }

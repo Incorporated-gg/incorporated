@@ -6,7 +6,7 @@ import { useUserData, reloadUserData } from 'lib/user'
 import Card from 'components/card'
 import Stat from 'components/stat'
 import cardStyles from 'components/card/card.module.scss'
-import CardList from 'components/CardList'
+import CardList from 'components/UI/CardList'
 
 const personnelImages = {
   sabots: require('./img/sabot.png'),

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import api from '../../lib/api'
-import Username from '../../components/Username'
+import Username from '../../components/UI/Username'
 import { buildingsList } from 'shared-lib/buildingsUtils'
 import styles from './contests.module.scss'
 

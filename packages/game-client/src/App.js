@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import LoggedInRouter from 'routers/logged-in'
 import LogInPage from 'routers/log-in'
 import { userData, loadUserDataFromStorage, userLoggedIn } from 'lib/user'
-import ErrorBoundary from 'components/ErrorBoundary'
+import ErrorBoundary from 'components/UI/ErrorBoundary'
 
 export function reloadApp() {
   staticReloadApp()

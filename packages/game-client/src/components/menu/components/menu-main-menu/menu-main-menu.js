@@ -20,7 +20,7 @@ export default function MainMenu({ menuItems, getActiveGroup }) {
         const isActive = group === activeGroup
         const extra = group.extra || []
         return (
-          <Link to={group.mainPath} key={group.mainPath} className={isActive ? styles.active : ''}>
+          <Link key={group.mainPath} to={group.mainPath} className={isActive ? styles.active : ''}>
             <Icon svg={group.svgIcon} className={styles.svgIcon} alt={mainPathAlt} />
             <div>
               <Icon svg={group.svgText} className={styles.svgText} />

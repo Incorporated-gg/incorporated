@@ -41,7 +41,7 @@ $border-radius-size: 14px;
       width: 5em;
       height: 5em;
       background: linear-gradient(225deg, #343434 0%, #000000 100%);
-      clip-path: polygon(0% 0%, 100% 0%, 100% 100%);
+      clip-path: polygon(-2% -2%, 102% -2%, 102% 102%);
       border-top-right-radius: $border-radius-size;
 
       span {

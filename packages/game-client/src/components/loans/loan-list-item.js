@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react'
 import PropTypes from 'prop-types'
-import Username from '../Username'
+import Username from '../UI/Username'
 import { useUserData } from '../../lib/user'
 import { post } from '../../lib/api'
 import { LOAN_DAYS_DURATION } from 'shared-lib/loansUtils'

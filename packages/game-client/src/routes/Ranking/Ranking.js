@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { get } from '../../lib/api'
-import Username from '../../components/Username'
+import Username from '../../components/UI/Username'
 import { useLocation } from 'react-router-dom'
 import styles from './Ranking.module.scss'
-import RankItem from '../../components/RankItem'
+import RankItem from '../../components/UI/RankItem'
 import AllianceLink from 'components/alliance/alliance-link'
 import { debounce } from '../../lib/utils'
 

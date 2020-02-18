@@ -4,7 +4,7 @@ import styles from './UserActionLinks.module.scss'
 import { useUserData } from 'lib/user'
 import NewMessageModal from 'routes/Messages/NewMessageModal'
 import { NEWBIE_ZONE_DAILY_INCOME } from 'shared-lib/missionsUtils'
-import MissionModal from './mission-modal'
+import MissionModal from '../mission-modal'
 
 UserActionLinks.propTypes = {
   user: PropTypes.object.isRequired,

@@ -1,5 +1,35 @@
 export const DESKTOP_WIDTH_BREAKPOINT = 720
 
+/**
+ * Converts a number to a human readable string. No guaranteed limit in chars (for really big numbers), but usually between 4 and 6
+ * @param {Number} number
+ * @returns {String} Number as string
+ */
+export function numberToAbbreviation(number) {
+  const symbolStr = number < 0 ? '-' : ''
+  number = Math.abs(number)
+
+  if (number >= 1e6) {
+    if (number >= 1e9) {
+      // Multi millions, after 1000M. No decimals
+      return symbolStr + Math.floor(number / 1e6) + 'M'
+    }
+
+    // Millions, between 1M and 1000M
+    let numStr = (Math.floor((number / 1e6) * 100) / 100).toLocaleString()
+    if (numStr.includes('.') || numStr.includes(',')) numStr = numStr.padEnd(4, '0')
+    return symbolStr + numStr + 'M'
+  }
+
+  if (number >= 1e3 * 100) {
+    // Thousands, between 100,000 and 1M
+    return symbolStr + Math.floor(number / 1e3) + 'K'
+  }
+
+  // Small numbers
+  return symbolStr + Math.floor(number).toLocaleString()
+}
+
 export const getTimeUntil = (epochTimestamp, asString = false) => {
   // Set the date we're counting down to
   const countDownDate = new Date(epochTimestamp * 1000).getTime()

@@ -5,7 +5,7 @@ import Header from 'components/header'
 import Footer from 'components/footer'
 import styles from './logged-in.module.scss'
 import ScrollToTop from 'lib/scrollToTop'
-import ChatBubble from 'components/ChatBubble'
+import ChatBubble from 'components/UI/ChatBubble'
 
 import Home from 'routes/home'
 import Buildings from 'routes/Buildings/Buildings'

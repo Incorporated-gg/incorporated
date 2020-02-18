@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import { get } from 'lib/api'
 import { useParams } from 'react-router-dom'
-import UserActionLinks from 'components/UserActionLinks'
+import UserActionLinks from 'components/UI/UserActionLinks'
 import styles from './UserProfile.module.scss'
 import Stat from 'components/stat'
-import Username from 'components/Username'
+import Username from 'components/UI/Username'
 
 export default function Ranking() {
   const { username: routeUsername } = useParams()
