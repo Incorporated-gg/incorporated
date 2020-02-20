@@ -61,9 +61,11 @@
       line-height: 1.4;
       text-align: center;
       &.statMission1 {
+        cursor: pointer;
         width: calc(100% - 25px);
       }
       &.statMission2 {
+        cursor: pointer;
         width: 20px;
         margin-left: 5px;
       }

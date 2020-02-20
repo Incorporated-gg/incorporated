@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
-import styles from './UserActionLinks.module.scss'
 import { useUserData } from 'lib/user'
 import NewMessageModal from 'routes/Messages/NewMessageModal'
 import { NEWBIE_ZONE_DAILY_INCOME } from 'shared-lib/missionsUtils'
@@ -22,16 +21,13 @@ export default function UserActionLinks({ user }) {
   const isInNewbieZone = user.income < NEWBIE_ZONE_DAILY_INCOME
   return (
     <>
-      <button className={styles.button} onClick={() => setShowMessageModal(true)} disabled={isMe}>
+      <button onClick={() => setShowMessageModal(true)} disabled={isMe}>
         Enviar mensaje
       </button>
-      <button
-        className={styles.button}
-        onClick={() => setShowAttackModal(true)}
-        disabled={isMe || shareAlliance || isInNewbieZone}>
+      <button onClick={() => setShowAttackModal(true)} disabled={isMe || shareAlliance || isInNewbieZone}>
         Atacar
       </button>
-      <button className={styles.button} onClick={() => setShowSpyModal(true)} disabled={isMe}>
+      <button onClick={() => setShowSpyModal(true)} disabled={isMe}>
         Espiar
       </button>
       <NewMessageModal user={user} isOpen={showMessageModal} onRequestClose={() => setShowMessageModal(false)} />

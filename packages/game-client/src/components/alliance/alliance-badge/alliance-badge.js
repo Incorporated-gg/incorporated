@@ -29,12 +29,12 @@ const iconComponents = {
 
 AllianceBadge.propTypes = {
   badge: PropTypes.object.isRequired,
+  style: PropTypes.object,
+  className: PropTypes.string,
 }
-export default function AllianceBadge({ badge }) {
+export default function AllianceBadge({ badge, className, style = {}, ...props }) {
   // Background
-  const bgStyle = {
-    backgroundColor: badge.backgroundColor,
-  }
+  style.backgroundColor = badge.backgroundColor
 
   // Icon
   const IconComponent = iconComponents[badge.icon.id]
@@ -42,7 +42,7 @@ export default function AllianceBadge({ badge }) {
   if (badge.icon && badge.icon.color) iconStyle.color = badge.icon.color
 
   return (
-    <span className={styles.container} style={bgStyle}>
+    <span className={styles.container + (className ? ` ${className}` : '')} style={style} {...props}>
       <IconComponent className={styles.icon} style={iconStyle} />
     </span>
   )

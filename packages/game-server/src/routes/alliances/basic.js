@@ -1,6 +1,6 @@
 const mysql = require('../../lib/mysql')
 const alliances = require('../../lib/db/alliances')
-const { hasActiveMission } = require('../../lib/db/users')
+const { getActiveMission } = require('../../lib/db/users')
 const personnel = require('../../lib/db/personnel')
 const { calcResourceMax, calcResearchPrice } = require('shared-lib/allianceUtils')
 
@@ -172,7 +172,8 @@ module.exports = app => {
       return
     }
 
-    if (resourceID !== 'money' && (await hasActiveMission(req.userData.id))) {
+    const activeMission = await getActiveMission(req.userData.id)
+    if ((resourceID === 'sabots' || resourceID === 'thieves') && activeMission.mission_type === 'attack') {
       res.status(400).json({
         error: 'Tienes una misión en curso',
       })

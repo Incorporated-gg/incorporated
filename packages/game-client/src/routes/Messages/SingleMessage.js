@@ -15,10 +15,8 @@ import NewMessageModal from './NewMessageModal'
 SingleMessage.propTypes = {
   message: PropTypes.object.isRequired,
   reloadMessagesData: PropTypes.func.isRequired,
-  isFirstMsg: PropTypes.bool.isRequired,
 }
-export default function SingleMessage({ reloadMessagesData, message, isFirstMsg }) {
-  const [showDetails, setShowDetails] = useState(isFirstMsg)
+export default function SingleMessage({ reloadMessagesData, message }) {
   const [showMessageModal, setShowMessageModal] = useState(false)
 
   const deleteMessage = e => {
@@ -31,44 +29,6 @@ export default function SingleMessage({ reloadMessagesData, message, isFirstMsg 
   }
   const wasSentToMe = message.receiver && message.receiver.id === userData.id
   const dateFormatted = new Date(message.created_at * 1000).toLocaleString()
-
-  if (!showDetails) {
-    let messageElm
-    try {
-      messageElm = getMessageExcerpt(message)
-    } catch (err) {
-      console.error(err)
-      messageElm = (
-        <div>
-          <b>Error al intepretar mensaje</b>: {err.message}
-        </div>
-      )
-    }
-
-    return (
-      <div className={styles.messageContainer}>
-        <button onClick={() => setShowDetails(true)}>Mostrar detalles</button>
-        <div className={styles.msgInfo}>
-          <div>
-            {wasSentToMe && message.sender && (
-              <>
-                {'Enviado por: '}
-                <Username user={message.sender} />
-              </>
-            )}
-            {!wasSentToMe && message.receiver && (
-              <>
-                {'Enviado a: '}
-                <Username user={message.receiver} />
-              </>
-            )}
-          </div>
-          <div>{dateFormatted}</div>
-        </div>
-        <div className={styles.messageText}>{messageElm}</div>
-      </div>
-    )
-  }
 
   let messageElm
   try {
@@ -84,7 +44,6 @@ export default function SingleMessage({ reloadMessagesData, message, isFirstMsg 
 
   return (
     <div className={styles.messageContainer}>
-      <button onClick={() => setShowDetails(false)}>Ocultar detalles</button>
       <div className={styles.msgInfo}>
         <div>
           {wasSentToMe && message.sender && (
@@ -339,44 +298,6 @@ function getMessage(message) {
           <b>Tipo &quot;{message.type}&quot; desconocido</b>: {JSON.stringify(message)}
         </div>
       )
-  }
-  return messageElm
-}
-
-function getMessageExcerpt(message) {
-  let messageElm = null
-  switch (message.type) {
-    case 'private_message':
-      messageElm = <div>Mensaje privado</div>
-      break
-    case 'monopoly_reward':
-      messageElm = <div>Ganaste un monopolio</div>
-      break
-    case 'caught_spies':
-      messageElm = <div>Espías enemigos cazados</div>
-      break
-    case 'war_started': {
-      messageElm = <div>Comienzo de guerra</div>
-      break
-    }
-    case 'war_ended': {
-      messageElm = <div>Fin de guerra</div>
-      break
-    }
-    case 'loan_started':
-      messageElm = <div>Comienzo de préstamo</div>
-      break
-    case 'loan_ended':
-      messageElm = <div>Fin de préstamo</div>
-      break
-    case 'attack_cancelled':
-      messageElm = <div>Ataque cancelado</div>
-      break
-    case 'new_alli_member_req':
-      messageElm = <div>Nueva petición de miembro</div>
-      break
-    default:
-      messageElm = <div>Tipo &quot;{message.type}&quot; desconocido</div>
   }
   return messageElm
 }

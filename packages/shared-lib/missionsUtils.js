@@ -14,8 +14,8 @@ module.exports.DAILY_DEFENSES_INCREASE = process.env.NODE_ENV === 'development' 
 
 module.exports.calculateMissionTime = calculateMissionTime
 function calculateMissionTime(missionType) {
-  if (missionType === 'attack') return process.env.NODE_ENV === 'development' ? 10 : 300
-  if (missionType === 'spy') return process.env.NODE_ENV === 'development' ? 10 : 120
+  if (missionType === 'attack') return process.env.NODE_ENV === 'development' ? 9999910 : 300
+  if (missionType === 'spy') return process.env.NODE_ENV === 'development' ? 99999910 : 120
   return 0
 }
 

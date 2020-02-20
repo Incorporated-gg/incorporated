@@ -1,0 +1,67 @@
+.modal {
+  width: 90vw;
+  max-width: 600px;
+}
+
+.container {
+  padding: 10px;
+  color: #fff;
+  position: relative;
+  text-align: center;
+}
+
+.closeButton {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  width: 2em;
+  height: 2em;
+  cursor: pointer;
+  color: #000;
+}
+
+.vsContainer {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  margin: 20px 0;
+
+  .avatarContainer {
+    position: relative;
+    width: 100%;
+    height: 100%;
+
+    >img {
+      border: 10px solid #EECF82;
+      width: 100%;
+      height: 100%;
+    }
+
+    .allianceBadgeContainer {
+      display: block;
+      padding: 0.15em;
+      background-color: #000;
+      font-size: 2em;
+
+      @media (min-width: 600px) {
+        font-size: 3em;
+      }
+
+      position: absolute;
+      bottom: -0.5em;
+
+      &.first {
+        right: -0.5em;
+      }
+
+      &.second {
+        left: -0.5em;
+      }
+    }
+  }
+}
+
+.attackDetailsContainer {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  margin-bottom: 20px;
+}

@@ -55,7 +55,7 @@ module.exports.getUserDailyIncome = getUserDailyIncome
 export async function getUserDailyIncome(userID) {
   let [buildingsRaw, researchs] = await Promise.all([
     mysql.query('SELECT id, quantity FROM buildings WHERE user_id=?', [userID]),
-    getResearchs(userID),
+    getUserResearchs(userID),
   ])
   const optimizeResearchLevel = researchs[5]
 
@@ -67,9 +67,7 @@ export async function getUserDailyIncome(userID) {
   return totalBuildingsIncome
 }
 
-module.exports.getResearchs = getResearchs
-export const getUserResearchs = getResearchs
-async function getResearchs(userID) {
+export async function getUserResearchs(userID) {
   const researchs = {}
   researchList.forEach(research => (researchs[research.id] = 1))
 
@@ -79,8 +77,7 @@ async function getResearchs(userID) {
   return researchs
 }
 
-module.exports.getPersonnel = getPersonnel
-async function getPersonnel(userID) {
+export async function getPersonnel(userID) {
   const personnels = {}
   personnelList.forEach(personnel => (personnels[personnel.resource_id] = 0))
 
@@ -90,14 +87,12 @@ async function getPersonnel(userID) {
   return personnels
 }
 
-module.exports.getTotalPersonnel = getTotalPersonnel // Includes personnel in active missions
-async function getTotalPersonnel(userID) {
+export async function getTotalPersonnel(userID) {
   const personnels = await getPersonnel(userID)
 
   return personnels
 }
 
-module.exports.getBuildings = getBuildings
 export async function getBuildings(userID) {
   const buildings = buildingsList.reduce((curr, building) => {
     curr[building.id] = {
@@ -115,15 +110,19 @@ export async function getBuildings(userID) {
   return buildings
 }
 
-module.exports.getMissions = getMissions
-async function getMissions(userID) {
+export async function getMissions(userID) {
+  let [
+    { last_checked_reports_at: lastCheckedReportsAt },
+  ] = await mysql.query('SELECT last_checked_reports_at FROM users WHERE id=?', [userID])
+  lastCheckedReportsAt = lastCheckedReportsAt || 0
+
   const dailyCountStartedAt = Math.floor(getInitialUnixTimestampOfServerDay() / 1000)
   const sentMissionsRaw = await mysql.query(
     'SELECT user_id, target_user, data, mission_type, started_at, will_finish_at, completed, result, profit FROM missions WHERE user_id=? ORDER BY will_finish_at DESC',
     [userID]
   )
   const receivedMissionsRaw = await mysql.query(
-    'SELECT user_id, target_user, data, mission_type, started_at, will_finish_at, completed, result, profit FROM missions WHERE target_user=? ORDER BY will_finish_at DESC',
+    'SELECT user_id, target_user, data, mission_type, started_at, will_finish_at, completed, result, profit FROM missions WHERE target_user=? AND mission_type="attack" ORDER BY will_finish_at DESC',
     [userID]
   )
   const [
@@ -149,18 +148,29 @@ async function getMissions(userID) {
     received: receivedMissions,
     receivedToday,
     sentToday,
+    lastCheckedReportsAt,
     ...userMissionLimits,
   }
 }
 
-module.exports.hasActiveMission = hasActiveMission
-async function hasActiveMission(userID) {
+export async function hasActiveMission(userID) {
   const activeMissions = await mysql.query('SELECT 1 FROM missions WHERE user_id=? AND completed=0', [userID])
 
   return activeMissions.length > 0
 }
 
-module.exports.sendMessage = sendMessage
+export async function getActiveMission(userID) {
+  const activeMission = await mysql.selectOne('SELECT mission_type FROM missions WHERE user_id=? AND completed=0', [
+    userID,
+  ])
+
+  if (!activeMission) return null
+
+  return {
+    mission_type: activeMission.mission_type,
+  }
+}
+
 export async function sendMessage({ receiverID, senderID, type, data }) {
   if (type.length > 20) throw new Error("Type can't be longer than 20 chars")
   const messageCreatedAt = Math.floor(Date.now() / 1000)
@@ -195,7 +205,7 @@ async function getUnreadReportsCount(userID) {
   const [
     { count: unreadMissionsCount },
   ] = await mysql.query(
-    'SELECT COUNT(*) as count FROM missions WHERE completed=1 AND will_finish_at>? AND (user_id=? OR target_user=?)',
+    'SELECT COUNT(*) as count FROM missions WHERE completed=1 AND will_finish_at>? AND (user_id=? OR (target_user=? AND mission_type="attack"))',
     [lastCheckedReportsAt || 0, userID, userID]
   )
   return unreadMissionsCount
@@ -212,7 +222,7 @@ async function runUserMoneyUpdate(userID) {
   await mysql.query('UPDATE users SET last_money_update=? WHERE id=?', [currentTimestamp, userID])
 
   // Buildings Income
-  const userResearchs = await getResearchs(userID)
+  const userResearchs = await getUserResearchs(userID)
 
   const buildings = await mysql.query('SELECT id, quantity, money FROM buildings WHERE user_id=?', [userID])
   const buildingsIncomes = buildings.map(building => ({

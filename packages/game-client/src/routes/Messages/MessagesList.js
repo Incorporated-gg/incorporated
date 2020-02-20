@@ -28,12 +28,7 @@ export default function MessagesList({ type }) {
   if (!messages) return <div>Cargando</div>
   if (messages.length === 0) return <div>No hay mensajes</div>
 
-  return messages.map((message, index) => (
-    <SingleMessage
-      key={message.id}
-      isFirstMsg={index === 0}
-      message={message}
-      reloadMessagesData={reloadMessagesData}
-    />
+  return messages.map(message => (
+    <SingleMessage key={message.id} message={message} reloadMessagesData={reloadMessagesData} />
   ))
 }

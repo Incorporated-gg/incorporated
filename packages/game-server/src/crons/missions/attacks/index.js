@@ -7,7 +7,7 @@ const {
 const { calcBuildingMaxMoney } = require('shared-lib/buildingsUtils')
 const { simulateAttack } = require('shared-lib/missionsUtils')
 const {
-  getResearchs,
+  getUserResearchs,
   getPersonnel,
   getBuildings,
   sendMessage,
@@ -69,9 +69,9 @@ async function completeAttackMission(mission) {
     defenderAllianceID,
     defenderMissions,
   ] = await Promise.all([
-    getResearchs(attacker.id),
+    getUserResearchs(attacker.id),
     getUserAllianceID(attacker.id),
-    getResearchs(defender.id),
+    getUserResearchs(defender.id),
     getPersonnel(defender.id),
     getBuildings(defender.id),
     getUserAllianceID(defender.id),

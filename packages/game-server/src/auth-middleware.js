@@ -1,7 +1,7 @@
 import { getUserActiveTasks } from './lib/db/tasks'
 const mysql = require('./lib/mysql')
 const {
-  getResearchs,
+  getUserResearchs,
   getPersonnel,
   getUnreadMessagesCount,
   getUnreadReportsCount,
@@ -28,7 +28,7 @@ async function authMiddleware(req, res, next) {
       await runUserMoneyUpdate(req.userData.id)
 
       const [researchs, personnel, buildings] = await Promise.all([
-        getResearchs(req.userData.id),
+        getUserResearchs(req.userData.id),
         getPersonnel(req.userData.id),
         getBuildings(req.userData.id),
       ])

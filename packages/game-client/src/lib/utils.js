@@ -1,3 +1,6 @@
+import api from './api'
+import { userData, reloadUserData } from './user'
+
 export const DESKTOP_WIDTH_BREAKPOINT = 720
 
 /**
@@ -105,4 +108,12 @@ export function throttle(func, wait, { leading = true, trailing = true } = {}) {
     }
     return result
   }
+}
+
+export async function cancelActiveMission() {
+  const activeMision = userData.active_mission
+  if (!activeMision) return
+  return await api.post('/v1/missions/cancel', { started_at: activeMision.started_at }).then(() => {
+    reloadUserData()
+  })
 }

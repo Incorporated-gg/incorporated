@@ -1,6 +1,5 @@
 .container {
   background: linear-gradient(#EECF82, #CC8C20);
-  padding: 5px;
 }
 
 .inner {
@@ -10,11 +9,7 @@
     border: 1px solid #FFFFFF;
   }
 
-  &.darkBg {
-    padding: 5px;
-
-    >* {
+  &.darkBg > * {
       background: #343434;
-    }
   }
 }

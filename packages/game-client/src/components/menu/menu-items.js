@@ -87,6 +87,7 @@ export default [
       {
         path: '/alliance/missions',
         alt: 'Misiones',
+        alternativePaths: ['/alliance/missions/spy'],
       },
       {
         path: '/alliance/wars',

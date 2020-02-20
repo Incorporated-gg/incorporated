@@ -5,6 +5,7 @@ import PropTypes from 'prop-types'
 Container.propTypes = {
   children: PropTypes.node.isRequired,
   darkBg: PropTypes.bool,
+  borderSize: PropTypes.number,
   whiteBorder: PropTypes.bool,
   className: PropTypes.string,
   style: PropTypes.object,
@@ -12,14 +13,28 @@ Container.propTypes = {
   outerClassName: PropTypes.string,
 }
 
-export default function Container({ children, darkBg, whiteBorder, className, outerClassName, outerStyle, ...props }) {
+export default function Container({
+  children,
+  borderSize = 5,
+  darkBg,
+  whiteBorder,
+  className,
+  outerClassName,
+  style = {},
+  outerStyle = {},
+  ...props
+}) {
+  outerStyle.padding = borderSize
+  if (darkBg) style.padding = borderSize
+
   return (
     <div className={`${styles.container} ${outerClassName}`} style={outerStyle}>
       <div
         {...props}
         className={`${styles.inner} ${whiteBorder ? styles.whiteBorder : ''} ${
           darkBg ? styles.darkBg : ''
-        } ${className}`}>
+        } ${className}`}
+        style={style}>
         {children}
       </div>
     </div>

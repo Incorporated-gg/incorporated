@@ -11,12 +11,13 @@ module.exports = app => {
       return
     }
 
+    const missions = await getMissions(req.userData.id)
+
     mysql.query('UPDATE users SET last_checked_reports_at=? WHERE id=?', [
       Math.floor(Date.now() / 1000),
       req.userData.id,
     ])
 
-    const missions = await getMissions(req.userData.id)
     res.json({
       missions,
     })

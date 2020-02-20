@@ -1,5 +1,11 @@
 const mysql = require('../../../lib/mysql')
-const { getResearchs, sendMessage, getBuildings, getPersonnel, runUserMoneyUpdate } = require('../../../lib/db/users')
+const {
+  getUserResearchs,
+  sendMessage,
+  getBuildings,
+  getPersonnel,
+  runUserMoneyUpdate,
+} = require('../../../lib/db/users')
 const { calcSpiesCaptured, calcInformationObtained } = require('./calcs')
 
 module.exports = {
@@ -31,8 +37,8 @@ async function completeSpyMission(mission) {
   }
 
   const [defensorResearchs, attackerResearchs] = await Promise.all([
-    getResearchs(defender.id),
-    getResearchs(attacker.id),
+    getUserResearchs(defender.id),
+    getUserResearchs(attacker.id),
   ])
 
   const spiesSent = data.spies

@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import api from '../../lib/api'
 import PropTypes from 'prop-types'
 import Modal from 'react-modal'
+import Container from 'components/UI/container'
 
 NewMessageModal.propTypes = {
   user: PropTypes.object,
@@ -26,19 +27,21 @@ export default function NewMessageModal({ user, isOpen, onRequestClose }) {
 
   return (
     <Modal isOpen={isOpen} onRequestClose={onRequestClose}>
-      <form className="login-form">
-        <div>
-          <label>
-            Para: <input type="text" value={addressee} onChange={e => setAddressee(e.target.value)} />
-          </label>
-        </div>
-        <div>
-          <label>
-            Mensaje: <textarea value={message} onChange={e => setMessage(e.target.value)} maxLength="500"></textarea>
-          </label>
-        </div>
-        <button onClick={sendClicked}>Enviar</button>
-      </form>
+      <Container whiteBorder darkBg borderSize={20}>
+        <form>
+          <div>
+            <label>
+              Para: <input type="text" value={addressee} onChange={e => setAddressee(e.target.value)} />
+            </label>
+          </div>
+          <div>
+            <label>
+              Mensaje: <textarea value={message} onChange={e => setMessage(e.target.value)} maxLength="500"></textarea>
+            </label>
+          </div>
+          <button onClick={sendClicked}>Enviar</button>
+        </form>
+      </Container>
     </Modal>
   )
 }

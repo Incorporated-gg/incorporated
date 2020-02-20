@@ -60,17 +60,14 @@ export default function Header() {
               </div>
             </Container>
             <Container darkBg outerClassName={styles.statContainer}>
-              <div className={`${styles.stat} ${styles.statMission1}`}>
-                {'3:30'} <Icon iconName="dynamite" className={styles.headerStatIcon} />
-              </div>
-              <div className={`${styles.stat} ${styles.statMission2}`}>+</div>
+              <ActiveMission />
             </Container>
           </div>
           <DeclareBankruptcy />
         </div>
         {isDesktop && <Menu />}
       </div>
-      <ActiveMission />
+
       <Task />
     </>
   )

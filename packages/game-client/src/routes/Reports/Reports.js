@@ -3,8 +3,15 @@ import api from 'lib/api'
 import MissionRow from './MissionRow'
 import styles from './Reports.module.scss'
 import MissionModal from 'components/mission-modal'
+import { Link, useLocation } from 'react-router-dom'
+
+function useQuery() {
+  return new URLSearchParams(useLocation().search)
+}
 
 export default function Reports() {
+  const query = useQuery()
+
   const [missions, setMissions] = useState({
     sent: [],
     received: [],
@@ -12,6 +19,7 @@ export default function Reports() {
     sentToday: 0,
     maxAttacks: 0,
     maxDefenses: 0,
+    lastCheckedReportsAt: 0,
   })
 
   const reloadMissionsCallback = useCallback(() => {
@@ -25,17 +33,33 @@ export default function Reports() {
 
   useEffect(() => reloadMissionsCallback(), [reloadMissionsCallback])
 
-  const [showAttackModal, setShowAttackModal] = useState(false)
-  const [showSpyModal, setShowSpyModal] = useState(false)
   const [showSimulatorModal, setShowSimulatorModal] = useState(false)
+
+  const notSeenReceivedCount = missions.received.filter(
+    mission => mission.completed && mission.will_finish_at > missions.lastCheckedReportsAt
+  ).length
+  const notSeenSentCount = missions.sent.filter(
+    mission => mission.completed && mission.will_finish_at > missions.lastCheckedReportsAt
+  ).length
+
+  // Figure out what type to display
+  const queryType = query.get('type')
+  const initialType = notSeenSentCount > 0 ? 'sent' : 'received'
+  const type = queryType === 'sent' ? 'sent' : queryType === 'received' ? 'received' : initialType
 
   return (
     <div>
-      <button onClick={() => setShowAttackModal(true)}>Atacar</button>
-      <button onClick={() => setShowSpyModal(true)}>Espiar</button>
+      <Link to="/reports?type=sent">
+        <button style={{ color: type === 'sent' ? '#EAC953' : '' }}>
+          Enviados {notSeenSentCount ? `(${notSeenSentCount})` : ''}
+        </button>
+      </Link>
+      <Link to="/reports?type=received">
+        <button style={{ color: type === 'received' ? '#EAC953' : '' }}>
+          Recibidos {notSeenReceivedCount ? `(${notSeenReceivedCount})` : ''}
+        </button>
+      </Link>
       <button onClick={() => setShowSimulatorModal(true)}>Simulador</button>
-      <MissionModal missionType="attack" isOpen={showAttackModal} onRequestClose={() => setShowAttackModal(false)} />
-      <MissionModal missionType="spy" isOpen={showSpyModal} onRequestClose={() => setShowSpyModal(false)} />
       <MissionModal
         missionType="simulate"
         isOpen={showSimulatorModal}
@@ -44,55 +68,48 @@ export default function Reports() {
 
       <div className={styles.missionContainer}>
         <h2>
-          Completed missions (today: {missions.sentToday}/{missions.maxAttacks})
+          {type === 'sent'
+            ? `Misiones enviadas (Hoy: ${missions.sentToday}/${missions.maxAttacks})`
+            : `Misiones recibidas (Hoy: ${missions.receivedToday}/${missions.maxDefenses})`}
         </h2>
         <table>
           <thead>
             <tr>
               <th>Tipo de misión</th>
-              <th>Usuario objetivo</th>
+              <th>{type === 'sent' ? 'Usuario objetivo' : 'Agresor'}</th>
               <th>Fecha</th>
               <th>Resultado</th>
               <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
-            {missions.sent.filter(m => m.completed).length ? (
-              missions.sent
-                .filter(m => m.completed)
-                .map((m, i) => <MissionRow key={i} mission={m} reloadMissionsCallback={reloadMissionsCallback} />)
-            ) : (
-              <tr>
-                <td colSpan="3">No has realizado ninguna misión todavía</td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
-      <div className={styles.missionContainer}>
-        <h2>
-          Received (today: {missions.receivedToday}/{missions.maxDefenses})
-        </h2>
-        <table>
-          <thead>
-            <tr>
-              <th>Tipo de misión</th>
-              <th>Usuario objetivo</th>
-              <th>Fecha</th>
-              <th>Resultado</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {missions.received.filter(m => m.completed).length ? (
-              missions.received
-                .filter(m => m.completed)
-                .map((m, i) => <MissionRow key={i} mission={m} reloadMissionsCallback={reloadMissionsCallback} />)
-            ) : (
-              <tr>
-                <td colSpan="3">No has recibido ninguna misión todavía</td>
-              </tr>
-            )}
+            {type === 'sent' &&
+              (missions.sent.filter(m => m.completed).length ? (
+                missions.sent
+                  .filter(m => m.completed)
+                  .map((m, i) => <MissionRow key={i} mission={m} reloadMissionsCallback={reloadMissionsCallback} />)
+              ) : (
+                <tr>
+                  <td colSpan="3">No has realizado ninguna misión todavía</td>
+                </tr>
+              ))}
+            {type === 'received' &&
+              (missions.received.filter(m => m.completed).length ? (
+                missions.received
+                  .filter(m => m.completed)
+                  .map((m, i) => (
+                    <MissionRow
+                      key={i}
+                      mission={m}
+                      reloadMissionsCallback={reloadMissionsCallback}
+                      showcaseUser="sender"
+                    />
+                  ))
+              ) : (
+                <tr>
+                  <td colSpan="3">No has recibido ninguna misión todavía</td>
+                </tr>
+              ))}
           </tbody>
         </table>
       </div>

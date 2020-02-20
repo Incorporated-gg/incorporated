@@ -9,6 +9,7 @@ import App from './App'
 import * as serviceWorker from './serviceWorker'
 
 Modal.defaultStyles = {}
+Modal.defaultProps.closeTimeoutMS = 150
 Modal.setAppElement(document.getElementById('root'))
 ReactDOM.render(<App />, document.getElementById('root'))
 

@@ -5,6 +5,7 @@ import Modal from 'react-modal'
 import MissionModalSpy from './components/mission-modal-spy'
 import MissionModalAttack from './components/mission-modal-attack'
 import MissionModalSimulate from './components/mission-modal-simulate'
+import Container from 'components/UI/container'
 
 MissionModal.propTypes = {
   user: PropTypes.object,
@@ -15,15 +16,17 @@ MissionModal.propTypes = {
 export default function MissionModal({ missionType, user, isOpen, onRequestClose }) {
   return (
     <Modal isOpen={isOpen} onRequestClose={onRequestClose}>
-      <form className={styles.startNewMission}>
-        {missionType === 'attack' ? (
-          <MissionModalAttack user={user} isOpen={isOpen} onRequestClose={onRequestClose} />
-        ) : missionType === 'spy' ? (
-          <MissionModalSpy user={user} isOpen={isOpen} onRequestClose={onRequestClose} />
-        ) : (
-          missionType === 'simulate' && <MissionModalSimulate />
-        )}
-      </form>
+      <Container whiteBorder darkBg borderSize={20}>
+        <form className={styles.startNewMission}>
+          {missionType === 'attack' ? (
+            <MissionModalAttack user={user} isOpen={isOpen} onRequestClose={onRequestClose} />
+          ) : missionType === 'spy' ? (
+            <MissionModalSpy user={user} isOpen={isOpen} onRequestClose={onRequestClose} />
+          ) : (
+            missionType === 'simulate' && <MissionModalSimulate />
+          )}
+        </form>
+      </Container>
     </Modal>
   )
 }

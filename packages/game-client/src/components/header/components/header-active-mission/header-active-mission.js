@@ -1,20 +1,25 @@
-import React from 'react'
-import styles from './header-active-mission.module.scss'
-import { useUserData, reloadUserData } from 'lib/user'
-import MissionRow from 'routes/Reports/MissionRow'
+import React, { useState } from 'react'
+import headerStyles from '../../header.module.scss'
+import { useUserData } from 'lib/user'
+import { MissionTimer } from 'routes/Reports/MissionRow'
+import Icon from 'components/icon'
+import ActiveMissionModal from '../active-mission-modal'
 
 export default function ActiveMission() {
   const userData = useUserData()
-  if (!userData.active_mission) return null
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  if (!userData.active_mission) return <div>&nbsp;</div>
 
   return (
-    <div className={styles.headerActiveMission}>
-      <h1>Misión activa</h1>
-      <table>
-        <tbody>
-          <MissionRow mission={userData.active_mission} reloadMissionsCallback={reloadUserData} />
-        </tbody>
-      </table>
-    </div>
+    <>
+      <div onClick={() => setIsModalOpen(true)} className={`${headerStyles.stat} ${headerStyles.statMission1}`}>
+        <MissionTimer finishesAt={userData.active_mission.will_finish_at} isMyMission />{' '}
+        <Icon iconName="dynamite" className={headerStyles.headerStatIcon} />
+      </div>
+      <div onClick={() => setIsModalOpen(true)} className={`${headerStyles.stat} ${headerStyles.statMission2}`}>
+        +
+      </div>
+      <ActiveMissionModal isOpen={isModalOpen} onRequestClose={() => setIsModalOpen(false)} />
+    </>
   )
 }
