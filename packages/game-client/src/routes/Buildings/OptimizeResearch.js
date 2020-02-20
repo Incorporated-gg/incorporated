@@ -3,9 +3,11 @@ import { calcResearchPrice } from 'shared-lib/researchUtils'
 import { calcBuildingDailyIncome } from 'shared-lib/buildingsUtils'
 import { useUserData } from 'lib/user'
 import Card from 'components/card'
-import Stat from 'components/stat'
-import { buyResearch } from '../Research/buyResearch'
 import cardStyles from 'components/card/card.module.scss'
+import { buyResearch } from '../Research/buyResearch'
+import Icon from 'components/icon'
+import { numberToAbbreviation } from 'lib/utils'
+import Container from 'components/UI/container'
 
 export default function OptimizeResearch() {
   const userData = useUserData()
@@ -16,6 +18,7 @@ export default function OptimizeResearch() {
   const income = calculateIncomeDiff(userData.buildings, currentOptimizeLvl)
   const timeToRecoverInvestment = (Math.round((coste / income) * 10) / 10).toLocaleString()
   const buyResearchClicked = useCallback(() => buyResearch(researchID), [researchID])
+  const canBuy = coste < userData.money
 
   return (
     <Card
@@ -23,12 +26,21 @@ export default function OptimizeResearch() {
       title={'Oficina Central'}
       ribbon={`Lvl. ${currentOptimizeLvl.toLocaleString()}`}
       desc={'Al subir de nivel, el resto de edificios darán más dinero.'}>
-      <Stat img={require('./img/stat-price.png')} title={'Coste'} value={`${coste.toLocaleString()}€`} />
-      <Stat img={require('./img/stat-pri.png')} title={'PRI'} value={`${timeToRecoverInvestment} días`} />
+      <>
+        <div className={cardStyles.statContainer}>
+          <div>
+            <div>PRI</div>
+            <div>{timeToRecoverInvestment} días</div>
+          </div>
+        </div>
 
-      <button className={cardStyles.button} onClick={buyResearchClicked} disabled={coste >= userData.money}>
-        MEJORAR
-      </button>
+        <Container onClick={buyResearchClicked} disabled={!canBuy} outerClassName={cardStyles.button}>
+          <div className={cardStyles.buttonNumberContainer}>
+            {numberToAbbreviation(coste)} <Icon iconName="money" style={{ marginLeft: 3 }} size={20} />
+          </div>
+          <h2>{'MEJORAR'}</h2>
+        </Container>
+      </>
     </Card>
   )
 }

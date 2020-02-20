@@ -1,15 +1,20 @@
 import React, { useCallback } from 'react'
-import { calcBuildingPrice, calcBuildingDailyIncome, buildingsList } from 'shared-lib/buildingsUtils'
+import {
+  calcBuildingPrice,
+  calcBuildingDailyIncome,
+  buildingsList,
+  calcBuildingMaxMoney,
+} from 'shared-lib/buildingsUtils'
 import PropTypes from 'prop-types'
 import { userData as userDataRaw, useUserData, updateUserData } from 'lib/user'
 import { post } from 'lib/api'
 import Card from 'components/card'
 import { buyBuilding } from './buyBuilding'
 import useHoldPress from 'lib/useHoldPress'
-import styles from './Buildings.module.scss'
 import Icon from 'components/icon'
 import { numberToAbbreviation } from 'lib/utils'
 import Container from 'components/UI/container'
+import cardStyles from 'components/card/card.module.scss'
 
 const buildingImages = {
   1: require('./img/b1.png'),
@@ -53,8 +58,8 @@ export default function BuildingItem({ buildingID }) {
       title={buildingInfo.name}
       ribbon={buildingCount.toLocaleString()}
       desc={desc}>
-      <div className={styles.cardContainer}>
-        <div className={styles.statContainer}>
+      <>
+        <div className={cardStyles.statContainer}>
           <div>
             <div>PRI</div>
             <div>{timeToRecoverInvestment} días</div>
@@ -67,9 +72,9 @@ export default function BuildingItem({ buildingID }) {
             </div>
           </div>
         </div>
-        <ExtractScreen buildingID={buildingID} />
+        <ExtractScreen buildingID={buildingID} buildingCount={buildingCount} />
         <BuyScreen buildingID={buildingID} coste={coste} hasEnoughOptimizeLvl={hasEnoughOptimizeLvl} />
-      </div>
+      </>
     </Card>
   )
 }
@@ -92,8 +97,8 @@ function BuyScreen({ buildingID, coste, hasEnoughOptimizeLvl }) {
   })
 
   return (
-    <Container {...buyHoldPress} outerClassName={`${styles.button} ${canBuy ? '' : styles.canNotBuy}`}>
-      <div className={styles.buttonNumberContainer}>
+    <Container {...buyHoldPress} outerClassName={cardStyles.button} disabled={!canBuy}>
+      <div className={cardStyles.buttonNumberContainer}>
         {numberToAbbreviation(coste)} <Icon iconName="money" style={{ marginLeft: 3 }} size={20} />
       </div>
       <h2>{'CONSTRUIR'}</h2>
@@ -103,9 +108,13 @@ function BuyScreen({ buildingID, coste, hasEnoughOptimizeLvl }) {
 
 ExtractScreen.propTypes = {
   buildingID: PropTypes.number.isRequired,
+  buildingCount: PropTypes.number.isRequired,
 }
-function ExtractScreen({ buildingID }) {
+function ExtractScreen({ buildingID, buildingCount }) {
   const accumulatedMoney = userDataRaw.buildings[buildingID].money
+  const userData = useUserData()
+  const bankResearchLevel = userData.researchs[4]
+  const maxMoney = calcBuildingMaxMoney({ buildingID, buildingAmount: buildingCount, bankResearchLevel })
 
   const onExtractMoney = useCallback(async () => {
     try {
@@ -124,9 +133,10 @@ function ExtractScreen({ buildingID }) {
   }, [buildingID])
 
   return (
-    <Container outerClassName={styles.button} onClick={onExtractMoney}>
-      <div className={styles.buttonNumberContainer}>
-        {numberToAbbreviation(accumulatedMoney)} <Icon iconName="money" style={{ marginLeft: 3 }} size={20} />
+    <Container outerClassName={cardStyles.button} onClick={onExtractMoney}>
+      <div className={cardStyles.buttonNumberContainer}>
+        {numberToAbbreviation(accumulatedMoney)} / {numberToAbbreviation(maxMoney.maxTotal)}{' '}
+        <Icon iconName="money" style={{ marginLeft: 3 }} size={20} />
       </div>
       <h2>{'RECOGER'}</h2>
     </Container>

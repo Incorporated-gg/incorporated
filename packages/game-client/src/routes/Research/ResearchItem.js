@@ -39,7 +39,7 @@ export default function ResearchItem({ researchID }) {
   const level = userData.researchs[researchID]
   const researchTime = calcResearchTime(researchID, level)
   const researchTimeParsed = getTimeUntil(Date.now() / 1000 + researchTime, true)
-  const cost = Math.ceil(calcResearchPrice(research.id, level))
+  const cost = Math.ceil(calcResearchPrice(research.id, level + (isUpgrading ? 1 : 0)))
   const canAfford = userData.money > cost
   const buyResearchClicked = useCallback(() => buyResearch(researchID), [researchID])
 

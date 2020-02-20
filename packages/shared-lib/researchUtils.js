@@ -18,8 +18,7 @@ export function calcResearchPrice(researchID, currentLevel) {
 export function calcResearchTime(researchID, currentLevel) {
   const researchInfo = researchList.find(r => r.id === researchID)
   if (researchInfo.showAsBuilding) return 0
-  const researchTime =
-    researchInfo.basePrice / 100 + (currentLevel - 1) * Math.pow(currentLevel, 2) * (researchInfo.basePrice / 1200)
+  const researchTime = (currentLevel * 5 + Math.pow(currentLevel / 2, 3.75)) * (researchInfo.basePrice / 1200)
   return Math.round(researchTime)
 }
 

@@ -7,6 +7,7 @@ Container.propTypes = {
   darkBg: PropTypes.bool,
   borderSize: PropTypes.number,
   whiteBorder: PropTypes.bool,
+  disabled: PropTypes.bool,
   className: PropTypes.string,
   style: PropTypes.object,
   outerStyle: PropTypes.object,
@@ -17,9 +18,10 @@ export default function Container({
   children,
   borderSize = 5,
   darkBg,
+  disabled,
   whiteBorder,
-  className,
-  outerClassName,
+  className = '',
+  outerClassName = '',
   style = {},
   outerStyle = {},
   ...props
@@ -28,7 +30,7 @@ export default function Container({
   if (darkBg) style.padding = borderSize
 
   return (
-    <div className={`${styles.container} ${outerClassName}`} style={outerStyle}>
+    <div className={`${styles.container} ${outerClassName}`} style={outerStyle} disabled={disabled}>
       <div
         {...props}
         className={`${styles.inner} ${whiteBorder ? styles.whiteBorder : ''} ${

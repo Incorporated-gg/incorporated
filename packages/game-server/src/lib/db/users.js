@@ -1,11 +1,11 @@
 import { getAccountUserData } from '../accountInternalApi'
+import { MAX_DAILY_ATTACKS, calculateMaxDailyReceivedAttacks } from 'shared-lib/missionsUtils'
 const mysql = require('../mysql')
 const alliances = require('./alliances')
 const { parseMissionFromDB } = require('./missions')
 const { researchList } = require('shared-lib/researchUtils')
 const { personnelList } = require('shared-lib/personnelUtils')
 const { getInitialUnixTimestampOfServerDay } = require('shared-lib/serverTime')
-const { MAX_DAILY_ATTACKS, MAX_DAILY_DEFENSES, DAILY_DEFENSES_INCREASE } = require('shared-lib/missionsUtils')
 const { calcBuildingDailyIncome, buildingsList, calcBuildingMaxMoney } = require('shared-lib/buildingsUtils')
 
 module.exports.getData = getData
@@ -263,6 +263,6 @@ async function getUserMissionLimits(userID) {
   const userDailyIncome = await getUserDailyIncome(userID)
   return {
     maxAttacks: MAX_DAILY_ATTACKS,
-    maxDefenses: MAX_DAILY_DEFENSES + Math.floor(userDailyIncome / DAILY_DEFENSES_INCREASE),
+    maxDefenses: calculateMaxDailyReceivedAttacks(userDailyIncome),
   }
 }

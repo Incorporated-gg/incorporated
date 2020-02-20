@@ -173,11 +173,13 @@ module.exports = app => {
     }
 
     const activeMission = await getActiveMission(req.userData.id)
-    if ((resourceID === 'sabots' || resourceID === 'thieves') && activeMission.mission_type === 'attack') {
-      res.status(400).json({
-        error: 'Tienes una misión en curso',
-      })
-      return
+    if (activeMission) {
+      if ((resourceID === 'sabots' || resourceID === 'thieves') && activeMission.mission_type === 'attack') {
+        res.status(400).json({
+          error: 'Tienes una misión en curso',
+        })
+        return
+      }
     }
 
     // Make sure the user has enough resources/space for them

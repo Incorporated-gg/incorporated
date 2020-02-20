@@ -26,7 +26,7 @@ export default function Card({ image, title, ribbon, desc, children }) {
       <div className={styles.accentBg}>
         <div className={styles.name}>{title}</div>
         <div className={styles.description}>{desc}</div>
-        {children}
+        <div className={styles.children}>{children}</div>
       </div>
     </div>
   )

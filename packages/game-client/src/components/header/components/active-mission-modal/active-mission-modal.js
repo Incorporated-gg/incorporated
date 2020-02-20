@@ -27,6 +27,10 @@ ActiveMissionModalContent.propTypes = {
 function ActiveMissionModalContent({ onRequestClose }) {
   const userData = useUserData()
   const activeMision = userData.active_mission
+  if (!activeMision) {
+    onRequestClose()
+    return
+  }
 
   const cancelMission = () => {
     onRequestClose()
@@ -41,7 +45,7 @@ function ActiveMissionModalContent({ onRequestClose }) {
         <Container onClick={onRequestClose} outerClassName={styles.closeButton}>
           x
         </Container>
-        <h1>Mision activa</h1>
+        <h1>Misión activa</h1>
         <div className={styles.vsContainer}>
           <div className={styles.avatarContainer}>
             <img src={activeMision.user.accountData.avatar} alt={activeMision.user.username} />
@@ -72,7 +76,7 @@ function ActiveMissionModalContent({ onRequestClose }) {
             </div>
           </div>
           <div>
-            <button onClick={cancelMission}>Cancelar</button>
+            <button onClick={cancelMission}>Cancelar misión</button>
           </div>
         </div>
       </div>

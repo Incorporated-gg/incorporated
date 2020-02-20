@@ -7,15 +7,19 @@ const guardsInfo = personnelList.find(t => t.resource_id === 'guards')
 const sabotsInfo = personnelList.find(t => t.resource_id === 'sabots')
 const thievesInfo = personnelList.find(t => t.resource_id === 'thieves')
 
-module.exports.NEWBIE_ZONE_DAILY_INCOME = 750000
-module.exports.MAX_DAILY_ATTACKS = process.env.NODE_ENV === 'development' ? 999 : 3
-module.exports.MAX_DAILY_DEFENSES = process.env.NODE_ENV === 'development' ? 999 : 6
-module.exports.DAILY_DEFENSES_INCREASE = process.env.NODE_ENV === 'development' ? 1000 : 20000000 // Puede recibir un ataque más cada DAILY_DEFENSES_INCREASE de ingresos
+export const NEWBIE_ZONE_DAILY_INCOME = 750000
+export const MAX_DAILY_ATTACKS = process.env.NODE_ENV === 'development' ? 999 : 3
 
-module.exports.calculateMissionTime = calculateMissionTime
-function calculateMissionTime(missionType) {
-  if (missionType === 'attack') return process.env.NODE_ENV === 'development' ? 9999910 : 300
-  if (missionType === 'spy') return process.env.NODE_ENV === 'development' ? 99999910 : 120
+export function calculateMaxDailyReceivedAttacks(dailyIncome) {
+  if (dailyIncome < 2e6) return 3
+  if (dailyIncome < 4e6) return 4
+  if (dailyIncome < 8e6) return 5
+  return 6 + Math.ceil((dailyIncome - 15e6) / 10e6)
+}
+
+export function calculateMissionTime(missionType) {
+  if (missionType === 'attack') return process.env.NODE_ENV === 'development' ? 86400 : 300
+  if (missionType === 'spy') return process.env.NODE_ENV === 'development' ? 86400 : 120
   return 0
 }
 
@@ -93,8 +97,7 @@ function simulateCombat({
   }
 }
 
-module.exports.simulateAttack = simulateAttack
-function simulateAttack({
+export function simulateAttack({
   buildingID,
   buildingAmount,
   defensorGuards,

@@ -3,7 +3,7 @@ import BuildingItem from './BuildingItem'
 import OptimizeResearch from './OptimizeResearch'
 import { buildingsList, calcBuildingDailyIncome, calcBuildingMaxMoney } from 'shared-lib/buildingsUtils'
 import { userData as userDataRaw, fireUserDataListeners } from '../../lib/user'
-import CardList, { cardListStyles } from '../../components/UI/CardList'
+import CardList, { cardListStyles } from 'components/UI/CardList'
 
 export default function Buildings() {
   useEffect(() => {

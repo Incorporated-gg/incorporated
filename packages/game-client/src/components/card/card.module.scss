@@ -72,6 +72,8 @@ $border-radius-size: 14px;
     color: #fff;
     border: 7px solid #EECF82;
     flex-grow: 1;
+    display: flex;
+    flex-direction: column;
 
     .name {
       font-size: 1.7em;
@@ -109,23 +111,29 @@ $border-radius-size: 14px;
     }
 
     .button {
-      display: block;
-      border: none;
-      border-radius: 0.3em;
-      font-size: 1.2em;
-      padding: 0.3em 0.75em;
-      line-height: 1;
-      background-color: #000;
-      color: #fafafa;
-      font-weight: 900;
-      margin: 0.5em auto;
-      box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.4);
-      letter-spacing: 0.05em;
-      user-select: none;
-
-      &:disabled {
+      cursor: pointer;
+      margin-top: 10px;
+      &:disabled, &[disabled] {
         opacity: 0.4;
       }
     }
+
+    .children {
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+    }
   }
+}
+
+.statContainer {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  flex-grow: 1;
+}
+
+.buttonNumberContainer {
+  background-color: #343434;
+  margin: 5px;
 }
