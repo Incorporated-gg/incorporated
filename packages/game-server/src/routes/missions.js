@@ -1,3 +1,5 @@
+import locks from '../lib/locks'
+
 const mysql = require('../lib/mysql')
 const { getMissions, getPersonnel, hasActiveMission, getData: getUserData } = require('../lib/db/users')
 const { getUserAllianceID } = require('../lib/db/alliances')
@@ -57,18 +59,24 @@ module.exports = app => {
       return
     }
 
-    if (await hasActiveMission(req.userData.id)) {
+    const lockName = `activeMission:${req.userData.id}`
+    const removeLock = () => locks.remove(lockName)
+
+    if ((await hasActiveMission(req.userData.id)) || locks.get(lockName)) {
       res.status(400).json({
         error: 'Ya tienes una misión en curso',
       })
       return
     }
 
+    locks.set(lockName, Date.now())
+
     const [targetUser] = await mysql.query('SELECT id FROM users WHERE username = ?', [req.body.target_user])
     if (!targetUser) {
       res.status(400).json({
         error: 'El usuario indicado no existe',
       })
+      removeLock()
       return
     }
 
@@ -84,12 +92,14 @@ module.exports = app => {
       case 'attack': {
         if (!buildingsList.find(b => b.id === targetBuilding)) {
           res.status(400).json({ error: 'El edificio enviado no existe' })
+          removeLock()
           return
         }
         // Ensure daily defenses limit
         const targetUserMissions = await getMissions(targetUser.id)
         if (targetUserMissions.receivedToday >= targetUserMissions.maxDefenses) {
           res.status(400).json({ error: `Este usuario ya ha sido atacado ${targetUserMissions.maxDefenses} veces hoy` })
+          removeLock()
           return
         }
         const targetUserData = await getUserData(targetUser.id)
@@ -97,24 +107,28 @@ module.exports = app => {
           res.status(400).json({
             error: 'No puedes atacar usuarios en la zona newbie',
           })
+          removeLock()
           return
         }
         if (sentSabots + sentThieves < 1) {
           res.status(400).json({
             error: 'Debes enviar algunos saboteadores o ladrones',
           })
+          removeLock()
           return
         }
         if (userPersonnel.sabots < sentSabots) {
           res.status(400).json({
             error: 'No tienes suficientes saboteadores',
           })
+          removeLock()
           return
         }
         if (userPersonnel.thieves < sentThieves) {
           res.status(400).json({
             error: 'No tienes suficientes ladrones',
           })
+          removeLock()
           return
         }
         const attackedAllianceID = await getUserAllianceID(targetUser.id)
@@ -123,6 +137,7 @@ module.exports = app => {
           res.status(400).json({
             error: 'No puedes atacar a alguien de tu alianza',
           })
+          removeLock()
           return
         }
 
@@ -130,6 +145,7 @@ module.exports = app => {
         const userMissions = await getMissions(req.userData.id)
         if (userMissions.sentToday >= userMissions.maxAttacks) {
           res.status(400).json({ error: `Ya has atacado ${userMissions.maxAttacks} veces hoy` })
+          removeLock()
           return
         }
         break
@@ -139,12 +155,14 @@ module.exports = app => {
           res.status(400).json({
             error: 'Debes enviar algunos espías',
           })
+          removeLock()
           return
         }
         if (userPersonnel.spies < sentSpies) {
           res.status(400).json({
             error: 'No tienes suficientes espías',
           })
+          removeLock()
           return
         }
 
@@ -153,6 +171,7 @@ module.exports = app => {
         res.status(400).json({
           error: 'Tipo de misión no soportada',
         })
+        removeLock()
         return
     }
 
@@ -173,5 +192,6 @@ module.exports = app => {
     res.json({
       success: true,
     })
+    removeLock()
   })
 }
