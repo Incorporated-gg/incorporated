@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import styles from './header.module.scss'
 import { useUserData, logout } from 'lib/user'
 import { DESKTOP_WIDTH_BREAKPOINT, numberToAbbreviation } from 'lib/utils'
@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom'
 import Icon from 'components/icon'
 import DeclareBankruptcy from 'components/header/components/header-declare-bankruptcy'
 import ActiveMission from 'components/header/components/header-active-mission'
-import Task from 'components/header/components/header-task'
+import ActiveTasksModal from 'components/header/components/active-tasks-modal'
 import useWindowSize from 'lib/useWindowSize'
 import Menu from '../menu/menu'
 import Container from 'components/UI/container'
@@ -14,6 +14,7 @@ import Container from 'components/UI/container'
 export default function Header() {
   const dimensions = useWindowSize()
   const isDesktop = dimensions.width >= DESKTOP_WIDTH_BREAKPOINT
+  const [isActiveTasksModalOpen, setIsActiveTasksModalOpen] = useState(false)
 
   return (
     <>
@@ -26,11 +27,12 @@ export default function Header() {
                   <Icon className={styles.headerIcon} svg={require('./img/finances.svg')} alt="Finances" />
                 </Container>
               </Link>
-              <Link to="/">
+              <div onClick={() => setIsActiveTasksModalOpen(true)}>
                 <Container outerClassName={styles.headerOuterContainer} className={styles.headerContainer}>
                   <Icon className={styles.headerIcon} svg={require('./img/tasks.svg')} alt="Tareas" />
+                  <FinishedActiveTasksCounter />
                 </Container>
-              </Link>
+              </div>
             </div>
             <div className={styles.logo}>
               <Icon svg={require('./img/logo.svg')} alt="" />
@@ -68,7 +70,7 @@ export default function Header() {
         {isDesktop && <Menu />}
       </div>
 
-      <Task />
+      <ActiveTasksModal isOpen={isActiveTasksModalOpen} onRequestClose={() => setIsActiveTasksModalOpen(false)} />
     </>
   )
 }
@@ -86,4 +88,13 @@ function MyMoney() {
   if (!userData) return null
 
   return numberToAbbreviation(userData.money)
+}
+
+function FinishedActiveTasksCounter() {
+  const userData = useUserData()
+  if (!userData) return null
+
+  const count = userData.activeTasks.filter(task => task.progressPercentage >= 100).length
+  if (!count) return null
+  return <span style={{ marginLeft: 5 }}>({count})</span>
 }

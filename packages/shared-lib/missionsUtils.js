@@ -18,8 +18,8 @@ export function calculateMaxDailyReceivedAttacks(dailyIncome) {
 }
 
 export function calculateMissionTime(missionType) {
-  if (missionType === 'attack') return process.env.NODE_ENV === 'development' ? 86400 : 300
-  if (missionType === 'spy') return process.env.NODE_ENV === 'development' ? 86400 : 120
+  if (missionType === 'attack') return process.env.NODE_ENV === 'development' ? 5 : 300
+  if (missionType === 'spy') return process.env.NODE_ENV === 'development' ? 5 : 120
   return 0
 }
 

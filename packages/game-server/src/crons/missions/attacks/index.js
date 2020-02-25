@@ -1,3 +1,4 @@
+import tasksProgressHook from '../../../lib/db/tasks/tasksProgressHook'
 const mysql = require('../../../lib/mysql')
 const {
   getUserAllianceID,
@@ -199,6 +200,12 @@ async function completeAttackMission(mission) {
 
   // Update war data if there's one
   await checkAndUpdateActiveWar(attackerAllianceID, defenderAllianceID)
+
+  // Tasks hook
+  await tasksProgressHook(attacker.id, 'attack_finished', {
+    result,
+    robbedMoney,
+  })
 }
 
 async function checkAndUpdateActiveWar(attackerAllianceID, defenderAllianceID) {

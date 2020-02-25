@@ -8,8 +8,14 @@ module.exports = app => {
     }
 
     const taskID = req.body.task_id
-    const { moneyReward } = await completeTask(req.userData.id, taskID)
-    req.userData.money += moneyReward
+    const taskCompletion = await completeTask(req.userData.id, taskID)
+    if (!taskCompletion) {
+      res.status(400).json({
+        error: 'Failed to complete task',
+      })
+      return
+    }
+    req.userData.money += taskCompletion.moneyReward
 
     res.json({
       success: true,

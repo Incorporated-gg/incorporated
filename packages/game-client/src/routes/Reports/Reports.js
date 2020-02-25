@@ -44,7 +44,7 @@ export default function Reports() {
 
   // Figure out what type to display
   const queryType = query.get('type')
-  const initialType = notSeenSentCount > 0 ? 'sent' : 'received'
+  const initialType = notSeenReceivedCount > 0 ? 'received' : 'sent'
   const type = queryType === 'sent' ? 'sent' : queryType === 'received' ? 'received' : initialType
 
   return (

@@ -1,4 +1,5 @@
 import mysql from '../mysql'
+import tasksProgressHook from './tasks/tasksProgressHook'
 
 export async function getActiveResearchs(userID) {
   const activeResearchs = await mysql.query('SELECT research_id, finishes_at FROM research_active WHERE user_id=?', [
@@ -17,4 +18,8 @@ export async function upgradeUserResearch(userID, researchID) {
   } else {
     await mysql.query('UPDATE research SET level=level+? WHERE user_id=? and id=?', [1, userID, researchID])
   }
+
+  await tasksProgressHook(userID, 'research_finished', {
+    researchID,
+  })
 }
