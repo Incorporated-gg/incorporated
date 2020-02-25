@@ -91,6 +91,10 @@ module.exports = app => {
       req.userData.buildings[buildingID].money = 0
     }
 
+    await tasksProgressHook(req.userData.id, 'extracted_money', {
+      extractedMoney,
+    })
+
     res.json({
       success: true,
     })

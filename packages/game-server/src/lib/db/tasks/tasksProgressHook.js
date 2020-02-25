@@ -94,6 +94,18 @@ export default async function tasksProgressHook(userID, hookType, hookData) {
       })
       break
     }
+    case 'extracted_money': {
+      if (hookData.extractedMoney === undefined) throw new Error('Invalid hookData')
+
+      const extractMoneyTasks = userActiveTasks.filter(task => task.type === 'custom_extract_money')
+      await extractMoneyTasks.map(async activeTask => {
+        const taskData = userTaskData[`task${activeTask.id}`] || {}
+        taskData.count = (taskData.count || 0) + hookData.extractedMoney
+        newUserTaskData[`task${activeTask.id}`] = taskData
+      })
+
+      break
+    }
     default: {
       throw new Error(`Unknown tasksProgressHook type: ${hookType}`)
     }

@@ -1,6 +1,7 @@
 import mysql from '../../mysql'
 import { getUserResearchs, getUserDailyIncome } from '../users'
 import generateTasksList from './generateTaskList'
+import { getUserAllianceID } from '../alliances'
 
 const tasks = generateTasksList()
 
@@ -57,7 +58,8 @@ async function getTaskCompletionPercentage(userID, taskInfo, taskData) {
     case 'cyclic_attack':
     case 'cyclic_research':
     case 'cyclic_rob':
-    case 'cyclic_income': {
+    case 'cyclic_income':
+    case 'custom_extract_money': {
       if (!taskData.count) taskData.count = 0
       progress = (taskData.count / taskInfo.requirements.amount) * 100
       break
@@ -77,12 +79,27 @@ async function getTaskCompletionPercentage(userID, taskInfo, taskData) {
     }
     case 'barrier_centraloffice': {
       const CENTRAL_OFFICE_RESEARCH_ID = 5
-      const researchObjectiveLevel = taskInfo.requirements.amount
-      const userResearchs = await getUserResearchs(userID)
-      const researchLevel = userResearchs[CENTRAL_OFFICE_RESEARCH_ID]
-      progress = (researchLevel / researchObjectiveLevel) * 100
+      progress = await researchLevelRequirement(userID, taskInfo.requirements.amount, CENTRAL_OFFICE_RESEARCH_ID)
+      break
+    }
+    case 'custom_bank': {
+      const BANK_RESEARCH_ID = 4
+      progress = await researchLevelRequirement(userID, taskInfo.requirements.amount, BANK_RESEARCH_ID)
+      break
+    }
+    case 'custom_join_alliance': {
+      const userAlliance = await getUserAllianceID(userID)
+      progress = userAlliance ? 100 : 0
       break
     }
   }
   return Math.min(Math.floor(progress), 100)
+}
+
+async function researchLevelRequirement(userID, amountNeeded, researchID) {
+  const researchObjectiveLevel = amountNeeded
+  const userResearchs = await getUserResearchs(userID)
+  const researchLevel = userResearchs[researchID]
+  const progress = (researchLevel / researchObjectiveLevel) * 100
+  return progress
 }

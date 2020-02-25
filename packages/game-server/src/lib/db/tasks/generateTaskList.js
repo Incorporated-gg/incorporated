@@ -3,7 +3,7 @@ export default function generateTasksList() {
   const cyclicTypes = ['cyclic_build', 'cyclic_attack', 'cyclic_research', 'cyclic_rob', 'cyclic_income']
   const barrierTypes = ['barrier_income', 'barrier_research', 'barrier_centraloffice']
 
-  const generatedTasks = []
+  const generatedTasks = [...initialTasks]
   let cyclicCounter = 0
   let barrierCounter = 0
   let taskTypeCounter = {}
@@ -24,9 +24,9 @@ export default function generateTasksList() {
     let requirements = {}
     switch (type) {
       case 'cyclic_build': {
-        const initialBuildingID = 2
+        const initialBuildingID = 5 // Cinemas
         const buildingID = ((typeCounter + initialBuildingID - 1) % 6) + 1 // Start on building 2, and loop
-        const amount = Math.pow(2, 6 - buildingID) * (typeCounter + 1) // Equivalent to +1 hotel every loop
+        const amount = Math.pow(2, 6 - buildingID) * (typeCounter + 0.5) // Equivalent to +1 hotel every loop, starting with 0.5 hotels (1 cinema)
 
         requirements.buildingID = buildingID
         requirements.amount = amount
@@ -84,7 +84,7 @@ export default function generateTasksList() {
     }
 
     const task = {
-      id: taskID,
+      id: taskID + initialTasks.length,
       reward: taskID * 50000,
       type,
       requirements,
@@ -93,3 +93,103 @@ export default function generateTasksList() {
   }
   return generatedTasks
 }
+
+const initialTasks = [
+  {
+    id: 1,
+    reward: 50000,
+    type: 'cyclic_build',
+    requirements: {
+      buildingID: 1,
+      amount: 5,
+    },
+  },
+  {
+    id: 2,
+    reward: 250000,
+    type: 'cyclic_build',
+    requirements: {
+      buildingID: 1,
+      amount: 50,
+    },
+  },
+  {
+    id: 3,
+    reward: 150000,
+    type: 'barrier_centraloffice',
+    requirements: {
+      amount: 3,
+    },
+  },
+  {
+    id: 4,
+    reward: 150000,
+    type: 'cyclic_build',
+    requirements: {
+      buildingID: 2,
+      amount: 20,
+    },
+  },
+  {
+    id: 5,
+    reward: 50000,
+    type: 'custom_extract_money',
+    requirements: {
+      amount: 1000,
+    },
+  },
+  {
+    id: 6,
+    reward: 50000,
+    type: 'custom_bank',
+    requirements: {
+      amount: 5,
+    },
+  },
+  {
+    id: 7,
+    reward: 200000,
+    type: 'barrier_centraloffice',
+    requirements: {
+      amount: 5,
+    },
+  },
+  {
+    id: 8,
+    reward: 700000,
+    type: 'cyclic_income',
+    requirements: {
+      amount: 100000,
+    },
+  },
+  {
+    id: 9,
+    reward: 250000,
+    type: 'custom_join_alliance',
+    requirements: {},
+  },
+  {
+    id: 10,
+    reward: 500000,
+    type: 'barrier_income',
+    requirements: {
+      amount: 500000,
+    },
+  },
+  {
+    id: 11,
+    reward: 500000,
+    type: 'barrier_research',
+    requirements: {
+      amount: 50,
+    },
+  },
+  {
+    id: 12,
+    reward: 1000000,
+    type: 'barrier_income',
+    requirements: {
+      amount: 750000,
+    },
+  },
+]

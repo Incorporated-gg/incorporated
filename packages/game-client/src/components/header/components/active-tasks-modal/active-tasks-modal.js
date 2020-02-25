@@ -60,6 +60,18 @@ function ActiveTasksList() {
         taskName = `Alcanza el nivel ${task.requirements.amount.toLocaleString()} de Oficina Central`
         break
       }
+      case 'custom_bank': {
+        taskName = `Alcanza el nivel ${task.requirements.amount.toLocaleString()} de Banco`
+        break
+      }
+      case 'custom_extract_money': {
+        taskName = `Obtén ${task.requirements.amount.toLocaleString()}€ en total, extrayendo dinero de tus edificios`
+        break
+      }
+      case 'custom_join_alliance': {
+        taskName = `Crea o únete a una alianza`
+        break
+      }
       default: {
         taskName = 'Unknown task'
       }
