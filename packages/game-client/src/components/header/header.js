@@ -61,7 +61,7 @@ export default function Header() {
                 {numberToAbbreviation(12345)} <Icon iconName="gold" className={styles.headerStatIcon} />
               </div>
             </Container>
-            <Container darkBg outerClassName={styles.statContainer}>
+            <Container darkBg outerClassName={styles.statContainer} style={{ display: 'flex' }}>
               <ActiveMission />
             </Container>
           </div>

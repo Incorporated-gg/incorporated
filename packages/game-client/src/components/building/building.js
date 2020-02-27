@@ -9,7 +9,6 @@ import PropTypes from 'prop-types'
 import { userData as userDataRaw, useUserData, updateUserData } from 'lib/user'
 import { post } from 'lib/api'
 import Card from 'components/card'
-import { buyBuilding } from './buyBuilding'
 import useHoldPress from 'lib/useHoldPress'
 import Icon from 'components/icon'
 import { numberToAbbreviation } from 'lib/utils'
@@ -145,4 +144,22 @@ function ExtractScreen({ buildingID, buildingCount }) {
       <h2>{'RECOGER'}</h2>
     </Container>
   )
+}
+
+async function buyBuilding(buildingID) {
+  const currentAmount = userDataRaw.buildings[buildingID].quantity
+  const coste = calcBuildingPrice(buildingID, currentAmount)
+  if (coste > userDataRaw.money) return
+  try {
+    updateUserData({
+      money: userDataRaw.money - coste,
+      buildings: {
+        ...userDataRaw.buildings,
+        [buildingID]: { ...userDataRaw.buildings[buildingID], quantity: currentAmount + 1 },
+      },
+    })
+    await post('/v1/buildings/buy', { building_id: buildingID, count: 1 })
+  } catch (e) {
+    alert(e.message)
+  }
 }

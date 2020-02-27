@@ -137,7 +137,7 @@ export default function ChatBubble() {
             </button>
             <h3 className="chatWindowTitle">Chat ({currentRoom && currentRoom.name})</h3>
             <button type="button" className="fullScreenButton" onClick={() => setIsFullscreen(!isFullscreen)}>
-              <span>+</span>
+              <span>{isFullscreen ? '-' : '+'}</span>
             </button>
             <button type="button" className="closeButton" onClick={() => toggleChat(false)}>
               <span>x</span>

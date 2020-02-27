@@ -4,12 +4,12 @@ import { calcBuildingDailyIncome } from 'shared-lib/buildingsUtils'
 import { useUserData } from 'lib/user'
 import Card from 'components/card'
 import cardStyles from 'components/card/card.module.scss'
-import { buyResearch } from '../Research/buyResearch'
+import { buyResearch } from '../../../../routes/Research/buyResearch'
 import Icon from 'components/icon'
 import { numberToAbbreviation } from 'lib/utils'
 import Container from 'components/UI/container'
 
-export default function OptimizeResearch() {
+export default function BuildingOptimizeResearch() {
   const userData = useUserData()
   const researchID = 5
   const currentOptimizeLvl = userData.researchs[researchID]
@@ -22,7 +22,7 @@ export default function OptimizeResearch() {
 
   return (
     <Card
-      image={require('./img/central-office.png')}
+      image={require('../../img/central-office.png')}
       title={'Oficina Central'}
       ribbon={`Lvl. ${currentOptimizeLvl.toLocaleString()}`}
       desc={'Al subir de nivel, el resto de edificios darán más dinero.'}>

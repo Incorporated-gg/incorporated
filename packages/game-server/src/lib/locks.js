@@ -7,8 +7,7 @@ export default {
     return lock.value
   },
   set(key, value) {
-    const newLock = { value }
-    locks.set(key, newLock)
+    locks.set(key, value)
   },
   remove(key) {
     locks.delete(key)

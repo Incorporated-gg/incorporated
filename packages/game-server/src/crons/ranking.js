@@ -1,5 +1,5 @@
 const mysql = require('../lib/mysql')
-const frequencyMs = process.env.NODE_ENV === 'development' ? 10 : 30 * 60 * 1000
+const frequencyMs = process.env.NODE_ENV === 'development' ? 10 * 1000 : 30 * 60 * 1000
 const { getUserDailyIncome } = require('../lib/db/users')
 
 async function doIncomeRanking() {
