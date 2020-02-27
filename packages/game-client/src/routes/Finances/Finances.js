@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import FinancialData from './FinancialData'
-import { getServerDate, getServerDay } from 'shared-lib/serverTime'
 import api from '../../lib/api'
 import styles from './Finances.module.scss'
 
 export default function Finances() {
   return (
     <div className={styles.container}>
-      <ServerTime />
       <FinancialData />
       <DailyLogGraphs />
     </div>
@@ -42,25 +40,5 @@ function DailyLogGraphs() {
       src={`https://quickchart.io/chart?c={type:'bar',data:${JSON.stringify(graphData)}}`}
       alt="Gráfica de ingresos por día"
     />
-  )
-}
-
-function ServerTime() {
-  const [reloaded, reload] = useState()
-  useEffect(() => {
-    const timeout = setTimeout(reload, 1000, {})
-    return () => clearTimeout(timeout)
-  }, [reloaded])
-
-  const serverDate = getServerDate()
-
-  function pad(number) {
-    return number.toString().padStart(2, '0')
-  }
-
-  return (
-    <span>
-      Día {getServerDay()}. Hora server: {pad(serverDate.hours)}:{pad(serverDate.minutes)}:{pad(serverDate.seconds)}
-    </span>
   )
 }

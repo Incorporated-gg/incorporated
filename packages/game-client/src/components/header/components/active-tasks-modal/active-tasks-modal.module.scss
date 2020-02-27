@@ -1,18 +1,22 @@
-.headerTask {
-  display: flex;
-  padding: 1em;
-  background-color: rgb(75, 75, 75);
-  color: #fff;
+.headerTaskOuter {
   // For desktop
   max-width: 720px;
   width: 100%;
-  margin: 0.5em auto;
+  margin: 1em auto;
+}
+
+.headerTask {
+  display: flex;
+  color: #fff;
 
   .tutorialInfo {
       flex-grow: 1;
+      margin-right: 0.5em;
+      padding: 0.5em;
   }
 
   button {
+      height: 100%;
       color: white;
 
       &[disabled] {

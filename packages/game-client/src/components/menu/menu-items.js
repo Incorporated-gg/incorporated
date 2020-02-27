@@ -8,12 +8,12 @@ export default [
       {
         path: '/ranking',
         alt: 'Ranking',
-        alternativePaths: ['/ranking/research', '/ranking/alliances'],
+        alternativePaths: [/\/ranking\/*/],
       },
       {
         path: '/contests/monopolies',
         alt: 'Competiciones',
-        alternativePaths: ['/contests', '/contests/fever', '/contests/profit', '/contests/spy'],
+        alternativePaths: [/\/contests\/*/],
       },
       {
         path: '/personnel',

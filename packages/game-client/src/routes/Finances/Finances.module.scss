@@ -1,7 +1,33 @@
 .container {
     padding: 0.5em;
-    margin: 0.5em;
-    border-radius: 0.3em;
-    background: linear-gradient(hsla(222, 10%, 70%, 0.5), hsla(222, 10%, 63%, 0.5));
-    text-align: center;
+    margin: 0.75em 1.5em;
+    background-color: #FFF8E6;
+    position: relative;
+
+    &::before {
+        display: block;
+        content: ' ';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        margin: auto;
+        height: 20px;
+        width: 98%;
+        background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH5AIaFy0pf5Rg2QAAAB1pVFh0Q29tbWVudAAAAAAAQ3JlYXRlZCB3aXRoIEdJTVBkLmUHAAABOElEQVQ4y82UMUvDQBTHf7GBC2ISkJKpCo6lk6Pg4OIncLezq9DP4ib4AZwcOyjSzTl0lw6lFOFylHKhEpdXuDbENKDQ/3jvvR/v3vvfwb7LqwqEceQBCdAFOnI8AcbAzOis2BkYxtExcAdcAz2gLaE5kAJD4MHo7KsWGMbRKfAEXAJ+xQVWwAjoG519VgKls2fgCih+Gck69gbcuJ22tmZ2D9xKslcz+wI4ARYqUKPcWgAOnKREZubXwFyoLzXJ+tAFdmUBTdWT2hKw42yzidqOrTaAfyIXOBGfNdVcakvAsZi2qVKpLQFn8gJWYok6FZI7lNpNH+bWogKVAhfA2Y7GfgcGRmfLElCgSxWoV+BcTFu1tG+B9Y3Opm6gtZ2ZW6tVoF6AhcSPgENnAR/Ao3Q2/ffva//1A4a7XkowYKKPAAAAAElFTkSuQmCC');
+        background-position: top;
+        background-repeat: space;
+    }
+}
+
+.textHighlight {
+    >td:first-child {
+        background-color: #FFEB4B;
+        border-top-left-radius: 0.5em 1.5em;
+    }
+
+    >td:nth-child(2) {
+        background-color: #FFEB4B;
+        border-bottom-right-radius: 0.5em 1.5em;
+    }
 }

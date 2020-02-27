@@ -111,9 +111,12 @@ $border-radius-size: 14px;
     }
 
     .button {
+      user-select: none;
       cursor: pointer;
       margin-top: 10px;
-      &:disabled, &[disabled] {
+
+      &:disabled,
+      &[disabled] {
         opacity: 0.4;
       }
     }
@@ -135,5 +138,18 @@ $border-radius-size: 14px;
 
 .buttonNumberContainer {
   background-color: #343434;
-  margin: 5px;
+  position: relative;
+
+  .buttonNumberProgress {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    max-width: 100%;
+    background: linear-gradient(90deg, #4A8B1A, #71B020);
+  }
+
+  .buttonNumberText {
+    position: relative;
+  }
 }

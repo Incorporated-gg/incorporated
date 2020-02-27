@@ -132,11 +132,15 @@ function ExtractScreen({ buildingID, buildingCount }) {
     }
   }, [buildingID])
 
+  const progress = (accumulatedMoney / maxMoney.maxTotal) * 100
   return (
     <Container outerClassName={cardStyles.button} onClick={onExtractMoney}>
       <div className={cardStyles.buttonNumberContainer}>
-        {numberToAbbreviation(accumulatedMoney)} / {numberToAbbreviation(maxMoney.maxTotal)}{' '}
-        <Icon iconName="money" style={{ marginLeft: 3 }} size={20} />
+        <div className={cardStyles.buttonNumberProgress} style={{ width: progress + '%' }} />
+        <div className={cardStyles.buttonNumberText}>
+          {numberToAbbreviation(accumulatedMoney)} / {numberToAbbreviation(maxMoney.maxTotal)}{' '}
+          <Icon iconName="money" style={{ marginLeft: 3 }} size={20} />
+        </div>
       </div>
       <h2>{'RECOGER'}</h2>
     </Container>

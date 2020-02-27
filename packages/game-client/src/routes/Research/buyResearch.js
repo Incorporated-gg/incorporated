@@ -1,6 +1,6 @@
 import { post } from 'lib/api'
 import { userData, updateUserData, reloadUserData } from 'lib/user'
-import { calcResearchPrice, calcResearchTime } from 'shared-lib/researchUtils'
+import { calcResearchPrice, calcResearchSecondsDuration } from 'shared-lib/researchUtils'
 
 export async function buyResearch(researchID) {
   const currentLvl = userData.researchs[researchID]
@@ -8,7 +8,7 @@ export async function buyResearch(researchID) {
   if (cost > userData.money) return
   try {
     const tsNow = Math.floor(Date.now() / 1000)
-    const researchTime = calcResearchTime(researchID, currentLvl)
+    const researchTime = calcResearchSecondsDuration(researchID, currentLvl)
 
     if (researchTime === 0) {
       updateUserData({

@@ -91,6 +91,12 @@ a {
   font-weight: bold;
 }
 
+// Disable tap highlight on mobile
+* { 
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  -moz-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
 .sub-menu {
   background: transparent linear-gradient(180deg, #E8CA7E 0%, #A38F5B 100%) 0% 0% no-repeat padding-box;
   padding: 5px;

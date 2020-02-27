@@ -20,7 +20,12 @@ function getActiveItemIndex(path, activeGroupItems) {
   const activeItemIndex = activeGroupItems.findIndex(item => {
     if (item.path === path) return true
     if (item.alternativePaths) {
-      return item.alternativePaths.some(alternativePath => alternativePath === path)
+      return item.alternativePaths.some(alternativePath => {
+        if (alternativePath instanceof RegExp) {
+          return alternativePath.test(path)
+        }
+        return alternativePath === path
+      })
     }
     return false
   })

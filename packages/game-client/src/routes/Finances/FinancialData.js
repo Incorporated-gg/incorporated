@@ -3,6 +3,7 @@ import { buildingsList, calcBuildingDailyIncome } from 'shared-lib/buildingsUtil
 import { useUserData } from '../../lib/user'
 import api from '../../lib/api'
 import { personnelList } from 'shared-lib/personnelUtils'
+import styles from './Finances.module.scss'
 
 export default function FinancialData() {
   const userData = useUserData()
@@ -54,7 +55,7 @@ export default function FinancialData() {
   return (
     <div>
       <h1>Finanzas</h1>
-      <table>
+      <table cellSpacing={0}>
         <thead>
           <tr>
             <th>Concepto</th>
@@ -94,7 +95,7 @@ export default function FinancialData() {
             <td></td>
             <td>{totalPersonnel.toLocaleString()}</td>
           </tr>
-          <tr>
+          <tr className={styles.textHighlight}>
             <td>TOTAL</td>
             <td>{totalTotal.toLocaleString()}</td>
             <td></td>

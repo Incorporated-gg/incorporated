@@ -24,7 +24,8 @@ function App() {
           setLoggedIn(Boolean(userData))
           setLoading(false)
         })
-        .catch(() => {
+        .catch(err => {
+          alert(err.message)
           setLoggedIn(false)
           setLoading(false)
         })
@@ -34,7 +35,8 @@ function App() {
           setLoggedIn(Boolean(userData))
           setLoading(false)
         })
-        .catch(() => {
+        .catch(err => {
+          alert(err.message)
           setLoggedIn(false)
           setLoading(false)
         })

@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { post } from '../../lib/api'
 import PropTypes from 'prop-types'
 import styles from './loans.module.scss'
+import Container from 'components/UI/container'
 
 const LOAN_DAYS_DURATION = 7
 CreateLoan.propTypes = {
@@ -29,26 +30,21 @@ export default function CreateLoan({ refreshLoansList, givenLoan }) {
       })
   }
 
-  return givenLoan ? (
-    <div className={styles.container}>
-      <div className={styles.contentContainer}>
-        Has dado un préstamo.
-        {givenLoan.borrower && (
-          <>
-            {' '}
-            Quedan{' '}
-            {Math.ceil(
-              givenLoan.loan_started_at +
-                60 * 60 * 24 * LOAN_DAYS_DURATION -
-                Math.floor(Date.now() / 1000) / (60 * 60 * 24)
-            )}{' '}
-            días
-          </>
-        )}
-      </div>
-    </div>
-  ) : (
-    <div className={styles.container}>
+  if (givenLoan) {
+    const remainingSeconds =
+      givenLoan.loan_started_at + 60 * 60 * 24 * LOAN_DAYS_DURATION - Math.floor(Date.now() / 1000)
+    const remainingTime = Math.ceil(remainingSeconds / (60 * 60 * 24))
+    return (
+      <Container>
+        <div className={styles.contentContainer}>
+          Has dado un préstamo.
+          {givenLoan.borrower && <> Quedan {remainingTime} días</>}
+        </div>
+      </Container>
+    )
+  }
+  return (
+    <Container>
       <div className={styles.title}>{'OFRECER PRÉSTAMO'}</div>
       <div className={styles.contentContainer}>
         <p>
@@ -65,6 +61,6 @@ export default function CreateLoan({ refreshLoansList, givenLoan }) {
           Publicar
         </button>
       </div>
-    </div>
+    </Container>
   )
 }

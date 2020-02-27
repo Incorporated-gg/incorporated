@@ -5,6 +5,8 @@ import { post } from 'lib/api'
 import { buildingsList } from 'shared-lib/buildingsUtils'
 import PropTypes from 'prop-types'
 import Modal from 'react-modal'
+import Container from 'components/UI/container'
+import cardStyles from 'components/card/card.module.scss'
 
 ActiveTasksModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
@@ -12,7 +14,7 @@ ActiveTasksModal.propTypes = {
 }
 export default function ActiveTasksModal({ isOpen, onRequestClose }) {
   return (
-    <Modal overlayClassName="backdropBlur" isOpen={isOpen} onRequestClose={onRequestClose} className={styles.modal}>
+    <Modal overlayClassName="backdropBlur" isOpen={isOpen} onRequestClose={onRequestClose}>
       <ActiveTasksList />
     </Modal>
   )
@@ -78,16 +80,22 @@ function ActiveTasksList() {
     }
 
     return (
-      <div key={task.id} className={styles.headerTask}>
+      <Container key={task.id} outerClassName={styles.headerTaskOuter} className={styles.headerTask} darkBg>
         <div className={styles.tutorialInfo}>
           <p>{taskName}</p>
-          <p>{task.progressPercentage} / 100%</p>
+          <p></p>
+          <div className={cardStyles.buttonNumberContainer}>
+            <div className={cardStyles.buttonNumberProgress} style={{ width: task.progressPercentage + '%' }} />
+            <div className={cardStyles.buttonNumberText}>{task.progressPercentage} / 100%</div>
+          </div>
           <p>Recompensa: {task.reward.toLocaleString()}€</p>
         </div>
-        <button disabled={task.progressPercentage < 100} onClick={completeTask}>
-          Completar
-        </button>
-      </div>
+        <div>
+          <button disabled={task.progressPercentage < 100} onClick={completeTask}>
+            Completar
+          </button>
+        </div>
+      </Container>
     )
   })
 }

@@ -17,5 +17,5 @@ export default function(app: express.Application): void {
 export function validateGameServerRequest(req: express.Request): boolean {
   const secret = req.headers.authorization?.replace('Bearer ', '')
   if (!secret) return false
-  return secret === 'c342[E$32C'
+  return secret === process.env.ACCOUNT_CLIENT_SHARED_SECRET
 }

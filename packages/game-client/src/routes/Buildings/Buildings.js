@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import BuildingItem from './BuildingItem'
+import BuildingItem from './building-item'
 import OptimizeResearch from './OptimizeResearch'
 import { buildingsList, calcBuildingDailyIncome, calcBuildingMaxMoney } from 'shared-lib/buildingsUtils'
 import { userData as userDataRaw, fireUserDataListeners } from '../../lib/user'

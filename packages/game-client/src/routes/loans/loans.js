@@ -32,7 +32,13 @@ export default function Loans() {
   return (
     <>
       <CreateLoan givenLoan={givenLoan} refreshLoansList={refreshLoansList} />
-      {takenLoan && <TakenLoan takenLoan={takenLoan} />}
+      <br />
+      {takenLoan && (
+        <>
+          <TakenLoan takenLoan={takenLoan} />
+          <br />
+        </>
+      )}
       <LoanList loans={loans} refreshLoansList={refreshLoansList} />
     </>
   )

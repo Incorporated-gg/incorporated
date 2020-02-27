@@ -5,9 +5,70 @@
   font-size: 1em;
   color: #fafafa;
   background-color: #343434;
-  border-bottom: 8px solid #EECF82;
-  padding: 0.5em;
-  padding-top: 0;
+  padding: 0 0.5em 0.5em 0.5em;
+
+  .containerBottomBorder {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+    width: 100%;
+    max-width: 720px;
+    height: 15px;
+    transform: translateY(100%);
+    background: linear-gradient(#000, transparent);
+
+    .containerBottomBorderFillLeft,
+    .containerBottomBorderFillRight {
+      position: absolute;
+      display: block;
+      content: ' ';
+      background-color: #343434;
+      top: 0;
+      width: 1.5em;
+      height: 1.5em;
+
+      &.containerBottomBorderFillLeft {
+        left: 0;
+        transform: rotate(45deg) translateX(-50%);
+      }
+
+      &.containerBottomBorderFillRight {
+        right: 0;
+        transform: rotate(-45deg) translateX(50%);
+      }
+    }
+
+    .containerBottomBorderCenter {
+      width: calc(100% - 1.5em);
+      position: absolute;
+      left: 0;
+      right: 0;
+      margin: auto;
+    }
+
+    .containerBottomBorderLeft {
+      transform: translateY(100%) translateX(-25%) rotate(-45deg);
+      width: 1.5em;
+      left: 0;
+    }
+
+    .containerBottomBorderRight {
+      transform: translateY(100%) translateX(25%) rotate(45deg);
+      width: 1.5em;
+      right: 0;
+    }
+
+    .containerBottomBorderCenter,
+    .containerBottomBorderLeft,
+    .containerBottomBorderRight {
+      position: absolute;
+      height: 8px;
+      background-color: #eecf82;
+      border-bottom: 4px solid #d9a545;
+    }
+  }
 
   .headerLinks {
     display: flex;
@@ -25,8 +86,8 @@
     }
 
     .headerIcon svg {
-      width: 1.1em;
-      height: 1.1em;
+      width: 1.5em;
+      height: 1.5em;
     }
 
     .logo {
@@ -60,10 +121,12 @@
       padding-top: 2px;
       line-height: 1.4;
       text-align: center;
+
       &.statMission1 {
         cursor: pointer;
         width: calc(100% - 25px);
       }
+
       &.statMission2 {
         cursor: pointer;
         width: 20px;

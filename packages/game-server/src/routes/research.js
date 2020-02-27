@@ -3,7 +3,7 @@ import { upgradeUserResearch } from '../lib/db/researchs'
 import {
   researchList,
   calcResearchPrice,
-  calcResearchTime,
+  calcResearchSecondsDuration,
   MANUALLY_FINISH_RESEARCH_UPGRADES_SECONDS,
 } from 'shared-lib/researchUtils'
 
@@ -45,7 +45,7 @@ module.exports = app => {
       return
     }
 
-    const researchTime = calcResearchTime(researchID, req.userData.researchs[researchID])
+    const researchTime = calcResearchSecondsDuration(researchID, req.userData.researchs[researchID])
     if (researchTime === 0) {
       await upgradeUserResearch(req.userData.id, researchID)
       req.userData.researchs[researchID] += 1

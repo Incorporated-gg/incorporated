@@ -2,17 +2,18 @@ import React, { useCallback, useState, useEffect } from 'react'
 import {
   researchList,
   calcResearchPrice,
-  calcResearchTime,
+  calcResearchSecondsDuration,
   MANUALLY_FINISH_RESEARCH_UPGRADES_SECONDS,
 } from 'shared-lib/researchUtils'
 import PropTypes from 'prop-types'
 import { useUserData, reloadUserData } from 'lib/user'
-import { getTimeUntil, throttle } from 'lib/utils'
+import { getTimeUntil, throttle, numberToAbbreviation } from 'lib/utils'
 import { buyResearch } from './buyResearch'
 import Card from 'components/card'
-import Stat from 'components/stat'
 import cardStyles from 'components/card/card.module.scss'
 import { post } from 'lib/api'
+import Container from 'components/UI/container'
+import Icon from 'components/icon'
 
 const researchImages = {
   1: require('./img/spy.png'),
@@ -37,8 +38,6 @@ export default function ResearchItem({ researchID }) {
   const isUpgrading = userData.activeResearchs.find(ar => ar.research_id === researchID)
   const research = researchList.find(r => r.id === researchID)
   const level = userData.researchs[researchID]
-  const researchTime = calcResearchTime(researchID, level)
-  const researchTimeParsed = getTimeUntil(Date.now() / 1000 + researchTime, true)
   const cost = Math.ceil(calcResearchPrice(research.id, level + (isUpgrading ? 1 : 0)))
   const canAfford = userData.money > cost
   const buyResearchClicked = useCallback(() => buyResearch(researchID), [researchID])
@@ -50,38 +49,71 @@ export default function ResearchItem({ researchID }) {
       ribbon={`Lvl. ${level.toLocaleString()}`}
       desc={researchDescriptions[researchID]}
       image={researchImages[researchID]}>
-      <Stat img={require('./img/stat-price.png')} title={'Coste'} value={`${cost.toLocaleString()}€`} />
-      <p style={{ color: '#fff' }}>
-        {isUpgrading ? (
-          <UpgradingTimer finishesAt={isUpgrading.finishes_at} />
-        ) : (
-          <>Duración de mejora: {researchTimeParsed}</>
-        )}
-      </p>
+      <TimerButtonNumber
+        finishesAt={isUpgrading && isUpgrading.finishes_at}
+        researchID={researchID}
+        level={level}
+        isUpgrading={!!isUpgrading}
+      />
 
       {isUpgrading && <UpgradeInstantlyButton finishesAt={isUpgrading.finishes_at} researchID={researchID} />}
-      <button className={cardStyles.button} onClick={buyResearchClicked} disabled={!canAfford || isUpgrading}>
-        MEJORAR
-      </button>
+
+      <Container outerClassName={cardStyles.button} onClick={buyResearchClicked} disabled={!canAfford || isUpgrading}>
+        <div className={cardStyles.buttonNumberContainer}>
+          <div className={cardStyles.buttonNumberText}>
+            {numberToAbbreviation(cost)} <Icon iconName="money" style={{ marginLeft: 3 }} size={20} />
+          </div>
+        </div>
+        <h2>{'INVESTIGAR'}</h2>
+      </Container>
     </Card>
   )
 }
 
-UpgradingTimer.propTypes = {
+TimerButtonNumber.propTypes = {
   finishesAt: PropTypes.number.isRequired,
+  researchID: PropTypes.number.isRequired,
+  level: PropTypes.number.isRequired,
+  isUpgrading: PropTypes.bool.isRequired,
 }
-function UpgradingTimer({ finishesAt }) {
-  const [timeLeft, setTimeLeft] = useState(getTimeUntil(finishesAt, true))
-  useEffect(() => {
-    const int = setInterval(() => setTimeLeft(getTimeUntil(finishesAt, true)), 1000)
-    return () => clearInterval(int)
-  }, [finishesAt])
+function TimerButtonNumber({ finishesAt, researchID, level, isUpgrading }) {
+  const [, _reload] = useState()
 
-  if (Date.now() / 1000 > finishesAt) {
+  useEffect(() => {
+    if (!isUpgrading) return
+
+    const int = setInterval(() => _reload({}), 1000)
+    return () => clearInterval(int)
+  }, [isUpgrading])
+
+  const tsNow = Math.floor(Date.now() / 1000)
+  const researchSeconds = calcResearchSecondsDuration(researchID, level)
+  let progress = 0
+
+  let text
+  if (!isUpgrading) {
+    const researchTimeParsed = getTimeUntil(tsNow + researchSeconds, true)
+    text = researchTimeParsed
+  } else if (tsNow > finishesAt) {
     throttledReloadUserData()
-    return <>Completando...</>
+    text = <>Completando...</>
+    progress = 100
+  } else {
+    const timeLeft = getTimeUntil(finishesAt, true)
+    text = <>Investigando... {timeLeft}</>
+    const initialTs = finishesAt - researchSeconds
+    const secondsElapsed = tsNow - initialTs
+    progress = (secondsElapsed / researchSeconds) * 100
   }
-  return <>Investigando... {timeLeft}</>
+
+  return (
+    <Container outerClassName={cardStyles.button}>
+      <div className={cardStyles.buttonNumberContainer}>
+        <div className={cardStyles.buttonNumberProgress} style={{ width: progress + '%' }} />
+        <div className={cardStyles.buttonNumberText}>{text}</div>
+      </div>
+    </Container>
+  )
 }
 const throttledReloadUserData = throttle(reloadUserData, 2000)
 

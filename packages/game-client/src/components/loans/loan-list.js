@@ -2,6 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import LoanListItem from './loan-list-item'
 import styles from './loans.module.scss'
+import Container from 'components/UI/container'
 
 LoanList.propTypes = {
   loans: PropTypes.array.isRequired,
@@ -9,7 +10,7 @@ LoanList.propTypes = {
 }
 export default function LoanList({ loans, refreshLoansList }) {
   return (
-    <div className={styles.container}>
+    <Container>
       <div className={styles.title}>PRÉSTAMOS</div>
       <div className={styles.contentContainer}>
         {loans.length ? (
@@ -18,6 +19,6 @@ export default function LoanList({ loans, refreshLoansList }) {
           <div>No hay préstamos disponibles</div>
         )}
       </div>
-    </div>
+    </Container>
   )
 }
