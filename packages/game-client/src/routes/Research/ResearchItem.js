@@ -71,7 +71,7 @@ export default function ResearchItem({ researchID }) {
 }
 
 TimerButtonNumber.propTypes = {
-  finishesAt: PropTypes.number.isRequired,
+  finishesAt: PropTypes.number,
   researchID: PropTypes.number.isRequired,
   level: PropTypes.number.isRequired,
   isUpgrading: PropTypes.bool.isRequired,

@@ -1,15 +1,15 @@
 import React, { useCallback } from 'react'
 import { calcResearchPrice } from 'shared-lib/researchUtils'
 import { calcBuildingDailyIncome } from 'shared-lib/buildingsUtils'
-import { useUserData } from 'lib/user'
 import Card from 'components/card'
 import cardStyles from 'components/card/card.module.scss'
 import { buyResearch } from '../../../../routes/Research/buyResearch'
 import Icon from 'components/icon'
 import { numberToAbbreviation } from 'lib/utils'
 import Container from 'components/UI/container'
+import { useUserData } from 'lib/user'
 
-export default function BuildingOptimizeResearch() {
+function BuildingOptimizeResearch() {
   const userData = useUserData()
   const researchID = 5
   const currentOptimizeLvl = userData.researchs[researchID]
@@ -33,8 +33,7 @@ export default function BuildingOptimizeResearch() {
             <div>{timeToRecoverInvestment} días</div>
           </div>
         </div>
-
-        <Container onClick={buyResearchClicked} disabled={!canBuy} outerClassName={cardStyles.button}>
+        <Container onClick={buyResearchClicked} outerClassName={cardStyles.button} disabled={!canBuy}>
           <div className={cardStyles.buttonNumberContainer}>
             {numberToAbbreviation(coste)} <Icon iconName="money" style={{ marginLeft: 3 }} size={20} />
           </div>
@@ -44,6 +43,7 @@ export default function BuildingOptimizeResearch() {
     </Card>
   )
 }
+export default BuildingOptimizeResearch
 
 function calculateIncomeDiff(buildings, currentOptimizeLvl) {
   let income = 0

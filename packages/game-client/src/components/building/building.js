@@ -6,7 +6,7 @@ import {
   calcBuildingMaxMoney,
 } from 'shared-lib/buildingsUtils'
 import PropTypes from 'prop-types'
-import { userData as userDataRaw, useUserData, updateUserData } from 'lib/user'
+import { userData as userDataRaw, updateUserData, useUserData } from 'lib/user'
 import { post } from 'lib/api'
 import Card from 'components/card'
 import useHoldPress from 'lib/useHoldPress'
@@ -111,8 +111,7 @@ ExtractScreen.propTypes = {
 }
 function ExtractScreen({ buildingID, buildingCount }) {
   const accumulatedMoney = userDataRaw.buildings[buildingID].money
-  const userData = useUserData()
-  const bankResearchLevel = userData.researchs[4]
+  const bankResearchLevel = userDataRaw.researchs[4]
   const maxMoney = calcBuildingMaxMoney({ buildingID, buildingAmount: buildingCount, bankResearchLevel })
 
   const onExtractMoney = useCallback(async () => {

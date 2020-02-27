@@ -2,8 +2,8 @@ import React, { useEffect } from 'react'
 import Building from 'components/building'
 import OptimizeResearch from 'components/building/components/building-optimize-research'
 import { buildingsList, calcBuildingDailyIncome, calcBuildingMaxMoney } from 'shared-lib/buildingsUtils'
-import { userData as userDataRaw, fireUserDataListeners } from 'lib/user'
-import CardList, { cardListStyles } from 'components/UI/CardList'
+import { userData, fireUserDataListeners } from 'lib/user'
+import CardList from 'components/card/card-list'
 
 export default function Buildings() {
   useEffect(() => {
@@ -12,13 +12,11 @@ export default function Buildings() {
   }, [])
 
   return (
-    <CardList noGrid>
-      <div className={cardListStyles.grid}>
-        <OptimizeResearch />
-        {buildingsList.map(buildingInfo => (
-          <Building key={buildingInfo.id} buildingID={buildingInfo.id} />
-        ))}
-      </div>
+    <CardList>
+      <OptimizeResearch />
+      {buildingsList.map(buildingInfo => (
+        <Building key={buildingInfo.id} buildingID={buildingInfo.id} />
+      ))}
     </CardList>
   )
 }
@@ -27,7 +25,6 @@ function setupBuildingsBankUpdater() {
   // Update every second userData.building money properties while the buildings screen is active
 
   function updateBuildingsMoney() {
-    const userData = userDataRaw
     const deltaMs = Date.now() - userData.__buildings_last_buildings_money_update
     userData.__buildings_last_buildings_money_update = Date.now()
     if (Number.isNaN(deltaMs)) {

@@ -1,89 +1,82 @@
 .subMenu {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  max-width: 720px;
+  margin: auto;
+  background-color: #343434;
+  border-bottom: 15px solid #EACA77;
+  border-top: 3px solid #EACC77;
+
+  &.desktop {
+    border-top: 15px solid #EACA77;
+    border-bottom: 3px solid #EACA77;
+  }
+
+  >a {
     position: relative;
+    flex-grow: 1;
+    flex-basis: 0;
+    padding: 0.6em 0;
+    text-align: center;
     display: flex;
-    flex-direction: row;
-    max-width: 720px;
-    margin: auto;
-    background-color: #343434;
-    border-bottom: 15px solid #EACA77;
-    border-top: 3px solid #EACC77;
+    align-items: center;
+    justify-content: center;
 
-    &.desktop {
-        border-top: 15px solid #EACA77;
-        border-bottom: 3px solid #EACA77;
-    }
+    .subMenuItem {
+      color: rgba(255, 255, 255, 0.8);
+      transition: all ease-in-out .3s;
+      font-family: 'Oswald';
+      font-weight: 400;
+      text-transform: uppercase;
+      font-size: 0.9em;
 
-    > a {
-      position: relative;
-      flex-grow: 1;
-      padding: 0.75em 0.25em;
-      text-align: center;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      
-      
-      .subMenuItem {
-        color: white;
-        transition: all ease-in-out .3s;
-        font-family: 'Oswald';
-        font-weight: 400;
-        text-transform: uppercase;
-        font-size: 13px;
-        letter-spacing: 1px;
-        
-        &::first-letter {
-          font-size: 1.1rem;
-        }
+      &::first-letter {
+        font-size: 1.3em;
       }
-
-      &.active .subMenuItem {
-        color: #EAC953;
-        font-size: 15px;
-
-        &::first-letter {
-          font-size: 1.2rem;
-        }
-      }
-
     }
 
-    .subMenuMarkers {
-        position: absolute;
-        left: 0;
-        height: 100%;
-        overflow: hidden;
-        width: 1em;
-        margin-left: -0.5em;
-        transition: all linear .1s;
-
-        &::before {
-            display: block;
-            content: "";
-            width: 0.5em;
-            height: 0.5em;
-            background-color: #EACA77;
-            transform: rotate(45deg);
-            position: absolute;
-            left: 0;
-            right: 0;
-            top: -0.25em;
-            margin: auto;
-        }
-
-        &::after {
-            display: block;
-            content: "";
-            width: 0.5em;
-            height: 0.5em;
-            background-color: #EACA77;
-            transform: rotate(45deg);
-            position: absolute;
-            left: 0;
-            right: 0;
-            bottom: -0.25em;
-            margin: auto;
-        }
+    &.active .subMenuItem {
+      color: #EAC953;
     }
+  }
+
+  .subMenuMarkers {
+    position: absolute;
+    left: 0;
+    height: 100%;
+    overflow: hidden;
+    width: 1em;
+    margin-left: -0.5em;
+    transition: all linear .1s;
+
+    &::before {
+      display: block;
+      content: "";
+      width: 0.5em;
+      height: 0.5em;
+      background-color: #EACA77;
+      transform: rotate(45deg);
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: -0.25em;
+      margin: auto;
+    }
+
+    &::after {
+      display: block;
+      content: "";
+      width: 0.5em;
+      height: 0.5em;
+      background-color: #EACA77;
+      transform: rotate(45deg);
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -0.25em;
+      margin: auto;
+    }
+  }
 
 }

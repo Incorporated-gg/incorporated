@@ -7,6 +7,8 @@ import useWindowSize from 'lib/useWindowSize'
 import { DESKTOP_WIDTH_BREAKPOINT } from 'lib/utils'
 import UnreadCountBubble from '../menu-unread-count-bubble'
 
+const lastVisitedRoutes = {}
+
 SubMenu.propTypes = {
   getActiveGroup: PropTypes.func.isRequired,
   getActiveItemIndex: PropTypes.func.isRequired,
@@ -25,14 +27,22 @@ export default function SubMenu({ getActiveGroup, getActiveItemIndex }) {
     transform: `translateX(${markersTranslateX * Math.min(DESKTOP_WIDTH_BREAKPOINT, windowDimensions.width)}px)`,
   }
 
+  // Set lastVisitedRoutes
+  if (!lastVisitedRoutes[activeGroup.mainPath]) lastVisitedRoutes[activeGroup.mainPath] = {}
+  setTimeout(() => {
+    lastVisitedRoutes[activeGroup.mainPath][activeItemIndex] = location.pathname
+  }, 1)
+
   return (
     <div className={`${styles.subMenu} ${isDesktop ? styles.desktop : ''}`}>
       <div className={styles.subMenuMarkers} style={markersStyle} />
       {activeGroup.items.map((item, index) => {
         const extra = item.extra || []
         const isActive = activeItemIndex === index
+        const link = isActive ? item.path : lastVisitedRoutes[activeGroup.mainPath][index] || item.path
+
         return (
-          <Link className={isActive ? styles.active : ''} to={item.path} key={item.path}>
+          <Link className={isActive ? styles.active : ''} to={link} key={item.path}>
             <div className={styles.subMenuItem}>{item.alt}</div>
             {extra.includes('unread_messages') && <UnreadCountBubble type="messages" />}
             {extra.includes('unread_reports') && <UnreadCountBubble type="reports" />}

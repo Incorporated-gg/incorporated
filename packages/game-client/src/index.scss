@@ -5,9 +5,10 @@ body {
   font-family: 'Lato', Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #444;
+  background-color: #343434;
   overflow-y: scroll;
   word-break: break-word;
+  min-height: 100%;
 }
 
 *,

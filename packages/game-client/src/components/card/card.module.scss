@@ -66,7 +66,7 @@ $border-radius-size: 14px;
 
   }
 
-  .accentBg {
+  .darkBg {
     font-weight: bold;
     background: #343434 0% 0% no-repeat padding-box;
     color: #fff;
@@ -74,6 +74,7 @@ $border-radius-size: 14px;
     flex-grow: 1;
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
 
     .name {
       font-size: 1.7em;
@@ -83,7 +84,6 @@ $border-radius-size: 14px;
 
     .description {
       padding: 0.5em;
-      flex-grow: 1;
       white-space: pre-wrap;
       display: flex;
       align-items: center;
@@ -123,9 +123,10 @@ $border-radius-size: 14px;
 
     .children {
       padding: 10px;
+      // flex-grow: 1; // Disabled due to ios safari bug, calculating too much extra height
       display: flex;
       flex-direction: column;
-      flex-grow: 1;
+      justify-content: space-between;
     }
   }
 }

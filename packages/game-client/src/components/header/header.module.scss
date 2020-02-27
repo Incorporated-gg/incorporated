@@ -29,12 +29,12 @@
 
       &.containerBottomBorderFillLeft {
         left: 0;
-        transform: rotate(45deg) translateX(-50%);
+        transform: translateY(-2px) rotate(45deg) translateX(-50%);
       }
 
       &.containerBottomBorderFillRight {
         right: 0;
-        transform: rotate(-45deg) translateX(50%);
+        transform: translateY(-2px) rotate(-45deg) translateX(50%);
       }
     }
 
