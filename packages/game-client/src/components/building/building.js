@@ -32,10 +32,10 @@ const buildingDescriptions = {
   6: `A veces limpiamos las habitaciones!`,
 }
 
-BuildingItem.propTypes = {
+Building.propTypes = {
   buildingID: PropTypes.number.isRequired,
 }
-export default function BuildingItem({ buildingID }) {
+export default function Building({ buildingID }) {
   const userData = useUserData()
   const buildingInfo = buildingsList.find(b => b.id === buildingID)
   const buildingCount = userData.buildings[buildingID].quantity
