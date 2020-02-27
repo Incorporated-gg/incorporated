@@ -7,14 +7,6 @@ module.exports.setupChat = io => {
       name: 'all',
       messages: [],
     },
-    {
-      name: 'corp',
-      messages: [],
-    },
-    {
-      name: 'gaymers',
-      messages: [],
-    },
   ]
 
   const apiNamespace = io.of('/api')

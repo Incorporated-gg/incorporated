@@ -49,7 +49,7 @@ $border-radius-size: 14px;
         top: 6px;
         right: 6px;
         font-size: 1.6em;
-        font-family: "Engebrechtre Bold";
+        font-family: "Oswald";
         text-align: right;
         color: rgba(255, 255, 255, 0.6);
         padding-left: 40%; // for word break
@@ -136,4 +136,7 @@ $border-radius-size: 14px;
 .buttonNumberContainer {
   background-color: #343434;
   margin: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

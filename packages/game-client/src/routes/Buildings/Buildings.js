@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react'
-import BuildingItem from './BuildingItem'
-import OptimizeResearch from './OptimizeResearch'
+import Building from 'components/building'
+import OptimizeResearch from 'components/building/components/building-optimize-research'
 import { buildingsList, calcBuildingDailyIncome, calcBuildingMaxMoney } from 'shared-lib/buildingsUtils'
-import { userData as userDataRaw, fireUserDataListeners } from '../../lib/user'
+import { userData as userDataRaw, fireUserDataListeners } from 'lib/user'
 import CardList, { cardListStyles } from 'components/UI/CardList'
 
 export default function Buildings() {
@@ -16,7 +16,7 @@ export default function Buildings() {
       <div className={cardListStyles.grid}>
         <OptimizeResearch />
         {buildingsList.map(buildingInfo => (
-          <BuildingItem key={buildingInfo.id} buildingID={buildingInfo.id} />
+          <Building key={buildingInfo.id} buildingID={buildingInfo.id} />
         ))}
       </div>
     </CardList>

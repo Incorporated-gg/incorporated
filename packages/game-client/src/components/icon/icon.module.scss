@@ -1,6 +1,13 @@
 .svg {
-  display: inline-block;
-  svg {
-    vertical-align: sub;
+  display: flex;
+  align-items: center;
+  
+  div {
+    display: flex;
+    align-items: center;
+
+    svg {
+      vertical-align: sub;
+    }
   }
 }

@@ -16,7 +16,7 @@ Container.propTypes = {
 
 export default function Container({
   children,
-  borderSize = 5,
+  borderSize = 3,
   darkBg,
   disabled,
   whiteBorder,
