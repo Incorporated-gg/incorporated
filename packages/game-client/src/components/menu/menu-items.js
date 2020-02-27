@@ -2,7 +2,6 @@ export default [
   {
     mainPath: '/ranking',
     svgIcon: require('./img/icon-missions.svg'),
-    svgText: require('./img/text-missions.svg'),
     title: 'Misiones',
     extra: ['unread_reports'],
     items: [
@@ -30,7 +29,6 @@ export default [
   {
     mainPath: '/newspaper',
     svgIcon: require('./img/icon-newspaper.svg'),
-    svgText: require('./img/text-newspaper.svg'),
     title: 'Periódico',
     extra: ['unread_messages'],
     items: [
@@ -49,7 +47,6 @@ export default [
   {
     mainPath: '/buildings',
     svgIcon: require('./img/icon-inversion.svg'),
-    svgText: require('./img/text-inversion.svg'),
     title: 'Inversión',
     items: [
       {
@@ -73,7 +70,6 @@ export default [
   {
     mainPath: '/alliance',
     svgIcon: require('./img/icon-corp.svg'),
-    svgText: require('./img/text-corp.svg'),
     title: 'Corporación',
     items: [
       {
@@ -106,7 +102,6 @@ export default [
   {
     mainPath: '/map',
     svgIcon: require('./img/icon-map.svg'),
-    svgText: require('./img/text-map.svg'),
     title: 'Mapa',
     items: [
       {
