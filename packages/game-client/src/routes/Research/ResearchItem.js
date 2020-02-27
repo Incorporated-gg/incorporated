@@ -35,10 +35,10 @@ ResearchItem.propTypes = {
 }
 export default function ResearchItem({ researchID }) {
   const userData = useUserData()
-  const isUpgrading = userData.activeResearchs.find(ar => ar.research_id === researchID)
+  const upgrade = userData.activeResearchs.find(ar => ar.research_id === researchID)
   const research = researchList.find(r => r.id === researchID)
   const level = userData.researchs[researchID]
-  const cost = Math.ceil(calcResearchPrice(research.id, level + (isUpgrading ? 1 : 0)))
+  const cost = Math.ceil(calcResearchPrice(research.id, level + (upgrade ? 1 : 0)))
   const canAfford = userData.money > cost
   const buyResearchClicked = useCallback(() => buyResearch(researchID), [researchID])
 
@@ -50,15 +50,15 @@ export default function ResearchItem({ researchID }) {
       desc={researchDescriptions[researchID]}
       image={researchImages[researchID]}>
       <TimerButtonNumber
-        finishesAt={isUpgrading && isUpgrading.finishes_at}
+        finishesAt={upgrade && upgrade.finishes_at}
         researchID={researchID}
         level={level}
-        isUpgrading={!!isUpgrading}
+        isUpgrading={!!upgrade}
       />
 
-      {isUpgrading && <UpgradeInstantlyButton finishesAt={isUpgrading.finishes_at} researchID={researchID} />}
+      {upgrade && <UpgradeInstantlyButton finishesAt={upgrade.finishes_at} researchID={researchID} />}
 
-      <Container outerClassName={cardStyles.button} onClick={buyResearchClicked} disabled={!canAfford || isUpgrading}>
+      <Container outerClassName={cardStyles.button} onClick={buyResearchClicked} disabled={!canAfford || !!upgrade}>
         <div className={cardStyles.buttonNumberContainer}>
           <div className={cardStyles.buttonNumberText}>
             {numberToAbbreviation(cost)} <Icon iconName="money" style={{ marginLeft: 3 }} size={20} />
