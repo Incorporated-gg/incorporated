@@ -1,5 +1,5 @@
-export const CREATE_ALLIANCE_PRICE = 5
-export const MAX_ALLIANCE_MEMBERS = 5
+export const CREATE_ALLIANCE_PRICE = 500000
+export const MAX_ALLIANCE_MEMBERS = 8
 export const WAR_DAYS_DURATION = 5
 
 export const RESEARCHS_LIST = [
