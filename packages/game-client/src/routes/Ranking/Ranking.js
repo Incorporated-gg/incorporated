@@ -25,7 +25,6 @@ export default function Ranking() {
   }, [history, page, pathname])
 
   useEffect(() => {
-    console.log('renderin')
     get('/v1/ranking', { type, page })
       .then(res => {
         setRanking(res.ranking.listing)
