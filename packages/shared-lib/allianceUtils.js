@@ -62,7 +62,7 @@ const maxResourcesPerLevel = {
   money: 500000,
   guards: 2000,
   sabots: 2000,
-  thieves: 500,
+  thieves: 1500,
 }
 module.exports.calcResourceMax = calcResourceMax
 function calcResourceMax(resourceID, researchs) {
@@ -81,7 +81,7 @@ const genResourcesPerLevel = {
   money: 100000,
   guards: 200,
   sabots: 100,
-  thieves: 50,
+  thieves: 100,
 }
 module.exports.calcResourceGeneration = calcResourceGeneration
 function calcResourceGeneration(resourceID, researchs) {

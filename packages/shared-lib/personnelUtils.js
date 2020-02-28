@@ -25,7 +25,7 @@ const personnelList = [
   {
     name: 'Ladrones',
     resource_id: 'thieves',
-    price: 300,
+    price: 200,
     firingCost: 250,
     combatPower: 0.2,
     robbingPower: 50,
