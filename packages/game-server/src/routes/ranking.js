@@ -69,8 +69,6 @@ module.exports = app => {
       }
     }
 
-    console.log(ranking)
-
     res.json({
       ranking,
     })

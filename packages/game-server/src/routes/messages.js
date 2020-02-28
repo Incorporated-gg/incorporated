@@ -76,12 +76,12 @@ module.exports = app => {
         return
       }
 
-      receiversIDs = members.map(member => member.user.id)
+      receiversIDs = members.map(member => member.user.id).filter(m => !!m)
     } else {
-      receiversIDs = [await users.getIDFromUsername(req.body.addressee)]
+      receiversIDs = [await users.getIDFromUsername(req.body.addressee)].filter(m => !!m)
     }
 
-    if (!receiversIDs) {
+    if (!receiversIDs.length) {
       res.status(400).json({ error: 'Nombre de usuario inválido' })
       return
     }
