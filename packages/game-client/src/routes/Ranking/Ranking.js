@@ -1,27 +1,38 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { get } from '../../lib/api'
 import Username from '../../components/UI/Username'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useHistory } from 'react-router-dom'
 import styles from './Ranking.module.scss'
 import RankItem from '../../components/UI/RankItem'
 import AllianceLink from 'components/alliance/alliance-link'
 import { debounce } from '../../lib/utils'
+import Pagination from 'components/UI/pagination'
 
 export default function Ranking() {
   const [ranking, setRanking] = useState([])
   const [error, setError] = useState(false)
   const { pathname } = useLocation()
   let type = pathname.split('/').pop()
+  const urlParams = new URLSearchParams(window.location.search)
+  const [page, setPage] = useState(parseInt(urlParams.get('page')) || 1)
+  const [maxPages, setMaxPages] = useState(1)
+  const history = useHistory()
   if (type === 'ranking') type = 'income'
   const rankingItemType = type === 'income' || type === 'research' ? 'users' : 'alliances'
 
   useEffect(() => {
-    get('/v1/ranking', { type })
+    history.push(`${pathname}?page=${page}`)
+  }, [history, page, pathname])
+
+  useEffect(() => {
+    console.log('renderin')
+    get('/v1/ranking', { type, page })
       .then(res => {
-        setRanking(res.ranking)
+        setRanking(res.ranking.listing)
+        setMaxPages(res.ranking.maxPages)
       })
       .catch(err => setError(err.message))
-  }, [type])
+  }, [type, page])
 
   if (error) return <h4>{error}</h4>
 
@@ -39,6 +50,7 @@ export default function Ranking() {
           </RankItem>
         ))}
       </div>
+      {maxPages > 1 && <Pagination onPageChange={pageNum => setPage(pageNum)} maxPages={maxPages} />}
     </>
   )
 }
