@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Switch, Route, NavLink } from 'react-router-dom'
-import MessagesList from './MessagesList'
-import NewMessageModal from './NewMessageModal'
+import MessagesList from 'components/messages/components/messages-list'
+import NewMessageModal from 'components/messages/components/new-message-modal'
 
 export default function Messages() {
   const [showNewMessageModal, setShowNewMessageModal] = useState(false)

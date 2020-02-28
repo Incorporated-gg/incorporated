@@ -10,6 +10,7 @@ body {
   overflow-y: scroll;
   word-break: break-word;
   min-height: 100%;
+  color: #fff;
 }
 
 *,
@@ -163,12 +164,4 @@ a {
   width: 100%;
   margin: 0 auto;
   z-index: 100;
-}
-
-.container {
-  padding: 0.5em;
-  margin: 0.5em;
-  border-radius: 0.3em;
-  background: linear-gradient(hsla(222, 10%, 70%, 0.5), hsla(222, 10%, 63%, 0.5));
-  text-align: center;
 }

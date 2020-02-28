@@ -35,7 +35,7 @@ export default function CreateLoan({ refreshLoansList, givenLoan }) {
       givenLoan.loan_started_at + 60 * 60 * 24 * LOAN_DAYS_DURATION - Math.floor(Date.now() / 1000)
     const remainingTime = Math.ceil(remainingSeconds / (60 * 60 * 24))
     return (
-      <Container>
+      <Container darkBg>
         <div className={styles.contentContainer}>
           Has dado un préstamo.
           {givenLoan.borrower && <> Quedan {remainingTime} días</>}
@@ -44,7 +44,7 @@ export default function CreateLoan({ refreshLoansList, givenLoan }) {
     )
   }
   return (
-    <Container>
+    <Container darkBg>
       <div className={styles.title}>{'OFRECER PRÉSTAMO'}</div>
       <div className={styles.contentContainer}>
         <p>

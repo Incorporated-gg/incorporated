@@ -14,6 +14,7 @@ import cardStyles from 'components/card/card.module.scss'
 import { post } from 'lib/api'
 import Container from 'components/UI/container'
 import Icon from 'components/icon'
+import styles from './research-item.module.scss'
 
 const researchImages = {
   1: require('./img/spy.png'),
@@ -64,7 +65,7 @@ export default function ResearchItem({ researchID }) {
             {numberToAbbreviation(cost)} <Icon iconName="money" style={{ marginLeft: 3 }} size={20} />
           </div>
         </div>
-        <h2>{'INVESTIGAR'}</h2>
+        <h2 className={styles.researchButton}>{'INVESTIGAR'}</h2>
       </Container>
     </Card>
   )
@@ -140,7 +141,7 @@ function UpgradeInstantlyButton({ researchID, finishesAt }) {
   if (secondsLeft > MANUALLY_FINISH_RESEARCH_UPGRADES_SECONDS) return null
 
   return (
-    <button className={cardStyles.button} onClick={manuallyFinishResearch} disabled={false}>
+    <button className={`${cardStyles.button}`} onClick={manuallyFinishResearch} disabled={false}>
       TERMINAR MEJORA
     </button>
   )

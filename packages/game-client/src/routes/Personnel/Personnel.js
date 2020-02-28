@@ -81,7 +81,6 @@ function PersonnelType({ personnelInfo, resourceAmount }) {
       <input
         className={cardStyles.input}
         placeholder="0"
-        style={{ color: '#333' }}
         type="number"
         value={hireAmount}
         onChange={e => setHireAmount(e.target.value)}
@@ -97,7 +96,6 @@ function PersonnelType({ personnelInfo, resourceAmount }) {
       <input
         className={cardStyles.input}
         placeholder="0"
-        style={{ color: '#333' }}
         type="number"
         value={fireAmount}
         onChange={e => setFireAmount(e.target.value)}

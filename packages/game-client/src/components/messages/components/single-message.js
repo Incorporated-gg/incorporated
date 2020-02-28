@@ -1,16 +1,17 @@
 import React, { useState } from 'react'
-import { post } from '../../lib/api'
-import Username from '../../components/UI/Username'
+import { post } from 'lib/api'
 import PropTypes from 'prop-types'
-import { userData } from '../../lib/user'
+import { userData } from 'lib/user'
 import { buildingsList } from 'shared-lib/buildingsUtils'
 import { personnelList } from 'shared-lib/personnelUtils'
 import { researchList } from 'shared-lib/researchUtils'
-import styles from './Messages.module.scss'
-import UserActionLinks from '../../components/UI/UserActionLinks'
-import ErrorBoundary from '../../components/UI/ErrorBoundary'
+import styles from './single-message.module.scss'
+import Username from 'components/UI/Username'
+import ErrorBoundary from 'components/UI/ErrorBoundary'
 import AllianceLink from 'components/alliance/alliance-link'
-import NewMessageModal from './NewMessageModal'
+import NewMessageModal from './new-message-modal'
+import Container from 'components/UI/container'
+import { getServerDay } from 'shared-lib/serverTime'
 
 SingleMessage.propTypes = {
   message: PropTypes.object.isRequired,
@@ -21,6 +22,8 @@ export default function SingleMessage({ reloadMessagesData, message }) {
 
   const deleteMessage = e => {
     e.preventDefault()
+    if (!window.confirm('Estás seguro/a de que quieres borrar el mensaje?')) return
+
     post(`/v1/messages/delete`, { message_id: message.id })
       .then(() => reloadMessagesData())
       .catch(err => {
@@ -29,6 +32,7 @@ export default function SingleMessage({ reloadMessagesData, message }) {
   }
   const wasSentToMe = message.receiver && message.receiver.id === userData.id
   const dateFormatted = new Date(message.created_at * 1000).toLocaleString()
+  const serverDay = getServerDay(message.created_at * 1000)
 
   let messageElm
   try {
@@ -43,41 +47,45 @@ export default function SingleMessage({ reloadMessagesData, message }) {
   }
 
   return (
-    <div className={styles.messageContainer}>
-      <div className={styles.msgInfo}>
-        <div>
-          {wasSentToMe && message.sender && (
-            <>
-              {'Enviado por: '}
-              <Username user={message.sender} />
-            </>
-          )}
-          {!wasSentToMe && message.receiver && (
-            <>
-              {'Enviado a: '}
-              <Username user={message.receiver} />
-            </>
-          )}
+    <Container darkBg outerClassName={styles.outerContainer}>
+      <div className={styles.messageContainer}>
+        <div className={styles.msgInfo}>
+          <div>
+            {wasSentToMe && message.sender && (
+              <>
+                {'Enviado por: '}
+                <Username user={message.sender} />
+              </>
+            )}
+            {!wasSentToMe && message.receiver && (
+              <>
+                {'Enviado a: '}
+                <Username user={message.receiver} />
+              </>
+            )}
+          </div>
+          <div>
+            Día {serverDay}. {dateFormatted}
+          </div>
         </div>
-        <div>{dateFormatted}</div>
+        <br />
+        <ErrorBoundary>
+          <div className={styles.messageText}>{messageElm}</div>
+        </ErrorBoundary>
+        <br />
+        {wasSentToMe && message.sender && (
+          <>
+            <button onClick={() => setShowMessageModal(true)}>Responder</button>
+            <NewMessageModal
+              user={message.sender}
+              isOpen={showMessageModal}
+              onRequestClose={() => setShowMessageModal(false)}
+            />
+          </>
+        )}
+        {wasSentToMe && <button onClick={deleteMessage}>Borrar</button>}
       </div>
-      <br />
-      <ErrorBoundary>
-        <div className={styles.messageText}>{messageElm}</div>
-      </ErrorBoundary>
-      <br />
-      {wasSentToMe && message.sender && (
-        <>
-          <button onClick={() => setShowMessageModal(true)}>Responder</button>
-          <NewMessageModal
-            user={message.sender}
-            isOpen={showMessageModal}
-            onRequestClose={() => setShowMessageModal(false)}
-          />
-        </>
-      )}
-      {wasSentToMe && <button onClick={deleteMessage}>Borrar</button>}
-    </div>
+    </Container>
   )
 }
 
@@ -199,7 +207,6 @@ function getMessage(message) {
       messageElm = (
         <div>
           <div>{message.data.message}</div>
-          <UserActionLinks user={message.sender} />
         </div>
       )
       break
@@ -217,7 +224,6 @@ function getMessage(message) {
         <div>
           Hemos cazado a {message.data.captured_spies.toLocaleString()} espías de{' '}
           <Username user={message.data.attacker} /> que nos intentaban robar información confidencial!
-          <UserActionLinks user={message.data.attacker} />
         </div>
       )
       break

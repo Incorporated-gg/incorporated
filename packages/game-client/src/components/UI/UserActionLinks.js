@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import { useUserData } from 'lib/user'
-import NewMessageModal from 'routes/Messages/NewMessageModal'
+import NewMessageModal from 'components/messages/components/new-message-modal'
 import { NEWBIE_ZONE_DAILY_INCOME } from 'shared-lib/missionsUtils'
 import MissionModal from '../mission-modal'
 

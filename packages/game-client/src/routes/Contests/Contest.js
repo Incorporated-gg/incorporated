@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom'
 import api from '../../lib/api'
 import Username from '../../components/UI/Username'
 import UserActionLinks from '../../components/UI/UserActionLinks'
+import Container from 'components/UI/container'
 
 export default function Monopolies() {
   const { contestName } = useParams()
@@ -19,39 +20,41 @@ export default function Monopolies() {
   }, [contestName])
 
   return (
-    <div>
-      {error && <h4>{error}</h4>}
-      <h2>{contestName}</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Rank</th>
-            <th>Nombre de usuario</th>
-            <th>Puntos</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          {contestScores && contestScores.length ? (
-            contestScores.map(contestScore => (
-              <tr key={contestScore.id}>
-                <td>{contestScore.rank && contestScore.rank.toLocaleString()}</td>
-                <td>
-                  <Username user={contestScore.user} />
-                </td>
-                <td>{contestScore.score && contestScore.score.toLocaleString()} puntos</td>
-                <td>
-                  <UserActionLinks user={contestScore.user} />
-                </td>
-              </tr>
-            ))
-          ) : (
+    <Container darkBg>
+      <div style={{ padding: 10 }}>
+        {error && <h4>{error}</h4>}
+        <h2>{contestName}</h2>
+        <table>
+          <thead>
             <tr>
-              <td>No users found</td>
+              <th>Rank</th>
+              <th>Nombre de usuario</th>
+              <th>Puntos</th>
+              <th>Acciones</th>
             </tr>
-          )}
-        </tbody>
-      </table>
-    </div>
+          </thead>
+          <tbody>
+            {contestScores && contestScores.length ? (
+              contestScores.map(contestScore => (
+                <tr key={contestScore.id}>
+                  <td>{contestScore.rank && contestScore.rank.toLocaleString()}</td>
+                  <td>
+                    <Username user={contestScore.user} />
+                  </td>
+                  <td>{contestScore.score && contestScore.score.toLocaleString()} puntos</td>
+                  <td>
+                    <UserActionLinks user={contestScore.user} />
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td>No users found</td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+    </Container>
   )
 }

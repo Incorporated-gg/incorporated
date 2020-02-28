@@ -54,54 +54,42 @@ export default function FinancialData() {
 
   return (
     <div>
-      <h1>Finanzas</h1>
-      <table cellSpacing={0}>
-        <thead>
-          <tr>
-            <th>Concepto</th>
-            <th>Ingresos</th>
-            <th>Gastos</th>
-          </tr>
-        </thead>
-        <tbody>
-          {buildingsIncome.map(building => {
-            return (
-              <tr key={building.building_id}>
-                <td>
-                  {building.name} ({building.quantity.toLocaleString()})
-                </td>
-                <td>{building.income.toLocaleString()}</td>
-                <td></td>
-              </tr>
-            )
-          })}
-          <tr>
-            <td>
-              <br />
-            </td>
-          </tr>
-          <tr>
-            <td>Total edificios</td>
-            <td>{totalBuildingsIncome.toLocaleString()}</td>
-            <td></td>
-          </tr>
-          <tr>
-            <td>Préstamos</td>
-            <td>{gainedFromLoans.toLocaleString()}</td>
-            <td>{lostFromLoans.toLocaleString()}</td>
-          </tr>
-          <tr>
-            <td>Mantenimiento de personal</td>
-            <td></td>
-            <td>{totalPersonnel.toLocaleString()}</td>
-          </tr>
-          <tr className={styles.textHighlight}>
-            <td>TOTAL</td>
-            <td>{totalTotal.toLocaleString()}</td>
-            <td></td>
-          </tr>
-        </tbody>
-      </table>
+      <h1 className={styles.title}>Finanzas</h1>
+      <div className={styles.table} cellSpacing={0}>
+        <div className={styles.tableTitle}>Concepto</div>
+        <div className={styles.tableTitle}></div>
+        <div className={styles.tableTitle}>Ingresos</div>
+        <div className={styles.tableTitle}>Gastos</div>
+        {buildingsIncome.map(building => {
+          return (
+            <React.Fragment key={building.building_id}>
+              <div>{building.name}</div>
+              <div>({building.quantity.toLocaleString()})</div>
+              <div>{building.income.toLocaleString()}</div>
+              <div></div>
+            </React.Fragment>
+          )
+        })}
+        <div>Total edificios</div>
+        <div></div>
+        <div>{totalBuildingsIncome.toLocaleString()}</div>
+        <div></div>
+
+        <div>Préstamos</div>
+        <div></div>
+        <div>{gainedFromLoans.toLocaleString()}</div>
+        <div>{lostFromLoans.toLocaleString()}</div>
+
+        <div>Personal</div>
+        <div></div>
+        <div></div>
+        <div>{totalPersonnel.toLocaleString()}</div>
+
+        <div className={`${styles.textHighlight} ${styles.textHighlightFirst}`}>TOTAL</div>
+        <div className={styles.textHighlight}></div>
+        <div className={`${styles.textHighlight} ${styles.textHighlightLast}`}>{totalTotal.toLocaleString()}</div>
+        <div></div>
+      </div>
     </div>
   )
 }

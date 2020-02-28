@@ -7,6 +7,7 @@ import {
   calcResourceGenerationByResearchID,
   calcResourceMaxByResearchID,
 } from 'shared-lib/allianceUtils'
+import Container from 'components/UI/container'
 
 AllianceResearch.propTypes = {
   alliance: PropTypes.object.isRequired,
@@ -23,21 +24,27 @@ export default function AllianceResearch({ alliance, reloadAllianceData }) {
   const chartImgUrl = `https://quickchart.io/chart?width=500&height=500&c=${JSON.stringify(chartData)}`
 
   return (
-    <div className={'container'}>
-      <div>
-        <h2>Research</h2>
-        {Object.values(alliance.researchs).map(researchData => {
-          return (
-            <SingleResearch key={researchData.id} researchData={researchData} reloadAllianceData={reloadAllianceData} />
-          )
-        })}
+    <Container darkBg>
+      <div style={{ padding: 10 }}>
+        <div>
+          <h2>Research</h2>
+          {Object.values(alliance.researchs).map(researchData => {
+            return (
+              <SingleResearch
+                key={researchData.id}
+                researchData={researchData}
+                reloadAllianceData={reloadAllianceData}
+              />
+            )
+          })}
+        </div>
+        <br />
+        <div>
+          <h2>Aportes</h2>
+          <img className={styles.aportesImg} src={chartImgUrl} alt="" />
+        </div>
       </div>
-      <br />
-      <div>
-        <h2>Aportes</h2>
-        <img className={styles.aportesImg} src={chartImgUrl} alt="" />
-      </div>
-    </div>
+    </Container>
   )
 }
 

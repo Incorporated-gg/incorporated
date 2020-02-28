@@ -10,7 +10,7 @@ LoanList.propTypes = {
 }
 export default function LoanList({ loans, refreshLoansList }) {
   return (
-    <Container>
+    <Container darkBg>
       <div className={styles.title}>PRÉSTAMOS</div>
       <div className={styles.contentContainer}>
         {loans.length ? (

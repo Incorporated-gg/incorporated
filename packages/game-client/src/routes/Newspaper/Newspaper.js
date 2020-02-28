@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react'
 import { getServerDate, getServerDay } from 'shared-lib/serverTime'
-import styles from './Newspaper.module.scss'
 import Newspaper from 'components/newspaper'
+import Container from 'components/UI/container'
 
 export default function NewspaperPage() {
   return (
-    <div className={styles.container}>
-      <ServerTime />
-      <Newspaper />
-    </div>
+    <Container darkBg>
+      <div style={{ padding: 10, textAlign: 'center' }}>
+        <ServerTime />
+        <Newspaper />
+      </div>
+    </Container>
   )
 }
 

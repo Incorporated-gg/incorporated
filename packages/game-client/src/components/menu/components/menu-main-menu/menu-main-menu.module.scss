@@ -43,6 +43,7 @@
       width: 100%;
       text-align: center;
       height: 2em;
+      overflow: hidden; // In small devices (or other languages), the title text might overflow. Alternatively, we could make the text smaller
 
       .title {
         @include pascalShadowTitle();

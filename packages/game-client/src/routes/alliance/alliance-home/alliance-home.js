@@ -5,7 +5,8 @@ import { post } from 'lib/api'
 import RankItem from 'components/UI/RankItem'
 import styles from './alliance-home.module.scss'
 import { useUserData, reloadUserData } from 'lib/user'
-import NewMessageModal from '../../Messages/NewMessageModal'
+import NewMessageModal from '../../../components/messages/components/new-message-modal'
+import Container from 'components/UI/container'
 
 AllianceHome.propTypes = {
   alliance: PropTypes.object.isRequired,
@@ -27,37 +28,39 @@ export default function AllianceHome({ alliance, reloadAllianceData }) {
   }
 
   return (
-    <div className={styles.container}>
-      <h3>
-        {alliance.long_name} ({alliance.short_name})
-      </h3>
-      <div className={styles.allianceDescText}> {alliance.description}</div>
-      <h3>Miembros</h3>
-      {alliance.members.map(member => {
-        return (
-          <RankItem
-            key={member.user.id}
-            rank={member.user.rank_position}
-            pointsString={member.user.income.toLocaleString() + '€'}>
-            <div>
-              <Username user={member.user} />
-            </div>
-            <div>{member.rank_name}</div>
-          </RankItem>
-        )
-      })}
-      {userData.alliance_user_rank.permission_send_circular_msg && (
-        <>
-          <hr />
-          <button onClick={() => setShowMessageModal(true)}>Enviar mensaje circular</button>
-        </>
-      )}
-      <button onClick={leaveAlliance}>Salir</button>
-      <NewMessageModal
-        user={{ username: `alliance:${alliance.short_name}` }}
-        isOpen={showMessageModal}
-        onRequestClose={() => setShowMessageModal(false)}
-      />
-    </div>
+    <Container darkBg>
+      <div className={styles.container}>
+        <h3>
+          {alliance.long_name} ({alliance.short_name})
+        </h3>
+        <div className={styles.allianceDescText}> {alliance.description}</div>
+        <h3>Miembros</h3>
+        {alliance.members.map(member => {
+          return (
+            <RankItem
+              key={member.user.id}
+              rank={member.user.rank_position}
+              pointsString={member.user.income.toLocaleString() + '€'}>
+              <div>
+                <Username user={member.user} />
+              </div>
+              <div>{member.rank_name}</div>
+            </RankItem>
+          )
+        })}
+        {userData.alliance_user_rank.permission_send_circular_msg && (
+          <>
+            <hr />
+            <button onClick={() => setShowMessageModal(true)}>Enviar mensaje circular</button>
+          </>
+        )}
+        <button onClick={leaveAlliance}>Salir</button>
+        <NewMessageModal
+          user={{ username: `alliance:${alliance.short_name}` }}
+          isOpen={showMessageModal}
+          onRequestClose={() => setShowMessageModal(false)}
+        />
+      </div>
+    </Container>
   )
 }

@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import api from '../../lib/api'
+import api from '../../../lib/api'
 import PropTypes from 'prop-types'
 import Modal from 'react-modal'
 import Container from 'components/UI/container'

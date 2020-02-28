@@ -3,6 +3,7 @@ import { post } from 'lib/api'
 import { calcResourceMax } from 'shared-lib/allianceUtils'
 import PropTypes from 'prop-types'
 import { useUserData, reloadUserData } from 'lib/user'
+import Container from 'components/UI/container'
 
 AllianceResources.propTypes = {
   alliance: PropTypes.object.isRequired,
@@ -12,30 +13,32 @@ export default function AllianceResources({ alliance, reloadAllianceData }) {
   const userData = useUserData()
 
   return (
-    <div className={'container'}>
-      {Object.values(alliance.resources).map(resourceData => {
-        return (
-          <SingleResources
-            key={resourceData.resource_id}
-            researchs={alliance.researchs}
-            resourceData={resourceData}
-            userResourceAmount={userData.personnel[resourceData.resource_id] || 0}
-            reloadAllianceData={reloadAllianceData}
-          />
-        )
-      })}
-      <div>
-        <h2>Historial de recursos</h2>
-        {alliance.resources_log.map(logEntry => {
+    <Container darkBg>
+      <div style={{ padding: 10 }}>
+        {Object.values(alliance.resources).map(resourceData => {
           return (
-            <div key={Math.random()}>
-              <b>{logEntry.user.username}</b>: {logEntry.quantity > 0 ? 'metió' : 'sacó'}{' '}
-              {Math.abs(logEntry.quantity).toLocaleString()} {logEntry.resource_id}
-            </div>
+            <SingleResources
+              key={resourceData.resource_id}
+              researchs={alliance.researchs}
+              resourceData={resourceData}
+              userResourceAmount={userData.personnel[resourceData.resource_id] || 0}
+              reloadAllianceData={reloadAllianceData}
+            />
           )
         })}
+        <div>
+          <h2>Historial de recursos</h2>
+          {alliance.resources_log.map(logEntry => {
+            return (
+              <div key={Math.random()}>
+                <b>{logEntry.user.username}</b>: {logEntry.quantity > 0 ? 'metió' : 'sacó'}{' '}
+                {Math.abs(logEntry.quantity).toLocaleString()} {logEntry.resource_id}
+              </div>
+            )
+          })}
+        </div>
       </div>
-    </div>
+    </Container>
   )
 }
 

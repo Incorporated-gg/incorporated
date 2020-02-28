@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react'
-import api from '../../lib/api'
+import api from '../../../lib/api'
 import PropTypes from 'prop-types'
-import SingleMessage from './SingleMessage'
+import SingleMessage from './single-message'
 
 MessagesList.propTypes = {
   type: PropTypes.string.isRequired,

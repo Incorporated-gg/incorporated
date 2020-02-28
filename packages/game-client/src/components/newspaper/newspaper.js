@@ -4,7 +4,7 @@ import api from 'lib/api'
 import NewsArticle from './components/news-article'
 
 export default function Newspaper() {
-  const [day, setDay] = useState(getServerDay())
+  const [day, setDay] = useState(getServerDay() - 1)
   const [newspaper, setNewspaper] = useState(false)
 
   const getNewspaper = useCallback(dayID => {

@@ -4,6 +4,7 @@ import MissionRow from './MissionRow'
 import styles from './Reports.module.scss'
 import MissionModal from 'components/mission-modal'
 import { Link, useLocation } from 'react-router-dom'
+import Container from 'components/UI/container'
 
 function useQuery() {
   return new URLSearchParams(useLocation().search)
@@ -66,53 +67,55 @@ export default function Reports() {
         onRequestClose={() => setShowSimulatorModal(false)}
       />
 
-      <div className={styles.missionContainer}>
-        <h2>
-          {type === 'sent'
-            ? `Misiones enviadas (Hoy: ${missions.sentToday}/${missions.maxAttacks})`
-            : `Misiones recibidas (Hoy: ${missions.receivedToday}/${missions.maxDefenses})`}
-        </h2>
-        <table>
-          <thead>
-            <tr>
-              <th>Tipo de misión</th>
-              <th>{type === 'sent' ? 'Usuario objetivo' : 'Agresor'}</th>
-              <th>Fecha</th>
-              <th>Resultado</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {type === 'sent' &&
-              (missions.sent.filter(m => m.completed).length ? (
-                missions.sent
-                  .filter(m => m.completed)
-                  .map((m, i) => <MissionRow key={i} mission={m} reloadMissionsCallback={reloadMissionsCallback} />)
-              ) : (
-                <tr>
-                  <td colSpan="3">No has realizado ninguna misión todavía</td>
-                </tr>
-              ))}
-            {type === 'received' &&
-              (missions.received.filter(m => m.completed).length ? (
-                missions.received
-                  .filter(m => m.completed)
-                  .map((m, i) => (
-                    <MissionRow
-                      key={i}
-                      mission={m}
-                      reloadMissionsCallback={reloadMissionsCallback}
-                      showcaseUser="sender"
-                    />
-                  ))
-              ) : (
-                <tr>
-                  <td colSpan="3">No has recibido ninguna misión todavía</td>
-                </tr>
-              ))}
-          </tbody>
-        </table>
-      </div>
+      <Container darkBg>
+        <div className={styles.missionContainer}>
+          <h2>
+            {type === 'sent'
+              ? `Misiones enviadas (Hoy: ${missions.sentToday}/${missions.maxAttacks})`
+              : `Misiones recibidas (Hoy: ${missions.receivedToday}/${missions.maxDefenses})`}
+          </h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Tipo de misión</th>
+                <th>{type === 'sent' ? 'Usuario objetivo' : 'Agresor'}</th>
+                <th>Fecha</th>
+                <th>Resultado</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {type === 'sent' &&
+                (missions.sent.filter(m => m.completed).length ? (
+                  missions.sent
+                    .filter(m => m.completed)
+                    .map((m, i) => <MissionRow key={i} mission={m} reloadMissionsCallback={reloadMissionsCallback} />)
+                ) : (
+                  <tr>
+                    <td colSpan="3">No has realizado ninguna misión todavía</td>
+                  </tr>
+                ))}
+              {type === 'received' &&
+                (missions.received.filter(m => m.completed).length ? (
+                  missions.received
+                    .filter(m => m.completed)
+                    .map((m, i) => (
+                      <MissionRow
+                        key={i}
+                        mission={m}
+                        reloadMissionsCallback={reloadMissionsCallback}
+                        showcaseUser="sender"
+                      />
+                    ))
+                ) : (
+                  <tr>
+                    <td colSpan="3">No has recibido ninguna misión todavía</td>
+                  </tr>
+                ))}
+            </tbody>
+          </table>
+        </div>
+      </Container>
     </div>
   )
 }
