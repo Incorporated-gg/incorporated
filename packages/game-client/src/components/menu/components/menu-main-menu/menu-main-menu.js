@@ -33,7 +33,7 @@ export default function MainMenu({ menuItems, getActiveGroup }) {
           <Link key={group.mainPath} to={link} className={isActive ? styles.active : ''}>
             <Icon svg={group.svgIcon} className={styles.svgIcon} alt={mainPathAlt} />
             <div className={styles.titleContainer}>
-              <span className={styles.title}>{group.title}</span>
+              <span className={`titleText shadow pascal ${styles.title}`}>{group.title}</span>
               {extra.includes('unread_messages') && <UnreadCountBubble type="messages" />}
               {extra.includes('unread_reports') && <UnreadCountBubble type="reports" />}
             </div>

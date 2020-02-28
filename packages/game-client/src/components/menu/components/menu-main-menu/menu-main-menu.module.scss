@@ -1,3 +1,5 @@
+@import '../../../../mixins.scss';
+
 .mainMenu {
   display: flex;
   flex-direction: row;
@@ -40,17 +42,11 @@
       left: 0;
       width: 100%;
       text-align: center;
-      overflow: hidden;
       height: 2em;
 
       .title {
+        @include pascalShadowTitle();
         display: inline-block;
-        color: #fff;
-        text-transform: uppercase;
-        font-family: 'Oswald';
-        font-weight: 600;
-        text-shadow: #000 -1px 1px 0px;
-        transition: font-size .1s linear;
         font-size: 0;
       }
     }

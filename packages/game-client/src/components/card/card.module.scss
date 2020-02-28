@@ -1,4 +1,5 @@
 @import '../../variables';
+@import '../../mixins.scss';
 
 $border-radius-size: 14px;
 
@@ -70,24 +71,26 @@ $border-radius-size: 14px;
     font-weight: bold;
     background: #343434 0% 0% no-repeat padding-box;
     color: #fff;
-    border: 7px solid #EECF82;
+    border: 5px solid #EECF82;
     flex-grow: 1;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    padding: 7px 5px;
 
     .name {
-      font-size: 1.7em;
-      font-weight: 900;
-      padding: 0 0.35em;
+      @include pascalGradientTitle();
+      transition: all ease-in-out .3s;
+      font-size: 17px;
+      margin-bottom: 10px;
     }
 
     .description {
-      padding: 0.5em;
       white-space: pre-wrap;
       display: flex;
       align-items: center;
       justify-content: center;
+      margin: 5px 0;
     }
 
     .input {
@@ -122,7 +125,6 @@ $border-radius-size: 14px;
     }
 
     .children {
-      padding: 10px;
       // flex-grow: 1; // Disabled due to ios safari bug, calculating too much extra height
       display: flex;
       flex-direction: column;
@@ -152,5 +154,10 @@ $border-radius-size: 14px;
 
   .buttonNumberText {
     position: relative;
+    font-size: 12px;
+    font-weight: normal;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 }

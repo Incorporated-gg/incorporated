@@ -1,8 +1,6 @@
 .container {
   display: inline-block;
   vertical-align: middle;
-  width: 1.2em;
-  height: 1.2em;
   position: relative;
 }
 .icon {
@@ -12,8 +10,9 @@
   bottom: 0;
   right: 0;
   margin: auto;
-  width: 0.7em;
-  height: 0.7em;
+  width: 45%;
+  height: 45%;
+
   path {
     fill: currentColor;
   }

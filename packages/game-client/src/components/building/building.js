@@ -14,6 +14,7 @@ import Icon from 'components/icon'
 import { numberToAbbreviation } from 'lib/utils'
 import Container from 'components/UI/container'
 import cardStyles from 'components/card/card.module.scss'
+import style from './building.module.scss'
 
 const buildingImages = {
   1: require('./img/b1.png'),
@@ -49,7 +50,7 @@ export default function Building({ buildingID }) {
   if (!hasEnoughOptimizeLvl)
     desc = `${desc}\nNecesitas oficina central nivel ${buildingInfo.requiredOptimizeResearchLevel}.`
 
-  const timeToRecoverInvestment = (Math.round((coste / income) * 10) / 10).toLocaleString()
+  const timeToRecoverInvestment = Math.round((coste / income) * 10) / 10
 
   return (
     <Card
@@ -59,13 +60,13 @@ export default function Building({ buildingID }) {
       desc={desc}>
       <>
         <div className={cardStyles.statContainer}>
-          <div>
-            <div>PRI</div>
-            <div>{timeToRecoverInvestment} días</div>
+          <div className={style.buildingStat}>
+            <div className={`titleText shadow ${style.buildingStatTitle}`}>PRI</div>
+            <div className={style.buildingStatValue}>{numberToAbbreviation(timeToRecoverInvestment)} días</div>
           </div>
-          <div>
-            <div>Bºs / día</div>
-            <div>
+          <div className={style.buildingStat}>
+            <div className={`titleText shadow ${style.buildingStatTitle}`}>Bº/día</div>
+            <div className={style.buildingStatValue}>
               {numberToAbbreviation(income * buildingCount)}{' '}
               <Icon iconName="money" style={{ marginLeft: 3 }} size={20} />
             </div>
@@ -98,9 +99,11 @@ function BuyScreen({ buildingID, coste, hasEnoughOptimizeLvl }) {
   return (
     <Container {...buyHoldPress} outerClassName={cardStyles.button} disabled={!canBuy}>
       <div className={cardStyles.buttonNumberContainer}>
-        {numberToAbbreviation(coste)} <Icon iconName="money" style={{ marginLeft: 3 }} size={20} />
+        <span className={cardStyles.buttonNumberText}>
+          {numberToAbbreviation(coste)} <Icon iconName="money" style={{ marginLeft: 3 }} size={20} />
+        </span>
       </div>
-      <h2>{'CONSTRUIR'}</h2>
+      <h2 className={`titleText shadow pascal ${style.buildingAction}`}>{'CONSTRUIR'}</h2>
     </Container>
   )
 }
@@ -140,7 +143,7 @@ function ExtractScreen({ buildingID, buildingCount }) {
           <Icon iconName="money" style={{ marginLeft: 3 }} size={20} />
         </div>
       </div>
-      <h2>{'RECOGER'}</h2>
+      <h2 className={`titleText shadow pascal ${style.buildingAction}`}>{'RECOGER'}</h2>
     </Container>
   )
 }

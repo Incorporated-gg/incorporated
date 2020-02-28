@@ -1,0 +1,14 @@
+.allianceLink {
+  display: flex;
+  align-items: center;
+
+  &Badge {
+    width: 15px;
+    height: 15px;
+    margin-right: 5px;
+  }
+  &Name {
+    text-transform: uppercase;
+    font-size: 12px;
+  }
+}

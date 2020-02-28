@@ -1,14 +1,17 @@
 .rankingItem {
-    display: grid;
-    grid-template-columns: auto 1fr 0.7fr;
-    align-items: center;
-    width: 100%;
-    padding: 0.5em;
-    color: #FFF8E6;
+  display: grid;
+  grid-template-columns: auto 0.6fr 1fr;
+  align-items: center;
+  width: 100%;
+  padding: 5px;
+  color: #FFF8E6;
+  
+  &:not(:last-of-type) {
+    border-bottom: 2px solid rgba(100, 255, 100, .2);
+  }
 }
 
 .rankPosition {
-    font-size: 1.5em;
     font-weight: bold;
     padding: 0.25em;
     color: #FFF8E6;
@@ -27,11 +30,10 @@
 }
 
 .points {
-    font-weight: 700;
-    text-align: center;
-    font-size: 1.15em;
+  font-weight: 700;
+  text-align: end;
+  font-size: 16px;
 }
 .username {
-    margin-left: 1em;
-    font-size: 1.15em;
+  margin-left: 5px;
 }

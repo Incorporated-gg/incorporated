@@ -1,24 +1,23 @@
 .container {
-    display: inline-flex;
-    align-items: center;
-    vertical-align: middle;
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
 }
 
 .avatarLink {
-    line-height: 0;
+  line-height: 0;
 }
 
 .avatar {
-    border: 5px solid #EECF82;
-    width: 2.5em;
-    height: 2.5em;
-    margin: 0.5em;
-    margin-left: 0;
+  border: 3px solid #EECF82;
+  width: 35px;
+  height: 35px;
+  margin-right: 10px;
 }
 
 .usernameLink {
-    color: #FFF8E6;
-    font-size: 1.2em;
-    margin: 0.1em 0;
-    display: block;
+  color: #FFF8E6;
+  margin: 0.1em 0;
+  display: block;
+  text-transform: capitalize;
 }

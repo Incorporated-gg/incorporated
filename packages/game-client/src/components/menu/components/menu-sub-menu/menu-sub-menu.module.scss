@@ -1,3 +1,5 @@
+@import '../../../../mixins.scss';
+
 .subMenu {
   position: relative;
   display: flex;
@@ -22,21 +24,16 @@
     display: flex;
     align-items: center;
     justify-content: center;
-
+    
     .subMenuItem {
-      color: rgba(255, 255, 255, 0.8);
+      @include titleText();
+      @include pascalText();
       transition: all ease-in-out .3s;
-      font-family: 'Oswald';
-      font-weight: 400;
-      text-transform: uppercase;
-      font-size: 0.9em;
-
-      &::first-letter {
-        font-size: 1.3em;
-      }
+      font-size: 14px;
     }
-
+    
     &.active .subMenuItem {
+      @include pascalGradientTitle();
       color: #EAC953;
     }
   }

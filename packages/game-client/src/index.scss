@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css?family=Lato:400,700|Oswald:400,700&display=swap');
 @import './variables';
+@import './mixins.scss';
 
 body {
   font-family: 'Lato', Arial, sans-serif;
@@ -102,17 +103,15 @@ a {
       flex-grow: 1;
 
       a {
+        @include titleText();
+        @include pascalText();
         display: block;
         padding: 0.5em 0.1em;
-        max-width: 100%;
         text-align: center;
-        text-decoration: none;
-        color: #fff;
-        font-size: 1.2em;
-        font-weight: 600;
+        font-size: 15px;
 
         &.active {
-          color: #EAC953;
+          @include gradientText();
         }
       }
     }
