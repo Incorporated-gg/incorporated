@@ -1,3 +1,4 @@
+import { WAR_DAYS_DURATION } from 'shared-lib/allianceUtils'
 const mysql = require('../lib/mysql')
 const alliances = require('../lib/db/alliances')
 const { sendMessage } = require('../lib/db/users')
@@ -6,8 +7,6 @@ const { personnelList } = require('shared-lib/personnelUtils')
 
 const sabotsInfo = personnelList.find(t => t.resource_id === 'sabots')
 const thievesInfo = personnelList.find(t => t.resource_id === 'thieves')
-
-const WAR_DAYS_DURATION = 5
 
 async function runOnce() {
   // Run every server day just after reset

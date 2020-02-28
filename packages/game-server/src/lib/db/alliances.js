@@ -326,3 +326,9 @@ async function deleteAlliance(allianceID) {
     mysql.query('DELETE FROM ranking_alliances WHERE alliance_id=?', [allianceID]),
   ])
 }
+
+module.exports.getAllianceRankPosition = getAllianceRankPosition
+async function getAllianceRankPosition(allianceID) {
+  const rankRow = await mysql.selectOne('SELECT rank FROM ranking_alliances WHERE alliance_id=?', [allianceID])
+  return rankRow ? rankRow.rank : null
+}

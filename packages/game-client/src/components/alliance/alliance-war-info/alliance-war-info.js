@@ -2,8 +2,8 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import AllianceLink from 'components/alliance/alliance-link'
 import styles from './alliance-war-info.module.scss'
+import { WAR_DAYS_DURATION } from 'shared-lib/allianceUtils'
 
-const WAR_DAYS_DURATION = 5
 const warDaysArray = new Array(WAR_DAYS_DURATION).fill(null).map((_, dayIndex) => dayIndex + 1)
 
 WarInfo.propTypes = {

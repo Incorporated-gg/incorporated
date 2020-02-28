@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from 'react'
 import { getServerDate, getServerDay } from 'shared-lib/serverTime'
 import styles from './Newspaper.module.scss'
+import Newspaper from 'components/newspaper'
 
-export default function Newspaper() {
+export default function NewspaperPage() {
   return (
     <div className={styles.container}>
       <ServerTime />
+      <Newspaper />
     </div>
   )
 }
+
 function ServerTime() {
   const [reloaded, reload] = useState()
   useEffect(() => {
@@ -22,9 +25,11 @@ function ServerTime() {
     return number.toString().padStart(2, '0')
   }
 
+  const currentServerDay = getServerDay()
+
   return (
-    <span>
-      Día {getServerDay()}. Hora server: {pad(serverDate.hours)}:{pad(serverDate.minutes)}:{pad(serverDate.seconds)}
-    </span>
+    <div>
+      Día {currentServerDay}. Hora server: {pad(serverDate.hours)}:{pad(serverDate.minutes)}:{pad(serverDate.seconds)}
+    </div>
   )
 }

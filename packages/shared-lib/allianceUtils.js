@@ -1,7 +1,8 @@
-module.exports.CREATE_ALLIANCE_PRICE = 500000
-module.exports.MAX_ALLIANCE_MEMBERS = 8
+export const CREATE_ALLIANCE_PRICE = 5
+export const MAX_ALLIANCE_MEMBERS = 5
+export const WAR_DAYS_DURATION = 5
 
-const RESEARCHS_LIST = [
+export const RESEARCHS_LIST = [
   { id: 1, name: 'Banco', pricePerLvl: 500000, type: 'resource' },
   { id: 2, name: 'Cabinas de guardias', pricePerLvl: 200000, type: 'resource' },
   { id: 3, name: 'Barracones de saboteadores', pricePerLvl: 200000, type: 'resource' },
@@ -9,9 +10,8 @@ const RESEARCHS_LIST = [
   { id: 5, name: 'Buff de ataque', pricePerLvl: 5000000, type: 'buff' },
   { id: 6, name: 'Buff de defensa', pricePerLvl: 5000000, type: 'buff' },
 ]
-module.exports.RESEARCHS_LIST = RESEARCHS_LIST
 
-const RESOURCES_LIST = [
+export const RESOURCES_LIST = [
   {
     resource_id: 'money',
     name: 'Dinero',
@@ -29,10 +29,8 @@ const RESOURCES_LIST = [
     name: 'Ladrones',
   },
 ]
-module.exports.RESOURCES_LIST = RESOURCES_LIST
 
-module.exports.calcResearchPrice = calcResearchPrice
-function calcResearchPrice(researchID, researchLevel) {
+export function calcResearchPrice(researchID, researchLevel) {
   const data = RESEARCHS_LIST.find(raw => raw.id === researchID)
   if (!data) return false
 
@@ -64,14 +62,14 @@ const maxResourcesPerLevel = {
   sabots: 2000,
   thieves: 1500,
 }
-module.exports.calcResourceMax = calcResourceMax
-function calcResourceMax(resourceID, researchs) {
+
+export function calcResourceMax(resourceID, researchs) {
   const researchID = mapResourceIDToResearchID[resourceID]
   const researchLevel = researchs[researchID].level
   return maxResourcesPerLevel[resourceID] * (1 + researchLevel)
 }
-module.exports.calcResourceMaxByResearchID = calcResourceMaxByResearchID
-function calcResourceMaxByResearchID(researchID, researchLevel) {
+
+export function calcResourceMaxByResearchID(researchID, researchLevel) {
   const resourceID = mapResearchIDToResourceID[researchID]
   return calcResourceMax(resourceID, { [researchID]: { level: researchLevel } })
 }
@@ -83,14 +81,14 @@ const genResourcesPerLevel = {
   sabots: 100,
   thieves: 100,
 }
-module.exports.calcResourceGeneration = calcResourceGeneration
-function calcResourceGeneration(resourceID, researchs) {
+
+export function calcResourceGeneration(resourceID, researchs) {
   const researchID = mapResourceIDToResearchID[resourceID]
   const researchLevel = researchs[researchID].level
   return genResourcesPerLevel[resourceID] * (1 + researchLevel)
 }
-module.exports.calcResourceGenerationByResearchID = calcResourceGenerationByResearchID
-function calcResourceGenerationByResearchID(researchID, researchLevel) {
+
+export function calcResourceGenerationByResearchID(researchID, researchLevel) {
   const resourceID = mapResearchIDToResourceID[researchID]
   return calcResourceGeneration(resourceID, { [researchID]: { level: researchLevel } })
 }
