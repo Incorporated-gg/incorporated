@@ -90,19 +90,23 @@ function SearchUsers() {
         onChange={e => setSearch(e.target.value)}
         placeholder={'Buscar usuario'}
       />
-      {loading && <div>Cargando...</div>}
-      {users && (
+      {search.length >= 3 && (
         <>
           <div className={styles.rankingContainer}>
-            {users.map(user => {
-              return (
-                <RankItem key={user.id} rank={user.rank_position} pointsString={user.income.toLocaleString() + '€'}>
-                  <Username user={user} />
-                </RankItem>
-              )
-            })}
+            <div className={`titleText shadow`}>Resultados de &quot;{search}&quot;</div>
+            {loading ? (
+              <div>Cargando...</div>
+            ) : (
+              users &&
+              users.map(user => {
+                return (
+                  <RankItem key={user.id} rank={user.rank_position} pointsString={user.income.toLocaleString() + '€'}>
+                    <Username user={user} />
+                  </RankItem>
+                )
+              })
+            )}
           </div>
-          <hr />
         </>
       )}
     </>
