@@ -8,12 +8,14 @@ Card.propTypes = {
   ribbon: PropTypes.string.isRequired,
   desc: PropTypes.string.isRequired,
   children: PropTypes.node,
+  disabled: PropTypes.bool,
+  colorful: PropTypes.bool,
 }
 
-export default function Card({ image, title, ribbon, desc, children }) {
+export default function Card({ image, title, ribbon, desc, children, disabled = false, colorful = false }) {
   const ribbonSizeClass = ribbon.length > 2 ? (ribbon.length > 3 ? styles.moreThan3Chars : styles.moreThan2Chars) : ''
   return (
-    <div className={styles.card}>
+    <div className={`${styles.card} ${colorful ? styles.cardColorful : ''} ${disabled ? styles.cardDisabled : ''}`}>
       <div className={styles.cardHeader}>
         <div className={styles.image}>
           <img src={image} alt="" />

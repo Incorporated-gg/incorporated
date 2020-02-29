@@ -47,8 +47,7 @@ export default function Building({ buildingID }) {
   const hasEnoughOptimizeLvl = currentOptimizeLvl >= buildingInfo.requiredOptimizeResearchLevel
 
   let desc = buildingDescriptions[buildingID]
-  if (!hasEnoughOptimizeLvl)
-    desc = `${desc}\nNecesitas oficina central nivel ${buildingInfo.requiredOptimizeResearchLevel}.`
+  if (!hasEnoughOptimizeLvl) desc = `Necesitas oficina central nivel ${buildingInfo.requiredOptimizeResearchLevel}.`
 
   const timeToRecoverInvestment = Math.round((coste / income) * 10) / 10
 
@@ -57,24 +56,31 @@ export default function Building({ buildingID }) {
       image={buildingImages[buildingID]}
       title={buildingInfo.name}
       ribbon={buildingCount.toLocaleString()}
-      desc={desc}>
-      <>
-        <div className={cardStyles.statContainer}>
-          <div className={style.buildingStat}>
-            <div className={`titleText shadow ${style.buildingStatTitle}`}>PRI</div>
-            <div className={style.buildingStatValue}>{numberToAbbreviation(timeToRecoverInvestment)} días</div>
-          </div>
-          <div className={style.buildingStat}>
-            <div className={`titleText shadow ${style.buildingStatTitle}`}>Bº/día</div>
-            <div className={style.buildingStatValue}>
-              {numberToAbbreviation(income * buildingCount)}{' '}
-              <Icon iconName="money" style={{ marginLeft: 3 }} size={20} />
+      desc={desc}
+      disabled={!hasEnoughOptimizeLvl}>
+      {!hasEnoughOptimizeLvl ? (
+        <span role="img" aria-label="locked" className={style.buildingLocked}>
+          🔒
+        </span>
+      ) : (
+        <>
+          <div className={cardStyles.statContainer}>
+            <div className={style.buildingStat}>
+              <div className={`titleText shadow ${style.buildingStatTitle}`}>PRI</div>
+              <div className={style.buildingStatValue}>{numberToAbbreviation(timeToRecoverInvestment)} días</div>
+            </div>
+            <div className={style.buildingStat}>
+              <div className={`titleText shadow ${style.buildingStatTitle}`}>Bº/día</div>
+              <div className={style.buildingStatValue}>
+                {numberToAbbreviation(income * buildingCount)}{' '}
+                <Icon iconName="money" style={{ marginLeft: 3 }} size={20} />
+              </div>
             </div>
           </div>
-        </div>
-        <ExtractScreen buildingID={buildingID} buildingCount={buildingCount} />
-        <BuyScreen buildingID={buildingID} coste={coste} hasEnoughOptimizeLvl={hasEnoughOptimizeLvl} />
-      </>
+          <ExtractScreen buildingID={buildingID} buildingCount={buildingCount} />
+          <BuyScreen buildingID={buildingID} coste={coste} hasEnoughOptimizeLvl={hasEnoughOptimizeLvl} />
+        </>
+      )}
     </Card>
   )
 }

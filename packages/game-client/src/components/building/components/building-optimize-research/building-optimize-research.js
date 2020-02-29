@@ -26,7 +26,8 @@ function BuildingOptimizeResearch() {
       image={require('../../img/central-office.png')}
       title={'Oficina Central'}
       ribbon={`Lvl. ${currentOptimizeLvl.toLocaleString()}`}
-      desc={'Al subir de nivel, el resto de edificios darán más dinero.'}>
+      desc={'Al subir de nivel, el resto de edificios darán más dinero.'}
+      colorful={true}>
       <>
         <div>
           <div className={buildingStyles.buildingStat}>
