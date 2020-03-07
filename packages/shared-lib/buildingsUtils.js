@@ -1,7 +1,7 @@
 const buildingsList = [
   {
     id: 1,
-    name: 'Zapaterías',
+    name: 'Sastrerías',
     basePrice: 1000,
     baseIncome: 1000,
     maximumDestroyedBuildings: 32,
@@ -11,7 +11,7 @@ const buildingsList = [
   },
   {
     id: 2,
-    name: 'Restaurantes',
+    name: 'Bares',
     basePrice: 3500,
     baseIncome: 2000,
     maximumDestroyedBuildings: 16,
@@ -31,7 +31,7 @@ const buildingsList = [
   },
   {
     id: 4,
-    name: 'Bares',
+    name: 'Joyerías',
     basePrice: 42000,
     baseIncome: 8000,
     maximumDestroyedBuildings: 4,

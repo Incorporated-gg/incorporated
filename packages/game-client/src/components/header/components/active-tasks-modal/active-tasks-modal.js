@@ -7,6 +7,8 @@ import PropTypes from 'prop-types'
 import Modal from 'react-modal'
 import Container from 'components/UI/container'
 import cardStyles from 'components/card/card.module.scss'
+import { numberToAbbreviation } from 'lib/utils'
+import Icon from 'components/icon'
 
 ActiveTasksModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
@@ -27,69 +29,88 @@ function ActiveTasksList() {
       post('/v1/tasks/complete', { task_id: task.id }).catch(() => {})
     }
 
-    let taskName = ''
+    let taskElm
     switch (task.type) {
       case 'cyclic_build': {
         const buildingInfo = buildingsList.find(b => b.id === task.requirements.buildingID)
-        taskName = `Construye ${task.requirements.amount.toLocaleString()} ${buildingInfo.name}`
+        taskElm = `Construye ${task.requirements.amount.toLocaleString()} ${buildingInfo.name}`
         break
       }
       case 'cyclic_attack': {
-        taskName = `Ataca con éxito ${task.requirements.amount.toLocaleString()} veces`
+        taskElm = `Ataca con éxito ${task.requirements.amount.toLocaleString()} veces`
         break
       }
       case 'cyclic_research': {
-        taskName = `Mejora tus investigaciones ${task.requirements.amount.toLocaleString()} veces`
+        taskElm = `Mejora tus investigaciones ${task.requirements.amount.toLocaleString()} veces`
         break
       }
       case 'cyclic_rob': {
-        taskName = `Roba ${task.requirements.amount.toLocaleString()}€`
+        taskElm = (
+          <>
+            Roba {numberToAbbreviation(task.requirements.amount)} <Icon iconName="money" size={20} />
+          </>
+        )
         break
       }
       case 'cyclic_income': {
-        taskName = `Mejora tus ingresos en ${task.requirements.amount.toLocaleString()}€`
+        taskElm = (
+          <>
+            Mejora tus ingresos en {numberToAbbreviation(task.requirements.amount)} <Icon iconName="money" size={20} />
+          </>
+        )
         break
       }
       case 'barrier_income': {
-        taskName = `Alcanza ${task.requirements.amount.toLocaleString()}€ de ingresos diarios`
+        taskElm = (
+          <>
+            Alcanza {numberToAbbreviation(task.requirements.amount)} <Icon iconName="money" size={20} /> de ingresos
+            diarios
+          </>
+        )
         break
       }
       case 'barrier_research': {
-        taskName = `Alcanza un total de ${task.requirements.amount.toLocaleString()} investigaciones`
+        taskElm = `Alcanza un total de ${task.requirements.amount.toLocaleString()} investigaciones`
         break
       }
       case 'barrier_centraloffice': {
-        taskName = `Alcanza el nivel ${task.requirements.amount.toLocaleString()} de Oficina Central`
+        taskElm = `Alcanza el nivel ${task.requirements.amount.toLocaleString()} de Oficina Central`
         break
       }
       case 'custom_bank': {
-        taskName = `Alcanza el nivel ${task.requirements.amount.toLocaleString()} de Banco`
+        taskElm = `Alcanza el nivel ${task.requirements.amount.toLocaleString()} de Banco`
         break
       }
       case 'cyclic_extract_money': {
-        taskName = `Obtén ${task.requirements.amount.toLocaleString()}€ en total, extrayendo dinero de tus edificios`
+        taskElm = (
+          <>
+            Recoge {numberToAbbreviation(task.requirements.amount)} <Icon iconName="money" size={20} /> de tus edificios
+          </>
+        )
         break
       }
       case 'custom_join_alliance': {
-        taskName = `Crea o únete a una alianza`
+        taskElm = `Crea o únete a una alianza`
         break
       }
       default: {
-        taskName = 'Unknown task'
+        taskElm = 'Unknown task'
       }
     }
 
     return (
       <Container key={task.id} outerClassName={styles.headerTaskOuter} className={styles.headerTask} darkBg>
         <div className={styles.tutorialInfo}>
-          <div>{taskName}</div>
+          <div>{taskElm}</div>
           <br />
           <div className={cardStyles.buttonNumberContainer}>
             <div className={cardStyles.buttonNumberProgress} style={{ width: task.progressPercentage + '%' }} />
             <div className={cardStyles.buttonNumberText}>{task.progressPercentage} / 100%</div>
           </div>
           <br />
-          <div>Recompensa: {task.reward.toLocaleString()}€</div>
+          <div>
+            Recompensa: {numberToAbbreviation(task.reward)} <Icon iconName="money" size={20} />
+          </div>
         </div>
         <div>
           <button disabled={task.progressPercentage < 100} onClick={completeTask}>
