@@ -12,7 +12,7 @@ export async function getAccountUserData(userID) {
   const res = await accountInternalApiFetch('GET', '/get_user_data', query)
   const result = res.accountData || null
 
-  cache.set(key, result, 10)
+  cache.set(key, result, 1)
   return result
 }
 

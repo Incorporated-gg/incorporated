@@ -1,5 +1,6 @@
 import { getAccountUserData } from '../accountInternalApi'
 import { MAX_DAILY_ATTACKS, calculateMaxDailyReceivedAttacks } from 'shared-lib/missionsUtils'
+import cache from '../cache'
 const mysql = require('../mysql')
 const alliances = require('./alliances')
 const { parseMissionFromDB } = require('./missions')
@@ -13,13 +14,13 @@ async function getData(userID) {
   const userDataPromise = mysql.selectOne('SELECT username FROM users WHERE id=?', [userID])
   const rankingDataPromise = mysql.selectOne('SELECT rank, points FROM ranking_income WHERE user_id=?', [userID])
   const alliancePromise = alliances.getUserAllianceID(userID).then(alliances.getBasicData)
-  const accountDataPromise = getAccountUserData(userID)
+  const accountPublicDataPromise = getAccountPublicData(userID)
 
-  const [userData, rankingData, allianceData, accountData] = await Promise.all([
+  const [userData, rankingData, allianceData, accountPublicData] = await Promise.all([
     userDataPromise,
     rankingDataPromise,
     alliancePromise,
-    accountDataPromise,
+    accountPublicDataPromise,
   ])
   if (!userData) return null
 
@@ -29,10 +30,20 @@ async function getData(userID) {
     rank_position: rankingData ? rankingData.rank : 0,
     income: rankingData ? rankingData.points : 0,
     alliance: allianceData,
-    accountData: {
-      avatar: accountData.avatar,
-    },
+    accountData: accountPublicData,
   }
+}
+
+async function getAccountPublicData(userID) {
+  const key = `accountPublicData:${userID}`
+  const cachedData = cache.get(key)
+  if (cachedData !== undefined) return cachedData
+
+  const accountData = await getAccountUserData(userID)
+  const result = accountData ? { avatar: accountData.avatar } : null
+
+  cache.set(key, result, 60)
+  return result
 }
 
 module.exports.getIDFromUsername = async username => {
