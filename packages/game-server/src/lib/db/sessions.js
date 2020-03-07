@@ -1,11 +1,11 @@
 import mysql from '../mysql'
-import { validateSessionID } from '../accountInternalApi'
+import { getSessionUserFromAccountService } from '../accountInternalApi'
 
 const initialMoney = 100000
 
 module.exports.getUserIDFromSessionID = async sessionID => {
   if (!sessionID) return
-  const sessionUser = await validateSessionID(sessionID)
+  const sessionUser = await getSessionUserFromAccountService(sessionID)
   if (!sessionUser) return
   const [userExists] = await mysql.query('SELECT 1 FROM users WHERE id=?', [sessionUser.id])
   if (!userExists) {

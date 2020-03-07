@@ -5,6 +5,7 @@ type BasicAccountData = {
   username: string
   avatar: string
   avatarID: number
+  gold: number
 }
 
 export function avatarIDToUrl(avatar: number): string {
@@ -13,7 +14,7 @@ export function avatarIDToUrl(avatar: number): string {
 
 export async function getData(userID?: number): Promise<BasicAccountData | undefined> {
   if (!userID) return
-  const accountDataPromise = mysql.query('SELECT username, avatar FROM users WHERE id=?', [userID])
+  const accountDataPromise = mysql.query('SELECT username, avatar, gold FROM users WHERE id=?', [userID])
   const [[accountData]] = await Promise.all([accountDataPromise])
   if (!accountData) return
 
@@ -25,10 +26,15 @@ export async function getData(userID?: number): Promise<BasicAccountData | undef
     username: accountData.username,
     avatarID: accountData.avatar,
     avatar,
+    gold: accountData.gold,
   }
 }
 
 export async function getIDFromUsername(username: string): Promise<BasicAccountData | undefined> {
   const [accountData] = await mysql.query('SELECT id FROM users WHERE username=?', [username])
   return accountData ? accountData.id : undefined
+}
+
+export async function giveGoldToUser(userID: number, gold: number): Promise<void> {
+  await mysql.query('UPDATE users SET gold=gold+? WHERE id=?', [gold, userID])
 }

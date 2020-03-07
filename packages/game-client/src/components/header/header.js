@@ -58,7 +58,7 @@ export default function Header() {
             </Container>
             <Container darkBg outerClassName={styles.statContainer}>
               <div className={styles.stat}>
-                {numberToAbbreviation(12345)} <Icon iconName="gold" className={styles.headerStatIcon} />
+                <MyGold /> <Icon iconName="gold" className={styles.headerStatIcon} />
               </div>
             </Container>
             <Container darkBg outerClassName={styles.statContainer} style={{ display: 'flex' }}>
@@ -95,6 +95,13 @@ function MyMoney() {
   if (!userData) return null
 
   return numberToAbbreviation(userData.money)
+}
+
+function MyGold() {
+  const userData = useUserData()
+  if (!userData) return null
+
+  return numberToAbbreviation(userData.gold)
 }
 
 function FinishedActiveTasksCounter() {

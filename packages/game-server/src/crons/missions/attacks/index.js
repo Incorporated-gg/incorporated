@@ -1,4 +1,5 @@
 import tasksProgressHook from '../../../lib/db/tasks/tasksProgressHook'
+import { sendAccountHook } from '../../../lib/accountInternalApi'
 const mysql = require('../../../lib/mysql')
 const {
   getUserAllianceID,
@@ -206,6 +207,7 @@ async function completeAttackMission(mission) {
     result,
     robbedMoney,
   })
+  sendAccountHook('attack_finished', { attackerID: attacker.id, defenderID: defender.id, result })
 }
 
 async function checkAndUpdateActiveWar(attackerAllianceID, defenderAllianceID) {

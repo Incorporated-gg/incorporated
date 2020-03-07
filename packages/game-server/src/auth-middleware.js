@@ -1,4 +1,5 @@
 import { getUserActiveTasks } from './lib/db/tasks'
+import { getAccountUserData } from './lib/accountInternalApi'
 const mysql = require('./lib/mysql')
 const {
   getUserResearchs,
@@ -52,14 +53,16 @@ function modifyResponseBody(req, res, next) {
   res.json = async function() {
     if (req.userData) {
       // Modify response to include extra data for logged in users
-      const [unreadMessagesCount, unreaReportsCount, activeMission, activeTasks] = await Promise.all([
+      const [unreadMessagesCount, unreaReportsCount, activeMission, activeTasks, accountData] = await Promise.all([
         getUnreadMessagesCount(req.userData.id),
         getUnreadReportsCount(req.userData.id),
         getActiveMission(req.userData.id),
         getUserActiveTasks(req.userData.id),
+        getAccountUserData(req.userData.id),
       ])
       const extraData = {
         money: req.userData.money,
+        gold: accountData.gold,
         unread_messages_count: unreadMessagesCount,
         unread_reports_count: unreaReportsCount,
         active_mission: activeMission,

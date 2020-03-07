@@ -4,34 +4,34 @@ import cache from './cache'
 export async function getAccountUserData(userID) {
   // TODO: If account changes username, should we detect it here or change it from a API call from the account service?
 
-  const key = `getAccountUserData:${userID}`
+  const key = `accountUserData:${userID}`
   const cachedData = cache.get(key)
   if (cachedData !== undefined) return cachedData
 
   const query = { userID }
   const res = await accountInternalApiFetch('GET', '/get_user_data', query)
   const result = res.accountData || null
-  if (result) {
-    delete result.id
-    delete result.username
-    delete result.avatarID
-  }
 
   cache.set(key, result, 10)
   return result
 }
 
-export async function validateSessionID(sessionID) {
-  const key = `validateSessionID:${sessionID}`
+export async function getSessionUserFromAccountService(sessionID) {
+  const key = `sessionUserFromAccountService:${sessionID}`
   const cachedData = cache.get(key)
   if (cachedData !== undefined) return cachedData
 
   const query = { sessionID }
   const res = await accountInternalApiFetch('GET', '/validate_session', query)
-  const result = res.sessionUser || null
+  const result = res.sessionUser || false
 
   cache.set(key, result, 600)
   return result
+}
+
+export async function sendAccountHook(eventID, eventData) {
+  const params = { eventID, eventData }
+  await accountInternalApiFetch('POST', '/game_event_hook', params)
 }
 
 function accountInternalApiFetch(method, url, payload = {}) {

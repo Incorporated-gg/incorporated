@@ -29,7 +29,9 @@ async function getData(userID) {
     rank_position: rankingData ? rankingData.rank : 0,
     income: rankingData ? rankingData.points : 0,
     alliance: allianceData,
-    accountData,
+    accountData: {
+      avatar: accountData.avatar,
+    },
   }
 }
 
