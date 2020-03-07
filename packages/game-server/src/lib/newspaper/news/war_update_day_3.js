@@ -32,13 +32,19 @@ export async function generate({ dayID, minTimestamp, maxTimestamp }) {
 
 export async function get({ warID }) {
   const war = await mysql.selectOne('SELECT alliance1_id, alliance2_id, data FROM alliances_wars WHERE id=?', [warID])
+  const warData = JSON.parse(war.data)
 
   const [alliance1, alliance2] = await Promise.all([
     getAllianceBasicData(war.alliance1_id),
     getAllianceBasicData(war.alliance2_id),
   ])
 
-  // TODO: Use JSON.parse(war.data) to get points
+  const warPoints1 = Object.values(warData.days)
+    .map(day => day.war_points_alliance1)
+    .reduce((prev, curr) => prev + curr, 0)
+  const warPoints2 = Object.values(warData.days)
+    .map(day => day.war_points_alliance2)
+    .reduce((prev, curr) => prev + curr, 0)
 
-  return { alliance1, alliance2 }
+  return { alliance1, alliance2, warPoints1, warPoints2 }
 }

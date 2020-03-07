@@ -1,6 +1,13 @@
 export default function generateTasksList() {
   const totalTasks = 500
-  const cyclicTypes = ['cyclic_build', 'cyclic_attack', 'cyclic_research', 'cyclic_rob', 'cyclic_income']
+  const cyclicTypes = [
+    'cyclic_build',
+    'cyclic_extract_money',
+    'cyclic_attack',
+    'cyclic_research',
+    'cyclic_rob',
+    'cyclic_income',
+  ]
   const barrierTypes = ['barrier_income', 'barrier_research', 'barrier_centraloffice']
 
   const generatedTasks = [...initialTasks]
@@ -10,12 +17,13 @@ export default function generateTasksList() {
   for (let taskID = 1; taskID <= totalTasks; taskID++) {
     // Find task type
     let type
-    if (taskID % 6) {
-      type = cyclicTypes[cyclicCounter]
-      cyclicCounter = (cyclicCounter + 1) % cyclicTypes.length
-    } else {
+    const shouldBeBarrier = taskID % (cyclicTypes.length + 1) === 0
+    if (shouldBeBarrier) {
       type = barrierTypes[barrierCounter]
       barrierCounter = (barrierCounter + 1) % barrierTypes.length
+    } else {
+      type = cyclicTypes[cyclicCounter]
+      cyclicCounter = (cyclicCounter + 1) % cyclicTypes.length
     }
 
     // Get task requirements based on type and taskID
@@ -43,7 +51,7 @@ export default function generateTasksList() {
         break
       }
       case 'cyclic_rob': {
-        const amount = 300000 * (typeCounter + 1)
+        const amount = 100000 + 300000 * typeCounter
         requirements.amount = amount
         break
       }
@@ -59,15 +67,23 @@ export default function generateTasksList() {
         requirements.amount = amount
         break
       }
+      case 'cyclic_extract_money': {
+        let amount = 400000
+        for (let i = 1; i <= typeCounter; i++) {
+          amount += 400000 + 100000 * (i + 1)
+        }
+        requirements.amount = amount
+        break
+      }
       case 'barrier_income': {
         const amount =
           typeCounter === 0
             ? 2000000
             : typeCounter === 1
-            ? 7000000
+            ? 8000000
             : typeCounter === 2
-            ? 20000000
-            : 20000000 + (typeCounter - 2) * 15000000
+            ? 16000000
+            : 16000000 + (typeCounter - 2) * 10000000
         requirements.amount = amount
         break
       }
@@ -77,7 +93,7 @@ export default function generateTasksList() {
         break
       }
       case 'barrier_centraloffice': {
-        const amount = 14 + typeCounter * 2
+        const amount = 12 + typeCounter * 2
         requirements.amount = amount
         break
       }
@@ -133,7 +149,7 @@ const initialTasks = [
   {
     id: 5,
     reward: 50000,
-    type: 'custom_extract_money',
+    type: 'cyclic_extract_money',
     requirements: {
       amount: 1000,
     },

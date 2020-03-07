@@ -21,6 +21,12 @@ function getArticleTitle(article) {
     case 'WAR_DECLARATION': {
       return 'Estalla guerra entre dos principales corporaciones'
     }
+    case 'WAR_ENDED': {
+      return 'Termina la guerra entre dos principales corporaciones'
+    }
+    case 'WAR_UPDATE_DAY_3': {
+      return 'Continua la guerra entre dos principales corporaciones'
+    }
     case 'FAKE_AD': {
       return 'Anuncio'
     }
@@ -44,6 +50,24 @@ function getArticleCorpus(article) {
           La corporación <AllianceLink alliance={article.data.alliance1} /> ha declarado la guerra a{' '}
           <AllianceLink alliance={article.data.alliance2} />. La tensión entre los dos gigantes se palpaba, y a nadie
           esta noticia le viene por sorpresa. Continuaremos informando sobre los avances de este conflicto.
+        </>
+      )
+    }
+    case 'WAR_ENDED': {
+      return (
+        <>
+          Ha finalizado la guerra entre la corporación <AllianceLink alliance={article.data.alliance1} /> y
+          <AllianceLink alliance={article.data.alliance2} />. La ganadora ha sido{' '}
+          <AllianceLink alliance={article.data.winner} />
+        </>
+      )
+    }
+    case 'WAR_UPDATE_DAY_3': {
+      return (
+        <>
+          La guerra entre dos principales corporaciones continúa. De momento, los puntos acumulados son{' '}
+          {article.data.warPoints1} para <AllianceLink alliance={article.data.alliance1} /> y {article.data.warPoints2}{' '}
+          para <AllianceLink alliance={article.data.alliance2} />
         </>
       )
     }

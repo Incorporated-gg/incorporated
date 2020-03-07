@@ -50,9 +50,7 @@ export default function AllianceBadgeCreator({ alliance, reloadAllianceData }) {
           onChange={e => setBadge({ ...badge, icon: { ...badge.icon, color: e.target.value } })}
         />
       </div>
-      <div style={{ fontSize: '2.5em' }}>
-        <AllianceBadge badge={badge} />
-      </div>
+      <AllianceBadge badge={badge} style={{ width: '4em', height: '4em', marginBottom: '1em' }} />
       <br />
       <button onClick={saveBadge}>Guardar</button>
     </div>

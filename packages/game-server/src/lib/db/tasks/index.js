@@ -59,7 +59,7 @@ async function getTaskCompletionPercentage(userID, taskInfo, taskData) {
     case 'cyclic_research':
     case 'cyclic_rob':
     case 'cyclic_income':
-    case 'custom_extract_money': {
+    case 'cyclic_extract_money': {
       if (!taskData.count) taskData.count = 0
       progress = (taskData.count / taskInfo.requirements.amount) * 100
       break

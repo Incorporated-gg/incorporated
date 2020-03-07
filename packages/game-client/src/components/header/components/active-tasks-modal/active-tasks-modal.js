@@ -66,7 +66,7 @@ function ActiveTasksList() {
         taskName = `Alcanza el nivel ${task.requirements.amount.toLocaleString()} de Banco`
         break
       }
-      case 'custom_extract_money': {
+      case 'cyclic_extract_money': {
         taskName = `Obtén ${task.requirements.amount.toLocaleString()}€ en total, extrayendo dinero de tus edificios`
         break
       }
@@ -82,13 +82,14 @@ function ActiveTasksList() {
     return (
       <Container key={task.id} outerClassName={styles.headerTaskOuter} className={styles.headerTask} darkBg>
         <div className={styles.tutorialInfo}>
-          <p>{taskName}</p>
-          <p></p>
+          <div>{taskName}</div>
+          <br />
           <div className={cardStyles.buttonNumberContainer}>
             <div className={cardStyles.buttonNumberProgress} style={{ width: task.progressPercentage + '%' }} />
             <div className={cardStyles.buttonNumberText}>{task.progressPercentage} / 100%</div>
           </div>
-          <p>Recompensa: {task.reward.toLocaleString()}€</p>
+          <br />
+          <div>Recompensa: {task.reward.toLocaleString()}€</div>
         </div>
         <div>
           <button disabled={task.progressPercentage < 100} onClick={completeTask}>
