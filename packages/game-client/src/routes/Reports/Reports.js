@@ -78,7 +78,7 @@ export default function Reports() {
             <thead>
               <tr>
                 <th>Tipo de misión</th>
-                <th>{type === 'sent' ? 'Usuario objetivo' : 'Agresor'}</th>
+                <th>{type === 'sent' ? 'Objetivo' : 'Agresor'}</th>
                 <th>Fecha</th>
                 <th>Resultado</th>
                 <th>Acciones</th>

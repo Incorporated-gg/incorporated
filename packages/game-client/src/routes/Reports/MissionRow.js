@@ -62,7 +62,12 @@ export default function MissionRow({ mission, reloadMissionsCallback, showcaseUs
       <tr>
         <td>{mission.mission_type}</td>
         <td>
-          <Username user={showcaseUser === 'target' ? mission.target_user : mission.user} />
+          {showcaseUser === 'sender' && <Username user={mission.user} />}
+          {showcaseUser === 'target' && mission.target_hood ? (
+            mission.target_hood.name
+          ) : (
+            <Username user={mission.target_user} />
+          )}
         </td>
         {isComplete ? (
           <>

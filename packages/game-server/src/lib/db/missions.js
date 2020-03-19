@@ -1,7 +1,7 @@
+import { hoods } from '../map'
 const users = require('./users')
 
-module.exports.parseMissionFromDB = parseMissionFromDB
-async function parseMissionFromDB(mission) {
+export async function parseMissionFromDB(mission) {
   if (!mission) throw new Error(`Unknown mission: ${JSON.stringify(mission)}`)
 
   if (mission.mission_type === 'spy') {
@@ -20,12 +20,12 @@ async function parseMissionFromDB(mission) {
       report: data.report,
     }
   } else if (mission.mission_type === 'attack') {
-    const defensorData = await users.getData(mission.target_user)
     const attackerData = await users.getData(mission.user_id)
     const data = JSON.parse(mission.data)
-    return {
+    const result = {
       user: attackerData,
-      target_user: defensorData,
+      target_user: undefined,
+      target_hood: undefined,
       target_building: data.building,
       mission_type: mission.mission_type,
       sent_sabots: data.sabots,
@@ -37,5 +37,12 @@ async function parseMissionFromDB(mission) {
       profit: mission.profit,
       report: data.report,
     }
+    if (mission.target_user) {
+      result.target_user = await users.getData(mission.target_user)
+    }
+    if (data.hood) {
+      result.target_hood = hoods.find(hood => hood.id === data.hood)
+    }
+    return result
   } else throw new Error(`Unknown mission type: ${mission.mission_type}`)
 }

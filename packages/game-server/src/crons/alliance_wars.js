@@ -1,4 +1,6 @@
 import { WAR_DAYS_DURATION } from 'shared-lib/allianceUtils'
+import { hoods } from '../lib/map'
+import { getBasicData as getAllianceBasicData } from '../lib/db/alliances'
 const mysql = require('../lib/mysql')
 const alliances = require('../lib/db/alliances')
 const { sendMessage } = require('../lib/db/users')
@@ -63,7 +65,6 @@ async function executeDayFinishForWar(war) {
 
 async function updateWarDayData(war, warDay) {
   if (warDay <= 0 || warDay > WAR_DAYS_DURATION) return
-  if (!war.data) war.data = { days: {} }
 
   // Get attacks today, calc scores, and save them
   const membersAlliance1 = (await alliances.getMembers(war.alliance1_id)).map(m => m.user.id)
@@ -181,6 +182,15 @@ async function endWar(war) {
 
   const winner = warPointsAlliance1 > warPointsAlliance2 ? 1 : 2
   war.data.winner = winner
+
+  if (winner === 1) {
+    // The attacker won. Change hoods owner
+    const attackerAllianceData = await getAllianceBasicData(war.alliance1_id)
+    war.data.hoods.forEach(hoodID => {
+      hoods.find(h => h.id === hoodID).owner = attackerAllianceData
+    })
+    await mysql.query('UPDATE hoods SET owner=? WHERE id IN (?)', [war.alliance1_id, war.data.hoods])
+  }
 
   await mysql.query('UPDATE alliances_wars SET completed=1, data=? WHERE id=?', [JSON.stringify(war.data), war.id])
   await Promise.all(

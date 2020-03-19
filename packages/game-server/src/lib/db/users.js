@@ -9,8 +9,7 @@ const { personnelList } = require('shared-lib/personnelUtils')
 const { getInitialUnixTimestampOfServerDay } = require('shared-lib/serverTime')
 const { calcBuildingDailyIncome, buildingsList, calcBuildingMaxMoney } = require('shared-lib/buildingsUtils')
 
-module.exports.getData = getData
-async function getData(userID) {
+export async function getData(userID) {
   const userDataPromise = mysql.selectOne('SELECT username FROM users WHERE id=?', [userID])
   const rankingDataPromise = mysql.selectOne('SELECT rank, points FROM ranking_income WHERE user_id=?', [userID])
   const alliancePromise = alliances.getUserAllianceID(userID).then(alliances.getBasicData)
@@ -46,13 +45,12 @@ async function getAccountPublicData(userID) {
   return result
 }
 
-module.exports.getIDFromUsername = async username => {
+export async function getIDFromUsername(username) {
   const userData = await mysql.selectOne('SELECT id FROM users WHERE username=?', [username])
   return userData ? userData.id : null
 }
 
-module.exports.getUserPersonnelCosts = getUserPersonnelCosts
-async function getUserPersonnelCosts(userID) {
+export async function getUserPersonnelCosts(userID) {
   let personnelCost = 0
   const userPersonnel = await getPersonnel(userID)
   Object.entries(userPersonnel).forEach(([resourceID, quantity]) => {
@@ -64,7 +62,6 @@ async function getUserPersonnelCosts(userID) {
   return personnelCost
 }
 
-module.exports.getUserDailyIncome = getUserDailyIncome
 export async function getUserDailyIncome(userID) {
   let [buildingsRaw, researchs] = await Promise.all([
     mysql.query('SELECT id, quantity FROM buildings WHERE user_id=?', [userID]),
@@ -196,8 +193,7 @@ export async function sendMessage({ receiverID, senderID, type, data }) {
   ])
 }
 
-module.exports.getUnreadMessagesCount = getUnreadMessagesCount
-async function getUnreadMessagesCount(userID) {
+export async function getUnreadMessagesCount(userID) {
   const [
     { last_checked_messages_at: lastCheckedMessagesAt },
   ] = await mysql.query('SELECT last_checked_messages_at FROM users WHERE id=?', [userID])
@@ -210,8 +206,7 @@ async function getUnreadMessagesCount(userID) {
   return unreadMessagesCount
 }
 
-module.exports.getUnreadReportsCount = getUnreadReportsCount
-async function getUnreadReportsCount(userID) {
+export async function getUnreadReportsCount(userID) {
   const [
     { last_checked_reports_at: lastCheckedReportsAt },
   ] = await mysql.query('SELECT last_checked_reports_at FROM users WHERE id=?', [userID])
@@ -224,8 +219,7 @@ async function getUnreadReportsCount(userID) {
   return unreadMissionsCount
 }
 
-module.exports.runUserMoneyUpdate = runUserMoneyUpdate
-async function runUserMoneyUpdate(userID) {
+export async function runUserMoneyUpdate(userID) {
   const [{ last_money_update: lastMoneyUpdate }] = await mysql.query('SELECT last_money_update FROM users WHERE id=?', [
     userID,
   ])
@@ -271,8 +265,7 @@ async function runUserMoneyUpdate(userID) {
   await mysql.query('UPDATE users SET money=money-? WHERE id=?', [personnelCosts, userID])
 }
 
-module.exports.getUserMissionLimits = getUserMissionLimits
-async function getUserMissionLimits(userID) {
+export async function getUserMissionLimits(userID) {
   const userDailyIncome = await getUserDailyIncome(userID)
   return {
     maxAttacks: MAX_DAILY_ATTACKS,

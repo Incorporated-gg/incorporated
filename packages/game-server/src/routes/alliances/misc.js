@@ -1,3 +1,4 @@
+import { hoods } from '../../lib/map'
 const mysql = require('../../lib/mysql')
 const alliances = require('../../lib/db/alliances')
 const { sendMessage } = require('../../lib/db/users')
@@ -181,14 +182,27 @@ module.exports = app => {
       return
     }
 
+    const attackedHoods = req.body.hoods
+    const areHoodsValid =
+      Array.isArray(attackedHoods) &&
+      attackedHoods.length > 0 &&
+      attackedHoods.every(hoodID => {
+        const hood = hoods.find(_h => _h.id === hoodID)
+        return hood && hood.owner && hood.owner.id === attackedAllianceID
+      })
+    if (!areHoodsValid) {
+      res.status(401).json({ error: 'Barrios inválidos' })
+      return
+    }
+
+    const data = { hoods: attackedHoods, days: {} }
     const tsNow = Math.floor(Date.now() / 1000)
     const {
       insertId: warID,
-    } = await mysql.query('INSERT INTO alliances_wars (created_at, alliance1_id, alliance2_id) VALUES (?, ?, ?)', [
-      tsNow,
-      userRank.alliance_id,
-      attackedAllianceID,
-    ])
+    } = await mysql.query(
+      'INSERT INTO alliances_wars (created_at, alliance1_id, alliance2_id, data) VALUES (?, ?, ?, ?)',
+      [tsNow, userRank.alliance_id, attackedAllianceID, JSON.stringify(data)]
+    )
 
     const attackedAllianceMembers = await alliances.getMembers(attackedAllianceID)
     const myAllianceMembers = await alliances.getMembers(userRank.alliance_id)

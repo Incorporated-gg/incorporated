@@ -41,7 +41,7 @@ export default function AllianceMissions({ alliance, reloadAllianceData }) {
           <thead>
             <tr>
               <th>Tipo de misión</th>
-              <th>Usuario objetivo</th>
+              <th>Objetivo</th>
               <th>Tropas enviadas</th>
               <th>Edificio objetivo</th>
               <th>Fecha de finalización</th>
@@ -82,7 +82,7 @@ export default function AllianceMissions({ alliance, reloadAllianceData }) {
           <thead>
             <tr>
               <th>Tipo de misión</th>
-              <th>Usuario objetivo</th>
+              <th>Objetivo</th>
               <th>Fecha</th>
               <th>Resultado</th>
               <th>Acciones</th>
@@ -109,7 +109,7 @@ export default function AllianceMissions({ alliance, reloadAllianceData }) {
           <thead>
             <tr>
               <th>Tipo de misión</th>
-              <th>Usuario objetivo</th>
+              <th>Objetivo</th>
               <th>Fecha</th>
               <th>Resultado</th>
               <th>Acciones</th>

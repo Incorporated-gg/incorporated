@@ -7,10 +7,12 @@ import styles from './AllianceProfile.module.scss'
 import RankItem from 'components/UI/RankItem'
 import WarInfo from 'components/alliance/alliance-war-info'
 import Container from 'components/UI/container'
+import DeclareWarModal from 'components/alliance/declare-war-modal'
 
 export default function Ranking() {
   const { allianceShortName } = useParams()
   const [alliance, setAlliance] = useState()
+  const [isDeclareWarModalOpen, setIsDeclareWarModalOpen] = useState(false)
   const [error, setError] = useState()
   const userData = useUserData()
 
@@ -35,19 +37,6 @@ export default function Ranking() {
   const leaveAlliance = () => {
     if (!window.confirm('Estás seguro de que quieres salir?')) return
     post('/v1/alliance/leave')
-      .then(() => {
-        reloadAllianceData()
-        reloadUserData()
-      })
-      .catch(err => {
-        alert(err.message)
-      })
-  }
-  const declareWar = () => {
-    if (!window.confirm('Estás seguro de que quieres declarar guerra a esta alianza?')) return
-    post('/v1/alliance/declare_war', {
-      alliance_id: alliance.id,
-    })
       .then(() => {
         reloadAllianceData()
         reloadUserData()
@@ -89,7 +78,9 @@ export default function Ranking() {
         ) : userData.alliance.id === alliance.id ? (
           <button onClick={leaveAlliance}>Salir</button>
         ) : (
-          userData.alliance_user_rank.permission_declare_war && <button onClick={declareWar}>Declarar guerra</button>
+          userData.alliance_user_rank.permission_declare_war && (
+            <button onClick={() => setIsDeclareWarModalOpen(true)}>Declarar guerra</button>
+          )
         )}
         <br />
         <h2>Guerras activas</h2>
@@ -102,6 +93,11 @@ export default function Ranking() {
           return <WarInfo war={war} key={war.id} />
         })}
       </div>
+      <DeclareWarModal
+        isOpen={isDeclareWarModalOpen}
+        onRequestClose={() => setIsDeclareWarModalOpen(false)}
+        alliance={alliance}
+      />
     </Container>
   )
 }

@@ -10,6 +10,7 @@ WarInfo.propTypes = {
   war: PropTypes.object.isRequired,
 }
 export default function WarInfo({ war }) {
+  const hasStarted = Object.keys(war.days).length > 0
   let warLineGraphData = null
   let extraData = {
     points: [0, 0],
@@ -17,7 +18,7 @@ export default function WarInfo({ war }) {
     profit: [0, 0],
     smacks: [0, 0],
   }
-  if (war.data) {
+  if (hasStarted) {
     warLineGraphData = {
       labels: [],
       datasets: [
@@ -26,7 +27,7 @@ export default function WarInfo({ war }) {
       ],
     }
     warDaysArray.forEach(day => {
-      const dayData = war.data.days[day]
+      const dayData = war.days[day]
 
       warLineGraphData.labels.push(`Día ${day}`)
       warLineGraphData.datasets[0].data.push(dayData ? dayData.war_points_alliance1 : 0)
@@ -51,8 +52,9 @@ export default function WarInfo({ war }) {
         <AllianceLink alliance={war.alliance2} />
       </h2>
       <p>Se declaró el {new Date(war.created_at * 1000).toLocaleString()}</p>
-      {!war.data && <div>La guerra se ha declarado hoy y comenzará mañana</div>}
-      {war.data && (
+      {!hasStarted && <div>La guerra se ha declarado hoy y comenzará mañana</div>}
+      <div>Barrios bajo ataque: {war.hoods.map(hood => hood.name).join(', ')}</div>
+      {hasStarted && (
         <>
           <img
             className={styles.lineGraphImg}
@@ -75,13 +77,12 @@ export default function WarInfo({ war }) {
             <p>{extraData.profit[1].toLocaleString()}€ beneficios</p>
             <p>{extraData.smacks[1].toLocaleString()} estampadas</p>
           </div>
-
-          {war.data.winner && (
-            <div>
-              Ganador: <AllianceLink alliance={war[`alliance${war.data.winner}`]} />
-            </div>
-          )}
         </>
+      )}
+      {war.winner && (
+        <div>
+          Ganador: <AllianceLink alliance={war[`alliance${war.winner}`]} />
+        </div>
       )}
     </div>
   )

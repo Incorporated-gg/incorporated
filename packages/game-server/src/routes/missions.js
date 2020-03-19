@@ -1,6 +1,6 @@
 import locks from '../lib/locks'
-
-const mysql = require('../lib/mysql')
+import { hoods } from '../lib/map'
+import mysql from '../lib/mysql'
 const { getMissions, getPersonnel, hasActiveMission, getData: getUserData } = require('../lib/db/users')
 const { getUserAllianceID } = require('../lib/db/alliances')
 const { buildingsList } = require('shared-lib/buildingsUtils')
@@ -53,26 +53,30 @@ module.exports = app => {
     })
   })
 
-  app.post('/v1/missions', async function(req, res) {
+  app.post('/v1/missions/create', async function(req, res) {
     if (!req.userData) {
       res.status(401).json({ error: 'Necesitas estar conectado', error_code: 'not_logged_in' })
       return
     }
 
+    // Locks
     const lockName = `activeMission:${req.userData.id}`
     const removeLock = () => locks.remove(lockName)
-
     if ((await hasActiveMission(req.userData.id)) || locks.get(lockName)) {
       res.status(400).json({
         error: 'Ya tienes una misión en curso',
       })
       return
     }
-
     locks.set(lockName, Date.now())
 
-    const [targetUser] = await mysql.query('SELECT id FROM users WHERE username = ?', [req.body.target_user])
-    if (!targetUser) {
+    // Find target (hood or user)
+    const missionType = req.body.mission_type
+    const targetHood = missionType === 'attack' && hoods.find(hood => hood.id === req.body.target_hood)
+    const targetUser =
+      !targetHood && (await mysql.selectOne('SELECT id FROM users WHERE username = ?', [req.body.target_user]))
+
+    if (!targetUser && !targetHood) {
       res.status(400).json({
         error: 'El usuario indicado no existe',
       })
@@ -80,36 +84,48 @@ module.exports = app => {
       return
     }
 
-    const missionType = req.body.missionType
-
     const sentSpies = parseInt(req.body.sent_spies) || 0
     const sentSabots = parseInt(req.body.sent_sabots) || 0
     const sentThieves = parseInt(req.body.sent_thieves) || 0
-    const targetBuilding = req.body.target_building ? parseInt(req.body.target_building) : undefined
+    const attackUserTargetBuilding = req.body.target_building ? parseInt(req.body.target_building) : undefined
 
     const userPersonnel = await getPersonnel(req.userData.id)
     switch (missionType) {
       case 'attack': {
-        if (!buildingsList.find(b => b.id === targetBuilding)) {
-          res.status(400).json({ error: 'El edificio enviado no existe' })
-          removeLock()
-          return
+        if (targetUser) {
+          // Detect possible errors when attacking users
+          if (!buildingsList.find(b => b.id === attackUserTargetBuilding)) {
+            res.status(400).json({ error: 'El edificio enviado no existe' })
+            removeLock()
+            return
+          }
+          // Ensure daily defenses limit
+          const targetUserMissions = await getMissions(targetUser.id)
+          if (targetUserMissions.receivedToday >= targetUserMissions.maxDefenses) {
+            res
+              .status(400)
+              .json({ error: `Este usuario ya ha sido atacado ${targetUserMissions.maxDefenses} veces hoy` })
+            removeLock()
+            return
+          }
+          const targetUserData = await getUserData(targetUser.id)
+          if (targetUserData.income < NEWBIE_ZONE_DAILY_INCOME) {
+            res.status(400).json({
+              error: 'No puedes atacar usuarios en la zona newbie',
+            })
+            removeLock()
+            return
+          }
         }
-        // Ensure daily defenses limit
-        const targetUserMissions = await getMissions(targetUser.id)
-        if (targetUserMissions.receivedToday >= targetUserMissions.maxDefenses) {
-          res.status(400).json({ error: `Este usuario ya ha sido atacado ${targetUserMissions.maxDefenses} veces hoy` })
-          removeLock()
-          return
+        if (targetHood) {
+          // Detect possible errors when attacking hoods
+          if (targetHood.owner) {
+            res.status(400).json({ error: 'Este barrio ya tiene dueño' })
+            removeLock()
+            return
+          }
         }
-        const targetUserData = await getUserData(targetUser.id)
-        if (targetUserData.income < NEWBIE_ZONE_DAILY_INCOME) {
-          res.status(400).json({
-            error: 'No puedes atacar usuarios en la zona newbie',
-          })
-          removeLock()
-          return
-        }
+        // Detect common errors for attacking users or hoods
         if (sentSabots + sentThieves < 1) {
           res.status(400).json({
             error: 'Debes enviar algunos saboteadores o ladrones',
@@ -181,13 +197,19 @@ module.exports = app => {
     if (missionType === 'spy') {
       data.spies = sentSpies
     } else if (missionType === 'attack') {
-      data.building = targetBuilding
+      if (targetUser) {
+        data.building = attackUserTargetBuilding
+      }
+      if (targetHood) {
+        data.hood = targetHood.id
+      }
       data.sabots = sentSabots
       data.thieves = sentThieves
     }
+    const targetUserID = targetUser ? targetUser.id : 0
     await mysql.query(
       'INSERT INTO missions (user_id, mission_type, data, target_user, started_at, will_finish_at) VALUES (?, ?, ?, ?, ?, ?)',
-      [req.userData.id, missionType, JSON.stringify(data), targetUser.id, tsNow, tsNow + missionDuration]
+      [req.userData.id, missionType, JSON.stringify(data), targetUserID, tsNow, tsNow + missionDuration]
     )
     res.json({
       success: true,

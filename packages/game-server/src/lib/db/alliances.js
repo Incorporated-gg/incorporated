@@ -1,18 +1,17 @@
+import { hoods } from '../map'
 const mysql = require('../mysql')
 const users = require('./users')
 const { parseMissionFromDB } = require('./missions')
 const { RESEARCHS_LIST, RESOURCES_LIST, calcResearchPrice } = require('shared-lib/allianceUtils')
 
-module.exports.MAX_MEMBERS = 10
+export const MAX_MEMBERS = 10
 
-module.exports.getUserAllianceID = getUserAllianceID
-async function getUserAllianceID(userID) {
+export async function getUserAllianceID(userID) {
   const [memberQuery] = await mysql.query('SELECT alliance_id FROM alliances_members WHERE user_id=?', [userID])
   return memberQuery ? memberQuery.alliance_id : false
 }
 
-module.exports.getUserRank = getUserRank
-async function getUserRank(userID) {
+export async function getUserRank(userID) {
   const [
     allianceMember,
   ] = await mysql.query(
@@ -37,8 +36,7 @@ async function getUserRank(userID) {
   }
 }
 
-module.exports.getBasicData = getBasicData
-async function getBasicData(allianceID) {
+export async function getBasicData(allianceID) {
   if (!allianceID) return false
   // Get basic alliance data
   const [
@@ -69,13 +67,12 @@ async function getBasicData(allianceID) {
   }
 }
 
-module.exports.getIDFromShortName = async shortName => {
+export async function getIDFromShortName(shortName) {
   const [allianceData] = await mysql.query('SELECT id FROM alliances WHERE short_name=?', [shortName])
   return allianceData ? allianceData.id : false
 }
 
-module.exports.getMembers = getMembers
-async function getMembers(allianceID) {
+export async function getMembers(allianceID) {
   let members = await mysql.query(
     'SELECT user_id, rank_name, permission_admin FROM alliances_members WHERE alliance_id=?',
     [allianceID]
@@ -91,8 +88,7 @@ async function getMembers(allianceID) {
   return members
 }
 
-module.exports.getResearchs = getResearchs
-async function getResearchs(allianceID) {
+export async function getResearchs(allianceID) {
   const rawResearchs = await mysql.query(
     'SELECT id, level, progress_money FROM alliances_research WHERE alliance_id=?',
     [allianceID]
@@ -113,8 +109,7 @@ async function getResearchs(allianceID) {
   return researchs
 }
 
-module.exports.getResources = getResources
-async function getResources(allianceID) {
+export async function getResources(allianceID) {
   const rawResources = await mysql.query('SELECT resource_id, quantity FROM alliances_resources WHERE alliance_id=?', [
     allianceID,
   ])
@@ -132,8 +127,7 @@ async function getResources(allianceID) {
   return resources
 }
 
-module.exports.getMissionHistory = getMissionHistory
-async function getMissionHistory(members = []) {
+export async function getMissionHistory(members = []) {
   const memberIDs = members.map(m => m.user.id)
 
   const activeMissionsQuery = mysql.query(
@@ -184,8 +178,7 @@ async function getMissionHistory(members = []) {
   }
 }
 
-module.exports.getResourcesLog = getResourcesLog
-async function getResourcesLog(allianceID) {
+export async function getResourcesLog(allianceID) {
   const rawLog = await mysql.query(
     'SELECT user_id, created_at, resource_id, quantity FROM alliances_resources_log WHERE alliance_id=? ORDER BY created_at DESC LIMIT 20',
     [allianceID]
@@ -203,8 +196,7 @@ async function getResourcesLog(allianceID) {
   return resourcesLog
 }
 
-module.exports.getResearchShares = getResearchShares
-async function getResearchShares(allianceID) {
+export async function getResearchShares(allianceID) {
   const rawShares = await mysql.query(
     'SELECT user_id, SUM(money) as total FROM alliances_research_log WHERE alliance_id=? GROUP BY user_id ORDER BY total DESC',
     [allianceID]
@@ -220,8 +212,7 @@ async function getResearchShares(allianceID) {
   return researchShares
 }
 
-module.exports.getBuffsData = getBuffsData
-async function getBuffsData(allianceID) {
+export async function getBuffsData(allianceID) {
   const [
     buffsLastUsed,
   ] = await mysql.query('SELECT buff_attack_last_used, buff_defense_last_used FROM alliances WHERE id=?', [allianceID])
@@ -242,8 +233,7 @@ async function getBuffsData(allianceID) {
   }
 }
 
-module.exports.getResearchBonusFromBuffs = getResearchBonusFromBuffs
-async function getResearchBonusFromBuffs(allianceID) {
+export async function getResearchBonusFromBuffs(allianceID) {
   if (!allianceID) {
     return {
       2: 0,
@@ -261,8 +251,7 @@ async function getResearchBonusFromBuffs(allianceID) {
   }
 }
 
-module.exports.getActiveWarBetweenAlliances = getActiveWarBetweenAlliances
-async function getActiveWarBetweenAlliances(allianceID1, allianceID2) {
+export async function getActiveWarBetweenAlliances(allianceID1, allianceID2) {
   const [
     war,
   ] = await mysql.query(
@@ -276,8 +265,7 @@ async function getActiveWarBetweenAlliances(allianceID1, allianceID2) {
   }
 }
 
-module.exports.getAllianceActiveWars = getAllianceActiveWars
-async function getAllianceActiveWars(allianceID) {
+export async function getAllianceActiveWars(allianceID) {
   let activeWars = await mysql.query(
     'SELECT id, created_at, alliance1_id, alliance2_id, data FROM alliances_wars WHERE completed=0 AND (alliance1_id=? OR alliance2_id=?) ORDER BY created_at DESC',
     [allianceID, allianceID]
@@ -287,8 +275,7 @@ async function getAllianceActiveWars(allianceID) {
   return activeWars
 }
 
-module.exports.getAlliancePastWars = getAlliancePastWars
-async function getAlliancePastWars(allianceID) {
+export async function getAlliancePastWars(allianceID) {
   let pastWars = await mysql.query(
     'SELECT id, created_at, alliance1_id, alliance2_id, data FROM alliances_wars WHERE completed=1 AND (alliance1_id=? OR alliance2_id=?) ORDER BY created_at DESC LIMIT 10',
     [allianceID, allianceID]
@@ -302,18 +289,25 @@ async function parseWar(allianceID, war) {
   const alliance1 = await getBasicData(war.alliance1_id)
   const alliance2 = await getBasicData(war.alliance2_id)
   const combatant = war.alliance1_id === allianceID ? alliance2 : alliance1
+  const data = JSON.parse(war.data)
+  const attackedHoods = data.hoods.map(hoodID => {
+    return hoods.find(h => h.id === hoodID)
+  })
+  const days = data.days
+  const winner = data.winner
   return {
     id: war.id,
     created_at: war.created_at,
-    data: JSON.parse(war.data),
     combatant,
+    days,
+    winner,
+    hoods: attackedHoods,
     alliance1: alliance1,
     alliance2: alliance2,
   }
 }
 
-module.exports.deleteAlliance = deleteAlliance
-async function deleteAlliance(allianceID) {
+export async function deleteAlliance(allianceID) {
   await Promise.all([
     mysql.query('DELETE FROM alliances WHERE id=?', [allianceID]),
     mysql.query('DELETE FROM alliances_member_requests WHERE alliance_id=?', [allianceID]),
@@ -327,8 +321,11 @@ async function deleteAlliance(allianceID) {
   ])
 }
 
-module.exports.getAllianceRankPosition = getAllianceRankPosition
-async function getAllianceRankPosition(allianceID) {
+export async function getAllianceRankPosition(allianceID) {
   const rankRow = await mysql.selectOne('SELECT rank FROM ranking_alliances WHERE alliance_id=?', [allianceID])
   return rankRow ? rankRow.rank : null
+}
+
+export function getAllianceHoods(allianceID) {
+  return hoods.filter(hood => hood.owner && hood.owner.id === allianceID)
 }

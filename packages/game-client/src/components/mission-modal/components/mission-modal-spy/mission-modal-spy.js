@@ -26,8 +26,8 @@ export default function MissionModalSpy({ user, onRequestClose }) {
       e.preventDefault()
       if (!isFormReady) return
       api
-        .post('/v1/missions', {
-          missionType: 'spy',
+        .post('/v1/missions/create', {
+          mission_type: 'spy',
           target_user: toUser,
           sent_spies: numTroops,
         })

@@ -1,11 +1,11 @@
 import React from 'react'
-import styles from './Map.module.scss'
 import Container from 'components/UI/container'
+import Map from 'components/map/map'
 
-export default function Map() {
+export default function MapScreen() {
   return (
     <Container darkBg>
-      <div className={styles.container}>Map!</div>
+      <Map />
     </Container>
   )
 }

@@ -111,7 +111,9 @@ export function AttackReportMsg({ mission, showSender, showTarget }) {
           Ataque enviado por <Username user={mission.user} />
         </div>
       )}
-      {showTarget && (
+      {showTarget && mission.target_hood ? (
+        <div>Ataque a {mission.target_hood.name}</div>
+      ) : (
         <div>
           Ataque a <Username user={mission.target_user} />
         </div>
@@ -119,7 +121,7 @@ export function AttackReportMsg({ mission, showSender, showTarget }) {
       <div>Resultado: {displayResult}</div>
       <div>Ladrones enviados: {mission.sent_thieves.toLocaleString()}</div>
       <div>Saboteadores enviados: {mission.sent_sabots.toLocaleString()}</div>
-      <div>Edificio atacado: {buildingInfo.name}</div>
+      {buildingInfo && <div>Edificio atacado: {buildingInfo.name}</div>}
       <div>Guardias muertos: {mission.report.killed_guards.toLocaleString()}</div>
       <div>Saboteadores muertos: {mission.report.killed_sabots.toLocaleString()}</div>
       <div>Ladrones muertos: {mission.report.killed_thieves.toLocaleString()}</div>
