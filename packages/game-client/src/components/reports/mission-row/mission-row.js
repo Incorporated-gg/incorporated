@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react'
-import Username from '../../components/UI/Username'
-import { throttle, getTimeUntil, cancelActiveMission } from '../../lib/utils'
+import React, { useState } from 'react'
+import Username from 'components/UI/Username'
+import { cancelActiveMission } from 'lib/utils'
 import PropTypes from 'prop-types'
-import { timestampFromEpoch } from 'shared-lib/commonUtils'
 import { buildingsList } from 'shared-lib/buildingsUtils'
-import { reloadUserData, userData } from '../../lib/user'
+import { userData } from 'lib/user'
 import { AttackReportMsg, SpyReportMsg } from 'components/messages/components/single-message'
 import { getServerDay } from 'shared-lib/serverTime'
-import ErrorBoundary from '../../components/UI/ErrorBoundary'
-import { updateTabTitle } from '../../lib/tabTitle'
+import ErrorBoundary from 'components/UI/ErrorBoundary'
+import MissionTimer from '../mission-timer/mission-timer'
+import Icon from 'components/icon'
 
 MissionRow.propTypes = {
   mission: PropTypes.object.isRequired,
@@ -57,26 +57,25 @@ export default function MissionRow({ mission, reloadMissionsCallback, showcaseUs
 
   const isMyMission = mission.user.id === userData.id
 
+  const iconSvg = mission.mission_type === 'attack' ? require('./img/attack.svg') : require('./img/spy.svg')
+
   return (
     <>
       <tr>
-        <td>{mission.mission_type}</td>
+        <td>
+          <Icon svg={iconSvg} alt={mission.mission_type === 'attack' ? 'Ataque' : 'Espionaje'} size={20} />
+        </td>
         <td>
           {showcaseUser === 'sender' && <Username user={mission.user} />}
-          {showcaseUser === 'target' && mission.target_hood ? (
-            mission.target_hood.name
-          ) : (
-            <Username user={mission.target_user} />
-          )}
+          {showcaseUser === 'target' &&
+            (mission.target_hood ? mission.target_hood.name : <Username user={mission.target_user} />)}
         </td>
         {isComplete ? (
           <>
-            <td>
-              Día {getServerDay(mission.will_finish_at * 1000)}. {timestampFromEpoch(mission.will_finish_at)}
-            </td>
+            <td>{getServerDay(mission.will_finish_at * 1000)}</td>
             <td style={{ color: resultColor }}>{displayResult}</td>
             <td>
-              <button onClick={clickedShowDetails}>{showDetails ? 'Ocultar detalles' : 'Mostrar detalles'}</button>
+              <button onClick={clickedShowDetails}>{showDetails ? '⬆' : '⬇'}</button>
             </td>
           </>
         ) : (
@@ -107,25 +106,3 @@ export default function MissionRow({ mission, reloadMissionsCallback, showcaseUs
     </>
   )
 }
-
-MissionTimer.propTypes = {
-  finishesAt: PropTypes.number.isRequired,
-  isMyMission: PropTypes.bool.isRequired,
-}
-export function MissionTimer({ finishesAt, isMyMission }) {
-  const [timeLeft, setTimeLeft] = useState(getTimeUntil(finishesAt, true))
-  useEffect(() => {
-    const int = setInterval(() => setTimeLeft(getTimeUntil(finishesAt, true)), 1000)
-    return () => clearInterval(int)
-  }, [finishesAt])
-
-  if (isMyMission) {
-    updateTabTitle({ missionTimeLeft: timeLeft })
-  }
-
-  if (Date.now() / 1000 > finishesAt) {
-    throttledReloadUserData()
-  }
-  return <>{timeLeft}</>
-}
-const throttledReloadUserData = throttle(reloadUserData, 2000)

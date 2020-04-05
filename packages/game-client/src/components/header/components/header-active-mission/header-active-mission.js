@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import styles from './header-active-mission.module.scss'
 import { useUserData } from 'lib/user'
-import { MissionTimer } from 'routes/Reports/MissionRow'
+import MissionTimer from 'components/reports/mission-timer/mission-timer'
 import Icon from 'components/icon'
 import ActiveMissionModal from '../active-mission-modal'
 import Container from 'components/UI/container'

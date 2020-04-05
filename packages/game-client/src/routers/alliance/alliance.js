@@ -3,7 +3,6 @@ import PropTypes from 'prop-types'
 import { Switch, Route } from 'react-router-dom'
 import AllianceResearch from 'routes/alliance/alliance-research'
 import AllianceResources from 'routes/alliance/alliance-resources'
-import AllianceMissions from 'routes/alliance/alliance-missions'
 import AllianceHome from 'routes/alliance/alliance-home'
 import AllianceWars from 'routes/alliance/alliance-wars'
 import AllianceAdmin from 'routes/alliance/alliance-admin'
@@ -18,9 +17,6 @@ export default function AllianceRouter({ alliance, reloadAllianceData }) {
       <Switch>
         <Route path="/alliance/resources">
           <AllianceResources alliance={alliance} reloadAllianceData={reloadAllianceData} />
-        </Route>
-        <Route path="/alliance/missions/:missionType?">
-          <AllianceMissions alliance={alliance} reloadAllianceData={reloadAllianceData} />
         </Route>
         <Route path="/alliance/research">
           <AllianceResearch alliance={alliance} reloadAllianceData={reloadAllianceData} />

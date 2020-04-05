@@ -5,13 +5,14 @@ import { userData } from 'lib/user'
 import { buildingsList } from 'shared-lib/buildingsUtils'
 import { personnelList } from 'shared-lib/personnelUtils'
 import { researchList } from 'shared-lib/researchUtils'
+import { getServerDay } from 'shared-lib/serverTime'
+import { timestampFromEpoch } from 'shared-lib/commonUtils'
 import styles from './single-message.module.scss'
 import Username from 'components/UI/Username'
 import ErrorBoundary from 'components/UI/ErrorBoundary'
 import AllianceLink from 'components/alliance/alliance-link'
 import NewMessageModal from './new-message-modal'
 import Container from 'components/UI/container'
-import { getServerDay } from 'shared-lib/serverTime'
 
 SingleMessage.propTypes = {
   message: PropTypes.object.isRequired,
@@ -120,6 +121,7 @@ export function AttackReportMsg({ mission, showSender, showTarget }) {
         </div>
       )}
       <div>Resultado: {displayResult}</div>
+      <div>Fecha: {timestampFromEpoch(mission.will_finish_at)}</div>
       <div>Ladrones enviados: {mission.sent_thieves.toLocaleString()}</div>
       <div>Saboteadores enviados: {mission.sent_sabots.toLocaleString()}</div>
       {buildingInfo && <div>Edificio atacado: {buildingInfo.name}</div>}
@@ -141,6 +143,7 @@ SpyReportMsg.propTypes = {
 export function SpyReportMsg({ mission }) {
   return (
     <div>
+      <div>Fecha: {timestampFromEpoch(mission.will_finish_at)}</div>
       <div>Número de espías enviados: {mission.sent_spies}</div>
       {mission.report.captured_spies > 0 && (
         <div>

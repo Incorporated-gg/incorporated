@@ -3,7 +3,6 @@ import { MAX_DAILY_ATTACKS, calculateMaxDailyReceivedAttacks } from 'shared-lib/
 import cache from '../cache'
 const mysql = require('../mysql')
 const alliances = require('./alliances')
-const { parseMissionFromDB } = require('./missions')
 const { researchList } = require('shared-lib/researchUtils')
 const { personnelList } = require('shared-lib/personnelUtils')
 const { getInitialUnixTimestampOfServerDay } = require('shared-lib/serverTime')
@@ -120,21 +119,9 @@ export async function getBuildings(userID) {
   return buildings
 }
 
-export async function getMissions(userID) {
-  let [
-    { last_checked_reports_at: lastCheckedReportsAt },
-  ] = await mysql.query('SELECT last_checked_reports_at FROM users WHERE id=?', [userID])
-  lastCheckedReportsAt = lastCheckedReportsAt || 0
-
+export async function getUserTodaysMissionsLimits(userID) {
   const dailyCountStartedAt = Math.floor(getInitialUnixTimestampOfServerDay() / 1000)
-  const sentMissionsRaw = await mysql.query(
-    'SELECT user_id, target_user, data, mission_type, started_at, will_finish_at, completed, result, profit FROM missions WHERE user_id=? ORDER BY will_finish_at DESC',
-    [userID]
-  )
-  const receivedMissionsRaw = await mysql.query(
-    'SELECT user_id, target_user, data, mission_type, started_at, will_finish_at, completed, result, profit FROM missions WHERE target_user=? AND mission_type="attack" ORDER BY will_finish_at DESC',
-    [userID]
-  )
+
   const [
     { receivedToday },
   ] = await mysql.query(
@@ -147,18 +134,11 @@ export async function getMissions(userID) {
     "SELECT COUNT(*) AS sentToday FROM missions WHERE user_id=? AND mission_type='attack' AND started_at>? AND completed=1",
     [userID, dailyCountStartedAt]
   )
-  const [sentMissions, receivedMissions] = await Promise.all([
-    Promise.all(sentMissionsRaw.map(parseMissionFromDB)),
-    Promise.all(receivedMissionsRaw.map(parseMissionFromDB)),
-  ])
   const userMissionLimits = await getUserMissionLimits(userID)
 
   return {
-    sent: sentMissions,
-    received: receivedMissions,
     receivedToday,
     sentToday,
-    lastCheckedReportsAt,
     ...userMissionLimits,
   }
 }

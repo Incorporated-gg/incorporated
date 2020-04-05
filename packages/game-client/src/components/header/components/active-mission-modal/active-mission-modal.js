@@ -6,7 +6,7 @@ import Container from 'components/UI/container'
 import { useUserData } from 'lib/user'
 import AllianceBadge from 'components/alliance/alliance-badge'
 import { buildingsList } from 'shared-lib/buildingsUtils'
-import { MissionTimer } from 'routes/Reports/MissionRow'
+import MissionTimer from 'components/reports/mission-timer/mission-timer'
 import { cancelActiveMission } from 'lib/utils'
 
 ActiveMissionModal.propTypes = {

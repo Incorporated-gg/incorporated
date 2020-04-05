@@ -1,117 +1,112 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import api from 'lib/api'
-import MissionRow from './MissionRow'
 import styles from './Reports.module.scss'
 import MissionModal from 'components/mission-modal'
-import { Link, useLocation } from 'react-router-dom'
 import Container from 'components/UI/container'
+import MissionRow from 'components/reports/mission-row/mission-row'
 
-function useQuery() {
-  return new URLSearchParams(useLocation().search)
-}
-
-export default function Reports() {
-  const query = useQuery()
-
-  const [missions, setMissions] = useState({
-    sent: [],
-    received: [],
+const initialMissionsState = {
+  missions: [],
+  todaysMissionLimits: {
     receivedToday: 0,
     sentToday: 0,
     maxAttacks: 0,
     maxDefenses: 0,
-    lastCheckedReportsAt: 0,
-  })
+  },
+  notSeenReceivedCount: 0,
+  notSeenSentCount: 0,
+}
+
+export default function Reports() {
+  const [showSimulatorModal, setShowSimulatorModal] = useState(false)
+
+  const [missions, setMissions] = useState(initialMissionsState)
+
+  const [sendType, setSendType] = useState('sent')
+  const [missionType, setMissionType] = useState('any')
+  const [ownerType, setOwnerType] = useState('own')
 
   const reloadMissionsCallback = useCallback(() => {
+    setMissions(initialMissionsState)
     api
-      .get('/v1/missions')
+      .get('/v1/missions', {
+        sendType,
+        missionType,
+        ownerType,
+      })
       .then(res => {
-        setMissions(res.missions)
+        setMissions(res)
       })
       .catch(err => alert(err.message))
-  }, [])
+  }, [missionType, ownerType, sendType])
 
   useEffect(() => reloadMissionsCallback(), [reloadMissionsCallback])
 
-  const [showSimulatorModal, setShowSimulatorModal] = useState(false)
-
-  const notSeenReceivedCount = missions.received.filter(
-    mission => mission.completed && mission.will_finish_at > missions.lastCheckedReportsAt
-  ).length
-  const notSeenSentCount = missions.sent.filter(
-    mission => mission.completed && mission.will_finish_at > missions.lastCheckedReportsAt
-  ).length
-
-  // Figure out what type to display
-  const queryType = query.get('type')
-  const initialType = notSeenReceivedCount > 0 ? 'received' : 'sent'
-  const type = queryType === 'sent' ? 'sent' : queryType === 'received' ? 'received' : initialType
-
   return (
     <div>
-      <Link to="/reports?type=sent">
-        <button style={{ color: type === 'sent' ? '#EAC953' : '' }}>
-          Enviados {notSeenSentCount ? `(${notSeenSentCount})` : ''}
-        </button>
-      </Link>
-      <Link to="/reports?type=received">
-        <button style={{ color: type === 'received' ? '#EAC953' : '' }}>
-          Recibidos {notSeenReceivedCount ? `(${notSeenReceivedCount})` : ''}
-        </button>
-      </Link>
-      <button onClick={() => setShowSimulatorModal(true)}>Simulador</button>
-      <MissionModal
-        missionType="simulate"
-        isOpen={showSimulatorModal}
-        onRequestClose={() => setShowSimulatorModal(false)}
-      />
+      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+        <button onClick={() => setShowSimulatorModal(true)}>Simulador</button>
+        <MissionModal
+          missionType="simulate"
+          isOpen={showSimulatorModal}
+          onRequestClose={() => setShowSimulatorModal(false)}
+        />
+        <span>
+          Enviadas hoy: {missions.todaysMissionLimits.sentToday}/{missions.todaysMissionLimits.maxAttacks}
+        </span>
+        <span>
+          Recibidas hoy: {missions.todaysMissionLimits.receivedToday}/{missions.todaysMissionLimits.maxDefenses}
+        </span>
+      </div>
+      <div>
+        <select value={sendType} onChange={e => setSendType(e.target.value)}>
+          <option value="sent">Enviadas{missions.notSeenSentCount ? ` (${missions.notSeenSentCount})` : ''}</option>
+          <option value="received">
+            Recibidas{missions.notSeenReceivedCount ? ` (${missions.notSeenReceivedCount})` : ''}
+          </option>
+        </select>
+        <select value={missionType} onChange={e => setMissionType(e.target.value)}>
+          <option value="any">Cualquier tipo</option>
+          <option value="spy">Espionajes</option>
+          <option value="attack">Ataques</option>
+        </select>
+        <select value={ownerType} onChange={e => setOwnerType(e.target.value)}>
+          <option value="own">Propias</option>
+          <option value="alliance">Alianza</option>
+        </select>
+      </div>
 
       <Container darkBg>
         <div className={styles.missionContainer}>
-          <h2>
-            {type === 'sent'
-              ? `Misiones enviadas (Hoy: ${missions.sentToday}/${missions.maxAttacks})`
-              : `Misiones recibidas (Hoy: ${missions.receivedToday}/${missions.maxDefenses})`}
-          </h2>
           <table>
             <thead>
               <tr>
-                <th>Tipo de misión</th>
-                <th>{type === 'sent' ? 'Objetivo' : 'Agresor'}</th>
-                <th>Fecha</th>
+                <th>Tipo</th>
+                <th>{sendType === 'sent' ? 'Objetivo' : 'Agresor'}</th>
+                <th>Día</th>
                 <th>Resultado</th>
-                <th>Acciones</th>
+                <th>Detalles</th>
               </tr>
             </thead>
             <tbody>
-              {type === 'sent' &&
-                (missions.sent.filter(m => m.completed).length ? (
-                  missions.sent
-                    .filter(m => m.completed)
-                    .map((m, i) => <MissionRow key={i} mission={m} reloadMissionsCallback={reloadMissionsCallback} />)
-                ) : (
-                  <tr>
-                    <td colSpan="3">No has realizado ninguna misión todavía</td>
-                  </tr>
-                ))}
-              {type === 'received' &&
-                (missions.received.filter(m => m.completed).length ? (
-                  missions.received
-                    .filter(m => m.completed)
-                    .map((m, i) => (
-                      <MissionRow
-                        key={i}
-                        mission={m}
-                        reloadMissionsCallback={reloadMissionsCallback}
-                        showcaseUser="sender"
-                      />
-                    ))
-                ) : (
-                  <tr>
-                    <td colSpan="3">No has recibido ninguna misión todavía</td>
-                  </tr>
-                ))}
+              {missions.missions.length ? (
+                missions.missions.map((mission, index) => (
+                  <MissionRow
+                    key={index}
+                    mission={mission}
+                    reloadMissionsCallback={reloadMissionsCallback}
+                    showcaseUser={sendType === 'received' ? 'sender' : 'target'}
+                  />
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="9999">
+                    {sendType === 'sent'
+                      ? 'No has realizado ninguna misión todavía'
+                      : 'No has recibido ninguna misión todavía'}
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>

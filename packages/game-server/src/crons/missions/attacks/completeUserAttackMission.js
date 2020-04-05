@@ -1,21 +1,17 @@
 import tasksProgressHook from '../../../lib/db/tasks/tasksProgressHook'
 import { sendAccountHook } from '../../../lib/accountInternalApi'
 import mysql from '../../../lib/mysql'
-const {
-  getUserAllianceID,
-  getResearchBonusFromBuffs,
-  getActiveWarBetweenAlliances,
-} = require('../../../lib/db/alliances')
-const { calcBuildingMaxMoney } = require('shared-lib/buildingsUtils')
-const { simulateAttack } = require('shared-lib/missionsUtils')
-const {
+import {
   getUserResearchs,
   getPersonnel,
   getBuildings,
   sendMessage,
   runUserMoneyUpdate,
-  getMissions,
-} = require('../../../lib/db/users')
+  getUserTodaysMissionsLimits,
+} from '../../../lib/db/users'
+import { getUserAllianceID, getResearchBonusFromBuffs, getActiveWarBetweenAlliances } from '../../../lib/db/alliances'
+const { calcBuildingMaxMoney } = require('shared-lib/buildingsUtils')
+const { simulateAttack } = require('shared-lib/missionsUtils')
 const { onNewWarAttack } = require('../../alliance_wars')
 
 export async function completeUserAttackMission(mission) {
@@ -42,7 +38,7 @@ export async function completeUserAttackMission(mission) {
     defenderPersonnel,
     defenderBuildings,
     defenderAllianceID,
-    defenderMissions,
+    defenderMissionLimits,
   ] = await Promise.all([
     getUserResearchs(attacker.id),
     getUserAllianceID(attacker.id),
@@ -50,10 +46,10 @@ export async function completeUserAttackMission(mission) {
     getPersonnel(defender.id),
     getBuildings(defender.id),
     getUserAllianceID(defender.id),
-    getMissions(defender.id),
+    getUserTodaysMissionsLimits(defender.id),
   ])
 
-  if (defenderMissions.receivedToday >= defenderMissions.maxDefenses) {
+  if (defenderMissionLimits.receivedToday >= defenderMissionLimits.maxDefenses) {
     // User has received max attacks before the attack could be completed. Cancel attacks and inform attackers about it
     await mysql.query('DELETE FROM missions WHERE id=?', [mission.id])
     await sendMessage({

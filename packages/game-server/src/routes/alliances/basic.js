@@ -42,7 +42,6 @@ module.exports = app => {
       alliances.getAlliancePastWars(allianceID),
     ])
 
-    const missionHistory = await alliances.getMissionHistory(members)
     const ranks = await Promise.all(
       members.map(async member => ({
         user: member.user,
@@ -58,7 +57,6 @@ module.exports = app => {
       resources,
       resources_log: resourcesLog,
       research_shares: researchShares,
-      mission_history: missionHistory,
       buffs_data: buffsData,
       active_wars: activeWars,
       past_wars: pastWars,
