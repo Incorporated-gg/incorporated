@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import Username from 'components/UI/Username'
-import { post } from 'lib/api'
+import api from 'lib/api'
 import RankItem from 'components/UI/RankItem'
 import styles from './alliance-home.module.scss'
 import { useUserData, reloadUserData } from 'lib/user'
@@ -17,7 +17,8 @@ export default function AllianceHome({ alliance, reloadAllianceData }) {
   const [showMessageModal, setShowMessageModal] = useState(false)
   const leaveAlliance = () => {
     if (!window.confirm('Estás seguro de que quieres salir?')) return
-    post('/v1/alliance/leave')
+    api
+      .post('/v1/alliance/leave')
       .then(() => {
         reloadAllianceData()
         reloadUserData()

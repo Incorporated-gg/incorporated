@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback } from 'react'
-import { get } from '../../lib/api'
 import Username from '../../components/UI/Username'
 import { useLocation, useHistory } from 'react-router-dom'
 import styles from './Ranking.module.scss'
@@ -7,6 +6,7 @@ import RankItem from '../../components/UI/RankItem'
 import AllianceLink from 'components/alliance/alliance-link'
 import { debounce } from '../../lib/utils'
 import Pagination from 'components/UI/pagination'
+import api from 'lib/api'
 
 export default function Ranking() {
   const [ranking, setRanking] = useState([])
@@ -25,7 +25,8 @@ export default function Ranking() {
   }, [history, page, pathname])
 
   useEffect(() => {
-    get('/v1/ranking', { type, page })
+    api
+      .get('/v1/ranking', { type, page })
       .then(res => {
         setRanking(res.ranking.listing)
         setMaxPages(res.ranking.maxPages)
@@ -61,7 +62,8 @@ function SearchUsers() {
 
   const doSearch = useCallback(
     debounce(username => {
-      get('/v1/search', { username })
+      api
+        .get('/v1/search', { username })
         .then(res => {
           setUsers(res.users)
           setLoading(false)

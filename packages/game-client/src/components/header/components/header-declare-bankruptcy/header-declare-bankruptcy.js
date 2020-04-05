@@ -1,13 +1,14 @@
 import React from 'react'
 import { useUserData, reloadUserData } from 'lib/user'
-import { post } from 'lib/api'
+import api from 'lib/api'
 
 export default function DeclareBankruptcy() {
   const userData = useUserData()
   if (!userData || userData.money > 0) return null
 
   const declareBankruptcy = () => {
-    post('/v1/declare_bankruptcy')
+    api
+      .post('/v1/declare_bankruptcy')
       .then(() => {
         reloadUserData()
       })

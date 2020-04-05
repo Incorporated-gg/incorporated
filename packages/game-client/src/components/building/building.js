@@ -7,7 +7,7 @@ import {
 } from 'shared-lib/buildingsUtils'
 import PropTypes from 'prop-types'
 import { userData as userDataRaw, updateUserData, useUserData } from 'lib/user'
-import { post } from 'lib/api'
+import api from 'lib/api'
 import Card from 'components/card'
 import useHoldPress from 'lib/useHoldPress'
 import Icon from 'components/icon'
@@ -133,7 +133,7 @@ function ExtractScreen({ buildingID, buildingCount }) {
           [buildingID]: { ...userDataRaw.buildings[buildingID], money: 0 },
         },
       })
-      await post('/v1/buildings/extract_money', { building_id: buildingID })
+      await api.post('/v1/buildings/extract_money', { building_id: buildingID })
     } catch (e) {
       alert(e.message)
     }
@@ -166,7 +166,7 @@ async function buyBuilding(buildingID) {
         [buildingID]: { ...userDataRaw.buildings[buildingID], quantity: currentAmount + 1 },
       },
     })
-    await post('/v1/buildings/buy', { building_id: buildingID, count: 1 })
+    await api.post('/v1/buildings/buy', { building_id: buildingID, count: 1 })
   } catch (e) {
     alert(e.message)
   }

@@ -67,76 +67,8 @@
       border-bottom: 4px solid #d9a545;
     }
   }
+}
 
-  .headerLinks {
-    display: flex;
-
-    .headerOuterContainer {
-      margin: 0.5em 0;
-      cursor: pointer;
-    }
-
-    .headerContainer {
-      padding: 3px 30px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .headerIcon svg {
-      width: auto;
-      height: 20px;
-    }
-
-    .logo {
-      margin: auto;
-
-      svg {
-        max-height: 4em;
-        width: 8em;
-        max-width: 30vw;
-      }
-    }
-  }
-
-  .headerStats {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    font-size: 0.9em;
-
-    .statContainer {
-      flex: 1 0 33%;
-
-      &:not(:last-child) {
-        margin-right: 0.25em;
-      }
-    }
-
-    .stat {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 3px 2px;
-      font-size: 16px;
-
-      &.statMission1 {
-        cursor: pointer;
-        width: calc(100% - 25px);
-      }
-
-      &.statMission2 {
-        cursor: pointer;
-        width: 20px;
-        margin-left: 5px;
-      }
-    }
-
-    .headerStatIcon svg {
-      margin-left: 3px;
-      height: 13px;
-      width: auto;
-      vertical-align: middle;
-    }
-  }
+.mainHeader {
+  display: flex;
 }

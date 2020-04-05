@@ -1,34 +1,39 @@
 import { useState, useEffect } from 'react'
 import asyncStorage from './asyncStorage'
-import { get } from './api'
 import { reloadApp } from '../App'
+import api from 'lib/api'
 
 export let sessionID = null
 export let userData = null
+export let accountData = null
 
-export async function userLoggedIn(newSessionID) {
+export async function setNewSessionID(newSessionID) {
   sessionID = newSessionID
   await asyncStorage.setItem('session_id', sessionID)
-  await reloadUserData()
+  await Promise.all([reloadUserData(), reloadAccountData()])
   reloadApp()
-}
-
-export async function reloadUserData() {
-  const userDataFromAPI = await get('/v1/my_data')
-  userData = Object.assign(userDataFromAPI.user_data, userDataFromAPI._extra)
-  fireUserDataListeners()
 }
 
 export async function logout() {
   await asyncStorage.setItem('session_id', null)
   sessionID = null
   userData = null
+  accountData = null
   reloadApp()
 }
 
-export async function loadUserDataFromStorage() {
+export async function loadUserAndAccountDataFromStorage() {
   sessionID = await asyncStorage.getItem('session_id', null)
-  if (sessionID) await reloadUserData()
+  if (sessionID) {
+    await Promise.all([reloadUserData(), reloadAccountData()])
+  }
+}
+
+// Game user data
+export async function reloadUserData() {
+  const userDataFromAPI = await api.get('/v1/my_data')
+  userData = Object.assign(userDataFromAPI.user_data, userDataFromAPI._extra)
+  fireUserDataListeners()
 }
 
 export function updateUserData(newData) {
@@ -48,4 +53,24 @@ export function useUserData() {
     return () => userDataListeners.delete(onChangeFn)
   }, [])
   return userData
+}
+
+// Account data
+export async function reloadAccountData() {
+  const accountDataFromAPI = await api.accountGet('/v1/my_data')
+  accountData = Object.assign(accountDataFromAPI.accountData, accountDataFromAPI._extra)
+  fireAccountDataListeners()
+}
+
+const accountDataListeners = new Set()
+const fireAccountDataListeners = () => accountDataListeners.forEach(cb => cb())
+
+export function useAccountData() {
+  const [, rerender] = useState({})
+  useEffect(() => {
+    const onChangeFn = () => rerender({})
+    accountDataListeners.add(onChangeFn)
+    return () => accountDataListeners.delete(onChangeFn)
+  }, [])
+  return accountData
 }

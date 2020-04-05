@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
-
-import { post } from 'lib/api'
+import api from 'lib/api'
 import { reloadUserData } from 'lib/user'
 
 AllianceRankEdit.propTypes = {
@@ -29,10 +28,11 @@ export default function AllianceRankEdit({ alliance, reloadAllianceData }) {
       )
     )
       return
-    post('/v1/alliance/edit_rank', {
-      username: rankMember.user.username,
-      ...rankEdit,
-    })
+    api
+      .post('/v1/alliance/edit_rank', {
+        username: rankMember.user.username,
+        ...rankEdit,
+      })
       .then(() => {
         reloadAllianceData()
         reloadUserData()
@@ -43,9 +43,10 @@ export default function AllianceRankEdit({ alliance, reloadAllianceData }) {
   }
   const kickMember = rankMember => () => {
     if (!window.confirm(`Estás seguro de que quieres echar a ${rankMember.user.username}?`)) return
-    post('/v1/alliance/kick_member', {
-      user_id: rankMember.user.id,
-    })
+    api
+      .post('/v1/alliance/kick_member', {
+        user_id: rankMember.user.id,
+      })
       .then(() => {
         reloadAllianceData()
       })

@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { post } from 'lib/api'
+import api from 'lib/api'
 import PropTypes from 'prop-types'
 import { CREATE_ALLIANCE_PRICE } from 'shared-lib/allianceUtils'
 import { reloadUserData } from 'lib/user'
@@ -14,11 +14,12 @@ export default function CreateAlliance({ reloadAllianceData }) {
 
   const createAlliance = e => {
     e.preventDefault()
-    post('/v1/alliance/create', {
-      long_name: longName,
-      short_name: shortName,
-      description,
-    })
+    api
+      .post('/v1/alliance/create', {
+        long_name: longName,
+        short_name: shortName,
+        description,
+      })
       .then(res => {
         reloadAllianceData()
         reloadUserData()

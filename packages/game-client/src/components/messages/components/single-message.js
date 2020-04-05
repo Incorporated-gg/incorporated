@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { post } from 'lib/api'
+import api from 'lib/api'
 import PropTypes from 'prop-types'
 import { userData } from 'lib/user'
 import { buildingsList } from 'shared-lib/buildingsUtils'
@@ -24,7 +24,8 @@ export default function SingleMessage({ reloadMessagesData, message }) {
     e.preventDefault()
     if (!window.confirm('Estás seguro/a de que quieres borrar el mensaje?')) return
 
-    post(`/v1/messages/delete`, { message_id: message.id })
+    api
+      .post(`/v1/messages/delete`, { message_id: message.id })
       .then(() => reloadMessagesData())
       .catch(err => {
         alert(err.message)

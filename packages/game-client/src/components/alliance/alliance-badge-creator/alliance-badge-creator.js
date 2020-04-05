@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { post } from 'lib/api'
+import api from 'lib/api'
 import PropTypes from 'prop-types'
 import AllianceBadge from 'components/alliance/alliance-badge'
 import { reloadUserData } from 'lib/user'
@@ -11,9 +11,10 @@ AllianceBadgeCreator.propTypes = {
 export default function AllianceBadgeCreator({ alliance, reloadAllianceData }) {
   const [badge, setBadge] = useState(alliance.badge)
   const saveBadge = () => {
-    post('/v1/alliance/change_badge', {
-      badge,
-    })
+    api
+      .post('/v1/alliance/change_badge', {
+        badge,
+      })
       .then(() => {
         reloadAllianceData()
         reloadUserData()

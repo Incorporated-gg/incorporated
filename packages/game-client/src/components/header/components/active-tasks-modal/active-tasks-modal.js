@@ -1,7 +1,7 @@
 import React from 'react'
 import styles from './active-tasks-modal.module.scss'
 import { useUserData } from 'lib/user'
-import { post } from 'lib/api'
+import api from 'lib/api'
 import { buildingsList } from 'shared-lib/buildingsUtils'
 import PropTypes from 'prop-types'
 import Modal from 'react-modal'
@@ -26,7 +26,7 @@ function ActiveTasksList() {
   const userData = useUserData()
   return userData.activeTasks.map(task => {
     const completeTask = () => {
-      post('/v1/tasks/complete', { task_id: task.id }).catch(() => {})
+      api.post('/v1/tasks/complete', { task_id: task.id }).catch(() => {})
     }
 
     let taskElm

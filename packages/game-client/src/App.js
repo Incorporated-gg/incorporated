@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import LoggedInRouter from 'routers/logged-in'
 import LogInPage from 'routers/log-in'
-import { userData, loadUserDataFromStorage, userLoggedIn } from 'lib/user'
+import { userData, loadUserAndAccountDataFromStorage } from 'lib/user'
 import ErrorBoundary from 'components/UI/ErrorBoundary'
 
 export function reloadApp() {
@@ -17,30 +17,17 @@ function App() {
   useEffect(() => {
     if (!loading) return
 
-    const sessionID = getQueryVariable('sessionID')
-    if (sessionID) {
-      userLoggedIn(sessionID)
-        .then(() => {
-          setLoggedIn(Boolean(userData))
-          setLoading(false)
-        })
-        .catch(err => {
-          alert(err.message)
-          setLoggedIn(false)
-          setLoading(false)
-        })
-    } else {
-      loadUserDataFromStorage()
-        .then(() => {
-          setLoggedIn(Boolean(userData))
-          setLoading(false)
-        })
-        .catch(err => {
-          alert(err.message)
-          setLoggedIn(false)
-          setLoading(false)
-        })
-    }
+    loadUserAndAccountDataFromStorage()
+      .then(() => {
+        setLoggedIn(Boolean(userData))
+        setLoading(false)
+      })
+      .catch(err => {
+        alert(err.message)
+        setLoggedIn(false)
+        setLoading(false)
+        throw err
+      })
   }, [loading])
 
   if (loading) return null
@@ -49,14 +36,3 @@ function App() {
 }
 
 export default App
-
-function getQueryVariable(variable) {
-  var query = window.location.search.substring(1)
-  var vars = query.split('&')
-  for (var i = 0; i < vars.length; i++) {
-    var pair = vars[i].split('=')
-    if (decodeURIComponent(pair[0]) === variable) {
-      return decodeURIComponent(pair[1])
-    }
-  }
-}

@@ -1,0 +1,45 @@
+.moneyAndGoldContainer {
+  flex-grow: 1;
+  flex-shrink: 1;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  padding: 0 1em;
+  font-size: 0.9em;
+
+  .statContainer {
+    line-height: 0;
+    width: 100%;
+    max-width: 300px;
+    margin: 0.25em 0;
+  }
+
+  .stat {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 3px 2px;
+    font-size: 16px;
+    line-height: 1em;
+
+    &.statMission1 {
+      cursor: pointer;
+      width: calc(100% - 25px);
+    }
+
+    &.statMission2 {
+      cursor: pointer;
+      width: 20px;
+      margin-left: 5px;
+    }
+  }
+
+  .headerStatIcon svg {
+    margin-left: 3px;
+    height: 13px;
+    width: auto;
+    vertical-align: middle;
+  }
+}

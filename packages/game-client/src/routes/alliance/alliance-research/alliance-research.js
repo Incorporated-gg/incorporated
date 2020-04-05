@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { post } from 'lib/api'
+import api from 'lib/api'
 import PropTypes from 'prop-types'
 import styles from './alliance-research.module.scss'
 import {
@@ -58,7 +58,8 @@ function SingleResearch({ researchData, reloadAllianceData }) {
 
   const doResearch = e => {
     e.preventDefault()
-    post('/v1/alliance/research', { research_id: researchData.id, amount })
+    api
+      .post('/v1/alliance/research', { research_id: researchData.id, amount })
       .then(() => {
         reloadAllianceData()
       })

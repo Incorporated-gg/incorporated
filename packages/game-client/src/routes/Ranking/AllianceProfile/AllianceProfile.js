@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react'
-import { get, post } from 'lib/api'
+import api from 'lib/api'
 import Username from 'components/UI/Username'
 import { useParams } from 'react-router-dom'
 import { useUserData, reloadUserData } from 'lib/user'
@@ -17,7 +17,8 @@ export default function Ranking() {
   const userData = useUserData()
 
   const reloadAllianceData = useCallback(() => {
-    get(`/v1/ranking/alliance/${allianceShortName}`)
+    api
+      .get(`/v1/ranking/alliance/${allianceShortName}`)
       .then(res => {
         setAlliance(res.alliance)
       })
@@ -29,14 +30,16 @@ export default function Ranking() {
   }, [allianceShortName, reloadAllianceData])
 
   const createMemberRequest = () => {
-    post('/v1/alliance/member_request/create', { alliance_id: alliance.id })
+    api
+      .post('/v1/alliance/member_request/create', { alliance_id: alliance.id })
       .then(() => alert('Petición enviada'))
       .catch(err => alert(err.message))
   }
 
   const leaveAlliance = () => {
     if (!window.confirm('Estás seguro de que quieres salir?')) return
-    post('/v1/alliance/leave')
+    api
+      .post('/v1/alliance/leave')
       .then(() => {
         reloadAllianceData()
         reloadUserData()

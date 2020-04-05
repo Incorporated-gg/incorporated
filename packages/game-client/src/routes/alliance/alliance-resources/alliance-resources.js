@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
-import { post } from 'lib/api'
 import { calcResourceMax } from 'shared-lib/allianceUtils'
 import PropTypes from 'prop-types'
 import { useUserData, reloadUserData } from 'lib/user'
 import Container from 'components/UI/container'
+import api from 'lib/api'
 
 AllianceResources.propTypes = {
   alliance: PropTypes.object.isRequired,
@@ -54,10 +54,11 @@ function SingleResources({ resourceData, reloadAllianceData, researchs, userReso
 
   const doResources = extracting => e => {
     e.preventDefault()
-    post('/v1/alliance/resources', {
-      resource_id: resourceData.resource_id,
-      amount: (extracting ? -1 : 1) * amount,
-    })
+    api
+      .post('/v1/alliance/resources', {
+        resource_id: resourceData.resource_id,
+        amount: (extracting ? -1 : 1) * amount,
+      })
       .then(() => {
         reloadAllianceData()
         reloadUserData()

@@ -1,6 +1,6 @@
-import { post } from 'lib/api'
 import { userData, updateUserData, reloadUserData } from 'lib/user'
 import { calcResearchPrice, calcResearchSecondsDuration } from 'shared-lib/researchUtils'
+import api from 'lib/api'
 
 export async function buyResearch(researchID) {
   const currentLvl = userData.researchs[researchID]
@@ -29,7 +29,7 @@ export async function buyResearch(researchID) {
       })
     }
 
-    await post('/v1/research/buy', { research_id: researchID, count: 1 })
+    await api.post('/v1/research/buy', { research_id: researchID, count: 1 })
     if (researchTime !== 0) await reloadUserData()
   } catch (e) {
     alert(e.message)

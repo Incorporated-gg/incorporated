@@ -1,3 +1,3 @@
-import Login from './log-in'
+import LoginRouter from './log-in'
 
-export default Login
+export default LoginRouter

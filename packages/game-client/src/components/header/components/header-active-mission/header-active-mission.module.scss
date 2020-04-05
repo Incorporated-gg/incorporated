@@ -1,0 +1,33 @@
+.statContainer {
+  flex: 1 0 33%;
+
+  &:not(:last-child) {
+    margin-right: 0.25em;
+  }
+}
+
+.stat {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 3px 2px;
+  font-size: 16px;
+
+  &.statMission1 {
+    cursor: pointer;
+    width: calc(100% - 25px);
+  }
+
+  &.statMission2 {
+    cursor: pointer;
+    width: 20px;
+    margin-left: 5px;
+  }
+}
+
+.headerStatIcon svg {
+  margin-left: 3px;
+  height: 13px;
+  width: auto;
+  vertical-align: middle;
+}

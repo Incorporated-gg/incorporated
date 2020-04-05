@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { post } from '../../lib/api'
+import api from 'lib/api'
 import PropTypes from 'prop-types'
 import styles from './loans.module.scss'
 import Container from 'components/UI/container'
@@ -16,10 +16,11 @@ export default function CreateLoan({ refreshLoansList, givenLoan }) {
   const postLoan = () => {
     setMoneyAmount(0)
     setInterestRate(15)
-    post('/v1/loans/create', {
-      money_amount: moneyAmount,
-      interest_rate: interestRate,
-    })
+    api
+      .post('/v1/loans/create', {
+        money_amount: moneyAmount,
+        interest_rate: interestRate,
+      })
       .then(() => {
         refreshLoansList()
       })

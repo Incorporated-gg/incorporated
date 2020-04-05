@@ -11,10 +11,10 @@ import { getTimeUntil, throttle, numberToAbbreviation } from 'lib/utils'
 import { buyResearch } from './buyResearch'
 import Card from 'components/card'
 import cardStyles from 'components/card/card.module.scss'
-import { post } from 'lib/api'
 import Container from 'components/UI/container'
 import Icon from 'components/icon'
 import styles from './research-item.module.scss'
+import api from 'lib/api'
 
 const researchImages = {
   1: require('./img/spy.png'),
@@ -130,7 +130,8 @@ function UpgradeInstantlyButton({ researchID, finishesAt }) {
   }, [finishesAt])
 
   const manuallyFinishResearch = useCallback(() => {
-    post('/v1/research/manually_finish', { research_id: researchID })
+    api
+      .post('/v1/research/manually_finish', { research_id: researchID })
       .then(() => {
         reloadUserData()
       })

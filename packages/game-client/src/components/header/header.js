@@ -1,15 +1,14 @@
 import React, { useState } from 'react'
 import styles from './header.module.scss'
-import { useUserData, logout } from 'lib/user'
-import { DESKTOP_WIDTH_BREAKPOINT, numberToAbbreviation } from 'lib/utils'
-import { Link } from 'react-router-dom'
-import Icon from 'components/icon'
+import { DESKTOP_WIDTH_BREAKPOINT } from 'lib/utils'
 import DeclareBankruptcy from 'components/header/components/header-declare-bankruptcy'
 import ActiveMission from 'components/header/components/header-active-mission'
 import ActiveTasksModal from 'components/header/components/active-tasks-modal'
 import useWindowSize from 'lib/useWindowSize'
 import Menu from '../menu/menu'
-import Container from 'components/UI/container'
+import AccountAviAndLvl from './components/account-avi-and-lvl/account-avi-and-lvl'
+import MoneyAndGold from './components/money-and-gold/money-and-gold'
+import HeaderRightButtons from './components/header-right-buttons/header-right-buttons'
 
 export default function Header() {
   const dimensions = useWindowSize()
@@ -20,51 +19,12 @@ export default function Header() {
     <>
       <div style={{ top: 0 }} className={'stickyFullwidthBar'}>
         <div className={styles.container}>
-          <div className={styles.headerLinks}>
-            <div>
-              <Link to="/finances">
-                <Container outerClassName={styles.headerOuterContainer} className={styles.headerContainer}>
-                  <Icon className={styles.headerIcon} svg={require('./img/finances.svg')} alt="Finances" />
-                </Container>
-              </Link>
-              <div onClick={() => setIsActiveTasksModalOpen(true)}>
-                <Container outerClassName={styles.headerOuterContainer} className={styles.headerContainer}>
-                  <Icon className={styles.headerIcon} svg={require('./img/tasks.svg')} alt="Tareas" />
-                  <FinishedActiveTasksCounter />
-                </Container>
-              </div>
-            </div>
-            <div className={styles.logo}>
-              <Icon svg={require('./img/logo.svg')} alt="" />
-            </div>
-            <div>
-              <div onClick={logout}>
-                <Container outerClassName={styles.headerOuterContainer} className={styles.headerContainer}>
-                  <Icon className={styles.headerIcon} svg={require('./img/logout.svg')} alt="Logout" />
-                </Container>
-              </div>
-              <LinkToMyProfile>
-                <Container outerClassName={styles.headerOuterContainer} className={styles.headerContainer}>
-                  <Icon className={styles.headerIcon} svg={require('./img/profile.svg')} alt="Perfil" />
-                </Container>
-              </LinkToMyProfile>
-            </div>
+          <div className={styles.mainHeader}>
+            <AccountAviAndLvl />
+            <MoneyAndGold />
+            <HeaderRightButtons setIsActiveTasksModalOpen={setIsActiveTasksModalOpen} />
           </div>
-          <div className={styles.headerStats}>
-            <Container darkBg outerClassName={styles.statContainer}>
-              <div className={styles.stat}>
-                <MyMoney /> <Icon iconName="money" className={styles.headerStatIcon} />
-              </div>
-            </Container>
-            <Container darkBg outerClassName={styles.statContainer}>
-              <div className={styles.stat}>
-                <MyGold /> <Icon iconName="gold" className={styles.headerStatIcon} />
-              </div>
-            </Container>
-            <Container darkBg outerClassName={styles.statContainer} style={{ display: 'flex' }}>
-              <ActiveMission />
-            </Container>
-          </div>
+          <ActiveMission />
           <DeclareBankruptcy />
           <div className={styles.containerBottomBorder}>
             <div className={styles.containerBottomBorderFillLeft} />
@@ -80,35 +40,4 @@ export default function Header() {
       <ActiveTasksModal isOpen={isActiveTasksModalOpen} onRequestClose={() => setIsActiveTasksModalOpen(false)} />
     </>
   )
-}
-
-// eslint-disable-next-line react/prop-types
-function LinkToMyProfile({ children }) {
-  const userData = useUserData()
-  if (!userData) return null
-
-  return <Link to={`/ranking/user/${userData.username}`}>{children}</Link>
-}
-
-function MyMoney() {
-  const userData = useUserData()
-  if (!userData) return null
-
-  return numberToAbbreviation(userData.money)
-}
-
-function MyGold() {
-  const userData = useUserData()
-  if (!userData) return null
-
-  return numberToAbbreviation(userData.gold)
-}
-
-function FinishedActiveTasksCounter() {
-  const userData = useUserData()
-  if (!userData) return null
-
-  const count = userData.activeTasks.filter(task => task.progressPercentage >= 100).length
-  if (!count) return null
-  return <span style={{ marginLeft: 5 }}>({count})</span>
 }

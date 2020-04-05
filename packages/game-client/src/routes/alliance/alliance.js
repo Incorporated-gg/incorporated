@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react'
-import { get } from 'lib/api'
+import api from 'lib/api'
 
 import CreateAlliance from 'components/alliance/alliance-create'
 import AllianceRouter from 'routers/alliance'
@@ -14,7 +14,8 @@ export default function Alliance() {
   }, [alliance])
 
   const reloadAllianceData = useCallback(() => {
-    get('/v1/alliance')
+    api
+      .get('/v1/alliance')
       .then(res => {
         setAlliance(res.alliance)
       })

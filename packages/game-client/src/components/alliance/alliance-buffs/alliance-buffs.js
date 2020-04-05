@@ -1,6 +1,6 @@
 import React from 'react'
 import Proptypes from 'prop-types'
-import { post } from 'lib/api'
+import api from 'lib/api'
 
 AllianceBuffs.propTypes = {
   alliance: Proptypes.object.isRequired,
@@ -9,9 +9,10 @@ AllianceBuffs.propTypes = {
 export default function AllianceBuffs({ alliance, reloadAllianceData }) {
   const activateBuff = buffID => () => {
     if (!window.confirm('Estás seguro de que quieres activar el buff?')) return
-    post('/v1/alliance/buffs/activate', {
-      buff_id: buffID,
-    })
+    api
+      .post('/v1/alliance/buffs/activate', {
+        buff_id: buffID,
+      })
       .then(() => {
         reloadAllianceData()
       })

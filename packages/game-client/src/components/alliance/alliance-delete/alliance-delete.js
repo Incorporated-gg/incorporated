@@ -1,6 +1,6 @@
 import React from 'react'
 import Proptypes from 'prop-types'
-import { post } from 'lib/api'
+import api from 'lib/api'
 import { reloadUserData } from 'lib/user'
 
 AllianceDelete.propTypes = {
@@ -9,7 +9,8 @@ AllianceDelete.propTypes = {
 export default function AllianceDelete({ reloadAllianceData }) {
   const deleteAlliance = () => {
     if (!window.confirm('Estás seguro? Todos los recursos de la alianza se perderán')) return
-    post('/v1/alliance/delete')
+    api
+      .post('/v1/alliance/delete')
       .then(() => {
         reloadAllianceData()
         reloadUserData()

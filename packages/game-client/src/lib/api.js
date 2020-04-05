@@ -1,19 +1,33 @@
 import { updateUserData, sessionID, logout } from './user'
 import { updateTabTitle } from './tabTitle'
 
-export const API_URL = '/api'
+const API_URL = '/api'
+const ACCOUNT_API_URL = '/account_api'
 
-export default { get, post, API_URL }
-
-export function post(url, data) {
-  return apiFetch('POST', url, data)
+function get(url, data) {
+  return apiFetch(API_URL, 'GET', url, data)
 }
-export function get(url, data) {
-  return apiFetch('GET', url, data)
+function post(url, data) {
+  return apiFetch(API_URL, 'POST', url, data)
+}
+
+function accountGet(url, data) {
+  return apiFetch(ACCOUNT_API_URL, 'GET', url, data)
+}
+function accountPost(url, data) {
+  return apiFetch(ACCOUNT_API_URL, 'POST', url, data)
+}
+
+export default {
+  get,
+  post,
+  accountPost,
+  accountGet,
+  API_URL,
 }
 
 let lastApiCallID = null
-function apiFetch(method, url, payload = {}) {
+function apiFetch(apiUrl, method, url, payload = {}) {
   let body
   let headers = {}
   headers.Accept = 'application/json, text/plain, */*'
@@ -32,7 +46,7 @@ function apiFetch(method, url, payload = {}) {
   }
 
   lastApiCallID = Math.random()
-  return window.fetch(`${API_URL}${url}`, { method, headers, body }).then(res => parseApiResponse(lastApiCallID, res))
+  return window.fetch(`${apiUrl}${url}`, { method, headers, body }).then(res => parseApiResponse(lastApiCallID, res))
 }
 
 async function parseApiResponse(apiCallID, res) {

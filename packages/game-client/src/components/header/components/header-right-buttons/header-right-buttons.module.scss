@@ -1,0 +1,32 @@
+.rightButtonsContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.rightButton {
+  margin: 0.25em 0;
+  border-radius: 50%;
+  cursor: pointer;
+
+  .rightButtonInner {
+    position: relative;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    svg {
+      width: auto;
+      height: 20px;
+    }
+  }
+}
+.finishedActiveTasksCounter {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  background-color: rgba(0, 0, 0, 0.6);
+  border-radius: 10px;
+  padding: 2px 6px;
+  font-weight: 700;
+}

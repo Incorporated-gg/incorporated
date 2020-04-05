@@ -18,6 +18,7 @@ services:
     depends_on:
       - game-server
       - game-client
+      - account-server
 
   game-client:
     build: ./packages/game-client
@@ -59,32 +60,6 @@ services:
       - 3307:3306 # remove in prod
     volumes:
       - ./.mariadb-docker:/var/lib/mysql
-
-  account-nginx-proxy:
-    image: jwilder/nginx-proxy:alpine
-    ports:
-      - "3000:80"
-    networks:
-      - backend
-      - default
-    volumes:
-      - /var/run/docker.sock:/tmp/docker.sock:ro
-      - ./nginx-conf/logs:/var/log/nginx:rw
-      - ./nginx-conf/vhost.d:/etc/nginx/vhost.d
-      - ./nginx-conf/conf.d/account-dev/proxy.conf:/etc/nginx/conf.d/my_proxy.conf:rw
-      - ./nginx-conf/certs:/etc/nginx/certs:rw
-    depends_on:
-      - account-server
-      - account-client
-
-  account-client:
-    build: ./packages/account-client
-    networks:
-      - default
-    environment:
-      - CHOKIDAR_USEPOLLING=true
-    volumes:
-      - ./packages/account-client:/usr/src/client:rw
 
   account-server:
     build: ./packages/account-server
