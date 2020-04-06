@@ -14,69 +14,79 @@ module.exports = app => {
       res.status(401).json({ error: 'Necesitas estar conectado', error_code: 'not_logged_in' })
       return
     }
+    // It's important to check for invalid inputs to avoid possible vulnerabilities
+    const sendType = req.query.sendType // [sent, received]
+    if (sendType !== 'sent' && sendType !== 'received') {
+      res.status(401).json({ error: 'sendType inválido' })
+      return
+    }
+    const missionType = req.query.missionType // [any, attack, spy]
+    if (missionType !== 'any' && missionType !== 'attack' && missionType !== 'spy') {
+      res.status(401).json({ error: 'missionType inválido' })
+      return
+    }
+    const ownerType = req.query.ownerType // [own, alliance]
+    if (ownerType !== 'own' && ownerType !== 'alliance') {
+      res.status(401).json({ error: 'ownerType inválido' })
+      return
+    }
 
-    // Misc stuff that we always need to return
+    // todaysMissionLimits
+    const todaysMissionLimits = await getUserTodaysMissionsLimits(req.userData.id)
+
+    // Unread counts
     let [
       { last_checked_reports_at: lastCheckedReportsAt },
     ] = await mysql.query('SELECT last_checked_reports_at FROM users WHERE id=?', [req.userData.id])
     lastCheckedReportsAt = lastCheckedReportsAt || 0
 
-    const sentMissionsRaw = await mysql.query(
-      'SELECT user_id, target_user, data, mission_type, started_at, will_finish_at, completed, result, profit FROM missions WHERE user_id=? AND completed=1 ORDER BY will_finish_at DESC LIMIT 100',
-      [req.userData.id]
+    const sentMissionsCountRaw = await mysql.selectOne(
+      'SELECT COUNT(*) as count FROM missions WHERE user_id=? AND completed=1 AND will_finish_at>?',
+      [req.userData.id, lastCheckedReportsAt]
     )
-    const receivedMissionsRaw = await mysql.query(
-      'SELECT user_id, target_user, data, mission_type, started_at, will_finish_at, completed, result, profit FROM missions WHERE target_user=? AND mission_type="attack" AND completed=1 ORDER BY will_finish_at DESC LIMIT 100',
-      [req.userData.id]
+    const receivedMissionsCountRaw = await mysql.selectOne(
+      'SELECT COUNT(*) as count FROM missions WHERE target_user=? AND mission_type="attack" AND completed=1 AND will_finish_at>?',
+      [req.userData.id, lastCheckedReportsAt]
     )
-    const [sentMissions, receivedMissions] = await Promise.all([
-      Promise.all(sentMissionsRaw.map(parseMissionFromDB)),
-      Promise.all(receivedMissionsRaw.map(parseMissionFromDB)),
-    ])
-
-    const notSeenReceivedCount = receivedMissions.filter(
-      mission => mission.completed && mission.will_finish_at > lastCheckedReportsAt
-    ).length
-    const notSeenSentCount = sentMissions.filter(
-      mission => mission.completed && mission.will_finish_at > lastCheckedReportsAt
-    ).length
-
-    const todaysMissionLimits = await getUserTodaysMissionsLimits(req.userData.id)
+    const notSeenReceivedCount = sentMissionsCountRaw.count
+    const notSeenSentCount = receivedMissionsCountRaw.count
 
     mysql.query('UPDATE users SET last_checked_reports_at=? WHERE id=?', [
       Math.floor(Date.now() / 1000),
       req.userData.id,
     ])
 
-    // Actual info requested
-    let missions = []
-    const sendType = req.query.sendType
-    const missionType = req.query.missionType
-    const ownerType = req.query.ownerType
-
+    // Actual requested missions
+    let userWhere
+    let queryParams
     if (ownerType === 'own') {
       // Own reports
-      // We use the info already gotten previously, but if that gets optimized we could make our own query like in the alliance part below
-      missions = sendType === 'sent' ? sentMissions : receivedMissions
-      if (missionType !== 'any') missions = missions.filter(mission => mission.mission_type === missionType)
+
+      userWhere = `WHERE ${sendType === 'sent' ? 'user_id' : 'target_user'} = ?`
+      queryParams = [req.userData.id]
     } else if (ownerType === 'alliance') {
       // Whole alliance reports
       const allianceID = await getUserAllianceID(req.userData.id)
-      if (allianceID) {
-        const allianceMembers = await getMembers(allianceID)
-        const allianceMemberIDs = allianceMembers.map(user => user.user.id)
-
-        // Construct query using the query params (sendType, missionType)
-        const userWhere = `WHERE ${sendType === 'sent' ? 'user_id' : 'target_user'} IN (?)`
-        const missionTypeWhere =
-          missionType === 'attack' ? "AND mission_type='attack'" : missionType === 'spy' ? "AND mission_type='spy'" : ''
-        const selectEnd = 'AND completed=1 ORDER BY will_finish_at DESC LIMIT 100'
-        const selectQuery = `SELECT user_id, target_user, data, mission_type, started_at, will_finish_at, completed, result, profit FROM missions ${userWhere} ${missionTypeWhere} ${selectEnd}`
-
-        const missionsRaw = await mysql.query(selectQuery, [allianceMemberIDs])
-        missions = await Promise.all(missionsRaw.map(parseMissionFromDB))
+      if (!allianceID) {
+        res.status(401).json({ error: 'No estás en una alianza' })
+        return
       }
+
+      const allianceMembers = await getMembers(allianceID)
+      const allianceMemberIDs = allianceMembers.map(user => user.user.id)
+
+      userWhere = `WHERE ${sendType === 'sent' ? 'user_id' : 'target_user'} IN (?)`
+      queryParams = [allianceMemberIDs]
     }
+
+    // Construct query
+    const missionTypeWhere =
+      missionType === 'attack' ? "AND mission_type='attack'" : missionType === 'spy' ? "AND mission_type='spy'" : ''
+    const uncaughtSpionagesWhere = sendType === 'received' ? "AND result!='not_caught'" : '' // Uncaught received spionages shouldn't be reported to the target
+    const selectQuery = `SELECT user_id, target_user, data, mission_type, started_at, will_finish_at, completed, result, profit FROM missions ${userWhere} ${missionTypeWhere} ${uncaughtSpionagesWhere} AND completed=1 ORDER BY will_finish_at DESC LIMIT 100`
+
+    const missionsRaw = await mysql.query(selectQuery, queryParams)
+    const missions = await Promise.all(missionsRaw.map(parseMissionFromDB))
 
     res.json({
       todaysMissionLimits,
