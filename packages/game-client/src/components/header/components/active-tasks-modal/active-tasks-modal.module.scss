@@ -1,8 +1,10 @@
 .headerTaskOuter {
-  // For desktop
-  max-width: 720px;
   width: 100%;
-  margin: 1em auto;
+  max-width: 720px; // For desktop
+  margin-bottom: 1em;
+  &:last-child {
+    margin-bottom: 0;
+  }
 }
 
 .headerTask {

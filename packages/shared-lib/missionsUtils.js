@@ -13,7 +13,6 @@ export const MAX_DAILY_ATTACKS = process.env.NODE_ENV === 'development' ? 999 : 
 export function calculateIsInAttackRange(attackerDailyIncome, defenderDailyIncome) {
   const maxIncome = attackerDailyIncome * 1.2 + 2000000
   const minIncome = (attackerDailyIncome - 2000000) / 1.2
-  console.log(minIncome, maxIncome)
   return defenderDailyIncome >= minIncome && defenderDailyIncome <= maxIncome
 }
 

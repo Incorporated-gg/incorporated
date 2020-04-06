@@ -1,3 +1,3 @@
-import HeaderTask from './active-tasks-modal'
+import ActiveTasksModal from './active-tasks-modal'
 
-export default HeaderTask
+export default ActiveTasksModal

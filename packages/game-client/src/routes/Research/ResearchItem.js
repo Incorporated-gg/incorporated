@@ -21,6 +21,7 @@ const researchImages = {
   2: require('./img/attack.png'),
   3: require('./img/defense.png'),
   4: require('./img/bank.png'),
+  5: require('./img/central-office.png'),
   6: require('./img/security.png'),
 }
 const researchDescriptions = {
@@ -28,6 +29,7 @@ const researchDescriptions = {
   2: `Mejora tus saboteadores y ladrones`,
   3: `Mejora tus guardias`,
   4: `Mejora el maximo dinero almacenado en tus edificios`,
+  5: `Optimiza los ingresos de tus edificios`,
   6: `Mejora la defensa intrínsica de tus edificios`,
 }
 
@@ -54,7 +56,8 @@ export default function ResearchItem({ researchID }) {
         finishesAt={upgrade && upgrade.finishes_at}
         researchID={researchID}
         level={level}
-        isUpgrading={!!upgrade}
+        isUpgrading={Boolean(upgrade)}
+        skipResearchDuration={research.skipResearchDuration}
       />
 
       {upgrade && <UpgradeInstantlyButton finishesAt={upgrade.finishes_at} researchID={researchID} />}
@@ -76,8 +79,9 @@ TimerButtonNumber.propTypes = {
   researchID: PropTypes.number.isRequired,
   level: PropTypes.number.isRequired,
   isUpgrading: PropTypes.bool.isRequired,
+  skipResearchDuration: PropTypes.bool.isRequired,
 }
-function TimerButtonNumber({ finishesAt, researchID, level, isUpgrading }) {
+function TimerButtonNumber({ finishesAt, researchID, level, isUpgrading, skipResearchDuration }) {
   const [, _reload] = useState()
 
   useEffect(() => {
@@ -92,7 +96,9 @@ function TimerButtonNumber({ finishesAt, researchID, level, isUpgrading }) {
   let progress = 0
 
   let text
-  if (!isUpgrading) {
+  if (skipResearchDuration) {
+    text = '00:00' // Hack needed since getTimeUntil will return Completando... if <= 0
+  } else if (!isUpgrading) {
     const researchTimeParsed = getTimeUntil(tsNow + researchSeconds, true)
     text = researchTimeParsed
   } else if (tsNow > finishesAt) {

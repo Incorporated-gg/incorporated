@@ -98,6 +98,9 @@ function ActiveTasksList() {
       }
     }
 
+    const progressAmount = Math.floor((task.progressPercentage / 100) * task.requirements.amount)
+    const progressText = `${numberToAbbreviation(progressAmount)} / ${numberToAbbreviation(task.requirements.amount)}`
+
     return (
       <Container key={task.id} outerClassName={styles.headerTaskOuter} className={styles.headerTask} darkBg>
         <div className={styles.tutorialInfo}>
@@ -105,7 +108,7 @@ function ActiveTasksList() {
           <br />
           <div className={cardStyles.buttonNumberContainer}>
             <div className={cardStyles.buttonNumberProgress} style={{ width: task.progressPercentage + '%' }} />
-            <div className={cardStyles.buttonNumberText}>{task.progressPercentage} / 100%</div>
+            <div className={cardStyles.buttonNumberText}>{progressText}</div>
           </div>
           <br />
           <div>

@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react'
 import Building from 'components/building'
-import OptimizeResearch from 'components/building/components/building-optimize-research'
 import { buildingsList, calcBuildingDailyIncome, calcBuildingMaxMoney } from 'shared-lib/buildingsUtils'
 import { userData, fireUserDataListeners } from 'lib/user'
 import CardList from 'components/card/card-list'
@@ -13,7 +12,6 @@ export default function Buildings() {
 
   return (
     <CardList>
-      <OptimizeResearch />
       {buildingsList.map(buildingInfo => (
         <Building key={buildingInfo.id} buildingID={buildingInfo.id} />
       ))}
