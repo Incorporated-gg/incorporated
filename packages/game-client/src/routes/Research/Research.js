@@ -1,7 +1,7 @@
 import React from 'react'
 import { researchList } from 'shared-lib/researchUtils'
-import ResearchItem from './ResearchItem'
 import CardList from 'components/card/card-list'
+import ResearchItem from 'components/research/components/research-item/research-item'
 
 export default function Researchs() {
   return (

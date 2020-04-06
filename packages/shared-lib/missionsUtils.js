@@ -34,6 +34,16 @@ function getBuildingDestroyedProfit({ buildingID, buildingAmount, destroyedBuild
   return Math.round((currentPrice * destroyedBuildings) / 2)
 }
 
+export function calcSabotsPower(sabotageResearchLvl) {
+  return 2 * sabotsInfo.combatPower * sabotageResearchLvl
+}
+function calcThievesPower(sabotageResearchLvl) {
+  return 2 * thievesInfo.combatPower * sabotageResearchLvl
+}
+export function calcGuardsPower(securityResearchLvl) {
+  return 2 * guardsInfo.combatPower * securityResearchLvl
+}
+
 function simulateCombat({
   attackedBuildingInfo,
   buildingAmount,
@@ -44,12 +54,12 @@ function simulateCombat({
   defensorSecurityLvl,
   attackerSabotageLvl,
 }) {
-  const guardsAttackPower = guardsInfo.combatPower * defensorSecurityLvl
-  const guardsDefensePower = 2 * guardsInfo.combatPower * defensorSecurityLvl
-  const sabotAttackPower = 2 * sabotsInfo.combatPower * attackerSabotageLvl
-  const sabotDefensePower = sabotsInfo.combatPower * attackerSabotageLvl
-  const thievesAttackPower = 2 * thievesInfo.combatPower * attackerSabotageLvl
-  const thievesDefensePower = thievesInfo.combatPower * attackerSabotageLvl
+  const guardsAttackPower = calcGuardsPower(defensorSecurityLvl) / 2
+  const guardsDefensePower = calcGuardsPower(defensorSecurityLvl)
+  const sabotAttackPower = calcSabotsPower(attackerSabotageLvl)
+  const sabotDefensePower = calcSabotsPower(attackerSabotageLvl) / 2
+  const thievesAttackPower = calcThievesPower(attackerSabotageLvl)
+  const thievesDefensePower = calcThievesPower(attackerSabotageLvl) / 2
 
   // Simulamos lucha
   let deadSabots = 0
@@ -183,4 +193,8 @@ export function simulateAttack({
     realAttackerProfit,
     robbedMoney,
   }
+}
+
+export function calcSendableSpies(spyResearchLvl) {
+  return Math.ceil(3 * Math.pow(Math.E, 0.11 * spyResearchLvl))
 }

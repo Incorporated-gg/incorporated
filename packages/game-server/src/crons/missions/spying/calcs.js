@@ -1,3 +1,5 @@
+import { calcSendableSpies } from 'shared-lib/missionsUtils'
+
 module.exports = {
   _calcFailProbability,
   _calcInformationObtainedProbabilities,
@@ -6,7 +8,7 @@ module.exports = {
 }
 
 function _calcFailProbability({ resLvlAttacker, resLvLDefender, spiesSent }) {
-  const sendableSpies = Math.ceil(3 * Math.pow(Math.E, 0.11 * resLvlAttacker))
+  const sendableSpies = calcSendableSpies(resLvlAttacker)
   const sentSpiesPercentage = spiesSent / sendableSpies
   const valueDiff =
     resLvLDefender < resLvlAttacker
@@ -38,7 +40,7 @@ function calcSpiesCaptured({ resLvlAttacker, resLvLDefender, spiesSent }) {
 }
 
 function _calcInformationObtainedProbabilities({ resLvLDefender, spiesRemaining }) {
-  const neededSpies = Math.ceil(3 * Math.pow(Math.E, 0.11 * resLvLDefender))
+  const neededSpies = calcSendableSpies(resLvLDefender)
   const sentSpiesPercentage = spiesRemaining / neededSpies
 
   const MINIMUM_FOR_RESEARCH = 1
