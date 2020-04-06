@@ -6,15 +6,22 @@ type BasicAccountData = {
   avatar: string
   avatarID: number
   gold: number
+  level: number
+  xp: number
+  levelUpXP: number
 }
 
 export function avatarIDToUrl(avatar: number): string {
   return `https://avatars.fra1.cdn.digitaloceanspaces.com/${avatar}.jpg`
 }
 
+function calculateLevelUpXP(currentLevel: number): number {
+  return 2 * currentLevel
+}
+
 export async function getData(userID?: number): Promise<BasicAccountData | undefined> {
   if (!userID) return
-  const accountDataPromise = mysql.query('SELECT username, avatar, gold FROM users WHERE id=?', [userID])
+  const accountDataPromise = mysql.query('SELECT username, avatar, gold, level, xp FROM users WHERE id=?', [userID])
   const [[accountData]] = await Promise.all([accountDataPromise])
   if (!accountData) return
 
@@ -27,6 +34,9 @@ export async function getData(userID?: number): Promise<BasicAccountData | undef
     avatarID: accountData.avatar,
     avatar,
     gold: accountData.gold,
+    level: accountData.level,
+    xp: accountData.xp,
+    levelUpXP: calculateLevelUpXP(accountData.level),
   }
 }
 
@@ -37,4 +47,19 @@ export async function getIDFromUsername(username: string): Promise<BasicAccountD
 
 export async function giveGoldToUser(userID: number, gold: number): Promise<void> {
   await mysql.query('UPDATE users SET gold=gold+? WHERE id=?', [gold, userID])
+}
+
+export async function giveXPToUser(userID: number, xp: number): Promise<void> {
+  const userData = await getData(userID)
+  if (!userData) return
+
+  let newXP = userData.xp + xp
+  let xpNeeded = userData.levelUpXP
+  let levelsUp = 0
+  while (newXP >= xpNeeded) {
+    newXP -= xpNeeded
+    levelsUp++
+    xpNeeded = calculateLevelUpXP(userData.level + levelsUp)
+  }
+  await mysql.query('UPDATE users SET xp=?, level=? WHERE id=?', [newXP, userData.level + levelsUp, userID])
 }

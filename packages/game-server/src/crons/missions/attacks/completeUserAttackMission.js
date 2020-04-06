@@ -176,7 +176,7 @@ export async function completeUserAttackMission(mission) {
     result,
     robbedMoney,
   })
-  sendAccountHook('attack_finished', { attackerID: attacker.id, defenderID: defender.id, result })
+  sendAccountHook('attack_finished', { attackerID: attacker.id, defenderID: defender.id, result, isHoodAttack: false })
 }
 
 async function checkAndUpdateActiveWar(attackerAllianceID, defenderAllianceID) {

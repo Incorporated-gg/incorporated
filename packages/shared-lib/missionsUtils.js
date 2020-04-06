@@ -10,6 +10,13 @@ const thievesInfo = personnelList.find(t => t.resource_id === 'thieves')
 export const NEWBIE_ZONE_DAILY_INCOME = 750000
 export const MAX_DAILY_ATTACKS = process.env.NODE_ENV === 'development' ? 999 : 3
 
+export function calculateIsInAttackRange(attackerDailyIncome, defenderDailyIncome) {
+  const maxIncome = attackerDailyIncome * 1.2 + 2000000
+  const minIncome = (attackerDailyIncome - 2000000) / 1.2
+  console.log(minIncome, maxIncome)
+  return defenderDailyIncome >= minIncome && defenderDailyIncome <= maxIncome
+}
+
 export function calculateMaxDailyReceivedAttacks(dailyIncome) {
   if (dailyIncome < 2e6) return 3
   if (dailyIncome < 4e6) return 4

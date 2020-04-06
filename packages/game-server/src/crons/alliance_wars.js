@@ -1,6 +1,7 @@
 import { WAR_DAYS_DURATION } from 'shared-lib/allianceUtils'
 import { hoods } from '../lib/map'
 import { getBasicData as getAllianceBasicData } from '../lib/db/alliances'
+import { sendAccountHook } from '../lib/accountInternalApi'
 const mysql = require('../lib/mysql')
 const alliances = require('../lib/db/alliances')
 const { sendMessage } = require('../lib/db/users')
@@ -152,8 +153,8 @@ function attackToPoints(attack) {
 }
 
 async function endWar(war) {
-  const membersAlliance1 = (await alliances.getMembers(war.alliance1_id)).map(m => m.user.id)
-  const membersAlliance2 = (await alliances.getMembers(war.alliance2_id)).map(m => m.user.id)
+  const alliance1UserIDs = (await alliances.getMembers(war.alliance1_id)).map(m => m.user.id)
+  const alliance2UserIDs = (await alliances.getMembers(war.alliance2_id)).map(m => m.user.id)
 
   const days = Object.values(war.data.days)
 
@@ -194,7 +195,7 @@ async function endWar(war) {
 
   await mysql.query('UPDATE alliances_wars SET completed=1, data=? WHERE id=?', [JSON.stringify(war.data), war.id])
   await Promise.all(
-    [...membersAlliance1, ...membersAlliance2].map(userID =>
+    [...alliance1UserIDs, ...alliance2UserIDs].map(userID =>
       sendMessage({
         receiverID: userID,
         senderID: null,
@@ -203,4 +204,6 @@ async function endWar(war) {
       })
     )
   )
+
+  sendAccountHook('war_ended', { winner, alliance1UserIDs, alliance2UserIDs })
 }

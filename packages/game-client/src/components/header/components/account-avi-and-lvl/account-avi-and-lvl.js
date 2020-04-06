@@ -15,7 +15,9 @@ export default function AccountAviAndLvl() {
       <Container style={{ padding: 0, lineHeight: 0 }}>
         <img src={accountData.avatar} alt={'Avatar de usuario'} className={styles.avatar} />
       </Container>
-      <div className={styles.lvlText}>Lvl {1}</div>
+      <div className={styles.lvlText} title={`${accountData.xp}/${accountData.levelUpXP} XP`}>
+        Lvl {accountData.level}
+      </div>
     </div>
   )
 }

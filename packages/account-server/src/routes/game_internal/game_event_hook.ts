@@ -1,7 +1,7 @@
 import express from 'express'
 import { validateGameServerRequest } from '.'
 
-import hookAttackFinished from './game_event_hook/attack_finished'
+import attackFinished from './game_event_hook/attack_finished'
 import hookContestEnded from './game_event_hook/contest_ended'
 import hookWarEnded from './game_event_hook/war_ended'
 import hookGameEnded from './game_event_hook/game_ended'
@@ -9,7 +9,7 @@ import hookGameEnded from './game_event_hook/game_ended'
 /* eslint-disable @typescript-eslint/camelcase */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const hooksMap: any = {
-  attack_finished: hookAttackFinished,
+  attack_finished: attackFinished,
   contest_ended: hookContestEnded,
   war_ended: hookWarEnded,
   game_ended: hookGameEnded,

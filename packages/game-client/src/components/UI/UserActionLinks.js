@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import { useUserData } from 'lib/user'
 import NewMessageModal from 'components/messages/components/new-message-modal'
-import { NEWBIE_ZONE_DAILY_INCOME } from 'shared-lib/missionsUtils'
+import { NEWBIE_ZONE_DAILY_INCOME, calculateIsInAttackRange } from 'shared-lib/missionsUtils'
 import MissionModal from '../mission-modal'
 
 UserActionLinks.propTypes = {
@@ -19,12 +19,14 @@ export default function UserActionLinks({ user }) {
   const isMe = userData.id === user.id
   const shareAlliance = userData.alliance && user.alliance && userData.alliance.id === user.alliance.id
   const isInNewbieZone = user.income < NEWBIE_ZONE_DAILY_INCOME
+  const isInAttackRange = calculateIsInAttackRange(userData.income, user.income)
+  const canAttack = !isMe && !shareAlliance && !isInNewbieZone && isInAttackRange
   return (
     <>
       <button onClick={() => setShowMessageModal(true)} disabled={isMe}>
         Enviar mensaje
       </button>
-      <button onClick={() => setShowAttackModal(true)} disabled={isMe || shareAlliance || isInNewbieZone}>
+      <button onClick={() => setShowAttackModal(true)} disabled={!canAttack}>
         Atacar
       </button>
       <button onClick={() => setShowSpyModal(true)} disabled={isMe}>

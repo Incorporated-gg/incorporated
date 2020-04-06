@@ -118,5 +118,5 @@ export async function completeHoodAttackMission(mission) {
     result,
     robbedMoney: 0,
   })
-  sendAccountHook('attack_finished', { attackerID: attacker.id, defenderID: 0, result })
+  sendAccountHook('attack_finished', { attackerID: attacker.id, defenderID: 0, result, isHoodAttack: true })
 }

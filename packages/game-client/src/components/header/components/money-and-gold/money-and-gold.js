@@ -2,7 +2,6 @@ import React from 'react'
 import Container from 'components/UI/container'
 import Icon from 'components/icon'
 import { useUserData } from 'lib/user'
-import { numberToAbbreviation } from 'lib/utils'
 import styles from './money-and-gold.module.scss'
 
 export default function MoneyAndGold() {
@@ -26,12 +25,12 @@ function MyMoney() {
   const userData = useUserData()
   if (!userData) return null
 
-  return numberToAbbreviation(userData.money)
+  return userData.money.toLocaleString()
 }
 
 function MyGold() {
   const userData = useUserData()
   if (!userData) return null
 
-  return numberToAbbreviation(userData.gold)
+  return userData.gold.toLocaleString()
 }

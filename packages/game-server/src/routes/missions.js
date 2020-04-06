@@ -6,7 +6,7 @@ import { parseMissionFromDB } from '../lib/db/missions'
 import { getMembers } from '../lib/db/alliances'
 const { getUserAllianceID } = require('../lib/db/alliances')
 const { buildingsList } = require('shared-lib/buildingsUtils')
-const { calculateMissionTime, NEWBIE_ZONE_DAILY_INCOME } = require('shared-lib/missionsUtils')
+const { calculateMissionTime, NEWBIE_ZONE_DAILY_INCOME, calculateIsInAttackRange } = require('shared-lib/missionsUtils')
 
 module.exports = app => {
   app.get('/v1/missions', async function(req, res) {
@@ -173,6 +173,15 @@ module.exports = app => {
           if (targetUserData.income < NEWBIE_ZONE_DAILY_INCOME) {
             res.status(400).json({
               error: 'No puedes atacar usuarios en la zona newbie',
+            })
+            removeLock()
+            return
+          }
+          const userIncome = (await getUserData(req.userData.id)).income
+          const isInAttackRange = calculateIsInAttackRange(userIncome, targetUserData.income)
+          if (!isInAttackRange) {
+            res.status(400).json({
+              error: 'No puedes atacar usuarios fuera de tu zona de ataque',
             })
             removeLock()
             return

@@ -1,10 +1,9 @@
 .rightButtonsContainer {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-around;
 }
 .rightButton {
-  margin: 0.25em 0;
   border-radius: 50%;
   cursor: pointer;
 
