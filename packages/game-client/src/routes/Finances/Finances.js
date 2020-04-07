@@ -2,13 +2,14 @@ import React, { useState, useEffect } from 'react'
 import FinancialData from './FinancialData'
 import api from '../../lib/api'
 import styles from './Finances.module.scss'
+import NotepadPage from 'components/UI/NotepadPage'
 
 export default function Finances() {
   return (
-    <div className={styles.container}>
+    <NotepadPage className={styles.container}>
       <FinancialData />
       <DailyLogGraphs />
-    </div>
+    </NotepadPage>
   )
 }
 

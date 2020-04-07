@@ -32,6 +32,7 @@ export default function ContestsRouter() {
             ))}
         </ul>
       </nav>
+      <br />
       {error && <h4>{error}</h4>}
 
       <Switch>

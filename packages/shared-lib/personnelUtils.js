@@ -1,4 +1,4 @@
-const personnelList = [
+export const personnelList = [
   {
     name: 'Guardias',
     resource_id: 'guards',
@@ -32,5 +32,3 @@ const personnelList = [
     dailyMaintenanceCost: 500,
   },
 ]
-
-module.exports.personnelList = personnelList

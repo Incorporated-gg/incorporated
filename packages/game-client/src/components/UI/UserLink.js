@@ -1,17 +1,18 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
-import styles from './Username.module.scss'
+import styles from './UserLink.module.scss'
 import AllianceLink from 'components/alliance/alliance-link'
 
-Username.propTypes = {
+UserLink.propTypes = {
   user: PropTypes.object,
+  colorScheme: PropTypes.oneOf(['light', 'dark']),
 }
-export default function Username({ user }) {
+export default function UserLink({ user, colorScheme = 'light' }) {
   if (!user) return <span>Usuario desconocido</span>
 
   return (
-    <span className={styles.container}>
+    <span className={`${styles.container} ${(colorScheme === 'dark' && styles.darkColors) || ''}`}>
       {user.accountData && (
         <Link className={styles.avatarLink} to={`/ranking/user/${user.username}`}>
           <img src={user.accountData.avatar} alt="" className={styles.avatar} />
@@ -21,7 +22,7 @@ export default function Username({ user }) {
         <Link className={styles.usernameLink} to={`/ranking/user/${user.username}`}>
           {user.username}
         </Link>
-        {user.alliance && <AllianceLink alliance={user.alliance} type="shortNameInBraces" />}
+        {user.alliance && <AllianceLink alliance={user.alliance} type="shortNameInBraces" colorScheme={colorScheme} />}
       </div>
     </span>
   )

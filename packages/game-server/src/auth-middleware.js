@@ -53,7 +53,7 @@ function modifyResponseBody(req, res, next) {
   res.json = async function() {
     if (req.userData) {
       // Modify response to include extra data for logged in users
-      const [unreadMessagesCount, unreaReportsCount, activeMission, activeTasks, accountData] = await Promise.all([
+      const [unreadMessagesCount, unreadReportsCount, activeMission, activeTasks, accountData] = await Promise.all([
         getUnreadMessagesCount(req.userData.id),
         getUnreadReportsCount(req.userData.id),
         getActiveMission(req.userData.id),
@@ -64,7 +64,7 @@ function modifyResponseBody(req, res, next) {
         money: req.userData.money,
         gold: accountData.gold,
         unread_messages_count: unreadMessagesCount,
-        unread_reports_count: unreaReportsCount,
+        unread_reports_count: unreadReportsCount.total,
         active_mission: activeMission,
         personnel: req.userData.personnel,
         researchs: req.userData.researchs,

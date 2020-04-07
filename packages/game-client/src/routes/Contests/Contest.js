@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import api from '../../lib/api'
-import Username from '../../components/UI/Username'
 import UserActionLinks from '../../components/UI/UserActionLinks'
 import Container from 'components/UI/container'
+import UserLink from 'components/UI/UserLink'
 
 export default function Monopolies() {
   const { contestName } = useParams()
@@ -39,7 +39,7 @@ export default function Monopolies() {
                 <tr key={contestScore.id}>
                   <td>{contestScore.rank && contestScore.rank.toLocaleString()}</td>
                   <td>
-                    <Username user={contestScore.user} />
+                    <UserLink user={contestScore.user} />
                   </td>
                   <td>{contestScore.score && contestScore.score.toLocaleString()} puntos</td>
                   <td>

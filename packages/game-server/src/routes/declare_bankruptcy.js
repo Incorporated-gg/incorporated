@@ -27,7 +27,7 @@ module.exports = app => {
       'UPDATE users_resources SET quantity=0 WHERE resource_id IN ("thieves", "guards", "sabots", "spies") AND user_id=?',
       [req.userData.id]
     )
-    await mysql.query('UPDATE users SET last_bankrupcy_at=? WHERE id=?', [tsNow, req.userData.id])
+    await mysql.query('UPDATE users SET money=0, last_bankrupcy_at=? WHERE id=?', [tsNow, req.userData.id])
 
     res.json({
       success: true,

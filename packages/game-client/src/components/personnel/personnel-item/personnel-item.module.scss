@@ -1,0 +1,24 @@
+@import '../../../mixins.scss';
+
+.statContainer {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+.statTitle {
+  @include pascalShadowTitle();
+}
+
+
+.button {
+  margin-top: 5px;
+  .buttonTitle {
+    @include pascalShadowTitle();
+    font-size: 14px;
+    padding: 2px;
+  }
+}
+
+input.input {
+  width: 100%;
+  margin-bottom: 10px;
+}

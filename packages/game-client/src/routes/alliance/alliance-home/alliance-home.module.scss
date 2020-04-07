@@ -1,8 +1,6 @@
 .container {
-  padding: 0.5em;
-  text-align: center;
-}
-.allianceDescText {
-  white-space: pre-wrap;
-  margin: 1em;
+  padding: 10px;
+  &.membersContainer {
+    text-align: center;
+  }
 }

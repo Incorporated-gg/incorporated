@@ -24,10 +24,9 @@ export default function AllianceResearch({ alliance, reloadAllianceData }) {
   const chartImgUrl = `https://quickchart.io/chart?width=500&height=500&c=${JSON.stringify(chartData)}`
 
   return (
-    <Container darkBg>
-      <div style={{ padding: 10 }}>
-        <div>
-          <h2>Research</h2>
+    <>
+      <Container darkBg>
+        <div style={{ padding: 10 }}>
           {Object.values(alliance.researchs).map(researchData => {
             return (
               <SingleResearch
@@ -38,13 +37,15 @@ export default function AllianceResearch({ alliance, reloadAllianceData }) {
             )
           })}
         </div>
-        <br />
-        <div>
+      </Container>
+      <br />
+      <Container darkBg>
+        <div style={{ padding: 10 }}>
           <h2>Aportes</h2>
           <img className={styles.aportesImg} src={chartImgUrl} alt="" />
         </div>
-      </div>
-    </Container>
+      </Container>
+    </>
   )
 }
 
@@ -69,7 +70,7 @@ function SingleResearch({ researchData, reloadAllianceData }) {
   }
 
   return (
-    <div>
+    <div style={{ marginBottom: 10 }}>
       <p>
         {researchInfo.name} <b>(Lvl {researchData.level})</b>
       </p>
@@ -99,11 +100,9 @@ function SingleResearch({ researchData, reloadAllianceData }) {
         </>
       )}
       <form>
-        <input type="number" value={amount} onChange={e => setAmount(e.target.value)} />
+        <input type="number" value={amount} onChange={e => setAmount(e.target.value)} />{' '}
         <button onClick={doResearch}>Aportar</button>
       </form>
-
-      <hr />
     </div>
   )
 }

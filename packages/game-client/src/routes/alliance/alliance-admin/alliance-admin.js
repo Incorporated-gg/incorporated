@@ -20,22 +20,45 @@ export default function AllianceAdmin({ alliance, reloadAllianceData }) {
   const userData = useUserData()
 
   return (
-    <Container darkBg>
-      <div style={{ padding: 10 }}>
-        <h2>Admin</h2>
-        {userData.alliance_user_rank.permission_activate_buffs && (
-          <AllianceBuffs alliance={alliance} reloadAllianceData={reloadAllianceData} />
-        )}
-        <AllianceBadgeCreator alliance={alliance} reloadAllianceData={reloadAllianceData} />
-        {(userData.alliance_user_rank.permission_admin ||
-          userData.alliance_user_rank.permission_accept_and_kick_members) && (
-          <AllianceRankEdit alliance={alliance} reloadAllianceData={reloadAllianceData} />
-        )}
-        {userData.alliance_user_rank.permission_accept_and_kick_members && (
-          <AllianceMemberRequests reloadAllianceData={reloadAllianceData} />
-        )}
-        {userData.alliance_user_rank.permission_admin && <AllianceDelete reloadAllianceData={reloadAllianceData} />}
-      </div>
-    </Container>
+    <>
+      {userData.alliance_user_rank.permission_activate_buffs && (
+        <Container darkBg>
+          <div style={{ padding: 10 }}>
+            <AllianceBuffs alliance={alliance} reloadAllianceData={reloadAllianceData} />
+          </div>
+        </Container>
+      )}
+      <br />
+      <Container darkBg>
+        <div style={{ padding: 10 }}>
+          <AllianceBadgeCreator alliance={alliance} reloadAllianceData={reloadAllianceData} />
+        </div>
+      </Container>
+      <br />
+      {(userData.alliance_user_rank.permission_admin ||
+        userData.alliance_user_rank.permission_accept_and_kick_members) && (
+        <Container darkBg>
+          <div style={{ padding: 10 }}>
+            <AllianceRankEdit alliance={alliance} reloadAllianceData={reloadAllianceData} />
+          </div>
+        </Container>
+      )}
+      <br />
+      {userData.alliance_user_rank.permission_accept_and_kick_members && (
+        <Container darkBg>
+          <div style={{ padding: 10 }}>
+            <AllianceMemberRequests reloadAllianceData={reloadAllianceData} />
+          </div>
+        </Container>
+      )}
+      <br />
+      {userData.alliance_user_rank.permission_admin && (
+        <Container darkBg>
+          <div style={{ padding: 10 }}>
+            <AllianceDelete reloadAllianceData={reloadAllianceData} />
+          </div>
+        </Container>
+      )}
+    </>
   )
 }

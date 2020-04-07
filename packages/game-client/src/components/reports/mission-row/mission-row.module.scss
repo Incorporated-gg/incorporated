@@ -1,0 +1,56 @@
+.firstRow {
+  align-self: center;
+}
+
+.secondRow {
+  margin: 0 10px;
+  align-self: center;
+}
+
+.thirdRow {
+  text-align: right;
+
+  .missionTypeContainer {
+    cursor: pointer;
+    display: inline-block;
+    text-align: left;
+  }
+
+  .missionTypeOuter {
+    display: inline-block;
+    min-width: 120px;
+    position: relative;
+    margin-right: 10px;
+  }
+
+  .missionTypeInner {
+    padding: 0px;
+    text-align: center;
+  }
+
+  .missionTypeIcon {
+    position: absolute;
+    right: -20px;
+    top: -10px;
+
+    svg {
+      width: 40px;
+      height: 40px;
+    }
+  }
+
+  .detailsText {
+    margin-top: 3px;
+    font-size: 0.9em;
+    color: #FFF8E6;
+    font-weight: 700;
+  }
+
+}
+
+.separator {
+  grid-column: 1 / 4;
+  border-bottom: 2px solid #FFF8E6;
+  opacity: 0.2;
+  margin: 10px 0;
+}

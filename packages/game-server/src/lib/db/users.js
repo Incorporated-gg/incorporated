@@ -187,16 +187,29 @@ export async function getUnreadMessagesCount(userID) {
 }
 
 export async function getUnreadReportsCount(userID) {
-  const [
+  let [
     { last_checked_reports_at: lastCheckedReportsAt },
   ] = await mysql.query('SELECT last_checked_reports_at FROM users WHERE id=?', [userID])
-  const [
-    { count: unreadMissionsCount },
-  ] = await mysql.query(
-    'SELECT COUNT(*) as count FROM missions WHERE completed=1 AND will_finish_at>? AND (user_id=? OR (target_user=? AND mission_type="attack"))',
-    [lastCheckedReportsAt || 0, userID, userID]
+  lastCheckedReportsAt = lastCheckedReportsAt || 0
+
+  const {
+    count: notSeenSentCount,
+  } = await mysql.selectOne(
+    'SELECT COUNT(*) as count FROM missions WHERE completed=1 AND will_finish_at>? AND user_id=?',
+    [lastCheckedReportsAt, userID]
   )
-  return unreadMissionsCount
+  const {
+    count: notSeenReceivedCount,
+  } = await mysql.selectOne(
+    'SELECT COUNT(*) as count FROM missions WHERE completed=1 AND will_finish_at>? AND target_user=? AND (mission_type="attack" OR (mission_type="spy" AND result="caught"))',
+    [lastCheckedReportsAt, userID]
+  )
+
+  return {
+    total: notSeenReceivedCount + notSeenSentCount,
+    notSeenReceivedCount,
+    notSeenSentCount,
+  }
 }
 
 export async function runUserMoneyUpdate(userID) {

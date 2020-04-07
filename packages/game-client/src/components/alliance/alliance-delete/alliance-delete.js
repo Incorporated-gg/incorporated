@@ -21,7 +21,6 @@ export default function AllianceDelete({ reloadAllianceData }) {
   }
   return (
     <div>
-      <h3>Borrar alianza</h3>
       <button onClick={deleteAlliance}>Borrar alianza</button>
     </div>
   )

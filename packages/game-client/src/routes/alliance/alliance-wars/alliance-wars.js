@@ -9,17 +9,24 @@ AllianceWars.propTypes = {
 }
 export default function AllianceWars({ alliance, reloadAllianceData }) {
   return (
-    <Container darkBg>
-      <div style={{ padding: 10 }}>
-        <h2>Guerras activas</h2>
-        {alliance.active_wars.map(war => {
-          return <WarInfo war={war} key={war.id} />
-        })}
-        <h2>Guerras pasadas</h2>
-        {alliance.past_wars.map(war => {
-          return <WarInfo war={war} key={war.id} />
-        })}
-      </div>
-    </Container>
+    <>
+      <Container darkBg>
+        <div style={{ padding: 10 }}>
+          <h2>Guerras activas</h2>
+          {alliance.active_wars.map(war => {
+            return <WarInfo war={war} key={war.id} />
+          })}
+        </div>
+      </Container>
+      <br />
+      <Container darkBg>
+        <div style={{ padding: 10 }}>
+          <h2>Guerras pasadas</h2>
+          {alliance.past_wars.map(war => {
+            return <WarInfo war={war} key={war.id} />
+          })}
+        </div>
+      </Container>
+    </>
   )
 }

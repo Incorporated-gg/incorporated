@@ -22,10 +22,9 @@ export default function AllianceBuffs({ alliance, reloadAllianceData }) {
   }
   return (
     <div>
-      <h3>Activar buffs</h3>
       <button onClick={activateBuff('attack')} disabled={!alliance.buffs_data.attack.can_activate}>
         Activar buff de ataque
-      </button>
+      </button>{' '}
       <button onClick={activateBuff('defense')} disabled={!alliance.buffs_data.defense.can_activate}>
         Activar buff de defensa
       </button>

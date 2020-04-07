@@ -1,0 +1,28 @@
+.container {
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
+  &.darkColors {
+    .usernameLink {
+      color: rgb(93, 67, 0);
+    }
+  }
+
+  .avatarLink {
+    line-height: 0;
+  }
+
+  .avatar {
+    border: 3px solid #EECF82;
+    width: 35px;
+    height: 35px;
+    margin-right: 10px;
+  }
+
+  .usernameLink {
+    color: #FFF8E6;
+    margin: 0.1em 0;
+    display: block;
+    text-transform: capitalize;
+  }
+}

@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import AllianceLink from 'components/alliance/alliance-link'
 import styles from './alliance-war-info.module.scss'
 import { WAR_DAYS_DURATION } from 'shared-lib/allianceUtils'
+import { getServerDay } from 'shared-lib/serverTime'
 
 const warDaysArray = new Array(WAR_DAYS_DURATION).fill(null).map((_, dayIndex) => dayIndex + 1)
 
@@ -50,8 +51,8 @@ export default function WarInfo({ war }) {
         <AllianceLink alliance={war.alliance1} />
         {' VS '}
         <AllianceLink alliance={war.alliance2} />
+        <span className={styles.declaredOnText}>Comenzó día {getServerDay(war.created_at * 1000) + 1}</span>
       </h2>
-      <p>Se declaró el {new Date(war.created_at * 1000).toLocaleString()}</p>
       {!hasStarted && <div>La guerra se ha declarado hoy y comenzará mañana</div>}
       <div>Barrios bajo ataque: {war.hoods.map(hood => hood.name).join(', ')}</div>
       {hasStarted && (

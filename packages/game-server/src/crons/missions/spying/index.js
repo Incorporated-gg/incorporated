@@ -1,11 +1,5 @@
 const mysql = require('../../../lib/mysql')
-const {
-  getUserResearchs,
-  sendMessage,
-  getBuildings,
-  getPersonnel,
-  runUserMoneyUpdate,
-} = require('../../../lib/db/users')
+const { getUserResearchs, getBuildings, getPersonnel, runUserMoneyUpdate } = require('../../../lib/db/users')
 const { calcSpiesCaptured, calcInformationObtained } = require('./calcs')
 
 module.exports = {
@@ -60,19 +54,6 @@ async function completeSpyMission(mission) {
       attacker.id,
       'spies',
     ])
-  }
-
-  // Message defender about espionage
-  if (spiesCaptured > 0) {
-    await sendMessage({
-      receiverID: defender.id,
-      senderID: null,
-      type: 'caught_spies',
-      data: {
-        attacker_id: attacker.id,
-        captured_spies: spiesCaptured,
-      },
-    })
   }
 
   // Run money update for defender, so buildings money info is correct

@@ -1,39 +1,39 @@
 import React, { useState } from 'react'
-import { CSSTransition } from 'react-transition-group'
-import './login.scss'
-import PropTypes from 'prop-types'
+import styles from './login.module.scss'
 import api from '../../lib/api'
 import { setNewSessionID } from '../../lib/user'
-import Container from 'components/UI/container'
 
 export default function LoginRoute() {
   const [active, setActive] = useState('login')
 
   return (
-    <Container outerClassName="login-page" darkBg>
-      <div>
-        <CSSTransition in={active === 'register'} timeout={200} unmountOnExit classNames="my-node">
-          <Register toggleActive={() => setActive('login')} />
-        </CSSTransition>
-        <CSSTransition in={active === 'login'} timeout={200} unmountOnExit classNames="my-node">
-          <Login toggleActive={() => setActive('register')} />
-        </CSSTransition>
+    <>
+      <img src={require('./img/logo.png')} alt="" className={styles.logo} />
+      {active === 'login' && <Login />}
+      {active === 'register' && <Register />}
+      <div
+        className={styles.toggleActiveLink}
+        onClick={() => {
+          setActive(active === 'login' ? 'register' : 'login')
+        }}>
+        {active === 'login' && (
+          <>
+            ¿No tienes cuenta? <b>Registrate</b>
+          </>
+        )}
+        {active === 'register' && (
+          <>
+            ¿Ya tienes cuenta? <b>Conéctate</b>
+          </>
+        )}
       </div>
-    </Container>
+    </>
   )
 }
 
-Login.propTypes = {
-  toggleActive: PropTypes.func.isRequired,
-}
-function Login({ toggleActive }) {
+function Login() {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-
-  function registerClicked(e) {
-    e.preventDefault()
-    toggleActive()
-  }
 
   function loginClicked(e) {
     e.preventDefault()
@@ -52,7 +52,7 @@ function Login({ toggleActive }) {
   }
 
   return (
-    <form>
+    <form className={styles.formContainer} onSubmit={loginClicked}>
       <input
         type="text"
         placeholder={'Nombre de usuario'}
@@ -60,29 +60,17 @@ function Login({ toggleActive }) {
         onChange={e => setUsername(e.target.value)}
       />
       <input type="password" placeholder={'Contraseña'} value={password} onChange={e => setPassword(e.target.value)} />
-      <button onClick={loginClicked}>Login</button>
-      <p>
-        No tienes cuenta?{' '}
-        <button type="button" onClick={registerClicked}>
-          Registrarme
-        </button>
-      </p>
+      <div className={styles.buttonText} onClick={loginClicked}>
+        INICIAR SESIÓN
+      </div>
     </form>
   )
 }
 
-Register.propTypes = {
-  toggleActive: PropTypes.func.isRequired,
-}
-function Register({ toggleActive }) {
+function Register() {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [email, setEmail] = useState('')
-
-  function loginClicked(e) {
-    e.preventDefault()
-    toggleActive()
-  }
 
   function registerClicked(e) {
     e.preventDefault()
@@ -101,17 +89,13 @@ function Register({ toggleActive }) {
   }
 
   return (
-    <form>
-      <input type="text" placeholder="Username" value={username} onChange={e => setUsername(e.target.value)} />
-      <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} />
+    <form className={styles.formContainer} onSubmit={registerClicked}>
+      <input type="text" placeholder="Nombre de usuario" value={username} onChange={e => setUsername(e.target.value)} />
+      <input type="password" placeholder="Contraseña" value={password} onChange={e => setPassword(e.target.value)} />
       <input type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} />
-      <button onClick={registerClicked}>Crear cuenta</button>
-      <p>
-        Ya tienes cuenta?{' '}
-        <button type="button" onClick={loginClicked}>
-          Conectarme
-        </button>
-      </p>
+      <div className={styles.buttonText} onClick={registerClicked}>
+        CREAR CUENTA
+      </div>
     </form>
   )
 }

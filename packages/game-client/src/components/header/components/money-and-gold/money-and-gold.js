@@ -25,7 +25,7 @@ function MyMoney() {
   const userData = useUserData()
   if (!userData) return null
 
-  return userData.money.toLocaleString()
+  return Math.floor(userData.money).toLocaleString()
 }
 
 function MyGold() {

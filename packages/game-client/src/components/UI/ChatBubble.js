@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import api from 'lib/api'
 import { sessionID } from 'lib/user'
-import Username from './Username'
+import UserLink from './UserLink'
 import { timestampFromEpoch } from 'shared-lib/commonUtils'
 import io from 'socket.io-client'
 import './ChatBubble.scss'
@@ -165,7 +165,7 @@ export default function ChatBubble() {
                   .messagesArray.map((message, i) => (
                     <div key={i} className="chatMessage">
                       <span className="timeStamp">{timestampFromEpoch(message.date)}</span>{' '}
-                      <Username user={message.user} />: {message.text}
+                      <UserLink user={message.user} />: {message.text}
                     </div>
                   ))}
             </div>

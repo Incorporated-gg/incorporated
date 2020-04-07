@@ -2,12 +2,20 @@
   display: inline-flex;
   align-items: center;
 
-  &Badge {
+  &.darkColors {
+    .name {
+      color: #946a00;
+    }
+  }
+
+  .badge {
     width: 15px;
     height: 15px;
     margin-right: 5px;
   }
-  &Name {
+  .name {
+    vertical-align: middle;
+    color: #EECF82;
     text-transform: uppercase;
     font-size: 12px;
   }

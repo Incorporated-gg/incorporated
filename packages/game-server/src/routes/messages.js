@@ -130,11 +130,6 @@ async function parseMessage(msg) {
   }
   try {
     switch (msg.type) {
-      case 'caught_spies': {
-        result.data.attacker = await users.getData(result.data.attacker_id)
-        delete result.data.attacker_id
-        break
-      }
       case 'loan_started':
       case 'loan_ended': {
         result.data.borrower = await users.getData(result.data.borrower_id)

@@ -44,7 +44,7 @@ export default function Reports() {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10 }}>
         <button onClick={() => setShowSimulatorModal(true)}>Simulador</button>
         <MissionModal
           missionType="simulate"
@@ -58,18 +58,18 @@ export default function Reports() {
           Recibidas hoy: {missions.todaysMissionLimits.receivedToday}/{missions.todaysMissionLimits.maxDefenses}
         </span>
       </div>
-      <div>
+      <div style={{ marginBottom: 10 }}>
         <select value={sendType} onChange={e => setSendType(e.target.value)}>
           <option value="sent">Enviadas{missions.notSeenSentCount ? ` (${missions.notSeenSentCount})` : ''}</option>
           <option value="received">
             Recibidas{missions.notSeenReceivedCount ? ` (${missions.notSeenReceivedCount})` : ''}
           </option>
-        </select>
+        </select>{' '}
         <select value={missionType} onChange={e => setMissionType(e.target.value)}>
           <option value="any">Cualquier tipo</option>
           <option value="spy">Espionajes</option>
           <option value="attack">Ataques</option>
-        </select>
+        </select>{' '}
         <select value={ownerType} onChange={e => setOwnerType(e.target.value)}>
           <option value="own">Propias</option>
           <option value="alliance">Alianza</option>
@@ -78,37 +78,22 @@ export default function Reports() {
 
       <Container darkBg>
         <div className={styles.missionContainer}>
-          <table>
-            <thead>
-              <tr>
-                <th>Tipo</th>
-                <th>{sendType === 'sent' ? 'Objetivo' : 'Agresor'}</th>
-                <th>Día</th>
-                <th>Resultado</th>
-                <th>Detalles</th>
-              </tr>
-            </thead>
-            <tbody>
-              {missions.missions.length ? (
-                missions.missions.map((mission, index) => (
-                  <MissionRow
-                    key={index}
-                    mission={mission}
-                    reloadMissionsCallback={reloadMissionsCallback}
-                    showcaseUser={sendType === 'received' ? 'sender' : 'target'}
-                  />
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="9999">
-                    {sendType === 'sent'
-                      ? 'No has realizado ninguna misión todavía'
-                      : 'No has recibido ninguna misión todavía'}
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+          {missions.missions.length ? (
+            missions.missions.map((mission, index) => (
+              <MissionRow
+                key={index}
+                mission={mission}
+                reloadMissionsCallback={reloadMissionsCallback}
+                showcaseUser={sendType === 'received' ? 'sender' : 'target'}
+              />
+            ))
+          ) : (
+            <div style={{ gridColumn: '1 / 4' }}>
+              {sendType === 'sent'
+                ? 'No has realizado ninguna misión todavía'
+                : 'No has recibido ninguna misión todavía'}
+            </div>
+          )}
         </div>
       </Container>
     </div>

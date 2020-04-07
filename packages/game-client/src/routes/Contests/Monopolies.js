@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import api from '../../lib/api'
-import Username from '../../components/UI/Username'
 import { buildingsList } from 'shared-lib/buildingsUtils'
 import styles from './contests.module.scss'
 import Container from 'components/UI/container'
+import UserLink from 'components/UI/UserLink'
 
 export default function Monopolies() {
   const [monopolies, setMonopolies] = useState([])
@@ -36,7 +36,7 @@ export default function Monopolies() {
               <tr key={i}>
                 <td>{buildingsList.find(b => b.id === monopoly.building_id).name}</td>
                 <td>
-                  <Username user={monopoly.user} />
+                  <UserLink user={monopoly.user} />
                 </td>
                 <td>{monopoly.building_quantity.toLocaleString()}</td>
               </tr>

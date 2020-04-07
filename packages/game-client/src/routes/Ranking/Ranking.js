@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback } from 'react'
-import Username from '../../components/UI/Username'
 import { useLocation, useHistory } from 'react-router-dom'
 import styles from './Ranking.module.scss'
 import RankItem from '../../components/UI/RankItem'
@@ -7,6 +6,7 @@ import AllianceLink from 'components/alliance/alliance-link'
 import { debounce } from '../../lib/utils'
 import Pagination from 'components/UI/pagination'
 import api from 'lib/api'
+import UserLink from 'components/UI/UserLink'
 
 export default function Ranking() {
   const [ranking, setRanking] = useState([])
@@ -45,7 +45,7 @@ export default function Ranking() {
             key={rankItem.user ? rankItem.user.id : rankItem.alliance ? rankItem.alliance.id : Math.random()}
             rank={rankItem.rank}
             pointsString={rankItem.points.toLocaleString() + (type === 'income' ? '€' : '')}>
-            {rankingItemType === 'users' && <Username user={rankItem.user} />}
+            {rankingItemType === 'users' && <UserLink user={rankItem.user} />}
             {rankingItemType === 'alliances' && <AllianceLink alliance={rankItem.alliance} type="shortAndLongName" />}
           </RankItem>
         ))}
@@ -103,7 +103,7 @@ function SearchUsers() {
               users.map(user => {
                 return (
                   <RankItem key={user.id} rank={user.rank_position} pointsString={user.income.toLocaleString() + '€'}>
-                    <Username user={user} />
+                    <UserLink user={user} />
                   </RankItem>
                 )
               })

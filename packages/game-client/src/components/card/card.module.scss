@@ -109,29 +109,6 @@ $border-radius-size: 14px;
       margin: 5px 0;
     }
 
-    .input {
-      display: block;
-      font-size: 1.2em;
-      padding: 0.3em 0.75em;
-      margin: 0.3em auto;
-      width: 100%;
-
-      &:disabled {
-        opacity: 0.4;
-      }
-    }
-
-    .button {
-      user-select: none;
-      cursor: pointer;
-      margin-top: 10px;
-
-      &:disabled,
-      &[disabled] {
-        opacity: 0.4;
-      }
-    }
-
     .children {
       // flex-grow: 1; // Disabled due to ios safari bug, calculating too much extra height
       display: flex;
@@ -168,5 +145,28 @@ $border-radius-size: 14px;
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+}
+
+.input {
+  display: block;
+  font-size: 1.2em;
+  padding: 0.3em 0.75em;
+  margin: 0.3em auto;
+  width: 100%;
+
+  &:disabled {
+    opacity: 0.4;
+  }
+}
+
+.button {
+  user-select: none;
+  cursor: pointer;
+  margin-top: 10px;
+
+  &:disabled,
+  &[disabled] {
+    opacity: 0.4;
   }
 }

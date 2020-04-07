@@ -1,9 +1,9 @@
 import React, { useCallback } from 'react'
 import PropTypes from 'prop-types'
-import Username from '../UI/Username'
 import { useUserData } from '../../lib/user'
 import { LOAN_DAYS_DURATION } from 'shared-lib/loansUtils'
 import api from 'lib/api'
+import UserLink from 'components/UI/UserLink'
 
 LoanListItem.propTypes = {
   loan: PropTypes.object.isRequired,
@@ -40,7 +40,7 @@ export default function LoanListItem({ loan, refreshLoansList }) {
 
   return (
     <div key={loan.lender.id}>
-      <Username user={loan.lender} />
+      <UserLink user={loan.lender} />
       <p>
         <b>Interés</b>: {loan.interest_rate.toLocaleString()}%
       </p>

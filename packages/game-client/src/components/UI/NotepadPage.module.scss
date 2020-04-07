@@ -1,0 +1,24 @@
+.container {
+  position: relative;
+  padding: 10px;
+  padding-top: 30px; // 20px for the header + normal padding
+  background-color: #FFF8E6;
+  color: #343434;
+  overflow: hidden;
+  border-top: 3px solid #595959;
+
+  &::before {
+      display: block;
+      content: ' ';
+      position: absolute;
+      top: -10px;
+      left: 0;
+      right: 0;
+      margin: auto;
+      height: 20px;
+      width: 98%;
+      background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH5AIaFy0pf5Rg2QAAAB1pVFh0Q29tbWVudAAAAAAAQ3JlYXRlZCB3aXRoIEdJTVBkLmUHAAABOElEQVQ4y82UMUvDQBTHf7GBC2ISkJKpCo6lk6Pg4OIncLezq9DP4ib4AZwcOyjSzTl0lw6lFOFylHKhEpdXuDbENKDQ/3jvvR/v3vvfwb7LqwqEceQBCdAFOnI8AcbAzOis2BkYxtExcAdcAz2gLaE5kAJD4MHo7KsWGMbRKfAEXAJ+xQVWwAjoG519VgKls2fgCih+Gck69gbcuJ22tmZ2D9xKslcz+wI4ARYqUKPcWgAOnKREZubXwFyoLzXJ+tAFdmUBTdWT2hKw42yzidqOrTaAfyIXOBGfNdVcakvAsZi2qVKpLQFn8gJWYok6FZI7lNpNH+bWogKVAhfA2Y7GfgcGRmfLElCgSxWoV+BcTFu1tG+B9Y3Opm6gtZ2ZW6tVoF6AhcSPgENnAR/Ao3Q2/ffva//1A4a7XkowYKKPAAAAAElFTkSuQmCC');
+      background-position: top;
+      background-repeat: space;
+  }
+}

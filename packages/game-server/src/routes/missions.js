@@ -1,7 +1,13 @@
 import locks from '../lib/locks'
 import { hoods } from '../lib/map'
 import mysql from '../lib/mysql'
-import { getUserTodaysMissionsLimits, getPersonnel, hasActiveMission, getData as getUserData } from '../lib/db/users'
+import {
+  getUserTodaysMissionsLimits,
+  getPersonnel,
+  hasActiveMission,
+  getData as getUserData,
+  getUnreadReportsCount,
+} from '../lib/db/users'
 import { parseMissionFromDB } from '../lib/db/missions'
 import { getMembers } from '../lib/db/alliances'
 const { getUserAllianceID } = require('../lib/db/alliances')
@@ -31,26 +37,11 @@ module.exports = app => {
       return
     }
 
-    // todaysMissionLimits
+    // Stuff that's always returned
     const todaysMissionLimits = await getUserTodaysMissionsLimits(req.userData.id)
+    const notSeenReports = await getUnreadReportsCount(req.userData.id)
 
-    // Unread counts
-    let [
-      { last_checked_reports_at: lastCheckedReportsAt },
-    ] = await mysql.query('SELECT last_checked_reports_at FROM users WHERE id=?', [req.userData.id])
-    lastCheckedReportsAt = lastCheckedReportsAt || 0
-
-    const sentMissionsCountRaw = await mysql.selectOne(
-      'SELECT COUNT(*) as count FROM missions WHERE user_id=? AND completed=1 AND will_finish_at>?',
-      [req.userData.id, lastCheckedReportsAt]
-    )
-    const receivedMissionsCountRaw = await mysql.selectOne(
-      'SELECT COUNT(*) as count FROM missions WHERE target_user=? AND mission_type="attack" AND completed=1 AND will_finish_at>?',
-      [req.userData.id, lastCheckedReportsAt]
-    )
-    const notSeenReceivedCount = sentMissionsCountRaw.count
-    const notSeenSentCount = receivedMissionsCountRaw.count
-
+    // Update last_checked_reports_at. Must be run after getUnreadReportsCount
     mysql.query('UPDATE users SET last_checked_reports_at=? WHERE id=?', [
       Math.floor(Date.now() / 1000),
       req.userData.id,
@@ -90,8 +81,8 @@ module.exports = app => {
 
     res.json({
       todaysMissionLimits,
-      notSeenReceivedCount,
-      notSeenSentCount,
+      notSeenReceivedCount: notSeenReports.notSeenReceivedCount,
+      notSeenSentCount: notSeenReports.notSeenSentCount,
       missions,
     })
   })
