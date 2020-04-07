@@ -138,6 +138,15 @@ export function simulateAttack({
     throw new Error('Missing params for attack simulation')
   }
   const attackedBuildingInfo = buildingsList.find(b => b.id === buildingID)
+  buildingID = parseInt(buildingID)
+  buildingAmount = parseInt(buildingAmount)
+  defensorGuards = parseInt(defensorGuards)
+  attackerSabots = parseInt(attackerSabots)
+  attackerThieves = parseInt(attackerThieves)
+  defensorSecurityLvl = parseInt(defensorSecurityLvl)
+  attackerSabotageLvl = parseInt(attackerSabotageLvl)
+  infraResearchLvl = parseInt(infraResearchLvl)
+  unprotectedMoney = parseInt(unprotectedMoney)
 
   const {
     deadSabots,

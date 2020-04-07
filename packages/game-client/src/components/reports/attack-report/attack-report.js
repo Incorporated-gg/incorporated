@@ -80,6 +80,7 @@ export default function AttackReport({ mission }) {
           </tr>
         </tbody>
       </table>
+      <br />
       <table>
         <thead>
           <tr>
@@ -90,7 +91,6 @@ export default function AttackReport({ mission }) {
             <th>Ganancia</th>
           </tr>
         </thead>
-        <br />
         <tbody>
           <tr>
             <td>Por destruir edificios</td>
