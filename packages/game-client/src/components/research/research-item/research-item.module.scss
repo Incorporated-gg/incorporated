@@ -1,7 +1,7 @@
-@import '../../../mixins.scss';
+@import '../../../variables';
 
 .researchButton {
   @include pascalShadowTitle();
-  font-size: 14px;
+  font-size: $font-size-medium;
   padding: 2px;
 }

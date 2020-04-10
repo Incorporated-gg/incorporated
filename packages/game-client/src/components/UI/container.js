@@ -6,7 +6,7 @@ Container.propTypes = {
   children: PropTypes.node.isRequired,
   darkBg: PropTypes.bool,
   borderSize: PropTypes.number,
-  whiteBorder: PropTypes.bool,
+  withHairline: PropTypes.bool,
   disabled: PropTypes.bool,
   className: PropTypes.string,
   style: PropTypes.object,
@@ -16,10 +16,10 @@ Container.propTypes = {
 
 export default function Container({
   children,
-  borderSize = 3,
+  borderSize = 5,
   darkBg,
   disabled,
-  whiteBorder,
+  withHairline,
   className = '',
   outerClassName = '',
   style = {},
@@ -33,7 +33,7 @@ export default function Container({
     <div className={`${styles.container} ${outerClassName}`} style={outerStyle} disabled={disabled}>
       <div
         {...props}
-        className={`${styles.inner} ${whiteBorder ? styles.whiteBorder : ''} ${
+        className={`${styles.inner} ${withHairline ? styles.withHairline : ''} ${
           darkBg ? styles.darkBg : ''
         } ${className}`}
         style={style}>

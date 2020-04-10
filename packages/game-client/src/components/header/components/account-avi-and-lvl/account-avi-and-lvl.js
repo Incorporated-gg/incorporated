@@ -2,7 +2,7 @@ import React from 'react'
 import { useAccountData } from 'lib/user'
 import styles from './account-avi-and-lvl.module.scss'
 import { useHistory } from 'react-router-dom'
-import Container from 'components/UI/container'
+import ProgressBar from 'components/UI/progress-bar'
 
 export default function AccountAviAndLvl() {
   let history = useHistory()
@@ -12,11 +12,12 @@ export default function AccountAviAndLvl() {
   }
   return (
     <div className={styles.container} onClick={openAccountPanel}>
-      <Container style={{ padding: 0, lineHeight: 0 }}>
-        <img src={accountData.avatar} alt={'Avatar de usuario'} className={styles.avatar} />
-      </Container>
-      <div className={styles.lvlText} title={`${accountData.xp}/${accountData.levelUpXP} XP`}>
-        Lvl {accountData.level}
+      <div className={styles.avatar}>
+        <img src={accountData.avatar} alt={'Avatar de usuario'} />
+      </div>
+      <div className={styles.lvlContainer}>
+        <ProgressBar direction="vertical" progressPercentage={(accountData.xp / accountData.levelUpXP) * 100} />
+        <div className={styles.levelText}>{accountData.level}</div>
       </div>
     </div>
   )

@@ -1,12 +1,14 @@
+@import '../../../variables';
+
 .container {
     padding: 0.5em;
     text-align: center;
 }
 
 .actionLinks {
-    font-size: 1.2em;
+    font-size: $font-size-large;
 }
 
 .username {
-    font-size: 2em;
+    font-size: $font-size-xlarge;
 }

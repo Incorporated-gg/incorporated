@@ -34,10 +34,10 @@ export default function UserActionLinks({ user }) {
     <>
       <button onClick={() => setShowMessageModal(true)} disabled={isMe}>
         Enviar mensaje
-      </button>
+      </button>{' '}
       <button onClick={() => setShowAttackModal(true)} disabled={!canAttack}>
         Atacar
-      </button>
+      </button>{' '}
       <button onClick={() => setShowSpyModal(true)} disabled={isMe}>
         Espiar
       </button>

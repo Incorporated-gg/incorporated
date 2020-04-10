@@ -1,9 +1,35 @@
+@import './mixins.scss';
+
 // Screen sizes
 $breakpoint-extrasmall: 350px;
-$breakpoint-small: 550px;
+$breakpoint-small: 425px;
 $breakpoint-desktop: 1024px;
 
 // the :export directive is the magic sauce for webpack
 :export {
   breakpointDesktop: $breakpoint-desktop;
 }
+
+// Font sizes. Ratio: 1.3333
+$font-size-xsmall: 9px;
+$font-size-small: 12px;
+$font-size-medium: 16px;
+$font-size-large: 21px;
+$font-size-xlarge: 28px;
+$font-size-xxlarge: 38px;
+
+// Colors
+$color-brand-light: #EECF82;
+$color-brand-dark: #DDAE52;
+$color-hairline: #FFD880;
+$gradient-brand: linear-gradient(180deg, $color-brand-light 0%, $color-brand-dark 100%);
+
+$color-green-light: #1FD070;
+$color-green-dark: #00793C;
+$gradient-green-horizontal: linear-gradient(90deg, $color-green-light 0%, $color-green-dark 100%);
+$gradient-green-vertical: linear-gradient(180deg, $color-green-light 0%, $color-green-dark 100%);
+
+$color-bg: #343434;
+
+// Header specific
+$header--color-text: #fafafa;

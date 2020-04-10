@@ -1,4 +1,4 @@
-@import '../../mixins.scss';
+@import '../../variables';
 
 .buildingStat {
   display: flex;
@@ -8,7 +8,7 @@
 
   &Title {
     @include pascalShadowTitle();
-    font-size: 13px;
+    font-size: $font-size-small;
     margin-bottom: 5px;
   }
   &Value {
@@ -21,7 +21,7 @@
 
 .buildingAction {
   @include pascalShadowTitle();
-  font-size: 14px;
+  font-size: $font-size-medium;
   padding: 2px;
 }
 

@@ -3,75 +3,42 @@
 .container {
   margin: 0 auto;
   max-width: $breakpoint-desktop;
-  color: #fafafa;
-  background-color: #343434;
-  padding: 0.5em;
-  box-shadow: 0px 0px 20px 5px rgba($color: #000000, $alpha: 0.9);
+  color: $header--color-text;
+  background-color: $color-bg;
+  box-shadow: 0px 0px 20px 5px rgba(0, 0, 0, 0.9);
+  padding: 12px;
+
+  @media (max-width: $breakpoint-small - 1) {
+    padding: 5px;
+  }
+
+  @media (min-width: $breakpoint-desktop) {
+    padding: 12px 20px;
+  }
 
   .containerBottomBorder {
     position: absolute;
-    bottom: -1.5em;
+    bottom: -9px;
     left: 0;
     right: 0;
     margin: auto;
     width: 100%;
     max-width: $breakpoint-desktop;
-    height: 1.5em;
-    overflow: hidden;
+    padding-top: 4px;
+    background: $color-brand-light;
+    border-bottom: 4px solid $color-brand-dark;
     pointer-events: none;
 
-    .containerBottomBorderFillLeft,
-    .containerBottomBorderFillRight {
-      position: absolute;
+    &::after {
+      content: "";
+      width: 100%;
       display: block;
-      content: ' ';
-      background-color: #343434;
-      top: 0;
-      width: 1.5em;
-      height: 1.5em;
-
-      &.containerBottomBorderFillLeft {
-        left: 0;
-        transform: translateY(-2px) rotate(45deg) translateX(-50%);
-      }
-
-      &.containerBottomBorderFillRight {
-        right: 0;
-        transform: translateY(-2px) rotate(-45deg) translateX(50%);
-      }
-    }
-
-    .containerBottomBorderCenter {
-      width: calc(100% - 1.5em);
-      position: absolute;
-      left: 0;
-      right: 0;
-      margin: auto;
-    }
-
-    .containerBottomBorderLeft {
-      transform: translateY(100%) translateX(-25%) rotate(-45deg);
-      width: 1.5em;
-      left: 0;
-    }
-
-    .containerBottomBorderRight {
-      transform: translateY(100%) translateX(25%) rotate(45deg);
-      width: 1.5em;
-      right: 0;
-    }
-
-    .containerBottomBorderCenter,
-    .containerBottomBorderLeft,
-    .containerBottomBorderRight {
-      position: absolute;
-      height: 8px;
-      background-color: #eecf82;
-      border-bottom: 4px solid #d9a545;
+      border-bottom: 1px solid $color-hairline;
     }
   }
 }
 
 .mainHeader {
   display: flex;
+  justify-content: space-between;
 }

@@ -7,11 +7,11 @@
   column-gap: 1em;
   row-gap: 3em;
 
-  @media screen and (max-width: calc($breakpoint-small - 1px)) {
+  @media (max-width: 550px) {
     grid-template-columns: 1fr 1fr;
   }
 
-  @media screen and (max-width: calc($breakpoint-extrasmall - 1px)) {
+  @media (max-width: $breakpoint-extrasmall - 1px) {
     grid-template-columns: 1fr;
   }
 

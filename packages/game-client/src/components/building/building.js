@@ -24,14 +24,6 @@ const buildingImages = {
   5: require('./img/b5.png'),
   6: require('./img/b6.png'),
 }
-const buildingDescriptions = {
-  1: `Aún existen de estas?`,
-  2: `Todo el mundo necesita comer.`,
-  3: `No vendemos drogas.`,
-  4: `A los guiris les cobramos doble.`,
-  5: `Compra palomitas!`,
-  6: `A veces limpiamos las habitaciones!`,
-}
 
 Building.propTypes = {
   buildingID: PropTypes.number.isRequired,
@@ -46,7 +38,7 @@ export default function Building({ buildingID }) {
   const currentOptimizeLvl = userData.researchs[5]
   const hasEnoughOptimizeLvl = currentOptimizeLvl >= buildingInfo.requiredOptimizeResearchLevel
 
-  let desc = buildingDescriptions[buildingID]
+  let desc = ''
   if (!hasEnoughOptimizeLvl) desc = `Necesitas oficina central nivel ${buildingInfo.requiredOptimizeResearchLevel}.`
 
   const timeToRecoverInvestment = Math.round((coste / income) * 10) / 10

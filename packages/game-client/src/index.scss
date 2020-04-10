@@ -11,6 +11,7 @@ body {
   word-break: break-word;
   min-height: 100%;
   color: #fff;
+  font-size: $font-size-medium;
 }
 
 *,
@@ -113,7 +114,6 @@ a {
         display: block;
         padding: 0.5em 0.1em;
         text-align: center;
-        font-size: 15px;
 
         &.active {
           @include gradientText();

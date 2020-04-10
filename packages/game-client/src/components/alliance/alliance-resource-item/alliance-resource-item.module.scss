@@ -1,0 +1,22 @@
+@import '../../../variables';
+
+.title {
+  @include pascalGradientTitle();
+  font-size: $font-size-large;
+}
+
+.amountContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  font-weight: 700;
+
+  .maxAmount {
+    color: #00000099;
+    flex-grow: 1;
+    max-width: 25vw;
+  }
+  .currentAmount {
+    text-align: center;
+  }
+}

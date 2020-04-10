@@ -26,7 +26,7 @@ export default function LoggedInRouter() {
   return (
     <Router>
       <ScrollToTop />
-      <div className={styles.pageContainer}>
+      <div className={`${styles.pageContainer} ${styles.loggedIn}`}>
         <Header />
         <div className={styles.contentContainer}>
           <Switch>

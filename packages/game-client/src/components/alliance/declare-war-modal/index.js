@@ -42,7 +42,7 @@ function DeclareWar({ alliance, onRequestClose }) {
   }
 
   return (
-    <Container whiteBorder darkBg borderSize={20}>
+    <Container withHairline darkBg borderSize={20}>
       <div style={{ padding: 10 }}>
         <h1>Declarar guerra a {alliance.short_name}</h1>
         {alliance.hoods.map(hood => {

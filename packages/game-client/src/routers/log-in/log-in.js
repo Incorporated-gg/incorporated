@@ -9,7 +9,7 @@ export default function LoginRouter() {
   return (
     <Router>
       <ScrollToTop />
-      <div className={styles.pageContainer}>
+      <div className={`${styles.pageContainer} ${styles.login}`}>
         <div className={styles.contentContainer}>
           <Switch>
             <Route path="/">

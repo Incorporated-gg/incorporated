@@ -1,20 +1,20 @@
+@import '../../../../variables';
+
 .moneyAndGoldContainer {
   flex-grow: 1;
   flex-shrink: 1;
+  max-width: 160px;
 
   display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
+  flex-direction: column;
   align-items: center;
-  justify-content: space-around;
+  justify-content: space-between;
 
-  padding: 0 1em;
-  font-size: 0.9em;
+  margin: 0 5px;
 
   .statContainer {
     line-height: 0;
     width: 100%;
-    max-width: 160px;
   }
 
   .stat {
@@ -22,7 +22,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 3px;
-    font-size: 16px;
+    font-size: $font-size-medium;
     line-height: 1em;
     font-weight: 700;
 

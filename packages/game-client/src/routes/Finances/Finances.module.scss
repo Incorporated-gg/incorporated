@@ -1,9 +1,11 @@
+@import '../../variables';
+
 .container {
-    font-size: 20px;
+    font-size: $font-size-large;
 }
 
 .title {
-    font-size: 40px;
+    font-size: $font-size-xxlarge;
     margin: 0;
     padding: 0.5em 0.25em;
 }

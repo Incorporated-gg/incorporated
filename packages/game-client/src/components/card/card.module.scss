@@ -9,7 +9,6 @@ $border-radius-size: 14px;
   height: 100%;
   display: flex;
   flex-direction: column;
-  font-size: 0.85em;
   border-top-left-radius: $border-radius-size;
   border-top-right-radius: $border-radius-size;
 
@@ -53,32 +52,17 @@ $border-radius-size: 14px;
     }
 
     .ribbon {
+      @include titleText();
       position: absolute;
-      top: 0;
-      right: 0;
-      width: 5em;
-      height: 5em;
-      background: linear-gradient(225deg, #343434 0%, #000000 100%);
-      clip-path: polygon(-2% -2%, 102% -2%, 102% 102%);
-      border-top-right-radius: $border-radius-size;
+      top: 3px;
+      right: 3px;
+      font-size: $font-size-xxlarge;
+      font-weight: 900;
+      text-align: right;
+      color: rgba(0, 0, 0, 0.6);
 
-      span {
-        position: absolute;
-        top: 6px;
-        right: 6px;
-        font-size: 1.6em;
-        font-family: "Oswald";
-        text-align: right;
-        color: rgba(255, 255, 255, 0.6);
-        padding-left: 40%; // for word break
-      }
-
-      &.moreThan2Chars span {
-        font-size: 1.3em;
-      }
-
-      &.moreThan3Chars span {
-        font-size: 1.2em;
+      &.moreThan2Chars {
+        font-size: $font-size-xlarge;
       }
     }
 
@@ -97,11 +81,12 @@ $border-radius-size: 14px;
     .name {
       @include pascalGradientTitle();
       transition: all ease-in-out .3s;
-      font-size: 17px;
+      font-size: $font-size-large;
       margin-bottom: 10px;
     }
 
     .description {
+      font-size: $font-size-small;
       white-space: pre-wrap;
       display: flex;
       align-items: center;
@@ -140,23 +125,11 @@ $border-radius-size: 14px;
 
   .buttonNumberText {
     position: relative;
-    font-size: 12px;
+    font-size: $font-size-small;
     font-weight: normal;
     display: flex;
     align-items: center;
     justify-content: center;
-  }
-}
-
-.input {
-  display: block;
-  font-size: 1.2em;
-  padding: 0.3em 0.75em;
-  margin: 0.3em auto;
-  width: 100%;
-
-  &:disabled {
-    opacity: 0.4;
   }
 }
 

@@ -1,25 +1,52 @@
+@import '../../../../variables';
+
 .rightButtonsContainer {
+  flex-grow: 1;
+  flex-shrink: 1;
+  max-width: 160px;
+
   display: flex;
   flex-direction: column;
-  justify-content: space-around;
+  align-items: center;
+  justify-content: space-between;
 }
-.rightButton {
-  border-radius: 50%;
-  cursor: pointer;
 
-  .rightButtonInner {
-    position: relative;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.rightButtonContainer {
+  width: 100%;
+}
+
+.rightButtonInner {
+  position: relative; // For .finishedActiveTasksCounter
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  .title {
+    @include titleText();
+    color: #00000099;
+    line-height: 1em;
+    font-weight: 700;
+    padding-left: 5px;
+    font-size: $font-size-large;
+
+    @media (max-width: 480px) {
+      font-size: inherit;
+    }
+  }
+
+  .chevron {
+    background-color: $color-bg;
+    padding: 5px;
+    padding-right: 15px;
+    clip-path: polygon(100% 0%, 75% 50%, 100% 100%, 0 100%, 0 0);
 
     svg {
-      width: auto;
-      height: 20px;
+      width: 25px;
+      height: 17px;
     }
   }
 }
+
 .finishedActiveTasksCounter {
   position: absolute;
   top: 0px;

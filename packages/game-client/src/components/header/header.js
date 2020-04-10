@@ -26,13 +26,7 @@ export default function Header() {
           </div>
           <ActiveMission />
           <DeclareBankruptcy />
-          <div className={styles.containerBottomBorder}>
-            <div className={styles.containerBottomBorderFillLeft} />
-            <div className={styles.containerBottomBorderFillRight} />
-            <div className={styles.containerBottomBorderCenter} />
-            <div className={styles.containerBottomBorderLeft} />
-            <div className={styles.containerBottomBorderRight} />
-          </div>
+          <div className={styles.containerBottomBorder} />
         </div>
         {isDesktop && <Menu />}
       </div>

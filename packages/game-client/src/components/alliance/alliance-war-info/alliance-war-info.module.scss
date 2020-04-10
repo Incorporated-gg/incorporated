@@ -1,3 +1,5 @@
+@import '../../../variables';
+
 .lineGraphImg {
   display: block;
   max-width: 98%;
@@ -7,6 +9,6 @@
 .declaredOnText {
   font-weight: 400;
   margin-left: 0.5em;
-  font-size: 0.6em;
+  font-size: $font-size-small;
   opacity: 0.75;
 }

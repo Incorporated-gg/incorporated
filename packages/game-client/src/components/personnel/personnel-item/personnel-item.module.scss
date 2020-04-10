@@ -1,4 +1,4 @@
-@import '../../../mixins.scss';
+@import '../../../variables';
 
 .statContainer {
   display: grid;
@@ -13,7 +13,7 @@
   margin-top: 5px;
   .buttonTitle {
     @include pascalShadowTitle();
-    font-size: 14px;
+    font-size: $font-size-medium;
     padding: 2px;
   }
 }

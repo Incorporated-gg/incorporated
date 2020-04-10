@@ -5,7 +5,6 @@ import AllianceBadge from 'components/alliance/alliance-badge'
 
 AllianceDetails.propTypes = {
   alliance: PropTypes.object.isRequired,
-  reloadAllianceData: PropTypes.func.isRequired,
 }
 export default function AllianceDetails({ alliance }) {
   return (

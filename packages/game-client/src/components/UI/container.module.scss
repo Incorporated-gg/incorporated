@@ -1,16 +1,19 @@
+@import '../../variables';
+
 .container {
-  background: linear-gradient(#E8CA7E, #A38F5B);
+  background: $gradient-brand;
+  padding: 5px;
 }
 
 .inner {
-  background-color: #E8CA7E;
+  background-color: $color-brand-light;
   padding: 5px;
 
-  &.whiteBorder {
-    border: 1px solid #FFFFFF;
+  &.withHairline {
+    border: 1px solid $color-hairline;
   }
 
   &.darkBg>* {
-    background: #343434;
+    background: $color-bg;
   }
 }

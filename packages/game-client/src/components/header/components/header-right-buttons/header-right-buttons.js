@@ -12,14 +12,23 @@ HeaderRightButtons.propTypes = {
 export default function HeaderRightButtons({ setIsActiveTasksModalOpen }) {
   return (
     <div className={styles.rightButtonsContainer}>
-      <Link to="/finances">
-        <Container outerClassName={styles.rightButton} className={styles.rightButtonInner}>
-          <Icon svg={require('./img/finances.svg')} alt="Finances" />
+      <Link className={styles.rightButtonContainer} to="/finances">
+        <Container withHairline className={styles.rightButtonInner}>
+          <div className={styles.chevron}>
+            <Icon svg={require('./img/finances.svg')} alt="Finances" />
+          </div>
+          <div className={styles.title}>TIENDA</div>
         </Container>
       </Link>
-      <div onClick={() => setIsActiveTasksModalOpen(true)}>
-        <Container outerClassName={styles.rightButton} className={styles.rightButtonInner}>
-          <Icon svg={require('./img/tasks.svg')} alt="Tareas" />
+      <div
+        className={styles.rightButtonContainer}
+        onClick={() => setIsActiveTasksModalOpen(true)}
+        style={{ cursor: 'pointer', marginTop: 10 }}>
+        <Container withHairline className={styles.rightButtonInner}>
+          <div className={styles.chevron}>
+            <Icon svg={require('./img/tasks.svg')} alt="Tareas" />
+          </div>
+          <div className={styles.title}>MISIONES</div>
           <FinishedActiveTasksCounter />
         </Container>
       </div>

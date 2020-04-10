@@ -30,7 +30,7 @@ Mission.propTypes = {
 }
 function Mission({ missionType, user, hood, onRequestClose }) {
   return (
-    <Container whiteBorder darkBg borderSize={20}>
+    <Container withHairline darkBg borderSize={20}>
       <form className={styles.startNewMission}>
         {missionType === 'attack' ? (
           <MissionModalAttack user={user} hood={hood} onRequestClose={onRequestClose} />

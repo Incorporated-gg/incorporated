@@ -1,5 +1,7 @@
+@import '../../variables';
+
 .title {
-  font-size: 1.5em;
+  font-size: $font-size-xlarge;
   font-weight: bold;
   text-align: center;
   padding: 0.25em;

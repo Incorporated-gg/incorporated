@@ -13,16 +13,14 @@ Card.propTypes = {
 }
 
 export default function Card({ image, title, ribbon, desc, children, disabled = false, colorful = false }) {
-  const ribbonSizeClass = ribbon.length > 2 ? (ribbon.length > 3 ? styles.moreThan3Chars : styles.moreThan2Chars) : ''
+  const ribbonSizeClass = ribbon.length > 2 ? styles.moreThan2Chars : ''
   return (
     <div className={`${styles.card} ${colorful ? styles.cardColorful : ''} ${disabled ? styles.cardDisabled : ''}`}>
       <div className={styles.cardHeader}>
         <div className={styles.image}>
           <img src={image} alt="" />
         </div>
-        <div className={`${styles.ribbon} ${ribbonSizeClass}`}>
-          <span>{ribbon}</span>
-        </div>
+        <div className={`${styles.ribbon} ${ribbonSizeClass}`}>{ribbon}</div>
       </div>
 
       <div className={styles.darkBg}>

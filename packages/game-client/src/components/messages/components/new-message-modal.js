@@ -27,7 +27,7 @@ export default function NewMessageModal({ user, isOpen, onRequestClose }) {
 
   return (
     <Modal isOpen={isOpen} onRequestClose={onRequestClose}>
-      <Container whiteBorder darkBg borderSize={20}>
+      <Container withHairline darkBg borderSize={20}>
         <form>
           <div>
             <label>

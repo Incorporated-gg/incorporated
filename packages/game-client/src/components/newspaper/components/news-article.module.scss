@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=IM+Fell+DW+Pica:ital@0;1&display=swap');
+@import '../../../variables';
 
 .container {
   display: inline-block;
@@ -36,7 +37,7 @@
 }
 
 .title {
-  font-size: 2.5em;
+  font-size: $font-size-xxlarge;
   transform: skewX(-20deg);
   filter: url(#newspaperGrainFilter);
 }

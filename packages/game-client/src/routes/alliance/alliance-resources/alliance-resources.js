@@ -1,11 +1,10 @@
-import React, { useState } from 'react'
-import { calcResourceMax } from 'shared-lib/allianceUtils'
+import React from 'react'
 import { personnelList } from 'shared-lib/personnelUtils'
 import PropTypes from 'prop-types'
-import { useUserData, reloadUserData } from 'lib/user'
+import { useUserData } from 'lib/user'
 import Container from 'components/UI/container'
-import api from 'lib/api'
 import UserLink from 'components/UI/UserLink'
+import AllianceResourceItem from 'components/alliance/alliance-resource-item/alliance-resource-item'
 
 AllianceResources.propTypes = {
   alliance: PropTypes.object.isRequired,
@@ -20,7 +19,7 @@ export default function AllianceResources({ alliance, reloadAllianceData }) {
         <div style={{ padding: 10 }}>
           {Object.values(alliance.resources).map(resourceData => {
             return (
-              <SingleResources
+              <AllianceResourceItem
                 key={resourceData.resource_id}
                 researchs={alliance.researchs}
                 resourceData={resourceData}
@@ -48,45 +47,5 @@ export default function AllianceResources({ alliance, reloadAllianceData }) {
         </div>
       </Container>
     </>
-  )
-}
-
-SingleResources.propTypes = {
-  resourceData: PropTypes.object.isRequired,
-  researchs: PropTypes.object.isRequired,
-  reloadAllianceData: PropTypes.func.isRequired,
-  userResourceAmount: PropTypes.number.isRequired,
-}
-function SingleResources({ resourceData, reloadAllianceData, researchs, userResourceAmount }) {
-  const [amount, setAmount] = useState(0)
-  const max = calcResourceMax(resourceData.resource_id, researchs)
-
-  const doResources = extracting => e => {
-    e.preventDefault()
-    api
-      .post('/v1/alliance/resources', {
-        resource_id: resourceData.resource_id,
-        amount: (extracting ? -1 : 1) * amount,
-      })
-      .then(() => {
-        reloadAllianceData()
-        reloadUserData()
-      })
-      .catch(err => {
-        alert(err.message)
-      })
-  }
-
-  return (
-    <div style={{ marginBottom: 10 }}>
-      <p>
-        <b>{resourceData.name}:</b> {Math.floor(resourceData.quantity).toLocaleString()} / {max.toLocaleString()}
-      </p>
-      {resourceData.resource_id !== 'money' && <p>Tienes {userResourceAmount.toLocaleString()}</p>}
-      <form>
-        <input type="number" value={amount} onChange={e => setAmount(e.target.value)} />{' '}
-        <button onClick={doResources(true)}>Sacar</button> <button onClick={doResources(false)}>Meter</button>
-      </form>
-    </div>
   )
 }

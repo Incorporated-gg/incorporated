@@ -40,7 +40,7 @@ function ActiveMissionModalContent({ onRequestClose }) {
   }
 
   return (
-    <Container whiteBorder darkBg borderSize={20}>
+    <Container withHairline darkBg borderSize={20}>
       <div className={styles.container}>
         <Container onClick={onRequestClose} outerClassName={styles.closeButton}>
           x
