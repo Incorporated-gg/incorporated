@@ -1,0 +1,65 @@
+@import url('https://fonts.googleapis.com/css2?family=IM+Fell+DW+Pica:ital@0;1&display=swap');
+
+.container {
+  display: inline-block;
+  padding: 10px;
+  vertical-align: top;
+  text-transform: uppercase;
+
+  &.containerFullWidth {
+    width: 100%;
+
+    .corpusContainer {
+      flex-direction: row;
+    }
+
+    .image {
+      padding-left: 20px;
+    }
+  }
+
+  &.containerHalfWidth {
+    width: 50%;
+
+    .corpusContainer {
+      flex-direction: column;
+    }
+
+    .image {
+      padding-top: 10px;
+    }
+
+    &:nth-child(even) {
+      border-left: 1px solid #000;
+    }
+  }
+}
+
+.title {
+  font-size: 2.5em;
+  transform: skewX(-20deg);
+  filter: url(#newspaperGrainFilter);
+}
+
+.corpusContainer {
+  display: flex;
+
+  .corpus {
+    flex-grow: 1;
+    flex-basis: 1px;
+    filter: url(#newspaperGrainFilter);
+
+    &:first-letter {
+      font-size: 1.3em;
+    }
+  }
+
+  .image {
+    flex-grow: 1;
+    flex-basis: 1px;
+
+    img {
+      width: calc(min(50vw, 100%));
+    }
+  }
+}

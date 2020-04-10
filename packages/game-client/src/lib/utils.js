@@ -1,7 +1,8 @@
 import api from './api'
 import { userData, reloadUserData } from './user'
+import variables from '../_variables.scss'
 
-export const DESKTOP_WIDTH_BREAKPOINT = 720
+export const DESKTOP_WIDTH_BREAKPOINT = parseInt(variables.breakpointDesktop)
 
 /**
  * Converts a number to a human readable string. No guaranteed limit in chars (for really big numbers), but usually between 4 and 6

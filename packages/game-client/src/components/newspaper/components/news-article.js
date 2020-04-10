@@ -3,15 +3,26 @@ import PropTypes from 'prop-types'
 import AllianceLink from 'components/alliance/alliance-link'
 import Icon from 'components/icon'
 import { numberToAbbreviation } from 'lib/utils'
+import styles from './news-article.module.scss'
 
 NewsArticle.propTypes = {
   article: PropTypes.object.isRequired,
+  type: PropTypes.oneOf(['fullwidth', 'halfwidth']),
 }
-export default function NewsArticle({ article, ...props }) {
+export default function NewsArticle({ article, type }) {
+  const picResource = require(`./pics/picture${Math.floor(Math.random() * 2 + 1)}.png`)
   return (
-    <div {...props}>
-      <h4>{getArticleTitle(article)}</h4>
-      <div>{getArticleCorpus(article)}</div>
+    <div
+      className={`${styles.container} ${
+        type === 'fullwidth' ? styles.containerFullWidth : type === 'halfwidth' ? styles.containerHalfWidth : ''
+      }`}>
+      <div className={styles.title}>{getArticleTitle(article)}</div>
+      <div className={styles.corpusContainer}>
+        <div className={styles.corpus}>{getArticleCorpus(article)}</div>
+        <div className={styles.image}>
+          <img src={picResource} alt="" />
+        </div>
+      </div>
     </div>
   )
 }
