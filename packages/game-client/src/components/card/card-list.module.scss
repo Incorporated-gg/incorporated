@@ -1,3 +1,5 @@
+@import '../../variables';
+
 .grid {
   margin: 3em 0;
   display: grid;
@@ -5,16 +7,12 @@
   column-gap: 1em;
   row-gap: 3em;
 
-  @media screen and (max-width: 719px) {
-    & {
-      grid-template-columns: 1fr 1fr;
-    }
+  @media screen and (max-width: calc($breakpoint-small - 1px)) {
+    grid-template-columns: 1fr 1fr;
   }
 
-  @media screen and (max-width: 350px) {
-    & {
-      grid-template-columns: 1fr;
-    }
+  @media screen and (max-width: calc($breakpoint-extrasmall - 1px)) {
+    grid-template-columns: 1fr;
   }
 
 }

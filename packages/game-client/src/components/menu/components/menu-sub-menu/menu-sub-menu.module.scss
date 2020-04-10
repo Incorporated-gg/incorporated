@@ -1,10 +1,11 @@
 @import '../../../../mixins.scss';
+@import '../../../../variables';
 
 .subMenu {
   position: relative;
   display: flex;
   flex-direction: row;
-  max-width: 720px;
+  max-width: $breakpoint-desktop;
   margin: auto;
   background-color: #343434;
   border-bottom: 15px solid #EACA77;

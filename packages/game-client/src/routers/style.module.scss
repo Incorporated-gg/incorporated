@@ -1,0 +1,30 @@
+@import '../variables';
+
+.pageContainer {
+  width: 100%;
+  flex-grow: 1;
+  align-self: center;
+  display: flex;
+  flex-direction: column;
+  background-color: #000;
+  background-image: url('/img/bg.jpg');
+  background-position: center calc(100% - 64px); // Bottom minus Main menu
+  background-size: contain;
+  background-attachment: fixed;
+  background-repeat: repeat-x;
+
+  @media (min-width: $breakpoint-desktop) {
+    // Adjust for desktop
+    background-position: center bottom;
+    background-size: calc(min(100vw, 1200px));
+  }
+}
+
+.contentContainer {
+  max-width: $breakpoint-desktop;
+  width: 100%;
+  flex-grow: 1;
+  align-self: center;
+  overflow-x: auto;
+  padding: 20px 10px;
+}

@@ -1,4 +1,4 @@
-@import '../../_variables.scss';
+@import '../../variables';
 
 .chatBubble {
   position: fixed;
@@ -9,7 +9,7 @@
   align-items: flex-end;
   z-index: 200;
 
-  @media screen and (min-width: $screen-medium) {
+  @media screen and (min-width: $breakpoint-desktop) {
     bottom: 30px;
     right: 30px;
   }
@@ -35,7 +35,7 @@
     height: 100%;
     transition: opacity 200ms;
 
-    @media screen and (min-width: $screen-medium) {
+    @media screen and (min-width: $breakpoint-desktop) {
       &:not(.fullScreen) {
         position: relative;
         margin-bottom: 15px;
@@ -73,7 +73,7 @@
       .fullScreenButton {
         display: none;
 
-        @media screen and (min-width: $screen-medium) {
+        @media screen and (min-width: $breakpoint-desktop) {
           display: unset;
         }
       }

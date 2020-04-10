@@ -1,6 +1,8 @@
+@import '../../variables';
+
 .container {
   margin: 0 auto;
-  max-width: 720px;
+  max-width: $breakpoint-desktop;
   color: #fafafa;
   background-color: #343434;
   padding: 0.5em;
@@ -13,7 +15,7 @@
     right: 0;
     margin: auto;
     width: 100%;
-    max-width: 720px;
+    max-width: $breakpoint-desktop;
     height: 1.5em;
     overflow: hidden;
     pointer-events: none;

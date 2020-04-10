@@ -1,9 +1,10 @@
 @import '../../../../mixins.scss';
+@import '../../../../variables';
 
 .mainMenu {
   display: flex;
   flex-direction: row;
-  max-width: 720px;
+  max-width: $breakpoint-desktop;
   margin: auto;
   background-color: #343434;
 

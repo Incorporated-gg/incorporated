@@ -1,6 +1,8 @@
+@import '../../../../variables';
+
 .headerTaskOuter {
   width: 100%;
-  max-width: 720px; // For desktop
+  max-width: $breakpoint-desktop;
   margin-bottom: 1em;
   &:last-child {
     margin-bottom: 0;

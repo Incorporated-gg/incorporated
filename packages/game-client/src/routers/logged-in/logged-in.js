@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 
 import Header from 'components/header'
 import Footer from 'components/footer'
-import styles from './logged-in.module.scss'
+import styles from '../style.module.scss'
 import ScrollToTop from 'lib/scrollToTop'
 import ChatBubble from 'components/UI/ChatBubble'
 
@@ -26,7 +26,7 @@ export default function LoggedInRouter() {
   return (
     <Router>
       <ScrollToTop />
-      <div className={styles.loggedinContainer}>
+      <div className={styles.pageContainer}>
         <Header />
         <div className={styles.contentContainer}>
           <Switch>

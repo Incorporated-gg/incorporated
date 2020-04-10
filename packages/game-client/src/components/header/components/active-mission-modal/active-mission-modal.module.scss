@@ -1,3 +1,5 @@
+@import '../../../../variables';
+
 .modal {
   width: 90vw;
   max-width: 600px;
@@ -42,7 +44,7 @@
       background-color: #000;
       font-size: 2em;
 
-      @media (min-width: 600px) {
+      @media (min-width: $breakpoint-desktop) {
         font-size: 3em;
       }
 
