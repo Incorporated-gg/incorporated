@@ -11,8 +11,4 @@
     grid-template-columns: 1fr 1fr;
   }
 
-  @media (max-width: $breakpoint-extrasmall - 1px) {
-    grid-template-columns: 1fr;
-  }
-
 }

@@ -1,8 +1,8 @@
 @import './mixins.scss';
 
 // Screen sizes
-$breakpoint-extrasmall: 350px;
 $breakpoint-small: 425px;
+$breakpoint-medium: 768px;
 $breakpoint-desktop: 1024px;
 
 // the :export directive is the magic sauce for webpack

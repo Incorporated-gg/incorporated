@@ -3,7 +3,16 @@
   <head>
     <meta charset="utf-8" />
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <meta id="myViewport" name="viewport" content="width=device-width, user-scalable=no, viewport-fit=cover" />
+    <script>
+      var minimumWidth = 375;
+      function updateViewportMinWidth() {
+        var newContentWidth = 'width=' + (screen.width < minimumWidth ? minimumWidth :  'device-width')
+        document.getElementById('myViewport').setAttribute('content', newContentWidth + ', user-scalable=no, viewport-fit=cover');
+      }
+      window.addEventListener('resize', updateViewportMinWidth)
+      updateViewportMinWidth()
+    </script>
     <meta name="theme-color" content="#343434" />
     <meta
       name="description"

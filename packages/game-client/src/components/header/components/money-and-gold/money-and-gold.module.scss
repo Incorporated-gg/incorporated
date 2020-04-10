@@ -21,7 +21,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 3px;
+    padding: 6px 3px;
     font-size: $font-size-medium;
     line-height: 1em;
     font-weight: 700;
@@ -40,7 +40,7 @@
 
   .headerStatIcon svg {
     margin-left: 3px;
-    height: 12px;
+    height: 14px;
     width: auto;
     vertical-align: middle;
   }
