@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 
 ProgressBar.propTypes = {
   progressPercentage: PropTypes.number.isRequired,
-  direction: PropTypes.oneOf('vertical', 'horizontal').isRequired,
+  direction: PropTypes.oneOf(['vertical', 'horizontal']).isRequired,
   children: PropTypes.node,
 }
 export default function ProgressBar({ progressPercentage, direction, children }) {

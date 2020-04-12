@@ -56,9 +56,10 @@ export default function Ranking() {
 
   return (
     <>
+      <AllianceDetails alliance={alliance} />
+      <br />
       <Container darkBg>
         <div className={styles.container}>
-          <AllianceDetails alliance={alliance} />
           {!userData.alliance ? (
             <button onClick={createMemberRequest}>Pedir ser miembro</button>
           ) : userData.alliance.id === alliance.id ? (

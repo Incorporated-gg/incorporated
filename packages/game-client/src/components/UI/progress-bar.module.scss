@@ -56,7 +56,7 @@
       }
 
       .shadow {
-        background: linear-gradient(90deg, transparent 65%, rgba(0, 0, 0, 0.12) 80%);
+        background: linear-gradient(-90deg, transparent 65%, rgba(0, 0, 0, 0.12) 80%);
       }
     }
   }
@@ -72,7 +72,7 @@
     bottom: 0;
     left: 0;
     background: $gradient-green-vertical;
-    transition: height ease-in-out .3s;
+    transition: height ease-in-out .3s, width ease-in-out .3s;
   }
 
   .shadow {

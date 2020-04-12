@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react'
 import api from '../../../lib/api'
 import PropTypes from 'prop-types'
+import Container from 'components/UI/container'
 
 MemberRequests.propTypes = {
   reloadAllianceData: PropTypes.func.isRequired,
@@ -8,7 +9,7 @@ MemberRequests.propTypes = {
 
 export default function MemberRequests({ reloadAllianceData }) {
   const [error, setError] = useState(null)
-  const [memberRequests, setMemberRequests] = useState(null)
+  const [memberRequests, setMemberRequests] = useState([])
 
   const reloadMemberRequests = useCallback(() => {
     api
@@ -34,13 +35,14 @@ export default function MemberRequests({ reloadAllianceData }) {
   }
 
   if (error) return <p>{error}</p>
+  if (!memberRequests.length) return null
   return (
-    <div>
-      <h3>Peticiones de miembro</h3>
-      <table>
-        <tbody>
-          {memberRequests && memberRequests.length ? (
-            memberRequests.map(memberRequest => {
+    <Container darkBg outerStyle={{ marginBottom: 10 }}>
+      <div style={{ padding: 10 }}>
+        <h3>Solicitudes de membresía</h3>
+        <table>
+          <tbody>
+            {memberRequests.map(memberRequest => {
               return (
                 <tr key={memberRequest.id}>
                   <td>{memberRequest.username}</td>
@@ -50,14 +52,10 @@ export default function MemberRequests({ reloadAllianceData }) {
                   </td>
                 </tr>
               )
-            })
-          ) : (
-            <tr>
-              <td colSpan="99">No hay nuevas peticiones</td>
-            </tr>
-          )}
-        </tbody>
-      </table>
-    </div>
+            })}
+          </tbody>
+        </table>
+      </div>
+    </Container>
   )
 }

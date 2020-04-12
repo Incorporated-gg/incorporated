@@ -5,6 +5,7 @@ import { useUserData } from 'lib/user'
 import Container from 'components/UI/container'
 import UserLink from 'components/UI/UserLink'
 import AllianceResourceItem from 'components/alliance/alliance-resource-item/alliance-resource-item'
+import AllianceBuffs from 'components/alliance/alliance-buffs'
 
 AllianceResources.propTypes = {
   alliance: PropTypes.object.isRequired,
@@ -30,6 +31,10 @@ export default function AllianceResources({ alliance, reloadAllianceData }) {
           })}
         </div>
       </Container>
+      <br />
+      {userData.alliance_user_rank.permission_activate_buffs && (
+        <AllianceBuffs alliance={alliance} reloadAllianceData={reloadAllianceData} />
+      )}
       <br />
       <Container darkBg>
         <div style={{ padding: 10 }}>

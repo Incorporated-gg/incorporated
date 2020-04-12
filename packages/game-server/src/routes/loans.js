@@ -63,6 +63,11 @@ module.exports = app => {
       return
     }
 
+    if (moneyAmount > req.userData.money) {
+      res.status(400).json({ error: 'No tienes suficiente dinero' })
+      return
+    }
+
     const [userHasLoan] = await mysql.query('SELECT 1 FROM loans WHERE lender_id=?', [lenderID])
     if (userHasLoan) {
       res.status(400).json({ error: 'Ya tienes un préstamo activo' })

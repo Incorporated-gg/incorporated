@@ -2,12 +2,16 @@ import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import api from 'lib/api'
 import { reloadUserData } from 'lib/user'
+import Container from 'components/UI/container'
+import IncButton from 'components/UI/inc-button'
+import { useHistory } from 'react-router-dom'
 
-AllianceRankEdit.propTypes = {
+AllianceEditMembers.propTypes = {
   alliance: PropTypes.object.isRequired,
   reloadAllianceData: PropTypes.func.isRequired,
 }
-export default function AllianceRankEdit({ alliance, reloadAllianceData }) {
+export default function AllianceEditMembers({ alliance, reloadAllianceData }) {
+  const history = useHistory()
   const defaultRankEdits = {}
   alliance.ranks.forEach(rankMember => {
     defaultRankEdits[rankMember.user.id] = { ...rankMember.rank }
@@ -75,60 +79,71 @@ export default function AllianceRankEdit({ alliance, reloadAllianceData }) {
     permission_declare_war: 'Declarar guerra',
   }
 
+  const exitPressed = () => {
+    history.push('/alliance')
+  }
+
   return (
-    <div>
-      <h3>Editar miembros</h3>
-      <table>
-        <thead>
-          <tr>
-            <th>Miembro</th>
-            <th>Nombre de rol</th>
-            {permissionsList.map(permissionName => (
-              <th key={permissionName}>{permissionsIDToName[permissionName] || permissionName}</th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {alliance.ranks.map(rankMember => {
-            const rankEdit = rankEdits[rankMember.user.id]
-            return (
-              <tr key={rankMember.user.id}>
-                <td>
-                  <b>{rankMember.user.username}</b>
-                </td>
-                <td>
-                  <label>
-                    <input
-                      type="text"
-                      value={rankEdit ? rankEdit.rank_name : rankMember.rank_name}
-                      onChange={changeRankName(rankMember)}
-                    />
-                  </label>
-                </td>
-                {permissionsList.map(permissionName => {
-                  return (
-                    <td key={permissionName}>
+    <>
+      <IncButton outerStyle={{ display: 'block', marginBottom: 10, textAlign: 'center' }} onClick={exitPressed}>
+        VOLVER
+      </IncButton>
+      <Container darkBg>
+        <div style={{ padding: 10 }}>
+          <h3>Editar miembros</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Miembro</th>
+                <th>Nombre de rol</th>
+                {permissionsList.map(permissionName => (
+                  <th key={permissionName}>{permissionsIDToName[permissionName] || permissionName}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {alliance.ranks.map(rankMember => {
+                const rankEdit = rankEdits[rankMember.user.id]
+                return (
+                  <tr key={rankMember.user.id}>
+                    <td>
+                      <b>{rankMember.user.username}</b>
+                    </td>
+                    <td>
                       <label>
                         <input
-                          type="checkbox"
-                          checked={rankEdit ? rankEdit[permissionName] : rankMember[permissionName]}
-                          onChange={changePermission(rankMember, permissionName)}
+                          type="text"
+                          value={rankEdit ? rankEdit.rank_name : rankMember.rank_name}
+                          onChange={changeRankName(rankMember)}
                         />
                       </label>
                     </td>
-                  )
-                })}
-                <td>
-                  <button onClick={saveRankEdit(rankMember)}>Guardar</button>
-                </td>
-                <td>
-                  <button onClick={kickMember(rankMember)}>Echar</button>
-                </td>
-              </tr>
-            )
-          })}
-        </tbody>
-      </table>
-    </div>
+                    {permissionsList.map(permissionName => {
+                      return (
+                        <td key={permissionName}>
+                          <label>
+                            <input
+                              type="checkbox"
+                              checked={rankEdit ? rankEdit[permissionName] : rankMember[permissionName]}
+                              onChange={changePermission(rankMember, permissionName)}
+                            />
+                          </label>
+                        </td>
+                      )
+                    })}
+                    <td>
+                      <button onClick={saveRankEdit(rankMember)}>Guardar</button>
+                    </td>
+                    <td>
+                      <button onClick={kickMember(rankMember)}>Echar</button>
+                    </td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
+        </div>
+      </Container>
+    </>
   )
 }

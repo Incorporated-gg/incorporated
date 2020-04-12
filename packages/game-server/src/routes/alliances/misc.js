@@ -42,7 +42,7 @@ module.exports = app => {
       return
     }
 
-    const isValidDescription = typeof description === 'string' && description.length >= 0 && description.length <= 1000
+    const isValidDescription = checkIsDescriptionValid(description)
     if (!isValidDescription) {
       res.status(400).json({ error: 'Descripción inválida' })
       return
@@ -244,4 +244,35 @@ module.exports = app => {
 
     res.json({ success: true })
   })
+
+  app.post('/v1/alliance/change_description', async function(req, res) {
+    if (!req.userData) {
+      res.status(401).json({ error: 'Necesitas estar conectado', error_code: 'not_logged_in' })
+      return
+    }
+
+    const userRank = await alliances.getUserRank(req.userData.id)
+    if (!userRank || !userRank.permission_admin) {
+      res.status(401).json({ error: 'No tienes permiso para hacer esto' })
+      return
+    }
+
+    if (!req.body.description) req.body.description = ''
+
+    const description = req.body.description
+
+    const isValidDescription = checkIsDescriptionValid(description)
+    if (!isValidDescription) {
+      res.status(400).json({ error: 'Descripción inválida' })
+      return
+    }
+
+    await mysql.query('UPDATE alliances SET description=? WHERE id=?', [description, userRank.alliance_id])
+
+    res.json({ success: true })
+  })
+}
+
+function checkIsDescriptionValid(description) {
+  return typeof description === 'string' && description.length >= 0 && description.length <= 1000
 }

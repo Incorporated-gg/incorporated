@@ -12,6 +12,7 @@ export default function useHoldPress({ callback, ms, rampUpMs, initialMs, endMs 
     if (pressedInterval.current) return
     callback()
     const timingFn = ms ? () => ms : msElapsed => mapNumberRange(msElapsed, 0, rampUpMs, initialMs, endMs)
+    pressedInterval.current && pressedInterval.current.stop()
     pressedInterval.current = setVariableInterval(callback, timingFn)
   }, [callback, endMs, initialMs, ms, rampUpMs])
 

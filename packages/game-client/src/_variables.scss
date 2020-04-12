@@ -19,7 +19,8 @@ $font-size-xlarge: 28px;
 $font-size-xxlarge: 38px;
 
 // Colors
-$color-brand-light: #EECF82;
+$color-brand: #EECF82;
+$color-brand-light: #F6DEA0;
 $color-brand-dark: #DDAE52;
 $color-hairline: #FFD880;
 $gradient-brand: linear-gradient(180deg, $color-brand-light 0%, $color-brand-dark 100%);
@@ -30,6 +31,7 @@ $gradient-green-horizontal: linear-gradient(90deg, $color-green-light 0%, $color
 $gradient-green-vertical: linear-gradient(180deg, $color-green-light 0%, $color-green-dark 100%);
 
 $color-bg: #343434;
+$color-red: #A7000099;
 
 // Header specific
 $header--color-text: #fafafa;

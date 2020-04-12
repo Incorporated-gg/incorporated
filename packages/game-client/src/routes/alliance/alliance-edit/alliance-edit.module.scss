@@ -1,0 +1,20 @@
+@import '../../../variables';
+
+.saveButton {
+  text-align: center;
+  font-size: $font-size-large;
+}
+.deleteCorpButton {
+  color: $color-red;
+  text-align: center;
+  font-size: $font-size-large;
+}
+.descTextarea {
+  width: 100%;
+  min-height: 100px;
+  padding: 10px;
+  font-size: $font-size-large;
+  color: #fff;
+  // Disable default textarea styles from index.scss
+  border: none;
+}

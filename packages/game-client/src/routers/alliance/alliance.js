@@ -5,7 +5,8 @@ import AllianceResearch from 'routes/alliance/alliance-research'
 import AllianceResources from 'routes/alliance/alliance-resources'
 import AllianceHome from 'routes/alliance/alliance-home'
 import AllianceWars from 'routes/alliance/alliance-wars'
-import AllianceAdmin from 'routes/alliance/alliance-admin'
+import AllianceEdit from 'routes/alliance/alliance-edit/alliance-edit'
+import AllianceEditMembers from 'routes/alliance/alliance-edit-members/alliance-edit-members'
 
 AllianceRouter.propTypes = {
   alliance: PropTypes.object.isRequired,
@@ -21,11 +22,14 @@ export default function AllianceRouter({ alliance, reloadAllianceData }) {
         <Route path="/alliance/research">
           <AllianceResearch alliance={alliance} reloadAllianceData={reloadAllianceData} />
         </Route>
-        <Route path="/alliance/admin">
-          <AllianceAdmin alliance={alliance} reloadAllianceData={reloadAllianceData} />
-        </Route>
         <Route path="/alliance/wars">
           <AllianceWars alliance={alliance} reloadAllianceData={reloadAllianceData} />
+        </Route>
+        <Route path="/alliance/edit">
+          <AllianceEdit alliance={alliance} reloadAllianceData={reloadAllianceData} />
+        </Route>
+        <Route path="/alliance/edit-members">
+          <AllianceEditMembers alliance={alliance} reloadAllianceData={reloadAllianceData} />
         </Route>
         <Route path="/alliance">
           <AllianceHome alliance={alliance} reloadAllianceData={reloadAllianceData} />

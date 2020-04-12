@@ -1,0 +1,12 @@
+@import '../../variables';
+
+.button {
+  display: inline-block;
+  color: #00000099;
+  font-weight: 700;
+  cursor: pointer;
+}
+.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

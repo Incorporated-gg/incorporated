@@ -12,6 +12,7 @@ Container.propTypes = {
   style: PropTypes.object,
   outerStyle: PropTypes.object,
   outerClassName: PropTypes.string,
+  onClick: PropTypes.func,
 }
 
 export default function Container({
@@ -24,13 +25,14 @@ export default function Container({
   outerClassName = '',
   style = {},
   outerStyle = {},
+  onClick,
   ...props
 }) {
   outerStyle.padding = borderSize
   if (darkBg) style.padding = borderSize
 
   return (
-    <div className={`${styles.container} ${outerClassName}`} style={outerStyle} disabled={disabled}>
+    <div className={`${styles.container} ${outerClassName}`} style={outerStyle} disabled={disabled} onClick={onClick}>
       <div
         {...props}
         className={`${styles.inner} ${withHairline ? styles.withHairline : ''} ${

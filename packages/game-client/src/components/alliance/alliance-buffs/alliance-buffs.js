@@ -1,6 +1,8 @@
 import React from 'react'
 import Proptypes from 'prop-types'
 import api from 'lib/api'
+import Container from 'components/UI/container'
+import IncButton from 'components/UI/inc-button'
 
 AllianceBuffs.propTypes = {
   alliance: Proptypes.object.isRequired,
@@ -21,13 +23,15 @@ export default function AllianceBuffs({ alliance, reloadAllianceData }) {
       })
   }
   return (
-    <div>
-      <button onClick={activateBuff('attack')} disabled={!alliance.buffs_data.attack.can_activate}>
-        Activar buff de ataque
-      </button>{' '}
-      <button onClick={activateBuff('defense')} disabled={!alliance.buffs_data.defense.can_activate}>
-        Activar buff de defensa
-      </button>
-    </div>
+    <Container darkBg>
+      <div style={{ padding: 10 }}>
+        <IncButton onClick={activateBuff('attack')} disabled={!alliance.buffs_data.attack.can_activate}>
+          Activar buff de ataque
+        </IncButton>{' '}
+        <IncButton onClick={activateBuff('defense')} disabled={!alliance.buffs_data.defense.can_activate}>
+          Activar buff de defensa
+        </IncButton>
+      </div>
+    </Container>
   )
 }

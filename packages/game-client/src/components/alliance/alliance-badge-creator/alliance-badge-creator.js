@@ -1,42 +1,28 @@
-import React, { useState } from 'react'
-import api from 'lib/api'
+import React from 'react'
 import PropTypes from 'prop-types'
 import AllianceBadge from 'components/alliance/alliance-badge'
-import { reloadUserData } from 'lib/user'
+import Container from 'components/UI/container'
+import ColorSelection from './color-selection'
 
 AllianceBadgeCreator.propTypes = {
-  alliance: PropTypes.object.isRequired,
-  reloadAllianceData: PropTypes.func.isRequired,
+  badge: PropTypes.object,
+  setBadge: PropTypes.func.isRequired,
 }
-export default function AllianceBadgeCreator({ alliance, reloadAllianceData }) {
-  const [badge, setBadge] = useState(alliance.badge)
-  const saveBadge = () => {
-    api
-      .post('/v1/alliance/change_badge', {
-        badge,
-      })
-      .then(() => {
-        reloadAllianceData()
-        reloadUserData()
-      })
-      .catch(err => {
-        alert(err.message)
-      })
-  }
-
+export default function AllianceBadgeCreator({ badge, setBadge }) {
   return (
-    <div>
-      <h3>Creador de emblema</h3>
-      <h4>Fondo</h4>
-      <div>
-        <input
-          type="color"
-          value={badge.backgroundColor}
-          onChange={e => setBadge({ ...badge, backgroundColor: e.target.value })}
+    <Container darkBg>
+      <div style={{ padding: 10 }}>
+        <h4>Color Fondo</h4>
+        <ColorSelection
+          color={badge.backgroundColor}
+          setColor={color => setBadge({ ...badge, backgroundColor: color })}
         />
-      </div>
-      <h4>Icono</h4>
-      <div>
+        <h4>Color Icono</h4>
+        <ColorSelection
+          color={badge.icon.color}
+          setColor={color => setBadge({ ...badge, icon: { ...badge.icon, color: color } })}
+        />
+        <h4>Icono</h4>
         <input
           type="range"
           min="1"
@@ -45,15 +31,8 @@ export default function AllianceBadgeCreator({ alliance, reloadAllianceData }) {
           value={badge.icon.id}
           onChange={e => setBadge({ ...badge, icon: { ...badge.icon, id: e.target.value } })}
         />
-        <input
-          type="color"
-          value={badge.icon.color}
-          onChange={e => setBadge({ ...badge, icon: { ...badge.icon, color: e.target.value } })}
-        />
+        <AllianceBadge badge={badge} style={{ width: '4em', height: '4em', marginBottom: '1em' }} />
       </div>
-      <AllianceBadge badge={badge} style={{ width: '4em', height: '4em', marginBottom: '1em' }} />
-      <br />
-      <button onClick={saveBadge}>Guardar</button>
-    </div>
+    </Container>
   )
 }

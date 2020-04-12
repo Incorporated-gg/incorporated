@@ -8,12 +8,16 @@ import { useUserData, reloadUserData } from 'lib/user'
 import NewMessageModal from '../../../components/messages/components/new-message-modal'
 import Container from 'components/UI/container'
 import AllianceDetails from 'components/UI/alliance-details'
+import AllianceMemberRequests from 'components/alliance/alliance-member-requests'
+import IncButton from 'components/UI/inc-button'
+import { useHistory } from 'react-router-dom'
 
 AllianceHome.propTypes = {
   alliance: PropTypes.object.isRequired,
   reloadAllianceData: PropTypes.func.isRequired,
 }
 export default function AllianceHome({ alliance, reloadAllianceData }) {
+  const history = useHistory()
   const userData = useUserData()
   const [showMessageModal, setShowMessageModal] = useState(false)
   const leaveAlliance = () => {
@@ -28,22 +32,32 @@ export default function AllianceHome({ alliance, reloadAllianceData }) {
         alert(err.message)
       })
   }
+  const editMembersPressed = () => {
+    history.push('/alliance/edit-members')
+  }
 
   return (
     <>
-      <Container darkBg>
-        <div className={styles.container}>
-          <AllianceDetails alliance={alliance} />
-          {userData.alliance_user_rank.permission_send_circular_msg && (
-            <button onClick={() => setShowMessageModal(true)}>Enviar mensaje circular</button>
-          )}{' '}
-          <button onClick={leaveAlliance}>Salir</button>
-        </div>
-      </Container>
+      <AllianceDetails alliance={alliance} />
       <br />
+      {userData.alliance_user_rank.permission_accept_and_kick_members && (
+        <AllianceMemberRequests reloadAllianceData={reloadAllianceData} />
+      )}
       <Container darkBg>
         <div className={`${styles.container} ${styles.membersContainer}`}>
-          <h3>Miembros</h3>
+          <h3>Lista de miembros</h3>
+          <IncButton
+            outerStyle={{ float: 'right' }}
+            style={{ padding: '5px 20px' }}
+            onClick={() => setShowMessageModal(true)}>
+            Mandar circular
+          </IncButton>
+          <IncButton
+            outerStyle={{ float: 'right', marginRight: 10 }}
+            style={{ padding: '5px 20px' }}
+            onClick={editMembersPressed}>
+            Editar
+          </IncButton>
           {alliance.members.map(member => {
             return (
               <RankItem
@@ -57,6 +71,13 @@ export default function AllianceHome({ alliance, reloadAllianceData }) {
           })}
         </div>
       </Container>
+      <br />
+      <Container darkBg>
+        <div className={styles.container}>
+          <IncButton onClick={leaveAlliance}>Salir</IncButton>
+        </div>
+      </Container>
+
       <NewMessageModal
         user={{ username: `alliance:${alliance.short_name}` }}
         isOpen={showMessageModal}

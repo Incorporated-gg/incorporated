@@ -81,6 +81,12 @@ module.exports = app => {
     }
 
     const userID = await users.getIDFromUsername(req.query.username)
+
+    if (!userID) {
+      res.status(401).json({ error: 'Usuario no encontrado' })
+      return
+    }
+
     const userData = await users.getData(userID)
 
     res.json({
@@ -95,6 +101,12 @@ module.exports = app => {
     }
 
     const allianceID = await alliances.getIDFromShortName(req.params.allianceShortName)
+
+    if (!allianceID) {
+      res.status(401).json({ error: 'Alianza no encontrada' })
+      return
+    }
+
     const [basicData, members, activeWars, pastWars, allianceHoods] = await Promise.all([
       alliances.getBasicData(allianceID),
       alliances.getMembers(allianceID),

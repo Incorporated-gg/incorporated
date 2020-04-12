@@ -75,6 +75,7 @@ export default [
       {
         path: '/alliance',
         alt: 'Inicio',
+        alternativePaths: ['/alliance/edit', '/alliance/edit-members'],
       },
       {
         path: '/alliance/resources',
@@ -87,10 +88,6 @@ export default [
       {
         path: '/alliance/wars',
         alt: 'Guerras',
-      },
-      {
-        path: '/alliance/admin',
-        alt: 'Admin',
       },
     ],
   },
