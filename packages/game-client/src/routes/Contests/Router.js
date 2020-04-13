@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { Switch, Route, NavLink } from 'react-router-dom'
 import api from '../../lib/api'
+import styles from './contests.module.scss'
 
 import Monopolies from './Monopolies'
 import Contest from './Contest'
+import Container from 'components/UI/container'
 
 export default function ContestsRouter() {
   const [contests, setContests] = useState([])
@@ -19,19 +21,21 @@ export default function ContestsRouter() {
   }, [])
   return (
     <>
-      <nav className="sub-menu">
-        <ul>
-          <li>
-            <NavLink to="/contests/monopolies">Monopolios</NavLink>
-          </li>
+      <Container darkBg>
+        <div style={{ display: 'flex' }}>
+          <NavLink className={styles.subMenuItem} to="/contests/monopolies">
+            Monopolios
+          </NavLink>
           {contests &&
             contests.map(contest => (
               <li key={contest.id}>
-                <NavLink to={`/contests/${contest.name}`}>{contest.name}</NavLink>
+                <NavLink className={styles.subMenuItem} to={`/contests/${contest.name}`}>
+                  {contest.name}
+                </NavLink>
               </li>
             ))}
-        </ul>
-      </nav>
+        </div>
+      </Container>
       <br />
       {error && <h4>{error}</h4>}
 

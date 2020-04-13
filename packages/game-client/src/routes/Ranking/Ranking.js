@@ -44,7 +44,8 @@ export default function Ranking() {
           <RankItem
             key={rankItem.user ? rankItem.user.id : rankItem.alliance ? rankItem.alliance.id : Math.random()}
             rank={rankItem.rank}
-            pointsString={rankItem.points.toLocaleString() + (type === 'income' ? '€' : '')}>
+            pointsType={type}
+            points={rankItem.points}>
             {rankingItemType === 'users' && <UserLink user={rankItem.user} />}
             {rankingItemType === 'alliances' && <AllianceLink alliance={rankItem.alliance} type="shortAndLongName" />}
           </RankItem>
@@ -102,7 +103,7 @@ function SearchUsers() {
               users &&
               users.map(user => {
                 return (
-                  <RankItem key={user.id} rank={user.rank_position} pointsString={user.income.toLocaleString() + '€'}>
+                  <RankItem key={user.id} rank={user.rank_position} pointsType="income" points={user.income}>
                     <UserLink user={user} />
                   </RankItem>
                 )

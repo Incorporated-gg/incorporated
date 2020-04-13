@@ -35,13 +35,14 @@
 
   .chevron {
     background-color: $color-bg;
-    padding: 5px;
+    padding: 3px;
+    padding-left: 5px;
     padding-right: 15px;
     clip-path: polygon(100% 0%, 75% 50%, 100% 100%, 0 100%, 0 0);
 
     svg {
-      width: 25px;
-      height: 17px;
+      width: 20px;
+      height: 16px;
     }
   }
 }

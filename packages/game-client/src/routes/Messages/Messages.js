@@ -2,34 +2,33 @@ import React, { useState } from 'react'
 import { Switch, Route, NavLink } from 'react-router-dom'
 import MessagesList from 'components/messages/components/messages-list'
 import NewMessageModal from 'components/messages/components/new-message-modal'
+import Container from 'components/UI/container'
+import styles from './messages.module.scss'
 
 export default function Messages() {
   const [showNewMessageModal, setShowNewMessageModal] = useState(false)
 
   return (
     <>
-      <nav className="sub-menu">
-        <ul>
-          <li>
-            <NavLink to="/messages" exact>
-              Recibidos
-            </NavLink>
-          </li>
-          <li>
-            <NavLink to="/messages/sent">Enviados</NavLink>
-          </li>
-          <li>
-            <a
-              href=" "
-              onClick={e => {
-                e.preventDefault()
-                setShowNewMessageModal(true)
-              }}>
-              Escribir
-            </a>
-          </li>
-        </ul>
-      </nav>
+      <Container darkBg>
+        <div style={{ display: 'flex' }}>
+          <NavLink className={styles.subMenuItem} to="/messages" exact>
+            Recibidos
+          </NavLink>
+          <NavLink className={styles.subMenuItem} to="/messages/sent" exact>
+            Enviados
+          </NavLink>
+          <a
+            className={styles.subMenuItem}
+            href=" "
+            onClick={e => {
+              e.preventDefault()
+              setShowNewMessageModal(true)
+            }}>
+            Escribir
+          </a>
+        </div>
+      </Container>
 
       <NewMessageModal isOpen={showNewMessageModal} onRequestClose={() => setShowNewMessageModal(false)} />
 

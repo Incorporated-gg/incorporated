@@ -1,3 +1,5 @@
+@import '../../variables';
+
 .rankingContainer {
     width: 100%;
     padding: 0 0.5em;
@@ -5,3 +7,15 @@
 .monopolies {
     padding: 10px;
 }
+
+.subMenuItem {
+    flex-grow: 1;
+    padding: 10px;
+    text-align: center;
+    font-family: $font-family-title;
+    font-weight: 400;
+    font-size: $font-size-large;
+    &:global(.active) {
+      color: $color-brand-light;
+    }
+  }

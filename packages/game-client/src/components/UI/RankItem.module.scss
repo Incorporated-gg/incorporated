@@ -2,7 +2,7 @@
 
 .rankingItem {
   display: grid;
-  grid-template-columns: auto 1fr 1fr;
+  grid-template-columns: auto 1fr 0.5fr;
   align-items: center;
   width: 100%;
   padding: 5px;
@@ -37,4 +37,19 @@
 }
 .username {
   margin-left: 5px;
+}
+.pointsContainer {
+  text-align: center;
+  padding: 1px!important;
+  position: relative;
+
+  .icon {
+    position: absolute;
+    right: -20px;
+    top: 0;
+    svg {
+      height: 20px;
+      width: auto;
+    }
+  }
 }

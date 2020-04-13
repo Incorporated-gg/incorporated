@@ -47,11 +47,11 @@ export default function WarInfo({ war }) {
 
   return (
     <div>
+      <div className={styles.declaredOnText}>Comenzó día {getServerDay(war.created_at * 1000) + 1}</div>
       <h2>
-        <AllianceLink alliance={war.alliance1} />
-        {' VS '}
-        <AllianceLink alliance={war.alliance2} />
-        <span className={styles.declaredOnText}>Comenzó día {getServerDay(war.created_at * 1000) + 1}</span>
+        <AllianceLink type="bigBadge" alliance={war.alliance1} />
+        <span>{' VS '}</span>
+        <AllianceLink type="bigBadge" alliance={war.alliance2} />
       </h2>
       {!hasStarted && <div>La guerra se ha declarado hoy y comenzará mañana</div>}
       <div>Barrios bajo ataque: {war.hoods.map(hood => hood.name).join(', ')}</div>

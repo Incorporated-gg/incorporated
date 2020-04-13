@@ -79,7 +79,8 @@ export default function Ranking() {
               <RankItem
                 key={member.user.id}
                 rank={member.user.rank_position}
-                pointsString={member.user.income.toLocaleString() + '€'}>
+                pointsType="income"
+                points={member.user.income}>
                 <div>
                   <UserLink user={member.user} />
                 </div>

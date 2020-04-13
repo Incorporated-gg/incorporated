@@ -63,7 +63,8 @@ export default function AllianceHome({ alliance, reloadAllianceData }) {
               <RankItem
                 key={member.user.id}
                 rank={member.user.rank_position}
-                pointsString={member.user.income.toLocaleString() + '€'}>
+                pointsType="income"
+                points={member.user.income}>
                 <UserLink user={member.user} />
                 <span style={{ marginLeft: 10 }}>{member.rank_name}</span>
               </RankItem>

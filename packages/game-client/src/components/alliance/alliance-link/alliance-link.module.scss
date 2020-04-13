@@ -22,3 +22,14 @@
     font-size: $font-size-small;
   }
 }
+
+.bigBadgeContainer {
+  flex-direction: column;
+  align-items: center;
+  
+  .bigBadgeBadge {
+    display: block;
+    width: 80px;
+    height: 80px;
+  }
+}

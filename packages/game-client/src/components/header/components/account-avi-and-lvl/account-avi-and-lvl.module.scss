@@ -28,13 +28,19 @@
     top: 4px;
     left: 4px;
     width: calc(100% - 8px);
-    padding: 3px;
-    font-size: $font-size-xsmall;
+    padding: 2px;
+    font-size: 11px;
     font-weight: 700;
     color: #fff;
     display: flex;
     background-color: #343434B2;
     justify-content: space-between;
+    >span {
+      word-break: keep-all;
+      &:first-of-type {
+        padding-right: 3px;
+      }
+    }
   }
 }
 
