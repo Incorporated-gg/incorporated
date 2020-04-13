@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import PropTypes from 'prop-types'
-import { getServerDay, getServerDate } from 'shared-lib/serverTime'
+import { getServerDay } from 'shared-lib/serverTime'
 import api from 'lib/api'
 import NewsArticle from './components/news-article'
 import styles from './newspaper.module.scss'

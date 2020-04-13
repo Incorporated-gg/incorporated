@@ -1,4 +1,5 @@
 import { hoods } from '../../lib/map'
+import { parseBadgeFromUserRequest } from '../../lib/db/alliances/badge'
 const mysql = require('../../lib/mysql')
 const alliances = require('../../lib/db/alliances')
 const { sendMessage } = require('../../lib/db/users')
@@ -238,8 +239,13 @@ module.exports = app => {
       return
     }
 
-    const badge = req.body.badge
-    // TODO: Sanitize input. Make sure badge is correct
+    let badge
+    try {
+      badge = parseBadgeFromUserRequest(req.body.badge)
+    } catch (e) {
+      res.status(400).json({ error: e.message })
+      return
+    }
     await mysql.query('UPDATE alliances SET badge_json=? WHERE id=?', [JSON.stringify(badge), userRank.alliance_id])
 
     res.json({ success: true })

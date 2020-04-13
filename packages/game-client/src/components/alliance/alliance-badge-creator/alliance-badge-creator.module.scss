@@ -1,0 +1,30 @@
+@import '../../../variables';
+
+.container {
+  display: flex;
+}
+.badgePreviewContainer {
+  background-color: $color-bg;
+  padding: 10px;
+  .badgePreview {
+    width: 80px;
+    height: 80px;
+  }
+}
+.iconsSelectionContainer {
+  margin-top: 10px;
+  display: flex;
+  background-color: $color-bg;
+  padding: 10px;
+}
+.colorSelectionContainer {
+  width: 100%;
+  margin-left: 10px;
+  background-color: $color-bg;
+  padding: 10px;
+  .title {
+    font-family: $font-family-title;
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+}

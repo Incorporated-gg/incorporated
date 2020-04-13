@@ -1,6 +1,7 @@
-import { hoods } from '../map'
-const mysql = require('../mysql')
-const users = require('./users')
+import { hoods } from '../../map'
+import { parseBadgeJSONFromDB } from './badge'
+const mysql = require('../../mysql')
+const users = require('../users')
 const { RESEARCHS_LIST, RESOURCES_LIST, calcResearchPrice } = require('shared-lib/allianceUtils')
 
 export const MAX_MEMBERS = 10
@@ -54,15 +55,7 @@ export async function getBasicData(allianceID) {
     long_name: allianceQuery.long_name,
     short_name: allianceQuery.short_name,
     description: allianceQuery.description,
-    badge: allianceQuery.badge_json
-      ? JSON.parse(allianceQuery.badge_json)
-      : {
-          backgroundColor: '#6b30c3',
-          icon: {
-            id: 1,
-            color: '#ffffff',
-          },
-        },
+    badge: parseBadgeJSONFromDB(allianceQuery.badge_json),
   }
 }
 

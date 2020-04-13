@@ -3,6 +3,12 @@
   vertical-align: middle;
   position: relative;
 }
+
+// Global so it applies to alliance-badge-creator
+:global(svg .secondary) {
+  fill: currentColor;
+}
+
 .icon {
   position: absolute;
   top: 0;
