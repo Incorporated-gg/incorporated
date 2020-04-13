@@ -11,12 +11,14 @@ $breakpoint-desktop: 1024px;
 }
 
 // Font sizes. Ratio: 1.3333
-$font-size-xsmall: 9px;
+$font-size-xsmall: 10px;
 $font-size-small: 12px;
 $font-size-medium: 16px;
 $font-size-large: 21px;
 $font-size-xlarge: 28px;
 $font-size-xxlarge: 38px;
+
+$font-family-title: 'Oswald', 'Lato', Arial, 'sans-serif';
 
 // Colors
 $color-brand: #EECF82;
@@ -30,6 +32,7 @@ $color-green-dark: #00793C;
 $gradient-green-horizontal: linear-gradient(90deg, $color-green-light 0%, $color-green-dark 100%);
 $gradient-green-vertical: linear-gradient(180deg, $color-green-light 0%, $color-green-dark 100%);
 
+$color-text-light: #FFF8E6;
 $color-bg: #343434;
 $color-red: #A7000099;
 

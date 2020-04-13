@@ -28,9 +28,8 @@
     font-weight: 700;
     padding-left: 5px;
     font-size: $font-size-large;
-
-    @media (max-width: 480px) {
-      font-size: inherit;
+    @media (max-width: $breakpoint-small - 1) {
+      font-size: $font-size-small;
     }
   }
 

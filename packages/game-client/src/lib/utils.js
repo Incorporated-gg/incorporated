@@ -14,14 +14,14 @@ export function numberToAbbreviation(number) {
   number = Math.abs(number)
 
   if (number >= 1e6) {
+    let numStr
     if (number >= 1e9) {
       // Multi millions, after 1000M. No decimals
-      return symbolStr + Math.floor(number / 1e6) + 'M'
+      numStr = Math.floor(number / 1e6).toLocaleString()
+    } else {
+      // Millions, between 1M and 1000M. 1 decimal
+      numStr = (Math.floor((number / 1e6) * 10) / 10).toLocaleString()
     }
-
-    // Millions, between 1M and 1000M
-    let numStr = (Math.floor((number / 1e6) * 100) / 100).toLocaleString()
-    if (numStr.includes('.') || numStr.includes(',')) numStr = numStr.padEnd(4, '0')
     return symbolStr + numStr + 'M'
   }
 

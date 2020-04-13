@@ -1,3 +1,5 @@
+@import '../../variables';
+
 .container {
   display: inline-flex;
   align-items: center;
@@ -20,7 +22,7 @@
   }
 
   .usernameLink {
-    color: #FFF8E6;
+    color: $color-text-light;
     margin: 0.1em 0;
     display: block;
     text-transform: capitalize;

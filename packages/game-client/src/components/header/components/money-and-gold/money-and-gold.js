@@ -8,12 +8,12 @@ import { numberToAbbreviation } from 'lib/utils'
 export default function MoneyAndGold() {
   return (
     <div className={styles.moneyAndGoldContainer}>
-      <Container withHairline darkBg outerClassName={styles.statContainer}>
+      <Container borderSize={4} withHairline darkBg outerClassName={styles.statContainer}>
         <div className={styles.stat}>
           <MyGold /> <Icon iconName="gold" className={styles.headerStatIcon} />
         </div>
       </Container>
-      <Container withHairline darkBg outerClassName={styles.statContainer}>
+      <Container borderSize={4} withHairline darkBg outerClassName={styles.statContainer}>
         <div className={styles.stat}>
           <MyMoney /> <Icon iconName="money" className={styles.headerStatIcon} />
         </div>

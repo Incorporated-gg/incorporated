@@ -13,7 +13,7 @@ export default function HeaderRightButtons({ setIsActiveTasksModalOpen }) {
   return (
     <div className={styles.rightButtonsContainer}>
       <Link className={styles.rightButtonContainer} to="/finances">
-        <Container withHairline className={styles.rightButtonInner}>
+        <Container borderSize={4} withHairline className={styles.rightButtonInner}>
           <div className={styles.chevron}>
             <Icon svg={require('./img/finances.svg')} alt="Finances" />
           </div>
@@ -23,8 +23,8 @@ export default function HeaderRightButtons({ setIsActiveTasksModalOpen }) {
       <div
         className={styles.rightButtonContainer}
         onClick={() => setIsActiveTasksModalOpen(true)}
-        style={{ cursor: 'pointer', marginTop: 10 }}>
-        <Container withHairline className={styles.rightButtonInner}>
+        style={{ cursor: 'pointer', marginTop: 5 }}>
+        <Container borderSize={4} withHairline className={styles.rightButtonInner}>
           <div className={styles.chevron}>
             <Icon svg={require('./img/tasks.svg')} alt="Tareas" />
           </div>

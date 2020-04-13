@@ -29,7 +29,7 @@ export default function Container({
   ...props
 }) {
   outerStyle.padding = borderSize
-  if (darkBg) style.padding = borderSize
+  style.padding = borderSize
 
   return (
     <div className={`${styles.container} ${outerClassName}`} style={outerStyle} disabled={disabled} onClick={onClick}>

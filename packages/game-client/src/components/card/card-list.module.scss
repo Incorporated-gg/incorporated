@@ -1,11 +1,11 @@
 @import '../../variables';
 
 .grid {
-  margin: 3em 0;
+  margin: 2em 0;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   column-gap: 1em;
-  row-gap: 3em;
+  row-gap: 2em;
 
   @media (max-width: 550px) {
     grid-template-columns: 1fr 1fr;

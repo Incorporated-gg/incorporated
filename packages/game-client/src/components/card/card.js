@@ -6,13 +6,12 @@ Card.propTypes = {
   image: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   ribbon: PropTypes.string.isRequired,
-  desc: PropTypes.oneOfType([PropTypes.string, PropTypes.node]).isRequired,
   children: PropTypes.node,
   disabled: PropTypes.bool,
   colorful: PropTypes.bool,
 }
 
-export default function Card({ image, title, ribbon, desc, children, disabled = false, colorful = false }) {
+export default function Card({ image, title, ribbon, children, disabled = false, colorful = false }) {
   const ribbonSizeClass = ribbon.length > 2 ? styles.moreThan2Chars : ''
   return (
     <div className={`${styles.card} ${colorful ? styles.cardColorful : ''} ${disabled ? styles.cardDisabled : ''}`}>
@@ -25,7 +24,6 @@ export default function Card({ image, title, ribbon, desc, children, disabled = 
 
       <div className={styles.darkBg}>
         <div className={`titleText gradient pascal ${styles.name}`}>{title}</div>
-        <div className={styles.description}>{desc}</div>
         <div className={styles.children}>{children}</div>
       </div>
     </div>

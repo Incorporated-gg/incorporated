@@ -45,8 +45,9 @@ function apiFetch(apiUrl, method, url, payload = {}) {
         .join('&')
   }
 
-  lastApiCallID = Math.random()
-  return window.fetch(`${apiUrl}${url}`, { method, headers, body }).then(res => parseApiResponse(lastApiCallID, res))
+  const apiCallID = Math.random()
+  lastApiCallID = apiCallID
+  return window.fetch(`${apiUrl}${url}`, { method, headers, body }).then(res => parseApiResponse(apiCallID, res))
 }
 
 async function parseApiResponse(apiCallID, res) {

@@ -9,7 +9,7 @@ import Icon from 'components/icon'
 import Container from 'components/UI/container'
 
 const personnelImages = {
-  sabots: require('./img/sabot.png'),
+  sabots: require('./img/gangster.png'),
   guards: require('./img/guard.png'),
   spies: require('./img/spy.png'),
   thieves: require('./img/thief.png'),
@@ -52,9 +52,9 @@ export default function PersonnelItem({ personnelInfo, resourceAmount }) {
     <Card
       image={personnelImages[personnelInfo.resource_id]}
       title={personnelInfo.name}
-      ribbon={resourceAmount.toLocaleString()}
-      desc={personnelDesc[personnelInfo.resource_id]}>
+      ribbon={resourceAmount.toLocaleString()}>
       <div>
+        <div>{personnelDesc[personnelInfo.resource_id]}</div>
         <div className={styles.statTitle}>Coste diario actual</div>
         <div>
           {(personnelInfo.dailyMaintenanceCost * resourceAmount).toLocaleString()} <Icon iconName="money" size={16} />

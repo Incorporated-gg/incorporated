@@ -44,7 +44,7 @@
   .detailsText {
     margin-top: 3px;
     font-size: $font-size-small;
-    color: #FFF8E6;
+    color: $color-text-light;
     font-weight: 700;
   }
 
@@ -52,7 +52,7 @@
 
 .separator {
   grid-column: 1 / 4;
-  border-bottom: 2px solid #FFF8E6;
+  border-bottom: 2px solid $color-text-light;
   opacity: 0.2;
   margin: 10px 0;
 }

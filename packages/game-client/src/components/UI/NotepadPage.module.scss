@@ -1,8 +1,10 @@
+@import '../../variables';
+
 .container {
   position: relative;
   padding: 10px;
   padding-top: 30px; // 20px for the header + normal padding
-  background-color: #FFF8E6;
+  background-color: $color-text-light;
   color: #343434;
   overflow: hidden;
   border-top: 3px solid #595959;

@@ -39,8 +39,8 @@ export default function ResearchItem({ researchID }) {
       cost={cost.toLocaleString()}
       title={researchInfo.name}
       ribbon={`Lvl. ${level.toLocaleString()}`}
-      desc={<ResearchEffectsInfo researchID={researchID} currentLevel={level} price={cost} />}
       image={researchImages[researchID]}>
+      <ResearchEffectsInfo researchID={researchID} currentLevel={level} price={cost} />
       <TimerButtonNumber
         finishesAt={upgrade && upgrade.finishes_at}
         researchID={researchID}

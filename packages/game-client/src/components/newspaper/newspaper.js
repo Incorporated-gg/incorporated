@@ -75,25 +75,3 @@ function NewspaperGrainFilterDeclaration() {
     </svg>
   )
 }
-
-function ServerTime() {
-  const [reloaded, reload] = useState()
-  useEffect(() => {
-    const timeout = setTimeout(reload, 1000, {})
-    return () => clearTimeout(timeout)
-  }, [reloaded])
-
-  const serverDate = getServerDate()
-
-  function pad(number) {
-    return number.toString().padStart(2, '0')
-  }
-
-  const currentServerDay = getServerDay()
-
-  return (
-    <div>
-      Día {currentServerDay}. Hora server: {pad(serverDate.hours)}:{pad(serverDate.minutes)}
-    </div>
-  )
-}

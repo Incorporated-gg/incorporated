@@ -1,16 +1,12 @@
 @import '../../variables';
 @import '../../mixins.scss';
 
-$border-radius-size: 14px;
-
 .card {
   position: relative;
   text-align: center;
   height: 100%;
   display: flex;
   flex-direction: column;
-  border-top-left-radius: $border-radius-size;
-  border-top-right-radius: $border-radius-size;
 
   &Disabled {
     filter: grayscale(90%);
@@ -28,26 +24,16 @@ $border-radius-size: 14px;
   }
 
   .cardHeader {
-    border-top-left-radius: $border-radius-size;
-    border-top-right-radius: $border-radius-size;
+    padding: 5px;
     background: linear-gradient(#CC8C20, #EECF82);
 
     .image {
       position: relative;
-      height: 7em;
-      margin-bottom: 1em;
-      border-top-left-radius: $border-radius-size;
-      border-top-right-radius: $border-radius-size;
 
       img {
         width: 100%;
-        max-width: 13em;
-        position: absolute;
-        top: -3.4em;
-        left: 0;
-        right: 0;
-        margin: auto;
-        filter: drop-shadow(12px 12px 25px rgba(0, 0, 0, 0.5));
+        height: calc(100% * (300 / 586));
+        object-fit: cover;
       }
     }
 
@@ -59,7 +45,7 @@ $border-radius-size: 14px;
       font-size: $font-size-xxlarge;
       font-weight: 900;
       text-align: right;
-      color: rgba(0, 0, 0, 0.6);
+      color: rgba(0, 0, 0, 0.8);
 
       &.moreThan2Chars {
         font-size: $font-size-xlarge;
@@ -83,15 +69,6 @@ $border-radius-size: 14px;
       transition: all ease-in-out .3s;
       font-size: $font-size-large;
       margin-bottom: 10px;
-    }
-
-    .description {
-      font-size: $font-size-small;
-      white-space: pre-wrap;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 5px 0;
     }
 
     .children {

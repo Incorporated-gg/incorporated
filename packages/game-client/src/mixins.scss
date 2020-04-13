@@ -12,7 +12,7 @@
 
 @mixin gradientText {
   color: #E9C574;
-  background: linear-gradient(0deg, #CC8C20 0%, #D0952D 0%, #DBAA4C 11%, #E3BA63 19%, #E9C574 28%, #ECCC7E 38%, #EECF82 50%, #ECCC7E 62%, #E9C574 72%, #E3BA63 81%, #DBAA4C 89%, #D0952D 97%, #CC8C20 100%);
+  background: linear-gradient(#F6DEA0, #DDAE52);
   background-clip: text;
   -webkit-text-fill-color: transparent;
 }

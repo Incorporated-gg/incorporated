@@ -1,31 +1,61 @@
 @import '../../variables';
 
-.buildingStat {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
-
-  &Title {
-    @include pascalShadowTitle();
-    font-size: $font-size-small;
-    margin-bottom: 5px;
-  }
-  &Value {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-  }
-}
-
-.buildingAction {
-  @include pascalShadowTitle();
-  font-size: $font-size-medium;
-  padding: 2px;
-}
 
 .buildingLocked {
   font-size: 40px;
   margin: 10px 0;
+}
+
+.statContainer {
+  margin-bottom: 0.5em;
+  font-family: $font-family-title;
+  font-weight: 500;
+
+  .statTitle {
+    color: $color-text-light;
+    margin-right: 0.5em;
+  }
+
+  .statValue {
+    color: $color-brand-light;
+    text-shadow: -2px 2px 0px rgba($color-brand-dark, 0.25);
+  }
+}
+
+.actionButton {
+  margin-top: 5px;
+  color: #000000B3;
+  font-family: $font-family-title;
+  font-size: $font-size-medium;
+  font-weight: 700;
+
+  &::first-letter {
+    font-size: 1.3em;
+  }
+}
+
+.buttonInfoText {
+  display: flex;
+  align-items: center;
+  font-family: $font-family-title;
+}
+
+.ribbonLeft,
+.ribbonRight {
+  width: 2.5em;
+  height: 1.5em;
+  background: $color-bg;
+}
+
+.ribbonLeft {
+  clip-path: polygon(100% 0%, 75% 50%, 100% 100%, 0 100%, 0 0);
+}
+
+.ribbonRight {
+  clip-path: polygon(100% 0%, 100% 100%, 0 100%, 25% 50%, 0 0);
+}
+
+// For extract button progress bar
+.progressText {
+  color: #fff;
 }

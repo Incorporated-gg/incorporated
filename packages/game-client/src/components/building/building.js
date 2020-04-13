@@ -12,9 +12,9 @@ import Card from 'components/card'
 import useHoldPress from 'lib/useHoldPress'
 import Icon from 'components/icon'
 import { numberToAbbreviation } from 'lib/utils'
-import Container from 'components/UI/container'
-import cardStyles from 'components/card/card.module.scss'
 import styles from './building.module.scss'
+import IncButton from 'components/UI/inc-button'
+import ProgressBar from 'components/UI/progress-bar'
 
 const buildingImages = {
   1: require('./img/b1.png'),
@@ -38,9 +38,6 @@ export default function Building({ buildingID }) {
   const currentOptimizeLvl = userData.researchs[5]
   const hasEnoughOptimizeLvl = currentOptimizeLvl >= buildingInfo.requiredOptimizeResearchLevel
 
-  let desc = ''
-  if (!hasEnoughOptimizeLvl) desc = `Necesitas oficina central nivel ${buildingInfo.requiredOptimizeResearchLevel}.`
-
   const timeToRecoverInvestment = Math.round((coste / income) * 10) / 10
 
   return (
@@ -48,41 +45,41 @@ export default function Building({ buildingID }) {
       image={buildingImages[buildingID]}
       title={buildingInfo.name}
       ribbon={buildingCount.toLocaleString()}
-      desc={desc}
       disabled={!hasEnoughOptimizeLvl}>
       {!hasEnoughOptimizeLvl ? (
-        <span role="img" aria-label="locked" className={styles.buildingLocked}>
-          🔒
-        </span>
+        <>
+          <span>Necesitas oficina central nivel {buildingInfo.requiredOptimizeResearchLevel}.</span>
+          <span role="img" aria-label="locked" className={styles.buildingLocked}>
+            🔒
+          </span>
+        </>
       ) : (
         <>
-          <div className={cardStyles.statContainer}>
-            <div className={styles.buildingStat}>
-              <div className={`titleText shadow ${styles.buildingStatTitle}`}>PRI</div>
-              <div className={styles.buildingStatValue}>{numberToAbbreviation(timeToRecoverInvestment)} días</div>
-            </div>
-            <div className={styles.buildingStat}>
-              <div className={`titleText shadow ${styles.buildingStatTitle}`}>Bº/día</div>
-              <div className={styles.buildingStatValue}>
-                {numberToAbbreviation(income * buildingCount)}{' '}
-                <Icon iconName="money" style={{ marginLeft: 3 }} size={20} />
-              </div>
-            </div>
+          <div className={styles.statContainer}>
+            <span className={styles.statTitle}>Retorno de Inversión:</span>
+            <span className={styles.statValue}>{numberToAbbreviation(timeToRecoverInvestment)} DÍAS</span>
           </div>
-          <ExtractScreen buildingID={buildingID} buildingCount={buildingCount} />
-          <BuyScreen buildingID={buildingID} coste={coste} hasEnoughOptimizeLvl={hasEnoughOptimizeLvl} />
+          <div className={styles.statContainer}>
+            <span className={styles.statTitle}>Beneficios por día:</span>
+            <span className={styles.statValue}>
+              {numberToAbbreviation(income * buildingCount)}{' '}
+              <Icon iconName="money" style={{ marginLeft: 3 }} size={20} />
+            </span>
+          </div>
+          <ExtractButton buildingID={buildingID} buildingCount={buildingCount} />
+          <BuyButton buildingID={buildingID} coste={coste} hasEnoughOptimizeLvl={hasEnoughOptimizeLvl} />
         </>
       )}
     </Card>
   )
 }
 
-BuyScreen.propTypes = {
+BuyButton.propTypes = {
   buildingID: PropTypes.number.isRequired,
   coste: PropTypes.number.isRequired,
   hasEnoughOptimizeLvl: PropTypes.bool.isRequired,
 }
-function BuyScreen({ buildingID, coste, hasEnoughOptimizeLvl }) {
+function BuyButton({ buildingID, coste, hasEnoughOptimizeLvl }) {
   const canAfford = userDataRaw.money > coste
   const canBuy = hasEnoughOptimizeLvl && canAfford
 
@@ -95,22 +92,24 @@ function BuyScreen({ buildingID, coste, hasEnoughOptimizeLvl }) {
   })
 
   return (
-    <Container {...buyHoldPress} outerClassName={cardStyles.button} disabled={!canBuy}>
-      <div className={cardStyles.buttonNumberContainer}>
-        <span className={cardStyles.buttonNumberText}>
+    <IncButton {...buyHoldPress} disabled={!canBuy} outerStyle={{ marginTop: 10 }}>
+      <div className={styles.buttonInfoText}>
+        <div className={styles.ribbonLeft} />
+        <span style={{ flexGrow: 1 }}>
           {numberToAbbreviation(coste)} <Icon iconName="money" style={{ marginLeft: 3 }} size={20} />
         </span>
+        <div className={styles.ribbonRight} />
       </div>
-      <h2 className={`titleText shadow pascal ${styles.buildingAction}`}>{'CONSTRUIR'}</h2>
-    </Container>
+      <h2 className={styles.actionButton}>{'CONSTRUIR'}</h2>
+    </IncButton>
   )
 }
 
-ExtractScreen.propTypes = {
+ExtractButton.propTypes = {
   buildingID: PropTypes.number.isRequired,
   buildingCount: PropTypes.number.isRequired,
 }
-function ExtractScreen({ buildingID, buildingCount }) {
+function ExtractButton({ buildingID, buildingCount }) {
   const accumulatedMoney = userDataRaw.buildings[buildingID].money
   const bankResearchLevel = userDataRaw.researchs[4]
   const maxMoney = calcBuildingMaxMoney({ buildingID, buildingAmount: buildingCount, bankResearchLevel })
@@ -133,16 +132,18 @@ function ExtractScreen({ buildingID, buildingCount }) {
 
   const progress = (accumulatedMoney / maxMoney.maxTotal) * 100
   return (
-    <Container outerClassName={cardStyles.button} onClick={onExtractMoney}>
-      <div className={cardStyles.buttonNumberContainer}>
-        <div className={cardStyles.buttonNumberProgress} style={{ width: progress + '%' }} />
-        <div className={cardStyles.buttonNumberText}>
-          {numberToAbbreviation(accumulatedMoney)} / {numberToAbbreviation(maxMoney.maxTotal)}{' '}
-          <Icon iconName="money" style={{ marginLeft: 3 }} size={20} />
-        </div>
+    <IncButton onClick={onExtractMoney}>
+      <div className={styles.buttonInfoText}>
+        <span style={{ marginRight: 5 }}>{numberToAbbreviation(maxMoney.maxTotal)}</span>
+        <ProgressBar direction="horizontal" progressPercentage={progress}>
+          <span className={styles.progressText}>
+            {numberToAbbreviation(accumulatedMoney)}
+            <Icon iconName="money" style={{ marginLeft: 3 }} size={18} />
+          </span>
+        </ProgressBar>
       </div>
-      <h2 className={`titleText shadow pascal ${styles.buildingAction}`}>{'RECOGER'}</h2>
-    </Container>
+      <h2 className={styles.actionButton}>{'RECOGER'}</h2>
+    </IncButton>
   )
 }
 
