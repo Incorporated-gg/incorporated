@@ -100,10 +100,14 @@ function useHoldTouchEvents({ callback, startHoldPress, stopHoldPress, isTouchDe
 }
 
 function useHoldMouseClickEvents({ startHoldPress, stopHoldPress, isTouchDevice }) {
-  const onMouseDown = useCallback(() => {
-    if (isTouchDevice.current) return
-    startHoldPress()
-  }, [isTouchDevice, startHoldPress])
+  const onMouseDown = useCallback(
+    e => {
+      if (e.button !== 0) return
+      if (isTouchDevice.current) return
+      startHoldPress()
+    },
+    [isTouchDevice, startHoldPress]
+  )
 
   const onMouseUp = useCallback(() => {
     if (isTouchDevice.current) return

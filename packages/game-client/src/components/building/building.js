@@ -138,7 +138,7 @@ function ExtractButton({ buildingID, buildingCount }) {
         <ProgressBar direction="horizontal" progressPercentage={progress}>
           <span className={styles.progressText}>
             {numberToAbbreviation(accumulatedMoney)}
-            <Icon iconName="money" style={{ marginLeft: 3 }} size={18} />
+            <Icon iconName="money" style={{ marginLeft: 3 }} size={20} />
           </span>
         </ProgressBar>
       </div>

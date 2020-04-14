@@ -1,33 +1,26 @@
 @import '../../variables';
 
+.sticky {
+  position: sticky;
+  left: 0;
+  right: 0;
+  top: 0;
+  width: 100%;
+  margin: 0 auto;
+  z-index: 100;
+  box-shadow: 0px 0px 20px 5px rgba(0, 0, 0, 0.9);
+}
+
 .container {
   margin: 0 auto;
   max-width: $breakpoint-desktop;
   color: $header--color-text;
   background-color: $color-bg;
-  box-shadow: 0px 0px 20px 5px rgba(0, 0, 0, 0.9);
-  padding: 12px;
-
-  @media (max-width: $breakpoint-medium - 1) {
-    padding: 5px;
-  }
-
-  @media (min-width: $breakpoint-desktop) {
-    padding: 12px 20px;
-  }
 
   .containerBottomBorder {
-    position: absolute;
-    bottom: -9px;
-    left: 0;
-    right: 0;
-    margin: auto;
-    width: 100%;
-    max-width: $breakpoint-desktop;
     padding-top: 4px;
-    background: $color-brand-light;
+    background: $color-brand;
     border-bottom: 4px solid $color-brand-dark;
-    pointer-events: none;
 
     &::after {
       content: "";
@@ -41,4 +34,13 @@
 .mainHeader {
   display: flex;
   justify-content: space-between;
+  padding: 5px;
+
+  @media (min-width: $breakpoint-medium) {
+    padding: 12px;
+  }
+
+  @media (min-width: $breakpoint-desktop) {
+    padding: 12px 20px;
+  }
 }

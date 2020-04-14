@@ -1,4 +1,5 @@
 import { completeTask } from '../lib/db/tasks'
+import { sendAccountHook } from '../lib/accountInternalApi'
 
 module.exports = app => {
   app.post('/v1/tasks/complete', async function(req, res) {
@@ -16,6 +17,8 @@ module.exports = app => {
       return
     }
     req.userData.money += taskCompletion.moneyReward
+
+    sendAccountHook('task_finished', { userID: req.userData.id })
 
     res.json({
       success: true,

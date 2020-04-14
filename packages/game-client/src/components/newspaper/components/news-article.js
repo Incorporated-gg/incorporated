@@ -58,18 +58,20 @@ function getArticleCorpus(article) {
     case 'WAR_DECLARATION': {
       return (
         <>
-          La corporación <AllianceLink alliance={article.data.alliance1} /> ha declarado la guerra a{' '}
-          <AllianceLink alliance={article.data.alliance2} />. La tensión entre los dos gigantes se palpaba, y a nadie
-          esta noticia le viene por sorpresa. Continuaremos informando sobre los avances de este conflicto.
+          La corporación <AllianceLink colorScheme="dark" alliance={article.data.alliance1} /> ha declarado la guerra a{' '}
+          <AllianceLink colorScheme="dark" alliance={article.data.alliance2} />. La tensión entre los dos gigantes se
+          palpaba, y a nadie esta noticia le viene por sorpresa. Continuaremos informando sobre los avances de este
+          conflicto.
         </>
       )
     }
     case 'WAR_ENDED': {
       return (
         <>
-          Ha finalizado la guerra entre la corporación <AllianceLink alliance={article.data.alliance1} /> y
-          <AllianceLink alliance={article.data.alliance2} />. La ganadora ha sido{' '}
-          <AllianceLink alliance={article.data.winner} />
+          Ha finalizado la guerra entre la corporación{' '}
+          <AllianceLink colorScheme="dark" alliance={article.data.alliance1} /> y
+          <AllianceLink colorScheme="dark" alliance={article.data.alliance2} />. La ganadora ha sido{' '}
+          <AllianceLink colorScheme="dark" alliance={article.data.winner} />
         </>
       )
     }
@@ -77,8 +79,8 @@ function getArticleCorpus(article) {
       return (
         <>
           La guerra entre dos principales corporaciones continúa. De momento, los puntos acumulados son{' '}
-          {article.data.warPoints1} para <AllianceLink alliance={article.data.alliance1} /> y {article.data.warPoints2}{' '}
-          para <AllianceLink alliance={article.data.alliance2} />
+          {article.data.warPoints1} para <AllianceLink colorScheme="dark" alliance={article.data.alliance1} /> y{' '}
+          {article.data.warPoints2} para <AllianceLink colorScheme="dark" alliance={article.data.alliance2} />
         </>
       )
     }

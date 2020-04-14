@@ -17,18 +17,18 @@ export default function Header() {
 
   return (
     <>
-      <div style={{ top: 0 }} className={'stickyFullwidthBar'}>
+      <div className={styles.sticky}>
         <div className={styles.container}>
           <div className={styles.mainHeader}>
             <AccountAviAndLvl />
             <MoneyAndGold />
             <HeaderRightButtons setIsActiveTasksModalOpen={setIsActiveTasksModalOpen} />
           </div>
-          <ActiveMission />
-          <DeclareBankruptcy />
           <div className={styles.containerBottomBorder} />
         </div>
         {isDesktop && <Menu />}
+        <ActiveMission />
+        <DeclareBankruptcy />
       </div>
 
       <ActiveTasksModal isOpen={isActiveTasksModalOpen} onRequestClose={() => setIsActiveTasksModalOpen(false)} />

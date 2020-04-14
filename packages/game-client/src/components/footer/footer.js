@@ -10,7 +10,7 @@ export default function Footer() {
 
   if (isDesktop) return null
   return (
-    <div style={{ bottom: 0 }} className={`stickyFullwidthBar ${styles.footer}`}>
+    <div className={styles.footer}>
       <Menu />
     </div>
   )

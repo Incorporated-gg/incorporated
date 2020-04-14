@@ -5,6 +5,7 @@ import attackFinished from './game_event_hook/attack_finished'
 import hookContestEnded from './game_event_hook/contest_ended'
 import hookWarEnded from './game_event_hook/war_ended'
 import hookGameEnded from './game_event_hook/game_ended'
+import taskFinished from './game_event_hook/task_finished'
 
 /* eslint-disable @typescript-eslint/camelcase */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -13,6 +14,7 @@ const hooksMap: any = {
   contest_ended: hookContestEnded,
   war_ended: hookWarEnded,
   game_ended: hookGameEnded,
+  task_finished: taskFinished,
 }
 /* eslint-enable @typescript-eslint/camelcase */
 

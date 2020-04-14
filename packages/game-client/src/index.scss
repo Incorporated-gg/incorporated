@@ -127,12 +127,3 @@ a {
   -webkit-overflow-scrolling: touch;
   outline: none;
 }
-
-.stickyFullwidthBar {
-  position: sticky;
-  left: 0;
-  right: 0;
-  width: 100%;
-  margin: 0 auto;
-  z-index: 100;
-}

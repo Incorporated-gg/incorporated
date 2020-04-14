@@ -8,22 +8,34 @@
   }
 }
 
-.stat {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 3px 2px;
-  font-size: $font-size-medium;
+// Main container serves to hide the side and top borders on mobile
+.container {
+  max-width: $breakpoint-desktop;
+  margin: 0 auto;
+  overflow: hidden;
 
-  &.statMission1 {
-    cursor: pointer;
-    width: calc(100% - 25px);
+  @media (max-width: $breakpoint-desktop - 1) {
+    >* {
+      margin: -9px;
+      margin-bottom: 0;
+    }
   }
+}
+
+.stat {
+  padding: 10px;
 
   &.statMission2 {
-    cursor: pointer;
-    width: 20px;
-    margin-left: 5px;
+    flex-grow: 1;
+    text-align: center;
+    margin-left: 8px;
+  }
+
+  &.statMission3 {
+    display: flex;
+    align-items: center;
+    font-size: $font-size-small;
+    margin-left: 8px;
   }
 }
 

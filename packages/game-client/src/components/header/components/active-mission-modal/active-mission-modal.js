@@ -33,6 +33,7 @@ function ActiveMissionModalContent({ onRequestClose }) {
   }
 
   const cancelMission = () => {
+    if (!window.confirm('Estás seguro de que quieres cancelar la misión?')) return
     onRequestClose()
     cancelActiveMission().catch(err => {
       alert(err.message)
@@ -57,11 +58,17 @@ function ActiveMissionModalContent({ onRequestClose }) {
           </div>
           <div>¡{activeMision.mission_type === 'attack' ? 'Ataque' : 'Espionaje'}!</div>
           <div className={styles.avatarContainer}>
-            <img src={activeMision.target_user.accountData.avatar} alt={activeMision.target_user.username} />
-            {activeMision.target_user.alliance && (
-              <div className={`${styles.allianceBadgeContainer} ${styles.second}`}>
-                <AllianceBadge badge={activeMision.target_user.alliance.badge} />
-              </div>
+            {activeMision.target_hood ? (
+              activeMision.target_hood.name
+            ) : (
+              <>
+                <img src={activeMision.target_user.accountData.avatar} alt={activeMision.target_user.username} />
+                {activeMision.target_user.alliance && (
+                  <div className={`${styles.allianceBadgeContainer} ${styles.second}`}>
+                    <AllianceBadge badge={activeMision.target_user.alliance.badge} />
+                  </div>
+                )}
+              </>
             )}
           </div>
         </div>
@@ -98,7 +105,7 @@ function AttackDetails({ activeMision }) {
       </div>
       <div>
         <h1>Objectivo</h1>
-        <div>{buildingInfo.name}</div>
+        <div>{activeMision.target_hood ? activeMision.target_hood.name : buildingInfo.name}</div>
       </div>
       <div>
         <h1>Ladrones</h1>

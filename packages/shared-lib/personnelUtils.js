@@ -8,7 +8,7 @@ export const personnelList = [
     dailyMaintenanceCost: 500,
   },
   {
-    name: 'Saboteadores',
+    name: 'Gangsters',
     resource_id: 'sabots',
     price: 500,
     firingCost: 250,

@@ -15,9 +15,11 @@
 
   &.cardColorful {
     box-shadow: 0px 0px 15px gold;
+
     .cardHeader {
       background: linear-gradient(yellow, gold);
     }
+
     .darkBg {
       border-color: gold;
     }
@@ -25,31 +27,27 @@
 
   .cardHeader {
     padding: 5px;
+    padding-bottom: 0;
     background: linear-gradient(#CC8C20, #EECF82);
 
-    .image {
-      position: relative;
-
-      img {
-        width: 100%;
-        height: calc(100% * (300 / 586));
-        object-fit: cover;
-      }
+    .image img {
+      display: block;
+      width: 100%;
+      height: calc(100% * (300 / 586));
+      object-fit: cover;
     }
 
     .ribbon {
-      @include titleText();
       position: absolute;
-      top: 3px;
-      right: 3px;
-      font-size: $font-size-xxlarge;
-      font-weight: 900;
+      top: 4px;
+      left: 4px;
+      width: calc(100% - 8px);
+      background-color: #343434B2;
+      color: #ffffff;
+      padding: 4px 15px;
+      font-size: $font-size-large;
+      font-weight: 700;
       text-align: right;
-      color: rgba(0, 0, 0, 0.8);
-
-      &.moreThan2Chars {
-        font-size: $font-size-xlarge;
-      }
     }
 
   }
@@ -65,10 +63,16 @@
     padding: 7px 5px;
 
     .name {
-      @include pascalGradientTitle();
+      @include gradientText();
+      font-family: $font-family-title;
+      text-transform: uppercase;
       transition: all ease-in-out .3s;
+      font-weight: 700;
       font-size: $font-size-large;
       margin-bottom: 10px;
+      &::first-letter {
+        font-size: 1.3em;
+      }
     }
 
     .children {
