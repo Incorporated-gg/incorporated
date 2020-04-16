@@ -32,19 +32,6 @@
       font-size: $font-size-small;
     }
   }
-
-  .chevron {
-    background-color: $color-bg;
-    padding: 3px;
-    padding-left: 5px;
-    padding-right: 15px;
-    clip-path: polygon(100% 0%, 75% 50%, 100% 100%, 0 100%, 0 0);
-
-    svg {
-      width: 20px;
-      height: 16px;
-    }
-  }
 }
 
 .finishedActiveTasksCounter {

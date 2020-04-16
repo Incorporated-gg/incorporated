@@ -13,18 +13,6 @@
     cursor: not-allowed;
   }
 
-  &.cardColorful {
-    box-shadow: 0px 0px 15px gold;
-
-    .cardHeader {
-      background: linear-gradient(yellow, gold);
-    }
-
-    .darkBg {
-      border-color: gold;
-    }
-  }
-
   .cardHeader {
     padding: 5px;
     padding-bottom: 0;

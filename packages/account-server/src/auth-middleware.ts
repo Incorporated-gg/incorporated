@@ -33,23 +33,6 @@ async function authMiddleware(req: express.Request, res: express.Response, next:
   next()
 }
 
-function modifyResponseBody(req: express.Request, res: express.Response, next: express.NextFunction): void {
-  const oldJson = res.json
-
-  // eslint-disable-next-line
-  // @ts-ignore I can't figure out how to fix this
-  res.json = async function(...args): Promise<void> {
-    if (req.accountData) {
-      // Modify response to include extra data for logged in users
-      const extraData = {}
-      args[0]._extra = extraData
-    }
-    oldJson.apply(res, args)
-  }
-  next()
-}
-
 export default (app: express.Application): void => {
   app.use(authMiddleware)
-  app.use(modifyResponseBody)
 }

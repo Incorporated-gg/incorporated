@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useAccountData } from 'lib/user'
+import { useUserData } from 'lib/user'
 import styles from './account-avi-and-lvl.module.scss'
 import { useHistory } from 'react-router-dom'
 import ProgressBar from 'components/UI/progress-bar'
@@ -7,7 +7,7 @@ import { getServerDate, getServerDay } from 'shared-lib/serverTime'
 
 export default function AccountAviAndLvl() {
   let history = useHistory()
-  const accountData = useAccountData()
+  const { accountData } = useUserData()
   const openAccountPanel = () => {
     history.push('/settings')
   }

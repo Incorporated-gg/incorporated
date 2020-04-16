@@ -62,13 +62,13 @@ function modifyResponseBody(req, res, next) {
       ])
       const extraData = {
         money: req.userData.money,
-        gold: accountData.gold,
-        unread_messages_count: unreadMessagesCount,
-        unread_reports_count: unreadReportsCount.total,
-        active_mission: activeMission,
         personnel: req.userData.personnel,
         researchs: req.userData.researchs,
         buildings: req.userData.buildings,
+        unread_messages_count: unreadMessagesCount,
+        unread_reports_count: unreadReportsCount.total,
+        active_mission: activeMission,
+        accountData,
         activeTasks,
       }
       arguments[0]._extra = extraData

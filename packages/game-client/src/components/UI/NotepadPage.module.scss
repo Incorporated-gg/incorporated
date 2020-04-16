@@ -3,17 +3,16 @@
 .container {
   position: relative;
   padding: 10px;
-  padding-top: 30px; // 20px for the header + normal padding
+  padding-top: 35px; // 25px for the header + normal padding
   background-color: $color-text-light;
   color: #343434;
   overflow: hidden;
-  border-top: 3px solid #595959;
 
   &::before {
       display: block;
       content: ' ';
       position: absolute;
-      top: -10px;
+      top: 5px;
       left: 0;
       right: 0;
       margin: auto;

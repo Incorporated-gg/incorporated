@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import LoggedInRouter from 'routers/logged-in'
 import LogInPage from 'routers/log-in'
-import { userData, loadUserAndAccountDataFromStorage } from 'lib/user'
+import { userData, loadUserDataFromStorage } from 'lib/user'
 import ErrorBoundary from 'components/UI/ErrorBoundary'
 
 export function reloadApp() {
@@ -17,7 +17,7 @@ function App() {
   useEffect(() => {
     if (!loading) return
 
-    loadUserAndAccountDataFromStorage()
+    loadUserDataFromStorage()
       .then(() => {
         setLoggedIn(Boolean(userData))
         setLoading(false)

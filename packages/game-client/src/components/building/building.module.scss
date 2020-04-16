@@ -40,21 +40,6 @@
   font-family: $font-family-title;
 }
 
-.ribbonLeft,
-.ribbonRight {
-  width: 2.5em;
-  height: 1.5em;
-  background: $color-bg;
-}
-
-.ribbonLeft {
-  clip-path: polygon(100% 0%, 75% 50%, 100% 100%, 0 100%, 0 0);
-}
-
-.ribbonRight {
-  clip-path: polygon(100% 0%, 100% 100%, 0 100%, 25% 50%, 0 0);
-}
-
 // For extract button progress bar
 .progressText {
   color: #fff;

@@ -15,6 +15,7 @@ import { numberToAbbreviation } from 'lib/utils'
 import styles from './building.module.scss'
 import IncButton from 'components/UI/inc-button'
 import ProgressBar from 'components/UI/progress-bar'
+import IncChevron from 'components/UI/inc-chevron'
 
 const buildingImages = {
   1: require('./img/b1.png'),
@@ -94,11 +95,11 @@ function BuyButton({ buildingID, coste, hasEnoughOptimizeLvl }) {
   return (
     <IncButton {...buyHoldPress} disabled={!canBuy} outerStyle={{ marginTop: 10 }}>
       <div className={styles.buttonInfoText}>
-        <div className={styles.ribbonLeft} />
+        <IncChevron direction="right" padding={12} />
         <span style={{ flexGrow: 1 }}>
           {numberToAbbreviation(coste)} <Icon iconName="money" style={{ marginLeft: 3 }} size={20} />
         </span>
-        <div className={styles.ribbonRight} />
+        <IncChevron direction="left" padding={12} />
       </div>
       <h2 className={styles.actionButton}>{'CONSTRUIR'}</h2>
     </IncButton>

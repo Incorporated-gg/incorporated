@@ -7,6 +7,7 @@ Container.propTypes = {
   darkBg: PropTypes.bool,
   borderSize: PropTypes.number,
   withHairline: PropTypes.bool,
+  noBackground: PropTypes.bool,
   disabled: PropTypes.bool,
   className: PropTypes.string,
   style: PropTypes.object,
@@ -21,6 +22,7 @@ export default function Container({
   darkBg,
   disabled,
   withHairline,
+  noBackground,
   className = '',
   outerClassName = '',
   style = {},
@@ -35,9 +37,9 @@ export default function Container({
     <div className={`${styles.container} ${outerClassName}`} style={outerStyle} disabled={disabled} onClick={onClick}>
       <div
         {...props}
-        className={`${styles.inner} ${withHairline ? styles.withHairline : ''} ${
-          darkBg ? styles.darkBg : ''
-        } ${className}`}
+        className={`${styles.inner} ${noBackground ? styles.noBackground : ''} ${
+          withHairline ? styles.withHairline : ''
+        } ${darkBg ? styles.darkBg : ''} ${className}`}
         style={style}>
         {children}
       </div>

@@ -6,9 +6,10 @@ import { buildingsList } from 'shared-lib/buildingsUtils'
 import PropTypes from 'prop-types'
 import Modal from 'react-modal'
 import Container from 'components/UI/container'
-import cardStyles from 'components/card/card.module.scss'
 import { numberToAbbreviation } from 'lib/utils'
 import Icon from 'components/icon'
+import ProgressBar from 'components/UI/progress-bar'
+import IncChevron from 'components/UI/inc-chevron'
 
 ActiveTasksModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
@@ -17,7 +18,12 @@ ActiveTasksModal.propTypes = {
 export default function ActiveTasksModal({ isOpen, onRequestClose }) {
   return (
     <Modal overlayClassName="backdropBlur" isOpen={isOpen} onRequestClose={onRequestClose}>
-      <ActiveTasksList />
+      <Container outerClassName={styles.headerTaskOuter} darkBg noBackground>
+        <div>
+          <div className={styles.title}>TAREAS</div>
+        </div>
+        <ActiveTasksList />
+      </Container>
     </Modal>
   )
 }
@@ -99,28 +105,29 @@ function ActiveTasksList() {
     }
 
     const progressAmount = Math.floor((task.progressPercentage / 100) * task.requirements.amount)
-    const progressText = `${numberToAbbreviation(progressAmount)} / ${numberToAbbreviation(task.requirements.amount)}`
 
     return (
-      <Container key={task.id} outerClassName={styles.headerTaskOuter} className={styles.headerTask} darkBg>
-        <div className={styles.tutorialInfo}>
-          <div>{taskElm}</div>
-          <br />
-          <div className={cardStyles.buttonNumberContainer}>
-            <div className={cardStyles.buttonNumberProgress} style={{ width: task.progressPercentage + '%' }} />
-            <div className={cardStyles.buttonNumberText}>{progressText}</div>
+      <div key={task.id} className={styles.innerContainer}>
+        <div className={styles.taskTitle}>{taskElm}</div>
+        <br />
+        <Container className={styles.progressContainer}>
+          <div className={styles.progressTotal}>{numberToAbbreviation(task.requirements.amount)}</div>
+          <ProgressBar direction="horizontal" progressPercentage={task.progressPercentage}>
+            {numberToAbbreviation(progressAmount)}
+          </ProgressBar>
+        </Container>
+        <br />
+        <Container className={styles.rewardContainer} onClick={completeTask}>
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <IncChevron direction="right" className={styles.taskRewardChevron} />
+            <div className={styles.taskRewardText}>
+              Recompensa: {numberToAbbreviation(task.reward)} <Icon iconName="money" size={20} />
+            </div>
+            <IncChevron direction="left" className={styles.taskRewardChevron} />
           </div>
-          <br />
-          <div>
-            Recompensa: {numberToAbbreviation(task.reward)} <Icon iconName="money" size={20} />
-          </div>
-        </div>
-        <div>
-          <button disabled={task.progressPercentage < 100} onClick={completeTask}>
-            Completar
-          </button>
-        </div>
-      </Container>
+          {task.progressPercentage >= 100 && <div className={styles.claimReward}>RECLAMAR</div>}
+        </Container>
+      </div>
     )
   })
 }

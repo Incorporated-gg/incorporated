@@ -5,12 +5,11 @@ import api from 'lib/api'
 
 export let sessionID = null
 export let userData = null
-export let accountData = null
 
 export async function setNewSessionID(newSessionID) {
   sessionID = newSessionID
   await asyncStorage.setItem('session_id', sessionID)
-  await Promise.all([reloadUserData(), reloadAccountData()])
+  await reloadUserData()
   reloadApp()
 }
 
@@ -18,14 +17,13 @@ export async function logout() {
   await asyncStorage.setItem('session_id', null)
   sessionID = null
   userData = null
-  accountData = null
   reloadApp()
 }
 
-export async function loadUserAndAccountDataFromStorage() {
+export async function loadUserDataFromStorage() {
   sessionID = await asyncStorage.getItem('session_id', null)
   if (sessionID) {
-    await Promise.all([reloadUserData(), reloadAccountData()])
+    await reloadUserData()
   }
 }
 
@@ -53,24 +51,4 @@ export function useUserData() {
     return () => userDataListeners.delete(onChangeFn)
   }, [])
   return userData
-}
-
-// Account data
-export async function reloadAccountData() {
-  const accountDataFromAPI = await api.accountGet('/v1/my_data')
-  accountData = Object.assign(accountDataFromAPI.accountData, accountDataFromAPI._extra)
-  fireAccountDataListeners()
-}
-
-const accountDataListeners = new Set()
-const fireAccountDataListeners = () => accountDataListeners.forEach(cb => cb())
-
-export function useAccountData() {
-  const [, rerender] = useState({})
-  useEffect(() => {
-    const onChangeFn = () => rerender({})
-    accountDataListeners.add(onChangeFn)
-    return () => accountDataListeners.delete(onChangeFn)
-  }, [])
-  return accountData
 }

@@ -7,6 +7,10 @@
 .inner {
   background-color: $color-brand;
 
+  &.noBackground {
+    background-color: unset;
+  }
+
   &.withHairline {
     border: 1px solid $color-hairline;
   }

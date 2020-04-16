@@ -1,12 +1,12 @@
 import React, { useEffect, useState, useCallback } from 'react'
 import styles from './avatar-change.module.scss'
 import api from '../../lib/api'
-import { useAccountData, reloadAccountData } from '../../lib/user'
+import { useUserData, reloadUserData } from '../../lib/user'
 import Container from 'components/UI/container'
 
 export default function AvatarChange() {
   const [avatarList, setAvatarList] = useState([])
-  const accountData = useAccountData()
+  const { accountData } = useUserData()
 
   const reloadList = useCallback(() => {
     api
@@ -24,7 +24,7 @@ export default function AvatarChange() {
 
   const changeAvatar = useCallback(avatarID => {
     api.accountPost('/v1/avatar/change', { avatarID }).then(res => {
-      reloadAccountData()
+      reloadUserData()
     })
   }, [])
 

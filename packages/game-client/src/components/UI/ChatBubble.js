@@ -128,65 +128,67 @@ export default function ChatBubble() {
   }
 
   return (
-    <aside className="chatBubble">
-      {isOpen && (
-        <div className={`chatWindow${isFullscreen ? ' fullScreen' : ''}`}>
-          <div className="chatWindowHeader">
-            <button type="button" onClick={() => setIsSelectingRoom(!isSelectingRoom)}>
-              ☰ Salas
-            </button>
-            <h3 className="chatWindowTitle">Chat ({currentRoom && currentRoom.name})</h3>
-            <button type="button" className="fullScreenButton" onClick={() => setIsFullscreen(!isFullscreen)}>
-              <span>{isFullscreen ? '-' : '+'}</span>
-            </button>
-            <button type="button" className="closeButton" onClick={() => toggleChat(false)}>
-              <span>x</span>
-            </button>
-          </div>
-          <div
-            ref={chatWindowBody}
-            onScroll={captureChatScroll}
-            className={`chatWindowBody${isSelectingRoom ? ' showRoomList' : ''}`}>
-            <div className="chatRoomList">
-              {chatRoomList.map((chatRoom, i) => (
-                <button
-                  key={i}
-                  type="button"
-                  className="chatRoom"
-                  onClick={() => chatRoom.name !== currentRoom.name && changeRoom(chatRoom)}>
-                  {chatRoom.name} {unreadMessagesForRoom(chatRoom) > 0 && `(${unreadMessagesForRoom(chatRoom)})`}
-                </button>
-              ))}
+    <>
+      <aside className="chatBubble">
+        {isOpen && (
+          <div className={`chatWindow${isFullscreen ? ' fullScreen' : ''}`}>
+            <div className="chatWindowHeader">
+              <button type="button" onClick={() => setIsSelectingRoom(!isSelectingRoom)}>
+                ☰ Salas
+              </button>
+              <h3 className="chatWindowTitle">Chat ({currentRoom && currentRoom.name})</h3>
+              <button type="button" className="fullScreenButton" onClick={() => setIsFullscreen(!isFullscreen)}>
+                <span>{isFullscreen ? '-' : '+'}</span>
+              </button>
+              <button type="button" className="closeButton" onClick={() => toggleChat(false)}>
+                <span>x</span>
+              </button>
             </div>
-            <div className="chatMessagesWrapper">
-              {messagesList.find(m => m.room === currentRoom.name) &&
-                messagesList
-                  .find(m => m.room === currentRoom.name)
-                  .messagesArray.map((message, i) => (
-                    <div key={i} className="chatMessage">
-                      <span className="timeStamp">{timestampFromEpoch(message.date)}</span>{' '}
-                      <UserLink user={message.user} />: {message.text}
-                    </div>
-                  ))}
+            <div
+              ref={chatWindowBody}
+              onScroll={captureChatScroll}
+              className={`chatWindowBody${isSelectingRoom ? ' showRoomList' : ''}`}>
+              <div className="chatRoomList">
+                {chatRoomList.map((chatRoom, i) => (
+                  <button
+                    key={i}
+                    type="button"
+                    className="chatRoom"
+                    onClick={() => chatRoom.name !== currentRoom.name && changeRoom(chatRoom)}>
+                    {chatRoom.name} {unreadMessagesForRoom(chatRoom) > 0 && `(${unreadMessagesForRoom(chatRoom)})`}
+                  </button>
+                ))}
+              </div>
+              <div className="chatMessagesWrapper">
+                {messagesList.find(m => m.room === currentRoom.name) &&
+                  messagesList
+                    .find(m => m.room === currentRoom.name)
+                    .messagesArray.map((message, i) => (
+                      <div key={i} className="chatMessage">
+                        <span className="timeStamp">{timestampFromEpoch(message.date)}</span>{' '}
+                        <UserLink user={message.user} />: {message.text}
+                      </div>
+                    ))}
+              </div>
+            </div>
+            <div className="chatWindowFooter">
+              <form onSubmit={sendMessage(currentMessage)}>
+                <input
+                  type="text"
+                  className="chatTextInput"
+                  value={currentMessage}
+                  ref={chatInput}
+                  onChange={e => setCurrentMessage(e.target.value)}
+                />
+                <button type="submit">Send</button>
+              </form>
             </div>
           </div>
-          <div className="chatWindowFooter">
-            <form onSubmit={sendMessage(currentMessage)}>
-              <input
-                type="text"
-                className="chatTextInput"
-                value={currentMessage}
-                ref={chatInput}
-                onChange={e => setCurrentMessage(e.target.value)}
-              />
-              <button type="submit">Send</button>
-            </form>
-          </div>
-        </div>
-      )}
-      <button type="button" className="chatToggleButton" onClick={() => toggleChat()}>
-        <span>Chat</span>
-      </button>
-    </aside>
+        )}
+      </aside>
+      <div type="button" className="chatToggleButton" onClick={() => toggleChat()}>
+        <div>Chat</div>
+      </div>
+    </>
   )
 }

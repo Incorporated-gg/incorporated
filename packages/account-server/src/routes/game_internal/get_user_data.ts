@@ -9,7 +9,7 @@ export default (app: express.Application): void => {
       return
     }
 
-    const accountData = await users.getData(req.query.userID)
+    const accountData = await users.getData(parseInt(req.query.userID))
     if (!accountData) {
       res.status(401).json({ error: 'Invalid sessionID' })
       return

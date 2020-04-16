@@ -19,22 +19,26 @@
     position: relative;
     flex-grow: 1;
     flex-basis: 0;
-    padding: 0.6em 0;
+    padding: 0.7em 0em;
     text-align: center;
     display: flex;
     align-items: center;
     justify-content: center;
-    
+
     .subMenuItem {
-      @include titleText();
       @include pascalText();
+      font-family: $font-family-title;
+      text-transform: uppercase;
+      font-weight: 400;
       transition: all ease-in-out .3s;
       font-size: $font-size-medium;
     }
-    
+
     &.active .subMenuItem {
-      @include pascalGradientTitle();
-      color: #EAC953;
+      color: #E9C574;
+      background: linear-gradient(#CC8C20 0%, #D6A03E 5%, #DFB157 11%, #E5BE6A 17%, #EAC877 24%, #EDCD7F 33%, #EECF82 50%, #EDCD7F 64%, #E9C676 73%, #E4BC67 81%, #DDAD51 89%, #D39B35 96%, #CC8C20 100%);
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
   }
 
