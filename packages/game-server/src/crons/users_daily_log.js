@@ -1,4 +1,4 @@
-const mysql = require('../lib/mysql')
+import mysql from '../lib/mysql'
 const { getServerDay, getInitialUnixTimestampOfServerDay } = require('shared-lib/serverTime')
 
 async function runOnce() {

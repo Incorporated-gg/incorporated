@@ -1,4 +1,4 @@
-const mysql = require('../lib/mysql')
+import mysql from '../lib/mysql'
 
 module.exports = app => {
   app.post('/v1/declare_bankruptcy', async function(req, res) {

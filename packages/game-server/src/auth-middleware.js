@@ -1,6 +1,6 @@
 import { getUserActiveTasks } from './lib/db/tasks'
 import { getAccountUserData } from './lib/accountInternalApi'
-const mysql = require('./lib/mysql')
+import mysql from './lib/mysql'
 const {
   getUserResearchs,
   getPersonnel,

@@ -92,3 +92,9 @@ export function calcResourceGenerationByResearchID(researchID, researchLevel) {
   const resourceID = mapResearchIDToResourceID[researchID]
   return calcResourceGeneration(resourceID, { [researchID]: { level: researchLevel } })
 }
+
+export function getMaxHoodsAttackedPerWar(dayID) {
+  if (dayID < 30) return 1
+  if (dayID < 60) return 2
+  return 3
+}

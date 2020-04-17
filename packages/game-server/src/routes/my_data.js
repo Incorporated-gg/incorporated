@@ -1,7 +1,7 @@
 import { getActiveResearchs } from '../lib/db/researchs'
+import mysql from '../lib/mysql'
 const users = require('../lib/db/users')
 const alliances = require('../lib/db/alliances')
-const mysql = require('../lib/mysql')
 
 module.exports = app => {
   app.get('/v1/my_data', async function(req, res) {

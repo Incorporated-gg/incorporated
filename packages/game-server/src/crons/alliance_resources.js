@@ -1,4 +1,4 @@
-const mysql = require('../lib/mysql')
+import mysql from '../lib/mysql'
 const alliances = require('../lib/db/alliances')
 const { calcResourceGeneration, calcResourceMax } = require('shared-lib/allianceUtils')
 const frequencyMs = 15 * 1000 // 15 for dev. 60 should be fine for prod, but can be tuned if needed

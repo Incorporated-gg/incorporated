@@ -1,7 +1,7 @@
 import { getAccountUserData } from '../accountInternalApi'
 import { MAX_DAILY_ATTACKS, calculateMaxDailyReceivedAttacks } from 'shared-lib/missionsUtils'
 import cache from '../cache'
-const mysql = require('../mysql')
+import mysql from '../mysql'
 const alliances = require('./alliances')
 const { researchList } = require('shared-lib/researchUtils')
 const { personnelList } = require('shared-lib/personnelUtils')

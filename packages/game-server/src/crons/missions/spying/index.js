@@ -1,4 +1,4 @@
-const mysql = require('../../../lib/mysql')
+import mysql from '../../../lib/mysql'
 const { getUserResearchs, getBuildings, getPersonnel, runUserMoneyUpdate } = require('../../../lib/db/users')
 const { calcSpiesCaptured, calcInformationObtained } = require('./calcs')
 

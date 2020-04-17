@@ -1,4 +1,4 @@
-const mysql = require('../lib/mysql')
+import mysql from '../lib/mysql'
 const users = require('../lib/db/users')
 
 module.exports = app => {

@@ -1,4 +1,4 @@
-const mysql = require('../../lib/mysql')
+import mysql from '../../lib/mysql'
 const alliances = require('../../lib/db/alliances')
 const { getActiveMission } = require('../../lib/db/users')
 const personnel = require('../../lib/db/personnel')

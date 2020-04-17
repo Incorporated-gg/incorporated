@@ -1,4 +1,4 @@
-const mysql = require('../../lib/mysql')
+import mysql from '../../lib/mysql'
 const { getServerDate } = require('shared-lib/serverTime')
 
 // Contest name has to be unique

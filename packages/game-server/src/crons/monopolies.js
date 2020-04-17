@@ -1,4 +1,4 @@
-const mysql = require('../lib/mysql')
+import mysql from '../lib/mysql'
 const { buildingsList } = require('shared-lib/buildingsUtils')
 const { getServerDate } = require('shared-lib/serverTime')
 const frequencyMs = 60 * 1000

@@ -1,5 +1,5 @@
 import { sendMessage } from '../../lib/db/users'
-const mysql = require('../../lib/mysql')
+import mysql from '../../lib/mysql'
 const alliances = require('../../lib/db/alliances')
 const users = require('../../lib/db/users')
 const { MAX_ALLIANCE_MEMBERS } = require('shared-lib/allianceUtils')

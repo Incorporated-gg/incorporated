@@ -1,4 +1,4 @@
-const mysql = require('../lib/mysql')
+import mysql from '../lib/mysql'
 const users = require('../lib/db/users')
 const alliances = require('../lib/db/alliances')
 
@@ -148,7 +148,7 @@ async function parseMessage(msg) {
       }
       case 'war_started':
       case 'war_ended': {
-        const [war] = await mysql.query('SELECT alliance1_id, alliance2_id, data FROM alliances_wars WHERE id=?', [
+        const war = await mysql.selectOne('SELECT alliance1_id, alliance2_id, data FROM alliances_wars WHERE id=?', [
           result.data.war_id,
         ])
         result.data.attacker_alliance = await alliances.getBasicData(war.alliance1_id)

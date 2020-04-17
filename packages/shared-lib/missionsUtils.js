@@ -1,5 +1,3 @@
-const process = require('process')
-
 const { buildingsList, calcBuildingPrice, calcBuildingResistance } = require('./buildingsUtils')
 const { personnelList } = require('./personnelUtils')
 
@@ -11,6 +9,9 @@ export const NEWBIE_ZONE_DAILY_INCOME = 750000
 export const MAX_DAILY_ATTACKS = process.env.NODE_ENV === 'development' ? 999 : 3
 
 export function calculateIsInAttackRange(attackerDailyIncome, defenderDailyIncome) {
+  if (process.env.NODE_ENV === 'development') return true
+  if (attackerDailyIncome < NEWBIE_ZONE_DAILY_INCOME || defenderDailyIncome < NEWBIE_ZONE_DAILY_INCOME) return false
+
   const maxIncome = attackerDailyIncome * 1.2 + 2000000
   const minIncome = (attackerDailyIncome - 2000000) / 1.2
   return defenderDailyIncome >= minIncome && defenderDailyIncome <= maxIncome

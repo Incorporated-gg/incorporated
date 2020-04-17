@@ -1,4 +1,4 @@
-const mysql = require('../lib/mysql')
+import mysql from '../lib/mysql'
 const personnel = require('../lib/db/personnel')
 const { hasActiveMission } = require('../lib/db/users')
 const { personnelList } = require('shared-lib/personnelUtils')

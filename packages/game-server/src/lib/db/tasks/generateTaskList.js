@@ -182,7 +182,7 @@ const initialTasks = [
     id: 9,
     reward: 250000,
     type: 'custom_join_alliance',
-    requirements: {},
+    requirements: { amount: 1 },
   },
   {
     id: 10,

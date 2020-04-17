@@ -40,10 +40,10 @@ export async function get({ warID }) {
   ])
 
   const warPoints1 = Object.values(warData.days)
-    .map(day => day.war_points_alliance1)
+    .map(day => day.alliance1.war_points)
     .reduce((prev, curr) => prev + curr, 0)
   const warPoints2 = Object.values(warData.days)
-    .map(day => day.war_points_alliance2)
+    .map(day => day.alliance1.war_points)
     .reduce((prev, curr) => prev + curr, 0)
 
   return { alliance1, alliance2, warPoints1, warPoints2 }

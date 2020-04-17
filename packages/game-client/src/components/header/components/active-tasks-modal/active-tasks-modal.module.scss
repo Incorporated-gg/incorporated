@@ -1,7 +1,9 @@
 @import '../../../../variables';
 
 .headerTaskOuter {
-  width: 90vw;
+  width: 80vw;
+  max-height: 90vh;
+  overflow: auto;
   max-width: $breakpoint-medium;
 }
 
@@ -39,7 +41,7 @@
 }
 
 .rewardContainer {
-  cursor: pointer;
+  display: block;
 }
 .claimReward {
   @include pascalText();

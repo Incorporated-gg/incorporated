@@ -1,4 +1,4 @@
-const mysql = require('../lib/mysql')
+import mysql from '../lib/mysql'
 const frequencyMs = 5 * 60 * 1000
 const { getUserDailyIncome } = require('../lib/db/users')
 

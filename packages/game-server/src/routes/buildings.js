@@ -1,5 +1,5 @@
 import tasksProgressHook from '../lib/db/tasks/tasksProgressHook'
-const mysql = require('../lib/mysql')
+import mysql from '../lib/mysql'
 const { buildingsList, calcBuildingPrice } = require('shared-lib/buildingsUtils')
 
 module.exports = app => {

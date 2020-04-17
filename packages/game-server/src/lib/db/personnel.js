@@ -1,4 +1,4 @@
-const mysql = require('../mysql')
+import mysql from '../mysql'
 
 module.exports.updatePersonnelAmount = updatePersonnelAmount
 async function updatePersonnelAmount(req, resourceID, resourceAmount) {

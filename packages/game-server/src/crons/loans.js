@@ -1,4 +1,4 @@
-const mysql = require('../lib/mysql')
+import mysql from '../lib/mysql'
 const { sendMessage } = require('../lib/db/users')
 const frequencyMs = 60 * 1000
 

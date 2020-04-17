@@ -1,9 +1,7 @@
-import { hoods } from '../../lib/map'
 import { parseBadgeFromUserRequest } from '../../lib/db/alliances/badge'
-const mysql = require('../../lib/mysql')
+import mysql from '../../lib/mysql'
+import { CREATE_ALLIANCE_PRICE } from 'shared-lib/allianceUtils'
 const alliances = require('../../lib/db/alliances')
-const { sendMessage } = require('../../lib/db/users')
-const { CREATE_ALLIANCE_PRICE } = require('shared-lib/allianceUtils')
 
 const alphanumericRegexp = /^[a-z0-9]+$/i
 
@@ -154,70 +152,6 @@ module.exports = app => {
 
     const msNow = Math.floor(Date.now() / 1000)
     await mysql.query('UPDATE alliances SET ??=? WHERE id=?', [`buff_${buffID}_last_used`, msNow, userRank.alliance_id])
-
-    res.json({ success: true })
-  })
-
-  app.post('/v1/alliance/declare_war', async function(req, res) {
-    if (!req.userData) {
-      res.status(401).json({ error: 'Necesitas estar conectado', error_code: 'not_logged_in' })
-      return
-    }
-
-    const attackedAllianceID = req.body.alliance_id
-    const allianceExists = await alliances.getBasicData(attackedAllianceID)
-    if (!allianceExists) {
-      res.status(401).json({ error: 'Esa alianza no existe' })
-      return
-    }
-
-    const userRank = await alliances.getUserRank(req.userData.id)
-    if (!userRank || !userRank.permission_declare_war) {
-      res.status(401).json({ error: 'No tienes permiso para hacer esto' })
-      return
-    }
-
-    const activeWarBetweenBoth = await alliances.getActiveWarBetweenAlliances(userRank.alliance_id, attackedAllianceID)
-    if (activeWarBetweenBoth) {
-      res.status(401).json({ error: 'Ya tenéis una guerra activa' })
-      return
-    }
-
-    const attackedHoods = req.body.hoods
-    const areHoodsValid =
-      Array.isArray(attackedHoods) &&
-      attackedHoods.length > 0 &&
-      attackedHoods.every(hoodID => {
-        const hood = hoods.find(_h => _h.id === hoodID)
-        return hood && hood.owner && hood.owner.id === attackedAllianceID
-      })
-    if (!areHoodsValid) {
-      res.status(401).json({ error: 'Barrios inválidos' })
-      return
-    }
-
-    const data = { hoods: attackedHoods, days: {} }
-    const tsNow = Math.floor(Date.now() / 1000)
-    const {
-      insertId: warID,
-    } = await mysql.query(
-      'INSERT INTO alliances_wars (created_at, alliance1_id, alliance2_id, data) VALUES (?, ?, ?, ?)',
-      [tsNow, userRank.alliance_id, attackedAllianceID, JSON.stringify(data)]
-    )
-
-    const attackedAllianceMembers = await alliances.getMembers(attackedAllianceID)
-    const myAllianceMembers = await alliances.getMembers(userRank.alliance_id)
-
-    await Promise.all(
-      [...attackedAllianceMembers, ...myAllianceMembers].map(member =>
-        sendMessage({
-          receiverID: member.user.id,
-          senderID: null,
-          type: 'war_started',
-          data: { war_id: warID },
-        })
-      )
-    )
 
     res.json({ success: true })
   })

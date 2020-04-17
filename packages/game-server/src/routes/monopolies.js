@@ -1,5 +1,5 @@
+import mysql from '../lib/mysql'
 const users = require('../lib/db/users')
-const mysql = require('../lib/mysql')
 
 module.exports = app => {
   app.get('/v1/monopolies', async function(req, res) {

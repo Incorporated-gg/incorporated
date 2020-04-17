@@ -6,6 +6,9 @@
   font-weight: 700;
   cursor: pointer;
   user-select: none;
+  &:active {
+    transform: translateY(2px);
+  }
 }
 .disabled {
   opacity: 0.6;

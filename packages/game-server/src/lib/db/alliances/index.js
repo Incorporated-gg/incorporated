@@ -1,6 +1,6 @@
 import { hoods } from '../../map'
 import { parseBadgeJSONFromDB } from './badge'
-const mysql = require('../../mysql')
+import mysql from '../../mysql'
 const users = require('../users')
 const { RESEARCHS_LIST, RESOURCES_LIST, calcResearchPrice } = require('shared-lib/allianceUtils')
 
@@ -208,44 +208,77 @@ export async function getActiveWarBetweenAlliances(allianceID1, allianceID2) {
 
 export async function getAllianceActiveWars(allianceID) {
   let activeWars = await mysql.query(
-    'SELECT id, created_at, alliance1_id, alliance2_id, data FROM alliances_wars WHERE completed=0 AND (alliance1_id=? OR alliance2_id=?) ORDER BY created_at DESC',
+    'SELECT id FROM alliances_wars WHERE completed=0 AND (alliance1_id=? OR alliance2_id=?) ORDER BY created_at DESC',
     [allianceID, allianceID]
   )
-  activeWars = await Promise.all(activeWars.map(war => parseWar(allianceID, war)))
+  activeWars = await Promise.all(activeWars.map(war => getWarData(war.id)))
 
   return activeWars
 }
 
 export async function getAlliancePastWars(allianceID) {
   let pastWars = await mysql.query(
-    'SELECT id, created_at, alliance1_id, alliance2_id, data FROM alliances_wars WHERE completed=1 AND (alliance1_id=? OR alliance2_id=?) ORDER BY created_at DESC LIMIT 10',
+    'SELECT id FROM alliances_wars WHERE completed=1 AND (alliance1_id=? OR alliance2_id=?) ORDER BY created_at DESC LIMIT 10',
     [allianceID, allianceID]
   )
-  pastWars = await Promise.all(pastWars.map(war => parseWar(allianceID, war)))
+  pastWars = await Promise.all(pastWars.map(war => getWarData(war.id)))
 
   return pastWars
 }
 
-async function parseWar(allianceID, war) {
+export async function getWarData(warID, { includeRawData = false } = {}) {
+  const war = await mysql.selectOne(
+    'SELECT id, created_at, alliance1_id, alliance2_id, data, alliance1_hoods, alliance2_hoods FROM alliances_wars WHERE id=?',
+    [warID]
+  )
+
   const alliance1 = await getBasicData(war.alliance1_id)
   const alliance2 = await getBasicData(war.alliance2_id)
-  const combatant = war.alliance1_id === allianceID ? alliance2 : alliance1
+
+  // alliance2_hoods is set when war is declared, but alliance1_hoods might take up to 24h
+  let alliance1Hoods = []
+  let alliance2Hoods = []
+  if (war.alliance1_hoods) {
+    alliance1Hoods = war.alliance1_hoods.split(',').map(hoodID => hoods.find(h => h.id === parseInt(hoodID)))
+  }
+  alliance2Hoods = war.alliance2_hoods.split(',').map(hoodID => hoods.find(h => h.id === parseInt(hoodID)))
+
   const data = JSON.parse(war.data)
-  const attackedHoods = data.hoods.map(hoodID => {
-    return hoods.find(h => h.id === hoodID)
-  })
   const days = data.days
   const winner = data.winner
-  return {
+
+  const alliance1Aids = []
+  const alliance2Aids = []
+  const warAids = await mysql.query(
+    'SELECT aided_alliance_id, aiding_alliance_id, accepted_at FROM alliances_wars_aid WHERE war_id=? AND accepted=1',
+    [warID]
+  )
+  await Promise.all(
+    warAids.map(async aid => {
+      const aidingAlliance = await getBasicData(aid.aiding_alliance_id)
+      const arrayToAppend = aid.aided_alliance_id === alliance1.id ? alliance1Aids : alliance2Aids
+      arrayToAppend.push({
+        alliance: aidingAlliance,
+        accepted_at: aid.accepted_at,
+      })
+    })
+  )
+
+  const result = {
     id: war.id,
     created_at: war.created_at,
-    combatant,
     days,
     winner,
-    hoods: attackedHoods,
+    alliance1_hoods: alliance1Hoods,
+    alliance2_hoods: alliance2Hoods,
+    alliance1_aids: alliance1Aids,
+    alliance2_aids: alliance2Aids,
     alliance1: alliance1,
     alliance2: alliance2,
+    _data: data,
   }
+  if (!includeRawData) delete result._data
+  return result
 }
 
 export async function deleteAlliance(allianceID) {
