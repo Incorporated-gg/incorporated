@@ -40,8 +40,8 @@ export default function WarInfo({ war }) {
       const dayData = war.days[day]
 
       warLineGraphData.labels.push(`Día ${day}`)
-      warLineGraphData.datasets[0].data.push(dayData ? dayData.war_points_alliance1 : 0)
-      warLineGraphData.datasets[1].data.push(dayData ? dayData.war_points_alliance2 : 0)
+      warLineGraphData.datasets[0].data.push(dayData ? dayData.alliance1.war_points : 0)
+      warLineGraphData.datasets[1].data.push(dayData ? dayData.alliance2.war_points : 0)
 
       extraData.points[0] += dayData ? dayData.alliance1.war_points || 0 : 0
       extraData.points[1] += dayData ? dayData.alliance2.war_points || 0 : 0

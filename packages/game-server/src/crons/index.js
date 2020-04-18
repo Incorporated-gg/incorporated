@@ -20,11 +20,10 @@ module.exports = () => {
         console.error(err)
       })
       setInterval(() => cron.run(), cron.frequencyMs)
-    } else if (cron.runOnce) {
-      cron.runOnce().catch(err => {
-        err.message = `[CRON] [${file}]: ` + err.message
-        console.error(err)
-      })
+    } else {
+      throw new Error('Invalid cron file')
     }
   })
+
+  require('./on_day_reset').runOnce()
 }

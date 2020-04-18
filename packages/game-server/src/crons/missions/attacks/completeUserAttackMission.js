@@ -12,7 +12,7 @@ import {
 import { getUserAllianceID, getResearchBonusFromBuffs, getActiveWarBetweenAlliances } from '../../../lib/db/alliances'
 const { calcBuildingMaxMoney } = require('shared-lib/buildingsUtils')
 const { simulateAttack } = require('shared-lib/missionsUtils')
-const { onNewWarAttack } = require('../../alliance_wars')
+const { onNewWarAttack } = require('../../on_day_reset/alliance_wars')
 
 export async function completeUserAttackMission(mission) {
   const data = JSON.parse(mission.data)
