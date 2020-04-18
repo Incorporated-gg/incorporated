@@ -1,5 +1,5 @@
 import React from 'react'
-import { personnelList } from 'shared-lib/personnelUtils'
+import { personnelObj } from 'shared-lib/personnelUtils'
 import { useUserData } from 'lib/user'
 import CardList from 'components/card/card-list'
 import PersonnelItem from 'components/personnel/personnel-item/personnel-item'
@@ -9,11 +9,11 @@ export default function Personnel() {
 
   return (
     <CardList>
-      {personnelList.map(personnel => (
+      {Object.values(personnelObj).map(personnelInfo => (
         <PersonnelItem
-          key={personnel.resource_id}
-          personnelInfo={personnel}
-          resourceAmount={userData.personnel[personnel.resource_id]}
+          key={personnelInfo.resource_id}
+          personnelInfo={personnelInfo}
+          resourceAmount={userData.personnel[personnelInfo.resource_id]}
         />
       ))}
     </CardList>

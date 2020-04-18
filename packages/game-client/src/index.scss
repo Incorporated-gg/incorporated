@@ -121,9 +121,12 @@ a {
 
 .ReactModal__Content {
   position: absolute;
-  max-width: 90vw;
+  max-width: 80vw;
   max-height: 90vh;
   overflow: auto;
   -webkit-overflow-scrolling: touch;
   outline: none;
+  @media (min-width: $breakpoint-medium / 0.8) {
+    max-width: $breakpoint-medium;
+  }
 }

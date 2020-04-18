@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import {} from 'shared-lib/personnelUtils'
 import PropTypes from 'prop-types'
 import { reloadUserData } from 'lib/user'
 import Card, { cardStyles } from 'components/card'

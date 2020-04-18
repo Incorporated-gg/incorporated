@@ -37,12 +37,19 @@
 }
 
 .title {
-  font-size: $font-size-xxlarge;
   filter: url(#newspaperGrainFilter);
+  font-size: $font-size-large;
+  @media (min-width: $breakpoint-medium) {
+    font-size: $font-size-xlarge;
+  }
 }
 
 .corpusContainer {
   display: flex;
+  font-size: $font-size-small;
+  @media (min-width: $breakpoint-medium) {
+    font-size: $font-size-medium;
+  }
 
   .corpus {
     flex-grow: 1;

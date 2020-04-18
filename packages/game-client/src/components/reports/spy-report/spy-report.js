@@ -1,20 +1,23 @@
-import React from 'react'
+import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import { userData } from 'lib/user'
 import { buildingsList } from 'shared-lib/buildingsUtils'
-import { personnelList } from 'shared-lib/personnelUtils'
+import { personnelObj } from 'shared-lib/personnelUtils'
 import { researchList } from 'shared-lib/researchUtils'
 import { timestampFromEpoch } from 'shared-lib/commonUtils'
 import UserLink from 'components/UI/UserLink'
 import NotepadPage from 'components/UI/NotepadPage'
 import Icon from 'components/icon'
 import { numberToAbbreviation } from 'lib/utils'
+import IncButton from 'components/UI/inc-button'
+import SimulatorModal from 'components/simulator-modal/simulator-modal'
 
 SpyReport.propTypes = {
   mission: PropTypes.object.isRequired,
 }
 export default function SpyReport({ mission }) {
   const isTargetMe = mission.target_user && userData.id === mission.target_user.id
+  const [isSimulatorModalOpen, setIsSimulatorModalOpen] = useState(false)
 
   if (isTargetMe) {
     return (
@@ -70,7 +73,7 @@ export default function SpyReport({ mission }) {
         <div>
           <br />
           <b>{'Personal'}:</b>
-          {personnelList.map(personnelInfo => {
+          {Object.values(personnelObj).map(personnelInfo => {
             return (
               <div key={personnelInfo.resource_id}>
                 {personnelInfo.name}: {mission.report.personnel[personnelInfo.resource_id]}
@@ -90,6 +93,20 @@ export default function SpyReport({ mission }) {
               </div>
             )
           })}
+          <br />
+          <IncButton
+            onClick={() => {
+              setIsSimulatorModalOpen(true)
+            }}>
+            Simular ataque
+          </IncButton>
+          <SimulatorModal
+            spyReport={mission.report}
+            isOpen={isSimulatorModalOpen}
+            onRequestClose={() => {
+              setIsSimulatorModalOpen(false)
+            }}
+          />
         </div>
       )}
       {!mission.report.buildings &&

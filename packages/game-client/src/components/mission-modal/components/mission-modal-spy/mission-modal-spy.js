@@ -1,9 +1,10 @@
 import React, { useState, useCallback, useEffect } from 'react'
 import api from 'lib/api'
 import { useUserData } from 'lib/user'
-import { personnelList } from 'shared-lib/personnelUtils'
-import { calculateMissionTime } from 'shared-lib/missionsUtils'
+import { personnelObj } from 'shared-lib/personnelUtils'
+import { calculateMissionTime, calcSpyFailProbabilities } from 'shared-lib/missionsUtils'
 import PropTypes from 'prop-types'
+import IncButton from 'components/UI/inc-button'
 
 MissionModalSpy.propTypes = {
   user: PropTypes.object,
@@ -11,11 +12,16 @@ MissionModalSpy.propTypes = {
 }
 export default function MissionModalSpy({ user, onRequestClose }) {
   const userData = useUserData()
+  const [theirLvl, setTheirLvl] = useState('')
   const [toUser, setToUser] = useState((user && user.username) || '')
-  const [numTroops, setNumTroops] = useState(() => {
-    return userData.personnel.spies
-  })
+  const [numTroops, setNumTroops] = useState(userData.personnel.spies)
   const isFormReady = toUser && numTroops && numTroops > 0
+
+  const espionageProbabilities = calcSpyFailProbabilities({
+    resLvlAttacker: userData.researchs[1],
+    resLvLDefender: parseInt(theirLvl) || userData.researchs[1],
+    spiesSent: numTroops,
+  })
 
   useEffect(() => {
     setNumTroops(userData.personnel.spies)
@@ -39,31 +45,46 @@ export default function MissionModalSpy({ user, onRequestClose }) {
     [isFormReady, numTroops, onRequestClose, toUser]
   )
 
-  const troopName = personnelList.find(p => p.resource_id === 'spies').name
+  const troopName = personnelObj.spies.name
 
   const missionSeconds = calculateMissionTime('spy')
 
   return (
     <>
       <div>
+        <p>Probabilidades de fallo:</p>
+        <p>
+          <label>
+            Su nivel de espionaje:
+            <input
+              type="number"
+              placeholder={'Desconocido'}
+              value={theirLvl}
+              onChange={e => setTheirLvl(e.target.value)}
+            />
+          </label>
+        </p>
+        <p>Por nivel: {Math.round(espionageProbabilities.level * 10) / 10}%</p>
+        <p>Por número de espías: {Math.round(espionageProbabilities.spies * 10) / 10}%</p>
+        <p>Total: {Math.round(espionageProbabilities.total * 10) / 10}%</p>
+      </div>
+      <div>
         <label>
-          Usuario a espiar
-          {': '}
-          <input type="text" name="" value={toUser} onChange={e => setToUser(e.target.value)} />
+          Usuario a espiar:
+          <input type="text" value={toUser} onChange={e => setToUser(e.target.value)} />
         </label>
       </div>
       <div>
         <label>
-          {troopName}
-          {': '}
-          <input type="number" name="quantity" value={numTroops} onChange={e => setNumTroops(e.target.value)} />
+          {troopName}:
+          <input type="number" value={numTroops} onChange={e => setNumTroops(e.target.value)} />
         </label>
       </div>
       <div>Tiempo de mision: {missionSeconds}s</div>
       <div>
-        <button onClick={startMission} disabled={!isFormReady}>
+        <IncButton onClick={startMission} disabled={!isFormReady}>
           Enviar
-        </button>
+        </IncButton>
       </div>
     </>
   )

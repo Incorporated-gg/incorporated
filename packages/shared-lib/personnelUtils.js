@@ -1,5 +1,5 @@
-export const personnelList = [
-  {
+export const personnelObj = {
+  guards: {
     name: 'Guardias',
     resource_id: 'guards',
     price: 100,
@@ -7,7 +7,7 @@ export const personnelList = [
     combatPower: 1,
     dailyMaintenanceCost: 500,
   },
-  {
+  sabots: {
     name: 'Gangsters',
     resource_id: 'sabots',
     price: 500,
@@ -15,14 +15,14 @@ export const personnelList = [
     combatPower: 1,
     dailyMaintenanceCost: 500,
   },
-  {
+  spies: {
     name: 'Espías',
     resource_id: 'spies',
     price: 2500,
     firingCost: 500,
     dailyMaintenanceCost: 1000,
   },
-  {
+  thieves: {
     name: 'Ladrones',
     resource_id: 'thieves',
     price: 200,
@@ -31,4 +31,4 @@ export const personnelList = [
     robbingPower: 50,
     dailyMaintenanceCost: 500,
   },
-]
+}

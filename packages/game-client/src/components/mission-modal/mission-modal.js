@@ -4,7 +4,6 @@ import styles from './mission-modal.module.scss'
 import Modal from 'react-modal'
 import MissionModalSpy from './components/mission-modal-spy'
 import MissionModalAttack from './components/mission-modal-attack'
-import MissionModalSimulate from './components/mission-modal-simulate'
 import Container from 'components/UI/container'
 
 MissionModal.propTypes = {
@@ -30,15 +29,13 @@ Mission.propTypes = {
 }
 function Mission({ missionType, user, hood, onRequestClose }) {
   return (
-    <Container withHairline darkBg borderSize={20}>
+    <Container withHairline darkBg>
       <form className={styles.startNewMission}>
         {missionType === 'attack' ? (
           <MissionModalAttack user={user} hood={hood} onRequestClose={onRequestClose} />
         ) : missionType === 'spy' ? (
           <MissionModalSpy user={user} onRequestClose={onRequestClose} />
-        ) : (
-          missionType === 'simulate' && <MissionModalSimulate />
-        )}
+        ) : null}
       </form>
     </Container>
   )

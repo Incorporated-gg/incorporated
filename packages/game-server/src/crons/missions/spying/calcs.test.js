@@ -1,12 +1,13 @@
-const { _calcFailProbability, _calcInformationObtainedProbabilities } = require('./calcs')
+import { _calcInformationObtainedProbabilities } from './calcs'
+import { calcSpyFailProbabilities } from 'shared-lib/missionsUtils'
 
 test('Spy 1', () => {
   expect(
-    _calcFailProbability({
+    calcSpyFailProbabilities({
       resLvLDefender: 32,
       resLvlAttacker: 10,
       spiesSent: 10,
-    })
+    }).total
   ).toBe(3.30311084960767)
 
   expect(
@@ -23,11 +24,11 @@ test('Spy 1', () => {
 
 test('Spy 2', () => {
   expect(
-    _calcFailProbability({
+    calcSpyFailProbabilities({
       resLvLDefender: 32,
       resLvlAttacker: 10,
       spiesSent: 100,
-    })
+    }).total
   ).toBe(112.16033757648157)
 
   expect(
@@ -44,11 +45,11 @@ test('Spy 2', () => {
 
 test('Spy 3', () => {
   expect(
-    _calcFailProbability({
+    calcSpyFailProbabilities({
       resLvLDefender: 10,
       resLvlAttacker: 40,
       spiesSent: 10,
-    })
+    }).total
   ).toBe(0.004297911912563827)
 
   expect(
@@ -65,11 +66,11 @@ test('Spy 3', () => {
 
 test('Spy 4', () => {
   expect(
-    _calcFailProbability({
+    calcSpyFailProbabilities({
       resLvLDefender: 10,
       resLvlAttacker: 40,
       spiesSent: 100,
-    })
+    }).total
   ).toBe(0.04103260579011485)
 
   expect(

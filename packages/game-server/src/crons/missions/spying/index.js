@@ -1,12 +1,8 @@
 import mysql from '../../../lib/mysql'
-const { getUserResearchs, getBuildings, getPersonnel, runUserMoneyUpdate } = require('../../../lib/db/users')
-const { calcSpiesCaptured, calcInformationObtained } = require('./calcs')
+import { calcSpiesCaptured, calcInformationObtained } from './calcs'
+import { getUserResearchs, getBuildings, getPersonnel, runUserMoneyUpdate } from '../../../lib/db/users'
 
-module.exports = {
-  doSpyMissions,
-}
-
-async function doSpyMissions() {
+export async function doSpyMissions() {
   const tsNow = Math.floor(Date.now() / 1000)
   const spyMissions = await mysql.query(
     'SELECT id, user_id, data, target_user, mission_type, started_at, will_finish_at, completed FROM missions WHERE completed=? AND mission_type=? AND will_finish_at<=?',

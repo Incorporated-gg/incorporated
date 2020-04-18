@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import styles from './header.module.scss'
 import { DESKTOP_WIDTH_BREAKPOINT } from 'lib/utils'
-import DeclareBankruptcy from 'components/header/components/header-declare-bankruptcy'
 import ActiveMission from 'components/header/components/header-active-mission'
 import ActiveTasksModal from 'components/header/components/active-tasks-modal'
 import useWindowSize from 'lib/useWindowSize'
@@ -28,7 +27,6 @@ export default function Header() {
         </div>
         {isDesktop && <Menu />}
         <ActiveMission />
-        <DeclareBankruptcy />
       </div>
 
       <ActiveTasksModal isOpen={isActiveTasksModalOpen} onRequestClose={() => setIsActiveTasksModalOpen(false)} />

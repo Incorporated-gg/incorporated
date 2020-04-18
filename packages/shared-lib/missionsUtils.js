@@ -1,9 +1,5 @@
 const { buildingsList, calcBuildingPrice, calcBuildingResistance } = require('./buildingsUtils')
-const { personnelList } = require('./personnelUtils')
-
-const guardsInfo = personnelList.find(t => t.resource_id === 'guards')
-const sabotsInfo = personnelList.find(t => t.resource_id === 'sabots')
-const thievesInfo = personnelList.find(t => t.resource_id === 'thieves')
+const { personnelObj } = require('./personnelUtils')
 
 export const NEWBIE_ZONE_DAILY_INCOME = 750000
 export const MAX_DAILY_ATTACKS = process.env.NODE_ENV === 'development' ? 999 : 3
@@ -36,13 +32,13 @@ function getBuildingDestroyedProfit({ buildingID, buildingAmount, destroyedBuild
 }
 
 export function calcSabotsPower(sabotageResearchLvl) {
-  return 2 * sabotsInfo.combatPower * sabotageResearchLvl
+  return 2 * personnelObj.sabots.combatPower * sabotageResearchLvl
 }
 function calcThievesPower(sabotageResearchLvl) {
-  return 2 * thievesInfo.combatPower * sabotageResearchLvl
+  return 2 * personnelObj.thieves.combatPower * sabotageResearchLvl
 }
 export function calcGuardsPower(securityResearchLvl) {
-  return 2 * guardsInfo.combatPower * securityResearchLvl
+  return 2 * personnelObj.guards.combatPower * securityResearchLvl
 }
 
 function simulateCombat({
@@ -125,18 +121,32 @@ export function simulateAttack({
   infraResearchLvl,
   unprotectedMoney,
 }) {
-  if (
-    typeof buildingID === 'undefined' ||
-    typeof buildingAmount === 'undefined' ||
-    typeof defensorGuards === 'undefined' ||
-    typeof attackerSabots === 'undefined' ||
-    typeof attackerThieves === 'undefined' ||
-    typeof defensorSecurityLvl === 'undefined' ||
-    typeof attackerSabotageLvl === 'undefined' ||
-    typeof infraResearchLvl === 'undefined' ||
-    typeof unprotectedMoney === 'undefined'
-  ) {
-    throw new Error('Missing params for attack simulation')
+  if (typeof buildingID === 'undefined') {
+    throw new Error(`Missing param ${'buildingID'} for attack simulation`)
+  }
+  if (typeof buildingAmount === 'undefined') {
+    throw new Error(`Missing param ${'buildingAmount'} for attack simulation`)
+  }
+  if (typeof defensorGuards === 'undefined') {
+    throw new Error(`Missing param ${'defensorGuards'} for attack simulation`)
+  }
+  if (typeof attackerSabots === 'undefined') {
+    throw new Error(`Missing param ${'attackerSabots'} for attack simulation`)
+  }
+  if (typeof attackerThieves === 'undefined') {
+    throw new Error(`Missing param ${'attackerThieves'} for attack simulation`)
+  }
+  if (typeof defensorSecurityLvl === 'undefined') {
+    throw new Error(`Missing param ${'defensorSecurityLvl'} for attack simulation`)
+  }
+  if (typeof attackerSabotageLvl === 'undefined') {
+    throw new Error(`Missing param ${'attackerSabotageLvl'} for attack simulation`)
+  }
+  if (typeof infraResearchLvl === 'undefined') {
+    throw new Error(`Missing param ${'infraResearchLvl'} for attack simulation`)
+  }
+  if (typeof unprotectedMoney === 'undefined') {
+    throw new Error(`Missing param ${'unprotectedMoney'} for attack simulation`)
   }
   const attackedBuildingInfo = buildingsList.find(b => b.id === buildingID)
   buildingID = parseInt(buildingID)
@@ -170,8 +180,8 @@ export function simulateAttack({
   const result = survivingGuards > 0 ? 'lose' : destroyedBuildings > 0 ? 'win' : 'draw'
 
   // Killed troops income
-  const killedGuardsPrice = deadGuards * guardsInfo.price
-  const killedSabotsPrice = deadSabots * sabotsInfo.price
+  const killedGuardsPrice = deadGuards * personnelObj.guards.price
+  const killedSabotsPrice = deadSabots * personnelObj.sabots.price
   const incomeForKilledTroops = killedGuardsPrice * 0.1
 
   // Destroyed buildings income
@@ -182,7 +192,7 @@ export function simulateAttack({
   })
 
   // Robbing income
-  const maxRobbedMoney = survivingThieves * thievesInfo.robbingPower
+  const maxRobbedMoney = survivingThieves * personnelObj.thieves.robbingPower
   const robbedMoney = Math.min(maxRobbedMoney, unprotectedMoney)
 
   // Misc calculations
@@ -207,4 +217,24 @@ export function simulateAttack({
 
 export function calcSendableSpies(spyResearchLvl) {
   return Math.ceil(3 * Math.pow(Math.E, 0.11 * spyResearchLvl))
+}
+
+export function calcSpyFailProbabilities({ resLvlAttacker, resLvLDefender, spiesSent }) {
+  const sendableSpies = calcSendableSpies(resLvlAttacker)
+  const sentSpiesPercentage = spiesSent / sendableSpies
+  const valueDiff =
+    resLvLDefender < resLvlAttacker
+      ? (0.18 * resLvLDefender) / Math.pow(resLvlAttacker - resLvLDefender, 1.3)
+      : 0.18 * resLvLDefender * Math.pow(resLvLDefender - resLvlAttacker, 1.3)
+  const spiesProbability =
+    sentSpiesPercentage > 1
+      ? 0.1 + Math.pow(1.03, resLvlAttacker) * Math.pow(sentSpiesPercentage - 1, 2)
+      : sentSpiesPercentage / 10
+  const lvlProbability = valueDiff / 100
+
+  return {
+    spies: Math.min(100, spiesProbability),
+    level: Math.min(100, lvlProbability),
+    total: Math.min(100, spiesProbability + lvlProbability),
+  }
 }

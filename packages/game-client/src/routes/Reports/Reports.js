@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import api from 'lib/api'
 import styles from './Reports.module.scss'
-import MissionModal from 'components/mission-modal'
 import Container from 'components/UI/container'
 import MissionRow from 'components/reports/mission-row/mission-row'
+import SimulatorModal from 'components/simulator-modal/simulator-modal'
 
 const initialMissionsState = {
   missions: [],
@@ -46,11 +46,7 @@ export default function Reports() {
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10 }}>
         <button onClick={() => setShowSimulatorModal(true)}>Simulador</button>
-        <MissionModal
-          missionType="simulate"
-          isOpen={showSimulatorModal}
-          onRequestClose={() => setShowSimulatorModal(false)}
-        />
+        <SimulatorModal isOpen={showSimulatorModal} onRequestClose={() => setShowSimulatorModal(false)} />
         <span>
           Enviadas hoy: {missions.todaysMissionLimits.sentToday}/{missions.todaysMissionLimits.maxAttacks}
         </span>

@@ -20,7 +20,7 @@ export default function ActiveTasksModal({ isOpen, onRequestClose }) {
   const userData = useUserData()
   return (
     <Modal overlayClassName="backdropBlur" isOpen={isOpen} onRequestClose={onRequestClose}>
-      <Container outerClassName={styles.headerTaskOuter} darkBg noBackground>
+      <Container darkBg noBackground>
         <div>
           <div className={styles.title}>TAREAS</div>
         </div>

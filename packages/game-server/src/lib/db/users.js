@@ -4,7 +4,7 @@ import cache from '../cache'
 import mysql from '../mysql'
 const alliances = require('./alliances')
 const { researchList } = require('shared-lib/researchUtils')
-const { personnelList } = require('shared-lib/personnelUtils')
+const { personnelObj } = require('shared-lib/personnelUtils')
 const { getInitialUnixTimestampOfServerDay } = require('shared-lib/serverTime')
 const { calcBuildingDailyIncome, buildingsList, calcBuildingMaxMoney } = require('shared-lib/buildingsUtils')
 
@@ -53,7 +53,7 @@ export async function getUserPersonnelCosts(userID) {
   let personnelCost = 0
   const userPersonnel = await getPersonnel(userID)
   Object.entries(userPersonnel).forEach(([resourceID, quantity]) => {
-    const personnelInfo = personnelList.find(p => p.resource_id === resourceID)
+    const personnelInfo = personnelObj[resourceID]
     if (!personnelInfo) return
     const dailyCost = quantity * personnelInfo.dailyMaintenanceCost
     personnelCost += dailyCost
@@ -87,17 +87,15 @@ export async function getUserResearchs(userID) {
 }
 
 export async function getPersonnel(userID) {
-  const personnels = {}
-  personnelList.forEach(personnel => (personnels[personnel.resource_id] = 0))
+  const personnels = {
+    guards: 0,
+    sabots: 0,
+    spies: 0,
+    thieves: 0,
+  }
 
   const personnelRaw = await mysql.query('SELECT resource_id, quantity FROM users_resources WHERE user_id=?', [userID])
   if (personnelRaw) personnelRaw.forEach(personnel => (personnels[personnel.resource_id] = personnel.quantity))
-
-  return personnels
-}
-
-export async function getTotalPersonnel(userID) {
-  const personnels = await getPersonnel(userID)
 
   return personnels
 }

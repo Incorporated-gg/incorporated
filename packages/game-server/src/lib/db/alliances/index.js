@@ -295,9 +295,13 @@ export async function deleteAlliance(allianceID) {
   ])
 }
 
-export async function getAllianceRankPosition(allianceID) {
-  const rankRow = await mysql.selectOne('SELECT rank FROM ranking_alliances WHERE alliance_id=?', [allianceID])
-  return rankRow ? rankRow.rank : null
+export async function getAllianceRankData(allianceID) {
+  const rankRow = await mysql.selectOne('SELECT rank, points FROM ranking_alliances WHERE alliance_id=?', [allianceID])
+  if (!rankRow) return null
+  return {
+    rank: rankRow.rank,
+    points: rankRow.points,
+  }
 }
 
 export function getAllianceHoods(allianceID) {

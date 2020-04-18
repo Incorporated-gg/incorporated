@@ -38,13 +38,13 @@
 
     .titleContainer {
       position: absolute;
-      bottom: 0;
+      bottom: env(safe-area-inset-bottom);
       left: 0;
       width: 100%;
       text-align: center;
       height: 2em;
       overflow: hidden; // In small devices (or other languages), the title text might overflow. Alternatively, we could make the text smaller
-
+    
       .title {
         font-family: $font-family-title;
         text-transform: uppercase;

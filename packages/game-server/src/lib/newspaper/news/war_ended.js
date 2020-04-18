@@ -1,5 +1,5 @@
 import mysql from '../../../lib/mysql'
-import { getAllianceRankPosition, getBasicData as getAllianceBasicData } from '../../../lib/db/alliances'
+import { getAllianceRankData, getBasicData as getAllianceBasicData } from '../../../lib/db/alliances'
 import NewsItem, { newsItemTypes, rankPositionToWeightVal } from '../NewsItem'
 import { WAR_DAYS_DURATION } from 'shared-lib/allianceUtils'
 
@@ -14,10 +14,10 @@ export async function generate({ dayID, minTimestamp, maxTimestamp }) {
   allWarDeclarations = await Promise.all(
     allWarDeclarations.map(async war => {
       const [rank1, rank2] = await Promise.all([
-        getAllianceRankPosition(war.alliance1_id),
-        getAllianceRankPosition(war.alliance2_id),
+        getAllianceRankData(war.alliance1_id),
+        getAllianceRankData(war.alliance2_id),
       ])
-      const rankWeight = (rankPositionToWeightVal(rank1) + rankPositionToWeightVal(rank2)) / 2
+      const rankWeight = (rankPositionToWeightVal(rank1.rank) + rankPositionToWeightVal(rank2.rank)) / 2
       const typeWeight = 1.8
 
       return new NewsItem({

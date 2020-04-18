@@ -1,5 +1,5 @@
 import React from 'react'
-import { personnelList } from 'shared-lib/personnelUtils'
+import { personnelObj } from 'shared-lib/personnelUtils'
 import PropTypes from 'prop-types'
 import { useUserData } from 'lib/user'
 import Container from 'components/UI/container'
@@ -40,7 +40,7 @@ export default function AllianceResources({ alliance, reloadAllianceData }) {
         <div style={{ padding: 10 }}>
           <h2>Historial de recursos</h2>
           {alliance.resources_log.map(logEntry => {
-            const resourceInfo = personnelList.find(r => r.resource_id === logEntry.resource_id)
+            const resourceInfo = personnelObj[logEntry.resource_id]
             const resourceName = resourceInfo?.name || 'Dinero'
             return (
               <div key={Math.random()}>

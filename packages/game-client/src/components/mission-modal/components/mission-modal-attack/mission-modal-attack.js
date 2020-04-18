@@ -2,7 +2,7 @@ import React, { useState, useCallback, useEffect } from 'react'
 import api from 'lib/api'
 import { useUserData } from 'lib/user'
 import { buildingsList } from 'shared-lib/buildingsUtils'
-import { personnelList } from 'shared-lib/personnelUtils'
+import { personnelObj } from 'shared-lib/personnelUtils'
 import { calculateMissionTime } from 'shared-lib/missionsUtils'
 import PropTypes from 'prop-types'
 
@@ -54,14 +54,14 @@ export default function MissionModalAttack({ user, hood, onRequestClose }) {
       <div>Tiempo de mision: {missionSeconds}s</div>
       <div>
         <label>
-          {personnelList.find(p => p.resource_id === 'sabots').name}
+          {personnelObj.sabots.name}
           {': '}
           <input type="number" name="quantity" value={numSabots} onChange={e => setNumSabots(e.target.value)} />
         </label>
       </div>
       <div>
         <label>
-          {personnelList.find(p => p.resource_id === 'thieves').name}
+          {personnelObj.thieves.name}
           {': '}
           <input type="number" name="quantity" value={numThieves} onChange={e => setNumThieves(e.target.value)} />
         </label>

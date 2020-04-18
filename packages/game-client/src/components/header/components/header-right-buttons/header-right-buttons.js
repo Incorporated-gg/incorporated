@@ -29,7 +29,7 @@ export default function HeaderRightButtons({ setIsActiveTasksModalOpen }) {
           <IncChevron padding={3} chevronSize={10} direction="right">
             <Icon width={26} height={16} svg={require('./img/tasks.svg')} alt="Tareas" />
           </IncChevron>
-          <div className={styles.title}>MISIONES</div>
+          <div className={styles.title}>TAREAS</div>
           <FinishedActiveTasksCounter />
         </Container>
       </div>

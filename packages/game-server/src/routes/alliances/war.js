@@ -13,7 +13,7 @@ module.exports = app => {
       return
     }
 
-    const attackedAllianceID = req.body.alliance_id
+    const attackedAllianceID = parseInt(req.body.alliance_id)
     const allianceExists = await alliances.getBasicData(attackedAllianceID)
     if (!allianceExists) {
       res.status(401).json({ error: 'Esa alianza no existe' })
@@ -23,6 +23,18 @@ module.exports = app => {
     const userRank = await alliances.getUserRank(req.userData.id)
     if (!userRank || !userRank.permission_declare_war) {
       res.status(401).json({ error: 'No tienes permiso para hacer esto' })
+      return
+    }
+
+    const ourRankData = await alliances.getAllianceRankData(userRank.alliance_id)
+    const theirRankData = await alliances.getAllianceRankData(attackedAllianceID)
+    if (
+      !ourRankData ||
+      !theirRankData ||
+      ourRankData.points > theirRankData.points * 1.2 + 16000 ||
+      ourRankData.points < (theirRankData.points - 16000) / 1.2
+    ) {
+      res.status(401).json({ error: 'Hay demasiada diferencia en puntos' })
       return
     }
 

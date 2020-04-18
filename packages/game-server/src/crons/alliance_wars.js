@@ -3,11 +3,11 @@ import { getMembers, getBasicData as getAllianceBasicData, getWarData } from '..
 import { sendAccountHook } from '../lib/accountInternalApi'
 import { sendMessage } from '../lib/db/users'
 import { getServerDay, getInitialUnixTimestampOfServerDay } from 'shared-lib/serverTime'
-import { personnelList } from 'shared-lib/personnelUtils'
+import { personnelObj } from 'shared-lib/personnelUtils'
 import { WAR_DAYS_DURATION } from 'shared-lib/allianceUtils'
 
-const sabotsInfo = personnelList.find(t => t.resource_id === 'sabots')
-const thievesInfo = personnelList.find(t => t.resource_id === 'thieves')
+const EXTRA_POINTS_PER_OBJECTIVE = 40
+const WAR_POINTS_LIMIT_FOR_AUTOFINISH = WAR_DAYS_DURATION * 50 + 1 + EXTRA_POINTS_PER_OBJECTIVE * 3
 
 export async function runOnce() {
   // Run every server day just after reset
@@ -22,7 +22,7 @@ export async function runOnce() {
 export async function onNewWarAttack(warID) {
   const warData = await getWarData(warID, { includeRawData: true })
   const warDay = getServerDay() - getServerDay(warData.created_at * 1000)
-  await updateWarDayData(warData, warDay)
+  await updateWarDayData(warData, warDay, false)
 }
 
 async function runJustAfterNewDay() {
@@ -38,10 +38,10 @@ async function getAllActiveWars() {
 
 async function executeDayFinishForWar(currentServerDay, warData) {
   const warDay = currentServerDay - getServerDay(warData.created_at * 1000)
-  await updateWarDayData(warData, warDay)
+  await updateWarDayData(warData, warDay, true)
 }
 
-async function updateWarDayData(warData, warDay) {
+async function updateWarDayData(warData, warDay, isRunningAtEndOfDay) {
   if (warDay <= 0) return // Attack done before war started
   if (warDay > WAR_DAYS_DURATION) {
     await endWar(warData)
@@ -77,9 +77,9 @@ async function updateWarDayData(warData, warDay) {
   ])
 
   // Calc war points from this day
-  const { warPointsAlliance1, warPointsAlliance2 } = calcWarPoints(alliance1Day, alliance2Day)
-  alliance1Day.war_points = warPointsAlliance1
-  alliance2Day.war_points = warPointsAlliance2
+  const { todayWarPointsAlliance1, todayWarPointsAlliance2 } = calcDayWarPoints(alliance1Day, alliance2Day)
+  alliance1Day.war_points = todayWarPointsAlliance1
+  alliance2Day.war_points = todayWarPointsAlliance2
 
   // Save day data
   warData._data.days[warDay] = {
@@ -88,9 +88,27 @@ async function updateWarDayData(warData, warDay) {
   }
 
   await mysql.query('UPDATE alliances_wars SET data=? WHERE id=?', [JSON.stringify(warData._data), warData.id])
+
+  if (isRunningAtEndOfDay) {
+    // End war if one alliance has mathematically no way left to win
+    const warPointsAlliance1 = Object.values(warData._data.days).reduce(
+      (prev, curr) => prev + curr.alliance1.war_points,
+      0
+    )
+    const warPointsAlliance2 = Object.values(warData._data.days).reduce(
+      (prev, curr) => prev + curr.alliance2.war_points,
+      0
+    )
+    if (
+      warPointsAlliance1 >= WAR_POINTS_LIMIT_FOR_AUTOFINISH ||
+      warPointsAlliance2 >= WAR_POINTS_LIMIT_FOR_AUTOFINISH
+    ) {
+      await endWar(warData)
+    }
+  }
 }
 
-function calcWarPoints(alliance1Day, alliance2Day) {
+function calcDayWarPoints(alliance1Day, alliance2Day) {
   let warPointsAlliance1 = 50
   let warPointsAlliance2 = 50
   if (alliance1Day.daily_points !== alliance2Day.daily_points) {
@@ -175,8 +193,8 @@ function attackToPoints(attack) {
 
   // Extra point for efficiency
   const incomeFromBuildings = attack.data.report.income_from_buildings
-  const moneyLostOnSabots = attack.data.report.killed_sabots * sabotsInfo.price
-  const moneyLostOnThieves = attack.data.report.killed_thieves * thievesInfo.price
+  const moneyLostOnSabots = attack.data.report.killed_sabots * personnelObj.sabots.price
+  const moneyLostOnThieves = attack.data.report.killed_thieves * personnelObj.thieves.price
   const moneyLostOnTroops = moneyLostOnSabots + moneyLostOnThieves
   if (incomeFromBuildings > 0 && incomeFromBuildings > moneyLostOnTroops) {
     const efficiencyRatio = (incomeFromBuildings - moneyLostOnTroops) / incomeFromBuildings
@@ -199,20 +217,20 @@ async function endWar(warData) {
   const attackWinsAlliance1 = days.reduce((prev, curr) => prev + curr.alliance1.attack_wins, 0)
   const attackWinsAlliance2 = days.reduce((prev, curr) => prev + curr.alliance2.attack_wins, 0)
   if (attackWinsAlliance1 !== attackWinsAlliance2) {
-    if (attackWinsAlliance1 > attackWinsAlliance2) warPointsAlliance1 += 40
-    else warPointsAlliance2 += 40
+    if (attackWinsAlliance1 > attackWinsAlliance2) warPointsAlliance1 += EXTRA_POINTS_PER_OBJECTIVE
+    else warPointsAlliance2 += EXTRA_POINTS_PER_OBJECTIVE
   }
   const profitAlliance1 = days.reduce((prev, curr) => prev + curr.alliance1.profit, 0)
   const profitAlliance2 = days.reduce((prev, curr) => prev + curr.alliance2.profit, 0)
   if (profitAlliance1 !== profitAlliance2) {
-    if (profitAlliance1 > profitAlliance2) warPointsAlliance1 += 40
-    else warPointsAlliance2 += 40
+    if (profitAlliance1 > profitAlliance2) warPointsAlliance1 += EXTRA_POINTS_PER_OBJECTIVE
+    else warPointsAlliance2 += EXTRA_POINTS_PER_OBJECTIVE
   }
   const attackSmacksAlliance1 = days.reduce((prev, curr) => prev + curr.alliance1.attack_smacks, 0)
   const attackSmacksAlliance2 = days.reduce((prev, curr) => prev + curr.alliance2.attack_smacks, 0)
   if (attackSmacksAlliance1 !== attackSmacksAlliance2) {
-    if (attackSmacksAlliance1 > attackSmacksAlliance2) warPointsAlliance1 += 40
-    else warPointsAlliance2 += 40
+    if (attackSmacksAlliance1 > attackSmacksAlliance2) warPointsAlliance1 += EXTRA_POINTS_PER_OBJECTIVE
+    else warPointsAlliance2 += EXTRA_POINTS_PER_OBJECTIVE
   }
 
   const winner = warPointsAlliance1 > warPointsAlliance2 ? 1 : 2

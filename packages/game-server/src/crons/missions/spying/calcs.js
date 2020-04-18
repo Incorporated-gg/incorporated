@@ -1,31 +1,7 @@
-import { calcSendableSpies } from 'shared-lib/missionsUtils'
+import { calcSendableSpies, calcSpyFailProbabilities } from 'shared-lib/missionsUtils'
 
-module.exports = {
-  _calcFailProbability,
-  _calcInformationObtainedProbabilities,
-  calcSpiesCaptured,
-  calcInformationObtained,
-}
-
-function _calcFailProbability({ resLvlAttacker, resLvLDefender, spiesSent }) {
-  const sendableSpies = calcSendableSpies(resLvlAttacker)
-  const sentSpiesPercentage = spiesSent / sendableSpies
-  const valueDiff =
-    resLvLDefender < resLvlAttacker
-      ? (0.18 * resLvLDefender) / Math.pow(resLvlAttacker - resLvLDefender, 1.3)
-      : 0.18 * resLvLDefender * Math.pow(resLvLDefender - resLvlAttacker, 1.3)
-  const spiesProbability =
-    sentSpiesPercentage > 1
-      ? 0.1 + Math.pow(1.03, resLvlAttacker) * Math.pow(sentSpiesPercentage - 1, 2)
-      : sentSpiesPercentage / 10
-  const lvlProbability = valueDiff / 100
-  const failProbability = spiesProbability + lvlProbability
-
-  return failProbability
-}
-
-function calcSpiesCaptured({ resLvlAttacker, resLvLDefender, spiesSent }) {
-  const failProbability = _calcFailProbability({ resLvlAttacker, resLvLDefender, spiesSent })
+export function calcSpiesCaptured({ resLvlAttacker, resLvLDefender, spiesSent }) {
+  const failProbability = calcSpyFailProbabilities({ resLvlAttacker, resLvLDefender, spiesSent }).total
 
   const randomNum = Math.random()
   const caught = randomNum < failProbability
@@ -39,7 +15,7 @@ function calcSpiesCaptured({ resLvlAttacker, resLvLDefender, spiesSent }) {
   return spiesCaptured
 }
 
-function _calcInformationObtainedProbabilities({ resLvLDefender, spiesRemaining }) {
+export function _calcInformationObtainedProbabilities({ resLvLDefender, spiesRemaining }) {
   const neededSpies = calcSendableSpies(resLvLDefender)
   const sentSpiesPercentage = spiesRemaining / neededSpies
 
@@ -77,7 +53,7 @@ function _calcInformationObtainedProbabilities({ resLvLDefender, spiesRemaining 
   }
 }
 
-function calcInformationObtained({ resLvLDefender, spiesRemaining }) {
+export function calcInformationObtained({ resLvLDefender, spiesRemaining }) {
   const { maxInfo, minInfo, maxInfoProb } = _calcInformationObtainedProbabilities({ resLvLDefender, spiesRemaining })
   const randomNum = Math.random()
   const infoObtained = randomNum < maxInfoProb ? maxInfo : minInfo

@@ -1,12 +1,5 @@
 @import '../../../../variables';
 
-.headerTaskOuter {
-  width: 80vw;
-  max-height: 90vh;
-  overflow: auto;
-  max-width: $breakpoint-medium;
-}
-
 .title {
   @include gradientText();
   @include pascalText();
