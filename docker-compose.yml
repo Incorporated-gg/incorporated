@@ -65,6 +65,7 @@ services:
     build: ./packages/account-server
     networks:
       - backend
+    command: sh -c './wait-for account-db:3306 -- npm run migrate_dev_docker && npm start'
     depends_on:
       - account-db
     volumes:
@@ -83,6 +84,17 @@ services:
       - 3308:3306 # remove in prod
     volumes:
       - ./.account-mariadb-docker:/var/lib/mysql
+
+  redis:
+    image: redis:5.0.8
+    networks: 
+      - backend
+    command: redis-server --requirepass root
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./redis/data:/var/lib/redis
+      - ./redis/conf:/usr/local/etc/redis/redis.conf
 
 networks:
   default:

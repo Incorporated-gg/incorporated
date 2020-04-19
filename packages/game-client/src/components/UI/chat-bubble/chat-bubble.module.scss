@@ -1,0 +1,259 @@
+@import '../../../variables';
+
+.chatToggleButton {
+  position: fixed;
+  right: 0px;
+  bottom: 135px;
+  z-index: 199;
+
+  @media (min-width: $breakpoint-desktop) {
+    bottom: 30px;
+  }
+
+  background: $gradient-brand;
+  width: 60px;
+  height: 60px;
+  padding: 7px;
+  padding-right: 0;
+  cursor: pointer;
+
+  >* {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #343434;
+  }
+}
+
+.chatBubble {
+  position: fixed;
+  bottom: 130px;
+  right: 5px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  z-index: 200;
+
+  @media (min-width: $breakpoint-desktop) {
+    bottom: 15px;
+    right: 70px;
+  }
+
+  .chatWindow {
+    position: fixed;
+    background: $gradient-brand;
+    left: 0;
+    top: 0;
+    display: flex;
+    width: 100%;
+    height: 100%;
+    transition: opacity 200ms;
+
+    @media screen and (min-width: $breakpoint-desktop) {
+      &:not(.fullScreen) {
+        position: relative;
+        margin-bottom: 15px;
+        width: 500px;
+        height: 500px;
+      }
+    }
+
+    .chatWindowSidebar {
+      display: flex;
+      flex-direction: column;
+      background-color: #222222;
+      margin-right: 10px;
+      max-width: 220px;
+      overflow-y: auto;
+      overflow-x: hidden;
+
+      .chatWindowSidebarHeader {
+        display: flex;
+        border-bottom: 3px solid #343434;
+        padding: 10px 5px;
+        position: sticky;
+        top: 0;
+        background: #222;
+
+        .chatWindowSidebarClose,
+        .chatWindowSidebarToggle {
+          background: transparent;
+          border: 0;
+          text-align: left;
+          svg .a {
+            fill: $color-brand-light;
+          }
+        }
+        .chatWindowSidebarClose {
+          flex-grow: 1;
+          cursor: pointer;
+        }
+        .chatWindowSidebarToggle {
+          transform: rotate(180deg);
+          cursor: pointer;
+          
+          &.active {
+            transform: none;
+          }
+        }
+      }
+
+      .chatWindowSidebarRoomList {
+        display: flex;
+        flex-direction: column;
+        padding: 10px 5px;
+        min-width: 220px;
+        max-width: 220px;
+
+        .chatRoomCategory {
+          @include pascalGradientTitle();
+          font-weight: 600;
+          margin-bottom: 20px;
+          font-size: 16px;
+          
+          @media screen and (min-width: $breakpoint-desktop) {
+            font-size: 20px;
+          }
+        }
+        .chatRoomCategoryList {
+          margin-bottom: 30px;
+          display: flex;
+          flex-direction: column;
+          
+          .chatRoomItemButton {
+            flex-grow: 1;
+            text-align: left;
+            font-weight: 600;
+            color: #fff;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            font-size: 14px;
+            
+            @media screen and (min-width: $breakpoint-desktop) {
+              font-size: 16px;
+            }
+
+            &:not(:last-child) {
+              margin-bottom: 15px;
+            }
+
+            .chatRoomItemButtonUnread {
+              padding: 2px 15px;
+              background: red;
+              border-radius: 15px;
+              margin-left: 10px;
+            }
+          }
+        }
+      }
+
+      .fullScreenButton {
+        display: none;
+
+        @media screen and (min-width: $breakpoint-desktop) {
+          display: unset;
+        }
+      }
+
+    }
+
+    .chatWindowBody {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+
+      &.showRoomList {
+        .chatRoomList {
+          position: sticky;
+          top: 0;
+          display: flex;
+        }
+      }
+
+      .chatWindowBodyHeader {
+        display: flex;
+        flex-direction: column;
+        padding: 10px 20px;
+        border-bottom: 3px solid #343434;
+        position: sticky;
+        top: 0;
+        background: #101010;
+
+        .chatWindowBodyHeaderTop {
+          display: flex;
+          h3 {
+            @include pascalGradientTitle();
+            margin-bottom: 5px;
+            flex-grow: 1;
+            font-weight: 600;
+            font-size: 16px;
+            
+            @media screen and (min-width: $breakpoint-desktop) {
+              font-size: 20px;
+            }
+          }
+          .chatOptionsButton {
+            border: 0;
+            background: transparent;
+          }
+        }
+        .chatWindowBodyHeaderBottom {
+          color: rgba(255, 255, 255, 0.6);
+          font-weight: bold;
+        }
+      }
+      .chatRoomList {
+        display: none;
+        background-color: rgba(0, 0, 0, 0.2);
+        flex-direction: column;
+        flex-basis: 150px;
+
+        .chatRoom {
+          padding: 10px;
+          border-bottom: 1px solid #333333;
+        }
+      }
+
+      .chatMessagesWrapper {
+        background-color: #101010;
+        padding: 10px;
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        overflow-y: scroll;
+
+        .timeStamp {
+          font-size: $font-size-small;
+          color: gray;
+        }
+      }
+    }
+
+    .chatWindowFooter {
+      display: flex;
+      position: sticky;
+      bottom: 0;
+
+      form {
+        display: flex;
+        flex-direction: column;
+        flex: 1 0;
+        margin: 10px;
+
+        .chatTextInput {
+          width: 100%;
+          border-width: 1px;
+          padding: 10px;
+          margin-bottom: 10px;
+        }
+        .chatTextSubmit {
+          align-self: flex-end;
+          padding: 5px 30px;
+        }
+      }
+    }
+  }
+}

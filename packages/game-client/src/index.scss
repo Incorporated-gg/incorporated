@@ -28,19 +28,6 @@ body {
   flex-direction: column;
 }
 
-button {
-  cursor: pointer;
-  background-color: #343434;
-  border: 4px solid #A38F5B;
-  color: #fff;
-  padding: 0.25em 0.75em;
-
-  &[disabled] {
-    pointer-events: none;
-    opacity: 0.4;
-  }
-}
-
 input[type="text"],
 input[type="number"],
 input[type="password"],

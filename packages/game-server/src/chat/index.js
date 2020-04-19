@@ -4,7 +4,23 @@ const sessions = require('../lib/db/sessions')
 module.exports.setupChat = io => {
   const chatrooms = [
     {
-      name: 'all',
+      name: 'Global',
+      messages: [],
+    },
+    {
+      name: 'Corporación',
+      messages: [],
+    },
+    {
+      name: 'Dudas y Ayuda',
+      messages: [],
+    },
+    {
+      name: 'Estrategia',
+      messages: [],
+    },
+    {
+      name: 'Off-Topic',
       messages: [],
     },
   ]
