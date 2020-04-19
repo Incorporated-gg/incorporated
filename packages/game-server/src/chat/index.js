@@ -1,5 +1,6 @@
 const users = require('../lib/db/users')
 const sessions = require('../lib/db/sessions')
+let connectedUsers = 0
 
 module.exports.setupChat = io => {
   const chatrooms = [
@@ -43,8 +44,10 @@ module.exports.setupChat = io => {
       }
     })
     .on('connection', socket => {
+      connectedUsers++
       chatrooms.forEach(room => {
         socket.join(room.name)
+        socket.emit('connectedUsers', connectedUsers)
         socket.emit('messages', {
           room: room.name,
           messagesArray: room.messages.slice(Math.max(room.messages.length - 25, 0), room.messages.length),
@@ -81,5 +84,13 @@ module.exports.setupChat = io => {
           messagesArray: previousMessages.slice(Math.max(previousMessages.length - 25, 0), previousMessages.length),
         })
       })
+
+      socket.on('disconnect', () => {
+        connectedUsers--
+      })
+
+      setInterval(() => {
+        apiNamespace.emit('connectedUsers', connectedUsers)
+      }, 10 * 1000)
     })
 }

@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import api from 'lib/api'
 import { sessionID } from 'lib/user'
-import UserLink from '../UserLink'
-import { timestampFromEpoch } from 'shared-lib/commonUtils'
+import ChatBubbleUser from './components/chat-bubble-user'
 import io from 'socket.io-client'
 import styles from './chat-bubble.module.scss'
 import Icon from 'components/icon'
 import IncButton from 'components/UI/inc-button'
+import { getServerDate } from 'shared-lib/serverTime'
 
 export default function ChatBubble() {
   const [chatRoomList, setChatRoomList] = useState([])
@@ -17,6 +17,7 @@ export default function ChatBubble() {
   const [messagesList, setMessagesList] = useState([])
   const [currentMessage, setCurrentMessage] = useState('')
   const [lastReadMessageDates, setLastReadMessageDates] = useState([])
+  const [connectedUsers, setConnectedUsers] = useState(0)
 
   const client = useRef(null)
   const chatWindowBody = useRef(null)
@@ -78,6 +79,10 @@ export default function ChatBubble() {
     client.current.on('chatRoomList', chatRooms => {
       setChatRoomList(chatRooms)
       changeRoom(chatRooms[0])
+    })
+
+    client.current.on('connectedUsers', newConnectedUsers => {
+      setConnectedUsers(newConnectedUsers)
     })
 
     client.current.on('olderMessages', ({ room, messagesArray }) => {
@@ -204,7 +209,9 @@ export default function ChatBubble() {
                     />
                   </button>
                 </div>
-                <span className={styles.chatWindowBodyHeaderBottom}>Yo, topotamadre y topotopadre</span>
+                <span className={styles.chatWindowBodyHeaderBottom}>
+                  {connectedUsers} usuario{connectedUsers > 1 && 's'} conectado{connectedUsers > 1 && 's'}
+                </span>
               </header>
               <div className={styles.chatMessagesWrapper}>
                 {messagesList.find(m => m.room === currentRoom.name) &&
@@ -212,8 +219,12 @@ export default function ChatBubble() {
                     .find(m => m.room === currentRoom.name)
                     .messagesArray.map((message, i) => (
                       <div key={i} className={styles.chatMessage}>
-                        <span className={styles.timeStamp}>{timestampFromEpoch(message.date)}</span>{' '}
-                        <UserLink user={message.user} />: {message.text}
+                        <ChatBubbleUser user={message.user} className={styles.chatMessageUserAvatar} />
+                        <div>
+                          <span className={styles.chatMessageUsername}>{message.user.username}</span>
+                          <span className={styles.chatMessageTimestamp}>{<ServerTime />}</span>
+                        </div>
+                        <p>{message.text}</p>
                       </div>
                     ))}
               </div>
@@ -241,4 +252,20 @@ export default function ChatBubble() {
       </div>
     </>
   )
+}
+
+function ServerTime() {
+  const [, _reload] = useState()
+  useEffect(() => {
+    const timeout = setTimeout(_reload, 3000, {})
+    return () => clearTimeout(timeout)
+  }, [])
+
+  const serverDate = getServerDate()
+
+  function pad(number) {
+    return number.toString().padStart(2, '0')
+  }
+
+  return `${pad(serverDate.hours)}:${pad(serverDate.minutes)}`
 }

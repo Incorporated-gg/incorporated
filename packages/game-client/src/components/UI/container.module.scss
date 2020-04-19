@@ -2,10 +2,12 @@
 
 .container {
   background: $gradient-brand;
+  padding: 5px;
 }
 
 .inner {
   background-color: $color-brand;
+  padding: 5px;
 
   &.noBackground {
     background-color: unset;

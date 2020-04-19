@@ -96,8 +96,9 @@
           border: 0;
           text-align: left;
           cursor: pointer;
-          svg .a {
-            fill: $color-brand-light;
+
+          svg * {
+            fill: $color-brand-light !important;
           }
         }
         .chatWindowSidebarToggle {
@@ -110,7 +111,7 @@
       .chatWindowSidebarRoomList {
         display: flex;
         flex-direction: column;
-        padding: 10px 5px;
+        padding: 10px;
         min-width: 220px;
         max-width: 220px;
 
@@ -205,6 +206,7 @@
           .chatOptionsButton {
             border: 0;
             background: transparent;
+            cursor: pointer;
           }
         }
         .chatWindowBodyHeaderBottom {
@@ -232,17 +234,31 @@
         flex-grow: 1;
         overflow-y: scroll;
 
-        .timeStamp {
-          font-size: $font-size-small;
-          color: gray;
+        .chatMessage {
+          font-size: 16px;
+          padding: 10px 0;
+          
+          &:not(:last-child) {
+            border-bottom: 1px solid #343434;
+          }
+          .chatMessageUserAvatar {
+            float: left;
+            margin-right: 10px;
+          }
+          .chatMessageUsername {
+            color: $color-brand-light;
+            font-weight: bold;
+          }
+          .chatMessageTimestamp {
+            margin-left: 10px;
+            font-size: 12px;
+          }
         }
       }
     }
 
     .chatWindowFooter {
       display: flex;
-      position: sticky;
-      bottom: 0;
 
       form {
         display: flex;
