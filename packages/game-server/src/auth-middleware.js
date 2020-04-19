@@ -74,7 +74,7 @@ function modifyResponseBody(req, res, next) {
           avatarID: accountData.avatarID,
           gold: accountData.gold,
           xp: accountData.xp,
-          levelUpXP: accountData.levelUpXP,,
+          levelUpXP: accountData.levelUpXP,
           level: accountData.level,
         },
       }
