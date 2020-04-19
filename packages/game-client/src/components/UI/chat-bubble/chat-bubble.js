@@ -140,19 +140,14 @@ export default function ChatBubble() {
           <div className={`${styles.chatWindow}${isFullscreen ? ` ${styles.fullScreen}` : ''}`}>
             <aside className={`${styles.chatWindowSidebar}${isSelectingRoom ? ` ${styles.active}` : ''}`}>
               <div className={styles.chatWindowSidebarHeader}>
-                {isSelectingRoom && (
-                  <button
-                    type="button"
-                    className={styles.chatWindowSidebarClose}
-                    onClick={() => setIsSelectingRoom(!isSelectingRoom)}>
-                    <Icon
-                      width={26}
-                      height={16}
-                      svg={require('./img/sidebarClose.svg')}
-                      alt={`${isSelectingRoom ? 'Ocultar menú' : 'Mostrar menú'}`}
-                    />
-                  </button>
-                )}
+                <button type="button" className={styles.chatWindowSidebarClose} onClick={() => toggleChat()}>
+                  <Icon
+                    width={26}
+                    height={16}
+                    svg={require('./img/sidebarClose.svg')}
+                    alt={`${isSelectingRoom ? 'Ocultar menú' : 'Mostrar menú'}`}
+                  />
+                </button>
                 <button
                   type="button"
                   className={`${styles.chatWindowSidebarToggle}${isSelectingRoom ? ` ${styles.active}` : ''}`}

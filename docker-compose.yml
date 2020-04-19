@@ -65,7 +65,6 @@ services:
     build: ./packages/account-server
     networks:
       - backend
-    command: sh -c './wait-for account-db:3306 -- npm run migrate_dev_docker && npm start'
     depends_on:
       - account-db
     volumes:

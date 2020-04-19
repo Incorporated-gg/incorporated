@@ -69,8 +69,21 @@
       overflow-y: auto;
       overflow-x: hidden;
 
+      &.active {
+        .chatWindowSidebarHeader {
+          flex-direction: row;
+
+          .chatWindowSidebarToggle {
+            margin-top: 0;
+            transform: none;
+          }
+        }
+      }
+
       .chatWindowSidebarHeader {
         display: flex;
+        flex-direction: column;
+        justify-content: space-between;
         border-bottom: 3px solid #343434;
         padding: 10px 5px;
         position: sticky;
@@ -82,21 +95,15 @@
           background: transparent;
           border: 0;
           text-align: left;
+          cursor: pointer;
           svg .a {
             fill: $color-brand-light;
           }
         }
-        .chatWindowSidebarClose {
-          flex-grow: 1;
-          cursor: pointer;
-        }
         .chatWindowSidebarToggle {
           transform: rotate(180deg);
           cursor: pointer;
-          
-          &.active {
-            transform: none;
-          }
+          margin-top: 20px;
         }
       }
 
