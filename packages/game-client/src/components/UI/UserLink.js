@@ -13,11 +13,9 @@ export default function UserLink({ user, colorScheme = 'light' }) {
 
   return (
     <span className={`${styles.container} ${(colorScheme === 'dark' && styles.darkColors) || ''}`}>
-      {user.accountData && (
-        <Link className={styles.avatarLink} to={`/ranking/user/${user.username}`}>
-          <img src={user.accountData.avatar} alt="" className={styles.avatar} />
-        </Link>
-      )}
+      <Link className={styles.avatarLink} to={`/ranking/user/${user.username}`}>
+        <img src={user.avatar} alt="" className={styles.avatar} />
+      </Link>
       <div>
         <Link className={styles.usernameLink} to={`/ranking/user/${user.username}`}>
           {user.username}

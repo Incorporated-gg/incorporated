@@ -21,8 +21,7 @@ function calculateLevelUpXP(currentLevel: number): number {
 
 export async function getData(userID?: number): Promise<BasicAccountData | undefined> {
   if (!userID) return
-  const accountDataPromise = mysql.query('SELECT username, avatar, gold, level, xp FROM users WHERE id=?', [userID])
-  const [[accountData]] = await Promise.all([accountDataPromise])
+  const accountData = await mysql.selectOne('SELECT username, avatar, gold, level, xp FROM users WHERE id=?', [userID])
   if (!accountData) return
 
   if (!accountData.avatar) accountData.avatar = 1
@@ -41,7 +40,7 @@ export async function getData(userID?: number): Promise<BasicAccountData | undef
 }
 
 export async function getIDFromUsername(username: string): Promise<BasicAccountData | undefined> {
-  const [accountData] = await mysql.query('SELECT id FROM users WHERE username=?', [username])
+  const accountData = await mysql.selectOne('SELECT id FROM users WHERE username=?', [username])
   return accountData ? accountData.id : undefined
 }
 

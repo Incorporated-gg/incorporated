@@ -49,7 +49,7 @@ function ActiveMissionModalContent({ onRequestClose }) {
         <h1>Misión activa</h1>
         <div className={styles.vsContainer}>
           <div className={styles.avatarContainer}>
-            <img src={activeMision.user.accountData.avatar} alt={activeMision.user.username} />
+            <img src={activeMision.user.avatar} alt={activeMision.user.username} />
             {activeMision.user.alliance && (
               <div className={`${styles.allianceBadgeContainer} ${styles.first}`}>
                 <AllianceBadge badge={activeMision.user.alliance.badge} />
@@ -62,7 +62,7 @@ function ActiveMissionModalContent({ onRequestClose }) {
               activeMision.target_hood.name
             ) : (
               <>
-                <img src={activeMision.target_user.accountData.avatar} alt={activeMision.target_user.username} />
+                <img src={activeMision.target_user.avatar} alt={activeMision.target_user.username} />
                 {activeMision.target_user.alliance && (
                   <div className={`${styles.allianceBadgeContainer} ${styles.second}`}>
                     <AllianceBadge badge={activeMision.target_user.alliance.badge} />

@@ -8,7 +8,7 @@ async function generateSessionID(): Promise<string> {
     .join('')
 
   // Check that generated id doesn't exist, should be basically impossible
-  const [session] = await mysql.query('SELECT 1 FROM sessions WHERE id=?', [randomSessionID])
+  const session = await mysql.selectOne('SELECT 1 FROM sessions WHERE id=?', [randomSessionID])
   if (session) return await generateSessionID() // If it does, generate another
 
   return randomSessionID
@@ -28,7 +28,7 @@ export const generateSession = async (userID: number): Promise<string> => {
 
 export const getUserIDFromSessionID = async (sessionID?: number): Promise<number | undefined> => {
   if (!sessionID) return
-  const [session] = await mysql.query('SELECT user_id FROM sessions WHERE id=?', [sessionID])
+  const session = await mysql.selectOne('SELECT user_id FROM sessions WHERE id=?', [sessionID])
   if (!session) return
   return session.user_id
 }

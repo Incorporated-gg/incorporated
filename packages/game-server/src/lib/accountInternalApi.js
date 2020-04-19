@@ -1,7 +1,7 @@
 import fetch from 'node-fetch'
 import cache from './cache'
 
-export async function getAccountUserData(userID) {
+export async function getAccountData(userID) {
   // TODO: If account changes username, should we detect it here or change it from a API call from the account service?
 
   const key = `accountUserData:${userID}`

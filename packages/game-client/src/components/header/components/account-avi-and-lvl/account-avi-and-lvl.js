@@ -7,14 +7,14 @@ import { getServerDate, getServerDay } from 'shared-lib/serverTime'
 
 export default function AccountAviAndLvl() {
   let history = useHistory()
-  const { accountData } = useUserData()
+  const userData = useUserData()
   const openAccountPanel = () => {
     history.push('/settings')
   }
   return (
     <div className={styles.container} onClick={openAccountPanel}>
       <div className={styles.avatar}>
-        <img src={accountData.avatar} alt={'Avatar de usuario'} />
+        <img src={userData.account.avatar} alt={'Avatar de usuario'} />
         <div className={styles.serverDateContainer}>
           <ServerTime />
         </div>
@@ -23,9 +23,9 @@ export default function AccountAviAndLvl() {
         <ProgressBar
           showBorder
           direction="vertical"
-          progressPercentage={(accountData.xp / accountData.levelUpXP) * 100}
+          progressPercentage={(userData.account.xp / userData.account.levelUpXP) * 100}
         />
-        <div className={styles.levelText}>{accountData.level}</div>
+        <div className={styles.levelText}>{userData.account.level}</div>
       </div>
     </div>
   )

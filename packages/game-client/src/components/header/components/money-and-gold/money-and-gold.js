@@ -33,5 +33,5 @@ function MyGold() {
   const userData = useUserData()
   if (!userData) return null
 
-  return numberToAbbreviation(userData.accountData.gold)
+  return numberToAbbreviation(userData.account.gold)
 }

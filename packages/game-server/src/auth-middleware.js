@@ -1,5 +1,5 @@
 import { getUserActiveTasks } from './lib/db/tasks'
-import { getAccountUserData } from './lib/accountInternalApi'
+import { getAccountData } from './lib/accountInternalApi'
 import mysql from './lib/mysql'
 const {
   getUserResearchs,
@@ -58,7 +58,7 @@ function modifyResponseBody(req, res, next) {
         getUnreadReportsCount(req.userData.id),
         getActiveMission(req.userData.id),
         getUserActiveTasks(req.userData.id),
-        getAccountUserData(req.userData.id),
+        getAccountData(req.userData.id),
       ])
       const extraData = {
         money: req.userData.money,
@@ -68,8 +68,14 @@ function modifyResponseBody(req, res, next) {
         unread_messages_count: unreadMessagesCount,
         unread_reports_count: unreadReportsCount.total,
         active_mission: activeMission,
-        accountData,
         activeTasks,
+        account: {
+          avatar: accountData.avatar,
+          avatarID: accountData.avatarID,
+          gold: accountData.gold,
+          xp: accountData.xp,
+          levelUpXP: accountData.levelUpXP,
+        },
       }
       arguments[0]._extra = extraData
     }

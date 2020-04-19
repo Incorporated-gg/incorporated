@@ -6,7 +6,7 @@ import Container from 'components/UI/container'
 
 export default function AvatarChange() {
   const [avatarList, setAvatarList] = useState([])
-  const { accountData } = useUserData()
+  const userData = useUserData()
 
   const reloadList = useCallback(() => {
     api
@@ -24,7 +24,7 @@ export default function AvatarChange() {
 
   const changeAvatar = useCallback(avatarID => {
     api.accountPost('/v1/avatar/change', { avatarID }).then(res => {
-      reloadUserData()
+      setTimeout(reloadUserData, 1000) // Wait for cache from client-server
     })
   }, [])
 
@@ -34,7 +34,7 @@ export default function AvatarChange() {
         <h1>Cambiar avatar</h1>
         <div className={styles.changeAvatarContainer}>
           {avatarList.map(avatar => {
-            const isActive = accountData.avatarID === avatar.id
+            const isActive = userData.account.avatarID === avatar.id
             return (
               <div
                 key={avatar.id}

@@ -7,10 +7,19 @@ const pool = mysql.createPool({
   database: process.env.DB_DATABASE,
 })
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function query(sql: string, args: any | any[]): Promise<any> {
+  const res = await pool.query(sql, args)
+  return res[0]
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function selectOne(sql: string, args: any | any[]): Promise<any> {
+  const res = await query(sql, args)
+  return res[0]
+}
+
 export default {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  query: async (sql: string, args: any | any[]): Promise<any> => {
-    const res = await pool.query(sql, args)
-    return res[0]
-  },
+  query,
+  selectOne,
 }
