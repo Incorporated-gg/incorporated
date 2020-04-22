@@ -1,8 +1,8 @@
 import mysql from '../lib/mysql'
 import { upgradeUserResearch } from '../lib/db/researchs'
-const frequencyMs = 10 * 1000
+export const frequencyMs = 10 * 1000
 
-const run = async () => {
+export async function run() {
   const tsNow = Math.floor(Date.now() / 1000)
   const researchs = await mysql.query('SELECT user_id, research_id FROM research_active WHERE finishes_at<=?', [tsNow])
   await Promise.all(
@@ -14,9 +14,4 @@ const run = async () => {
       await upgradeUserResearch(research.user_id, research.research_id)
     })
   )
-}
-
-module.exports = {
-  run,
-  frequencyMs,
 }

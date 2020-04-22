@@ -7,7 +7,7 @@ export async function getRobbingScoreboard(weekFirstServerDay) {
   const endDate = startDate + 60 * 60 * 24 * 7
 
   const allAttacks = await mysql.query(
-    "SELECT user_id, data FROM missions WHERE completed=1 AND mission_type='attack' AND will_finish_at>=? AND will_finish_at<? AND profit!=0",
+    "SELECT user_id, data FROM missions WHERE completed=1 AND mission_type='attack' AND will_finish_at>=? AND will_finish_at<? AND profit>0",
     [startDate, endDate]
   )
 
@@ -24,7 +24,7 @@ export async function getRobbingScoreboard(weekFirstServerDay) {
     }
   })
 
-  const topRobbers = Object.entries(usersRobbedMoney)
+  return Object.entries(usersRobbedMoney)
     .sort((a, b) => {
       return a[1] > b[1] ? -1 : 1
     })
@@ -33,6 +33,4 @@ export async function getRobbingScoreboard(weekFirstServerDay) {
       user_id: userID,
       score: robbedMoney,
     }))
-
-  return topRobbers
 }

@@ -8,31 +8,29 @@ import { getRobbingScoreboard } from './robbing'
 const contestsList = ['income', 'destruction', 'research', 'robbing']
 
 export default async function runJustAfterNewDay(finishedServerDay) {
-  const justFinishedServerDate = getServerDate(getInitialUnixTimestampOfServerDay(finishedServerDay + 1))
-  const hasMondayJustStarted = justFinishedServerDate.day_of_the_week === 0
+  const dayInitialTimestamp = getInitialUnixTimestampOfServerDay(finishedServerDay) / 1000
+  const serverDate = getServerDate(dayInitialTimestamp * 1000)
+  const hasMondayJustStarted = serverDate.day_of_the_week === 1
   if (!hasMondayJustStarted) return
-
-  const tsNow = Math.floor(Date.now() / 1000)
 
   // Finish current contest
   const ongoingContest = await mysql.selectOne('SELECT id, name, started_at FROM contests WHERE ended_at IS NULL')
   if (ongoingContest) {
-    // TODO: RUN FINAL SCOREBOARD UPDATE
-    // TODO: SEND OUT MSGS AND PRIZES
-    await mysql.query('UPDATE contests SET ended_at=? WHERE id=?', [tsNow, ongoingContest.id])
+    await updateCurrentContestScoreboard()
+    await giveOutContestPrizesAndMessages(ongoingContest)
+    await mysql.query('UPDATE contests SET ended_at=? WHERE id=?', [dayInitialTimestamp, ongoingContest.id])
   }
 
   // Start new contest
   const lastContestID = ongoingContest ? ongoingContest.id : 0
   const newContestName = contestsList[lastContestID % contestsList.length]
-  await mysql.query('INSERT INTO contests (name, started_at) VALUES (?, ?)', [newContestName, tsNow])
+  await mysql.query('INSERT INTO contests (name, started_at) VALUES (?, ?)', [newContestName, dayInitialTimestamp])
 }
 
-// Update scoreboard every 10min.
-// Maybe could be extracted to an actual cron job?
-setInterval(() => {
-  updateCurrentContestScoreboard().catch(() => {})
-}, 1000 * 60 * 10)
+async function giveOutContestPrizesAndMessages(ongoingContest) {
+  // TODO
+  console.log('TODO: giveOutContestPrizesAndMessages', ongoingContest)
+}
 
 export async function updateCurrentContestScoreboard() {
   const ongoingContest = await mysql.selectOne('SELECT id, name, started_at FROM contests WHERE ended_at IS NULL')

@@ -1,23 +1,28 @@
 import mysql from '../../../lib/mysql'
+import { getUserDailyIncome } from '../../../lib/db/users'
 
 // Has to return an array of objects containing { score, user_id }
 export async function getIncomeScoreboard(weekFirstServerDay) {
   const startServerDay = weekFirstServerDay
   const endServerDay = startServerDay + 7
 
-  const topUsers = await mysql.query(
-    `SELECT user_id,
-    (
-      (SELECT daily_income FROM users_daily_log udl2 WHERE server_day>=? AND server_day<? AND udl2.user_id=users_daily_log.user_id ORDER BY server_day DESC LIMIT 1)
-      -
-      (SELECT daily_income FROM users_daily_log udl2 WHERE server_day>=? AND server_day<? AND udl2.user_id=users_daily_log.user_id  ORDER BY server_day LIMIT 1)
-    ) as diff
-    FROM users_daily_log WHERE server_day>=? AND server_day<? GROUP BY user_id ORDER BY diff DESC LIMIT 30`,
-    [startServerDay, endServerDay, startServerDay, endServerDay, startServerDay, endServerDay]
+  const allUsers = await mysql.query(
+    `SELECT user_id, daily_income as initial_daily_income FROM users_daily_log WHERE server_day>=? AND server_day<? GROUP BY user_id ORDER BY server_day ASC`,
+    [startServerDay, endServerDay]
   )
 
-  return topUsers.map(row => ({
-    user_id: row.user_id,
-    score: row.diff,
-  }))
+  const allUsersIncome = await Promise.all(allUsers.map(u => getUserDailyIncome(u.user_id)))
+  allUsers.forEach((user, index) => {
+    user.income_diff = allUsersIncome[index] - user.initial_daily_income
+  })
+
+  return allUsers
+    .sort((a, b) => {
+      return a.income_diff > b.income_diff ? -1 : 1
+    })
+    .slice(0, 30)
+    .map(row => ({
+      user_id: row.user_id,
+      score: row.income_diff,
+    }))
 }
