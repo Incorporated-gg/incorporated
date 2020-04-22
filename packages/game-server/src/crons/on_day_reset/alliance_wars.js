@@ -9,18 +9,18 @@ import { WAR_DAYS_DURATION } from 'shared-lib/allianceUtils'
 const EXTRA_POINTS_PER_OBJECTIVE = 40
 const WAR_POINTS_LIMIT_FOR_AUTOFINISH = WAR_DAYS_DURATION * 50 + 1 + EXTRA_POINTS_PER_OBJECTIVE * 3
 
-export default async function runJustAfterNewDay() {
+export default async function runJustAfterNewDay(finishedServerDay) {
   const activeWars = await getAllActiveWars()
   await Promise.all(
     activeWars.map(warData => {
-      return updateWarDayData(warData, true)
+      return updateWarDayData(finishedServerDay + 1, warData, true)
     })
   )
 }
 
 export async function onNewWarAttack(warID) {
   const warData = await getWarData(warID, { includeRawData: true })
-  await updateWarDayData(warData, false)
+  await updateWarDayData(getServerDay(), warData, false)
 }
 
 async function getAllActiveWars() {
@@ -28,10 +28,10 @@ async function getAllActiveWars() {
   return Promise.all(activeWars.map(war => getWarData(war.id, { includeRawData: true })))
 }
 
-async function updateWarDayData(warData, isRunningAtEndOfDay) {
-  const warDay = getServerDay() - getServerDay(warData.created_at * 1000)
+async function updateWarDayData(serverDay, warData, isRunningAtEndOfDay) {
+  const warDay = serverDay - getServerDay(warData.created_at * 1000)
 
-  if (warDay <= 0) return // Attack done before war started
+  if (warDay <= 0) return // War hasn't started yet
   if (warDay > WAR_DAYS_DURATION) {
     await endWar(warData)
     return

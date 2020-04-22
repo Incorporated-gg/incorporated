@@ -1,10 +1,22 @@
 import { getServerDay, getInitialUnixTimestampOfServerDay } from 'shared-lib/serverTime'
+import mysql from '../../lib/mysql'
+
 import usersDailyLog from './users_daily_log'
 import newspaper from './newspaper'
 import allianceWars from './alliance_wars'
+import contests from './contests'
 
-export function runOnce() {
+export async function runOnce() {
   setTimeoutForStartOfTomorrow()
+
+  // Catch up if server was down for a day change
+  const serverDay = getServerDay()
+  const last = await mysql.selectOne('SELECT MAX(day) as day FROM cron_day_changes_done')
+  let day = last.day || 0
+
+  while (day < serverDay - 1) {
+    await runJustAfterNewDay(++day)
+  }
 }
 
 function setTimeoutForStartOfTomorrow() {
@@ -13,15 +25,16 @@ function setTimeoutForStartOfTomorrow() {
 
   setTimeout(() => {
     setTimeoutForStartOfTomorrow()
-    runJustAfterNewDay()
-  }, tsStartOfTomorrow - Date.now() + 100)
+    const finishedServerDay = getServerDay() - 1
+    runJustAfterNewDay(finishedServerDay)
+  }, tsStartOfTomorrow - Date.now() + 10)
 }
 
-async function runJustAfterNewDay() {
-  const finishedServerDay = getServerDay() - 1
+async function runJustAfterNewDay(finishedServerDay) {
+  await mysql.query('INSERT INTO cron_day_changes_done (day) VALUES (?)', [finishedServerDay])
 
   try {
-    await allianceWars()
+    await allianceWars(finishedServerDay)
   } catch (e) {
     console.error(e)
   }
@@ -34,6 +47,12 @@ async function runJustAfterNewDay() {
 
   try {
     await newspaper(finishedServerDay)
+  } catch (e) {
+    console.error(e)
+  }
+
+  try {
+    await contests(finishedServerDay)
   } catch (e) {
     console.error(e)
   }

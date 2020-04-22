@@ -28,11 +28,9 @@ export default function ContestsRouter() {
           </NavLink>
           {contests &&
             contests.map(contest => (
-              <li key={contest.id}>
-                <NavLink className={styles.subMenuItem} to={`/contests/${contest.name}`}>
-                  {contest.name}
-                </NavLink>
-              </li>
+              <NavLink key={contest.id} className={styles.subMenuItem} to={`/contests/${contest.name}`}>
+                {contest.name}
+              </NavLink>
             ))}
         </div>
       </Container>
