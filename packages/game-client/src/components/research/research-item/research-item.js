@@ -15,7 +15,7 @@ import styles from './research-item.module.scss'
 import ResearchEffectsInfo from '../research-effects-info/research-effects-info'
 import IncButton from 'components/UI/inc-button'
 import IncChevron from 'components/UI/inc-chevron'
-import ProgressBar from 'components/UI/progress-bar'
+import IncProgressBar from 'components/UI/inc-progress-bar'
 import getRemainingTimeText from './getRemainingTimeText'
 import api from 'lib/api'
 
@@ -86,7 +86,7 @@ export default function ResearchItem({ researchID }) {
       <IncButton onClick={buttonClicked} disabled={!isUpgrading && !canAfford}>
         <div className={styles.rowsContainer}>
           <span className={styles.remainingTimeText}>{remainingTimeText}</span>
-          <ProgressBar direction="horizontal" progressPercentage={progressPercentage} />
+          <IncProgressBar direction="horizontal" progressPercentage={progressPercentage} />
         </div>
         <div className={styles.rowsContainer} style={{ marginTop: 10 }}>
           <IncChevron padding={5} className={styles.priceChevron} direction="right">

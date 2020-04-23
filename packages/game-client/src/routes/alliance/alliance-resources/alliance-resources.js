@@ -2,8 +2,8 @@ import React from 'react'
 import { personnelObj } from 'shared-lib/personnelUtils'
 import PropTypes from 'prop-types'
 import { useUserData } from 'lib/user'
-import Container from 'components/UI/container'
-import UserLink from 'components/UI/UserLink'
+import IncContainer from 'components/UI/inc-container'
+import UserLink from 'components/UI/user-link'
 import AllianceResourceItem from 'components/alliance/alliance-resource-item/alliance-resource-item'
 import AllianceBuffs from 'components/alliance/alliance-buffs'
 
@@ -16,7 +16,7 @@ export default function AllianceResources({ alliance, reloadAllianceData }) {
 
   return (
     <>
-      <Container darkBg>
+      <IncContainer darkBg>
         <div style={{ padding: 10 }}>
           {Object.values(alliance.resources).map(resourceData => {
             return (
@@ -30,13 +30,13 @@ export default function AllianceResources({ alliance, reloadAllianceData }) {
             )
           })}
         </div>
-      </Container>
+      </IncContainer>
       <br />
       {userData.alliance_user_rank.permission_activate_buffs && (
         <AllianceBuffs alliance={alliance} reloadAllianceData={reloadAllianceData} />
       )}
       <br />
-      <Container darkBg>
+      <IncContainer darkBg>
         <div style={{ padding: 10 }}>
           <h2>Historial de recursos</h2>
           {alliance.resources_log.map(logEntry => {
@@ -50,7 +50,7 @@ export default function AllianceResources({ alliance, reloadAllianceData }) {
             )
           })}
         </div>
-      </Container>
+      </IncContainer>
     </>
   )
 }

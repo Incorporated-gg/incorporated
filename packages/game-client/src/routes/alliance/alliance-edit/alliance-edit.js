@@ -1,12 +1,13 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import AllianceBadgeCreator from 'components/alliance/alliance-badge-creator'
-import Container from 'components/UI/container'
+import IncContainer from 'components/UI/inc-container'
 import IncButton from 'components/UI/inc-button'
 import styles from './alliance-edit.module.scss'
 import api from 'lib/api'
 import { reloadUserData } from 'lib/user'
 import { useHistory } from 'react-router-dom'
+import IncInput from 'components/UI/inc-input'
 
 AllianceEdit.propTypes = {
   alliance: PropTypes.object.isRequired,
@@ -69,13 +70,15 @@ export default function AllianceEdit({ alliance, reloadAllianceData }) {
       <br />
       <AllianceBadgeCreator badge={badge} setBadge={setBadge} />
       <br />
-      <Container darkBg>
-        <textarea
+      <IncContainer darkBg>
+        <IncInput
+          multiline
           className={styles.descTextarea}
           placeholder={'Descripción de la corporación'}
           value={description}
-          onChange={e => setDescription(e.target.value)}></textarea>
-      </Container>
+          onChangeText={setDescription}
+        />
+      </IncContainer>
       <br />
       <IncButton outerStyle={{ display: 'block' }} className={styles.deleteCorpButton} onClick={deleteAlliance}>
         DISOLVER CORPORACIÓN

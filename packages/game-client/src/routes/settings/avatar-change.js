@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react'
 import styles from './avatar-change.module.scss'
 import api from '../../lib/api'
 import { useUserData, reloadUserData } from '../../lib/user'
-import Container from 'components/UI/container'
+import IncContainer from 'components/UI/inc-container'
 
 export default function AvatarChange() {
   const [avatarList, setAvatarList] = useState([])
@@ -29,7 +29,7 @@ export default function AvatarChange() {
   }, [])
 
   return (
-    <Container darkBg>
+    <IncContainer darkBg>
       <div>
         <h1>Cambiar avatar</h1>
         <div className={styles.changeAvatarContainer}>
@@ -46,6 +46,6 @@ export default function AvatarChange() {
           })}
         </div>
       </div>
-    </Container>
+    </IncContainer>
   )
 }

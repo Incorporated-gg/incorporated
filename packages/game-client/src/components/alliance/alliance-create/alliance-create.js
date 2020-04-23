@@ -3,6 +3,7 @@ import api from 'lib/api'
 import PropTypes from 'prop-types'
 import { CREATE_ALLIANCE_PRICE } from 'shared-lib/allianceUtils'
 import { reloadUserData } from 'lib/user'
+import IncInput from 'components/UI/inc-input'
 
 CreateAlliance.propTypes = {
   reloadAllianceData: PropTypes.func.isRequired,
@@ -43,7 +44,7 @@ export default function CreateAlliance({ reloadAllianceData }) {
       </div>
       <div>
         <label>
-          Descripción: <textarea value={description} onChange={e => setDescription(e.target.value)}></textarea>
+          Descripción: <IncInput multiline showBorder value={description} onChangeText={setDescription} />
         </label>
       </div>
       <div>Precio: {CREATE_ALLIANCE_PRICE.toLocaleString()}€</div>

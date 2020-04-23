@@ -2,8 +2,8 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { buildingsList } from 'shared-lib/buildingsUtils'
 import { timestampFromEpoch } from 'shared-lib/commonUtils'
-import UserLink from 'components/UI/UserLink'
-import NotepadPage from 'components/UI/NotepadPage'
+import UserLink from 'components/UI/user-link'
+import NotepadPage from 'components/UI/notepad-page'
 
 AttackReport.propTypes = {
   mission: PropTypes.object.isRequired,

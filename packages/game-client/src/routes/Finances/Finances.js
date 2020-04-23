@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import FinancialData from './FinancialData'
 import api from '../../lib/api'
 import styles from './Finances.module.scss'
-import NotepadPage from 'components/UI/NotepadPage'
+import NotepadPage from 'components/UI/notepad-page'
 
 export default function Finances() {
   return (

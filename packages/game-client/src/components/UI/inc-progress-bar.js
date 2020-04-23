@@ -1,14 +1,14 @@
 import React from 'react'
-import styles from './progress-bar.module.scss'
+import styles from './inc-progress-bar.module.scss'
 import PropTypes from 'prop-types'
 
-ProgressBar.propTypes = {
+IncProgressBar.propTypes = {
   progressPercentage: PropTypes.number.isRequired,
-  direction: PropTypes.oneOf(['vertical', 'horizontal']).isRequired,
+  direction: PropTypes.oneOf(['vertical', 'horizontal']),
   children: PropTypes.node,
   showBorder: PropTypes.bool,
 }
-export default function ProgressBar({ progressPercentage, direction, children, showBorder = false }) {
+export default function IncProgressBar({ progressPercentage, direction = 'horizontal', children, showBorder = false }) {
   const progressStyle = { [direction === 'vertical' ? 'height' : 'width']: progressPercentage + '%' }
 
   return (

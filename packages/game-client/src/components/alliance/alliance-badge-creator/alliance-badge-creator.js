@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import AllianceBadge from 'components/alliance/alliance-badge'
-import Container from 'components/UI/container'
+import IncContainer from 'components/UI/inc-container'
 import ColorSelection from './color-selection'
 import IconSelection from './icon-selection'
 import { iconComponents, backgroundComponents } from '../alliance-badge/svgComponents'
@@ -22,7 +22,7 @@ AllianceBadgeCreator.propTypes = {
 }
 export default function AllianceBadgeCreator({ badge, setBadge }) {
   return (
-    <Container>
+    <IncContainer>
       <div className={styles.container}>
         <div>
           <div className={styles.badgePreviewContainer}>
@@ -60,6 +60,6 @@ export default function AllianceBadgeCreator({ badge, setBadge }) {
           />
         </div>
       </div>
-    </Container>
+    </IncContainer>
   )
 }

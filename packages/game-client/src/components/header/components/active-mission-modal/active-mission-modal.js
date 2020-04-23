@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import styles from './active-mission-modal.module.scss'
 import Modal from 'react-modal'
-import Container from 'components/UI/container'
+import IncContainer from 'components/UI/inc-container'
 import { useUserData } from 'lib/user'
 import AllianceBadge from 'components/alliance/alliance-badge'
 import { buildingsList } from 'shared-lib/buildingsUtils'
@@ -41,11 +41,11 @@ function ActiveMissionModalContent({ onRequestClose }) {
   }
 
   return (
-    <Container withHairline darkBg borderSize={20}>
+    <IncContainer withHairline darkBg borderSize={20}>
       <div className={styles.container}>
-        <Container onClick={onRequestClose} outerClassName={styles.closeButton}>
+        <IncContainer onClick={onRequestClose} outerClassName={styles.closeButton}>
           x
-        </Container>
+        </IncContainer>
         <h1>Misión activa</h1>
         <div className={styles.vsContainer}>
           <div className={styles.avatarContainer}>
@@ -87,7 +87,7 @@ function ActiveMissionModalContent({ onRequestClose }) {
           </div>
         </div>
       </div>
-    </Container>
+    </IncContainer>
   )
 }
 

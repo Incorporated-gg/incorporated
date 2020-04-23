@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Switch, Route, NavLink } from 'react-router-dom'
 import MessagesList from 'components/messages/components/messages-list'
 import NewMessageModal from 'components/messages/components/new-message-modal'
-import Container from 'components/UI/container'
+import IncContainer from 'components/UI/inc-container'
 import styles from './messages.module.scss'
 
 export default function Messages() {
@@ -10,7 +10,7 @@ export default function Messages() {
 
   return (
     <>
-      <Container darkBg>
+      <IncContainer darkBg>
         <div style={{ display: 'flex' }}>
           <NavLink className={styles.subMenuItem} to="/messages" exact>
             Recibidos
@@ -28,7 +28,7 @@ export default function Messages() {
             Escribir
           </a>
         </div>
-      </Container>
+      </IncContainer>
 
       <NewMessageModal isOpen={showNewMessageModal} onRequestClose={() => setShowNewMessageModal(false)} />
 

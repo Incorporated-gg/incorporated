@@ -1,0 +1,13 @@
+@import '../../variables';
+
+.incInput {
+  border-radius: 5px;
+  padding: 5px;
+  background-color: $color-bg;
+  color: $color-text-light;
+  border: none;
+
+  &.border {
+    border: 2px solid $color-brand-light;
+  }
+}

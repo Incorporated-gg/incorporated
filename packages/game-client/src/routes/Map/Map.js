@@ -1,11 +1,11 @@
 import React from 'react'
-import Container from 'components/UI/container'
+import IncContainer from 'components/UI/inc-container'
 import Map from 'components/map/map'
 
 export default function MapScreen() {
   return (
-    <Container darkBg>
+    <IncContainer darkBg>
       <Map />
-    </Container>
+    </IncContainer>
   )
 }

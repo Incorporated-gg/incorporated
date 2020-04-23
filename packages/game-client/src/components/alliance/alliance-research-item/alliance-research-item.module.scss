@@ -6,3 +6,8 @@
   font-family: $font-family-title;
   color: #00000099;
 }
+.doResearchTitle {
+  @include pascalText();
+  font-family: $font-family-title;
+  margin-top: 10px;
+}

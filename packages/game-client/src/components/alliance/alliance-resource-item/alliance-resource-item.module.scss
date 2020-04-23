@@ -1,7 +1,8 @@
 @import '../../../variables';
 
 .title {
-  color: #fff;
+  @include gradientText();
+  @include pascalText();
   text-transform: uppercase;
   font-family: $font-family-title;
   font-size: $font-size-large;
@@ -21,7 +22,26 @@
     max-width: 25vw;
     text-align: center;
   }
+
   .currentAmount {
     text-align: center;
+  }
+}
+
+.buttonsContainer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+  margin-bottom: 10px;
+
+  .doExchangeTitle {
+    @include pascalText();
+    text-align: center;
+    font-family: $font-family-title;
+    margin-top: 10px;
+  }
+
+  .exhangeInput {
+    width: calc(min(200px, 35vw));
   }
 }

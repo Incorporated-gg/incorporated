@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { useLocation, useHistory } from 'react-router-dom'
 import styles from './Ranking.module.scss'
-import RankItem from '../../components/UI/RankItem'
+import RankItem from '../../components/UI/rank-item'
 import AllianceLink from 'components/alliance/alliance-link'
 import { debounce } from '../../lib/utils'
 import Pagination from 'components/UI/pagination'
 import api from 'lib/api'
-import UserLink from 'components/UI/UserLink'
+import UserLink from 'components/UI/user-link'
 
 export default function Ranking() {
   const [ranking, setRanking] = useState([])

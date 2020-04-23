@@ -3,9 +3,9 @@ import styles from './header-active-mission.module.scss'
 import { useUserData } from 'lib/user'
 import MissionTimer from 'components/reports/mission-timer/mission-timer'
 import ActiveMissionModal from '../active-mission-modal'
-import Container from 'components/UI/container'
+import IncContainer from 'components/UI/inc-container'
 import IncButton from 'components/UI/inc-button'
-import UserLink from 'components/UI/UserLink'
+import UserLink from 'components/UI/user-link'
 import { cancelActiveMission } from 'lib/utils'
 
 export default function ActiveMission() {
@@ -24,7 +24,7 @@ export default function ActiveMission() {
   return (
     <>
       <div className={styles.container}>
-        <Container withHairline borderSize={4} darkBg style={{ display: 'flex' }}>
+        <IncContainer withHairline borderSize={4} darkBg style={{ display: 'flex' }}>
           <div className={`${styles.stat} ${styles.statMission1}`}>
             {userData.active_mission.mission_type}
             <span> -&gt; </span>
@@ -43,7 +43,7 @@ export default function ActiveMission() {
             <div style={{ width: 10 }} />
             <IncButton onClick={cancelMission}>Cancelar</IncButton>
           </div>
-        </Container>
+        </IncContainer>
       </div>
       <ActiveMissionModal isOpen={isModalOpen} onRequestClose={() => setIsModalOpen(false)} />
     </>

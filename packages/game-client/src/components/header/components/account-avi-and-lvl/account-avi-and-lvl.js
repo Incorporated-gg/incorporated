@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useUserData } from 'lib/user'
 import styles from './account-avi-and-lvl.module.scss'
 import { useHistory } from 'react-router-dom'
-import ProgressBar from 'components/UI/progress-bar'
+import IncProgressBar from 'components/UI/inc-progress-bar'
 import { getServerDate, getServerDay } from 'shared-lib/serverTime'
 
 export default function AccountAviAndLvl() {
@@ -20,7 +20,7 @@ export default function AccountAviAndLvl() {
         </div>
       </div>
       <div className={styles.lvlContainer}>
-        <ProgressBar
+        <IncProgressBar
           showBorder
           direction="vertical"
           progressPercentage={(userData.account.xp / userData.account.levelUpXP) * 100}

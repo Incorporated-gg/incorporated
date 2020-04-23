@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react'
 import api from '../../lib/api'
 import { buildingsList } from 'shared-lib/buildingsUtils'
 import styles from './contests.module.scss'
-import Container from 'components/UI/container'
-import UserLink from 'components/UI/UserLink'
+import IncContainer from 'components/UI/inc-container'
+import UserLink from 'components/UI/user-link'
 
 export default function Monopolies() {
   const [monopolies, setMonopolies] = useState([])
@@ -19,7 +19,7 @@ export default function Monopolies() {
   }, [])
 
   return (
-    <Container darkBg>
+    <IncContainer darkBg>
       <div className={styles.monopolies}>
         {error && <h4>{error}</h4>}
         <h2>Monopolies</h2>
@@ -44,6 +44,6 @@ export default function Monopolies() {
           </tbody>
         </table>
       </div>
-    </Container>
+    </IncContainer>
   )
 }

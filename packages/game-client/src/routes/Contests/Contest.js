@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import api from '../../lib/api'
-import UserActionLinks from '../../components/UI/UserActionLinks'
-import Container from 'components/UI/container'
-import UserLink from 'components/UI/UserLink'
+import UserActionLinks from '../../components/UI/user-action-links'
+import IncContainer from 'components/UI/inc-container'
+import UserLink from 'components/UI/user-link'
 
 export default function Monopolies() {
   const { contestName } = useParams()
@@ -20,7 +20,7 @@ export default function Monopolies() {
   }, [contestName])
 
   return (
-    <Container darkBg>
+    <IncContainer darkBg>
       <div style={{ padding: 10 }}>
         {error && <h4>{error}</h4>}
         <h2>{contestName}</h2>
@@ -55,6 +55,6 @@ export default function Monopolies() {
           </tbody>
         </table>
       </div>
-    </Container>
+    </IncContainer>
   )
 }

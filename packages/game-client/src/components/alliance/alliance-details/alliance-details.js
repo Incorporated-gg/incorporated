@@ -2,10 +2,10 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import styles from './alliance-details.module.scss'
 import AllianceBadge from 'components/alliance/alliance-badge'
-import Container from './container'
 import { useHistory } from 'react-router-dom'
 import { userData } from 'lib/user'
-import IncButton from './inc-button'
+import IncContainer from 'components/UI/inc-container'
+import IncButton from 'components/UI/inc-button'
 
 AllianceDetails.propTypes = {
   alliance: PropTypes.object.isRequired,
@@ -20,11 +20,11 @@ export default function AllianceDetails({ alliance }) {
   const canEdit = isMyAlliance && userData.alliance_user_rank.permission_admin
 
   return (
-    <Container darkBg>
+    <IncContainer darkBg>
       <div className={styles.container}>
-        <Container outerClassName={styles.badgeContainer} borderSize={2}>
+        <IncContainer outerClassName={styles.badgeContainer} borderSize={2}>
           <AllianceBadge badge={alliance.badge} className={styles.badge} />
-        </Container>
+        </IncContainer>
         <div className={styles.detailsText}>
           <div className={styles.longName}>
             <span>{alliance.long_name}</span>
@@ -38,6 +38,6 @@ export default function AllianceDetails({ alliance }) {
           <div className={styles.description}> {alliance.description}</div>
         </div>
       </div>
-    </Container>
+    </IncContainer>
   )
 }

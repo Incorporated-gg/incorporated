@@ -5,7 +5,7 @@ import styles from './contests.module.scss'
 
 import Monopolies from './Monopolies'
 import Contest from './Contest'
-import Container from 'components/UI/container'
+import IncContainer from 'components/UI/inc-container'
 
 export default function ContestsRouter() {
   const [contests, setContests] = useState([])
@@ -21,7 +21,7 @@ export default function ContestsRouter() {
   }, [])
   return (
     <>
-      <Container darkBg>
+      <IncContainer darkBg>
         <div style={{ display: 'flex' }}>
           <NavLink className={styles.subMenuItem} to="/contests/monopolies">
             Monopolios
@@ -33,7 +33,7 @@ export default function ContestsRouter() {
               </NavLink>
             ))}
         </div>
-      </Container>
+      </IncContainer>
       <br />
       {error && <h4>{error}</h4>}
 

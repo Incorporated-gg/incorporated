@@ -4,7 +4,7 @@ import { buildingsList, calcBuildingMaxMoney } from 'shared-lib/buildingsUtils'
 import { calculateMissionTime, simulateAttack } from 'shared-lib/missionsUtils'
 import PropTypes from 'prop-types'
 import Modal from 'react-modal'
-import Container from 'components/UI/container'
+import IncContainer from 'components/UI/inc-container'
 
 SimulatorModal.propTypes = {
   spyReport: PropTypes.object,
@@ -61,7 +61,7 @@ function SimulatorWithSpyReport({ spyReport }) {
   })
 
   return (
-    <Container darkBg>
+    <IncContainer darkBg>
       <div style={{ padding: 10 }}>
         <div>
           <label>
@@ -90,7 +90,7 @@ function SimulatorWithSpyReport({ spyReport }) {
         <div>Tiempo de mision: {missionSeconds}s</div>
         <div style={{ whiteSpace: 'pre-wrap' }}>{JSON.stringify(simulation, null, 2)}</div>
       </div>
-    </Container>
+    </IncContainer>
   )
 }
 
@@ -133,7 +133,7 @@ function SimulatorFromScratch() {
   })
 
   return (
-    <Container darkBg>
+    <IncContainer darkBg>
       <div style={{ padding: 10 }}>
         <div>
           <label>
@@ -211,6 +211,6 @@ function SimulatorFromScratch() {
         <div>Tiempo de mision: {missionSeconds}s</div>
         <div style={{ whiteSpace: 'pre-wrap' }}>{JSON.stringify(simulation, null, 2)}</div>
       </div>
-    </Container>
+    </IncContainer>
   )
 }

@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import api from 'lib/api'
 import PropTypes from 'prop-types'
 import styles from './loans.module.scss'
-import Container from 'components/UI/container'
+import IncContainer from 'components/UI/inc-container'
 import { LOAN_DAYS_DURATION } from 'shared-lib/loansUtils'
 import IncButton from 'components/UI/inc-button'
 
@@ -39,9 +39,9 @@ export default function CreateLoan({ refreshLoansList, givenLoan }) {
       givenLoan.loan_started_at + 60 * 60 * 24 * LOAN_DAYS_DURATION - Math.floor(Date.now() / 1000)
     const remainingTime = Math.ceil(remainingSeconds / (60 * 60 * 24))
     return (
-      <Container darkBg>
+      <IncContainer darkBg>
         <div className={styles.contentContainer}>Aún estás dando un préstamo, quedan {remainingTime} días</div>
-      </Container>
+      </IncContainer>
     )
   }
 
@@ -50,7 +50,7 @@ export default function CreateLoan({ refreshLoansList, givenLoan }) {
   }
 
   return (
-    <Container darkBg>
+    <IncContainer darkBg>
       <div className={styles.contentContainer}>
         <div className={styles.title}>{'OFRECER PRÉSTAMO'}</div>
 
@@ -84,6 +84,6 @@ export default function CreateLoan({ refreshLoansList, givenLoan }) {
           </div>
         </div>
       </div>
-    </Container>
+    </IncContainer>
   )
 }

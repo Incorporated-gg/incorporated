@@ -1,8 +1,8 @@
 import React from 'react'
-import styles from './container.module.scss'
+import styles from './inc-container.module.scss'
 import PropTypes from 'prop-types'
 
-Container.propTypes = {
+IncContainer.propTypes = {
   children: PropTypes.node.isRequired,
   darkBg: PropTypes.bool,
   borderSize: PropTypes.number,
@@ -14,9 +14,12 @@ Container.propTypes = {
   outerStyle: PropTypes.object,
   outerClassName: PropTypes.string,
   onClick: PropTypes.func,
+  onKeyDown: PropTypes.func,
+  tabIndex: PropTypes.string,
+  role: PropTypes.string,
 }
 
-export default function Container({
+export default function IncContainer({
   children,
   borderSize,
   darkBg,
@@ -28,13 +31,23 @@ export default function Container({
   style = {},
   outerStyle = {},
   onClick,
+  onKeyDown,
+  tabIndex,
+  role,
   ...props
 }) {
   outerStyle.padding = borderSize
   style.padding = borderSize
 
   return (
-    <div className={`${styles.container} ${outerClassName}`} style={outerStyle} disabled={disabled} onClick={onClick}>
+    <div
+      className={`${styles.container} ${outerClassName}`}
+      style={outerStyle}
+      disabled={disabled}
+      onClick={onClick}
+      onKeyDown={onKeyDown}
+      tabIndex={tabIndex}
+      role={role}>
       <div
         {...props}
         className={`${styles.inner} ${noBackground ? styles.noBackground : ''} ${

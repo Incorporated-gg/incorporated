@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import api from 'lib/api'
 import { reloadUserData } from 'lib/user'
-import Container from 'components/UI/container'
+import IncContainer from 'components/UI/inc-container'
 import IncButton from 'components/UI/inc-button'
 import { useHistory } from 'react-router-dom'
 
@@ -88,7 +88,7 @@ export default function AllianceEditMembers({ alliance, reloadAllianceData }) {
       <IncButton outerStyle={{ display: 'block', marginBottom: 10, textAlign: 'center' }} onClick={exitPressed}>
         VOLVER
       </IncButton>
-      <Container darkBg>
+      <IncContainer darkBg>
         <div style={{ padding: 10 }}>
           <h3>Editar miembros</h3>
           <table>
@@ -143,7 +143,7 @@ export default function AllianceEditMembers({ alliance, reloadAllianceData }) {
             </tbody>
           </table>
         </div>
-      </Container>
+      </IncContainer>
     </>
   )
 }

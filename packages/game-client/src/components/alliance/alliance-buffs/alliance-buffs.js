@@ -1,7 +1,7 @@
 import React from 'react'
 import Proptypes from 'prop-types'
 import api from 'lib/api'
-import Container from 'components/UI/container'
+import IncContainer from 'components/UI/inc-container'
 import IncButton from 'components/UI/inc-button'
 
 AllianceBuffs.propTypes = {
@@ -23,7 +23,7 @@ export default function AllianceBuffs({ alliance, reloadAllianceData }) {
       })
   }
   return (
-    <Container darkBg>
+    <IncContainer darkBg>
       <div style={{ padding: 10 }}>
         <IncButton onClick={activateBuff('attack')} disabled={!alliance.buffs_data.attack.can_activate}>
           Activar buff de ataque
@@ -32,6 +32,6 @@ export default function AllianceBuffs({ alliance, reloadAllianceData }) {
           Activar buff de defensa
         </IncButton>
       </div>
-    </Container>
+    </IncContainer>
   )
 }

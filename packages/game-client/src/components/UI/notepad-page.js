@@ -1,5 +1,5 @@
 import React from 'react'
-import styles from './NotepadPage.module.scss'
+import styles from './notepad-page.module.scss'
 import PropTypes from 'prop-types'
 
 NotepadPage.propTypes = {

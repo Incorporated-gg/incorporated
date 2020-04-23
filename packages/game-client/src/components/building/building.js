@@ -14,7 +14,7 @@ import Icon from 'components/icon'
 import { numberToAbbreviation } from 'lib/utils'
 import styles from './building.module.scss'
 import IncButton from 'components/UI/inc-button'
-import ProgressBar from 'components/UI/progress-bar'
+import IncProgressBar from 'components/UI/inc-progress-bar'
 import IncChevron from 'components/UI/inc-chevron'
 
 const buildingImages = {
@@ -136,12 +136,12 @@ function ExtractButton({ buildingID, buildingCount }) {
     <IncButton onClick={onExtractMoney}>
       <div className={styles.buttonInfoText}>
         <span style={{ marginRight: 5 }}>{numberToAbbreviation(maxMoney.maxTotal)}</span>
-        <ProgressBar direction="horizontal" progressPercentage={progress}>
+        <IncProgressBar direction="horizontal" progressPercentage={progress}>
           <span className={styles.progressText}>
             {numberToAbbreviation(accumulatedMoney)}
             <Icon iconName="money" style={{ marginLeft: 3 }} size={20} />
           </span>
-        </ProgressBar>
+        </IncProgressBar>
       </div>
       <h2 className={styles.actionButton}>{'RECOGER'}</h2>
     </IncButton>

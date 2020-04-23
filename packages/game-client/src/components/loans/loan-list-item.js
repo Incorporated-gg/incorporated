@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { useUserData } from '../../lib/user'
 import { LOAN_DAYS_DURATION } from 'shared-lib/loansUtils'
 import api from 'lib/api'
-import UserLink from 'components/UI/UserLink'
+import UserLink from 'components/UI/user-link'
 import IncButton from 'components/UI/inc-button'
 import styles from './loans.module.scss'
 

@@ -1,9 +1,9 @@
 import React from 'react'
-import styles from './RankItem.module.scss'
+import styles from './rank-item.module.scss'
 import PropTypes from 'prop-types'
 import { numberToAbbreviation } from 'lib/utils'
 import Icon from 'components/icon'
-import Container from './container'
+import IncContainer from './inc-container'
 
 RankItem.propTypes = {
   children: PropTypes.node.isRequired,
@@ -17,10 +17,10 @@ export default function RankItem({ rank, children, pointsType, points }) {
       <div className={`${styles.rankPosition} pos${rank}`}>{rank.toLocaleString()}.</div>
       <div className={styles.username}>{children}</div>
       <div className={styles.points}>
-        <Container className={styles.pointsContainer}>
+        <IncContainer className={styles.pointsContainer}>
           <span style={{ color: '#000' }}>{numberToAbbreviation(points)}</span>{' '}
           <Icon className={styles.icon} iconName={pointsType === 'income' ? 'money' : 'dynamite'} />
-        </Container>
+        </IncContainer>
       </div>
     </div>
   )

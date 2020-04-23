@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
-import UserActionLinks from 'components/UI/UserActionLinks'
+import UserActionLinks from 'components/UI/user-action-links'
 import styles from './UserProfile.module.scss'
-import Container from 'components/UI/container'
+import IncContainer from 'components/UI/inc-container'
 import api from 'lib/api'
-import UserLink from 'components/UI/UserLink'
+import UserLink from 'components/UI/user-link'
 import Icon from 'components/icon'
 
 export default function Ranking() {
@@ -26,7 +26,7 @@ export default function Ranking() {
   if (!user) return <div>Cargando</div>
 
   return (
-    <Container darkBg>
+    <IncContainer darkBg>
       <div className={styles.container}>
         <div className={styles.username}>
           <UserLink user={user} />
@@ -39,6 +39,6 @@ export default function Ranking() {
           <UserActionLinks user={user} />
         </div>
       </div>
-    </Container>
+    </IncContainer>
   )
 }

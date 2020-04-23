@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import AllianceBadge from 'components/alliance/alliance-badge'
 import styles from './alliance-link.module.scss'
-import Container from 'components/UI/container'
+import IncContainer from 'components/UI/inc-container'
 
 AllianceLink.propTypes = {
   alliance: PropTypes.object,
@@ -40,9 +40,9 @@ function BigBadgeAllianceLink({ alliance }) {
     <Link
       to={`/ranking/alliance/${alliance.short_name}`}
       className={`${styles.allianceLink} ${styles.bigBadgeContainer}`}>
-      <Container borderSize={3}>
+      <IncContainer borderSize={3}>
         <AllianceBadge badge={alliance.badge} className={styles.bigBadgeBadge} />
-      </Container>
+      </IncContainer>
       <div>{alliance.long_name}</div>
     </Link>
   )

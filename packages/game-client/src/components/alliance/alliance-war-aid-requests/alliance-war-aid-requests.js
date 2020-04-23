@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import api from 'lib/api'
-import Container from 'components/UI/container'
+import IncContainer from 'components/UI/inc-container'
 import AllianceLink from '../alliance-link'
 import IncButton from 'components/UI/inc-button'
 
@@ -45,7 +45,7 @@ export default function AllianceWarAidRequests() {
   if (error) return error
 
   return (
-    <Container darkBg outerStyle={{ marginBottom: 10 }}>
+    <IncContainer darkBg outerStyle={{ marginBottom: 10 }}>
       <div style={{ padding: 10 }}>
         <h2>Peticiones de ayuda</h2>
         {warRequests.map(warRequest => {
@@ -60,6 +60,6 @@ export default function AllianceWarAidRequests() {
           )
         })}
       </div>
-    </Container>
+    </IncContainer>
   )
 }

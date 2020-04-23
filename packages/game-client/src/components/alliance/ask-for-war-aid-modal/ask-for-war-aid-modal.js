@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import Modal from 'react-modal'
-import Container from 'components/UI/container'
+import IncContainer from 'components/UI/inc-container'
 import AllianceLink from '../alliance-link'
 import IncButton from 'components/UI/inc-button'
 import api from 'lib/api'
@@ -50,7 +50,7 @@ function AskForWarAid({ war, onRequestClose }) {
   }
 
   return (
-    <Container withHairline darkBg borderSize={20}>
+    <IncContainer withHairline darkBg borderSize={20}>
       <div style={{ padding: 10 }}>
         <input value={searchTerm} onChange={e => setSearchTerm(e.target.value)} placeholder="Alianza" />
         {searchResults.map(alliance => {
@@ -62,6 +62,6 @@ function AskForWarAid({ war, onRequestClose }) {
           )
         })}
       </div>
-    </Container>
+    </IncContainer>
   )
 }

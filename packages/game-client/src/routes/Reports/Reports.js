@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import api from 'lib/api'
 import styles from './Reports.module.scss'
-import Container from 'components/UI/container'
+import IncContainer from 'components/UI/inc-container'
 import MissionRow from 'components/reports/mission-row/mission-row'
 import SimulatorModal from 'components/simulator-modal/simulator-modal'
 
@@ -72,7 +72,7 @@ export default function Reports() {
         </select>
       </div>
 
-      <Container darkBg>
+      <IncContainer darkBg>
         <div className={styles.missionContainer}>
           {missions.missions.length ? (
             missions.missions.map((mission, index) => (
@@ -91,7 +91,7 @@ export default function Reports() {
             </div>
           )}
         </div>
-      </Container>
+      </IncContainer>
     </div>
   )
 }

@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
-import styles from './UserLink.module.scss'
+import styles from './user-link.module.scss'
 import AllianceLink from 'components/alliance/alliance-link'
 
 UserLink.propTypes = {

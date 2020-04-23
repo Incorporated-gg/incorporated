@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import Modal from 'react-modal'
-import Container from 'components/UI/container'
+import IncContainer from 'components/UI/inc-container'
 import { reloadUserData } from 'lib/user'
 import api from 'lib/api'
 
@@ -42,7 +42,7 @@ function DeclareWar({ alliance, onRequestClose }) {
   }
 
   return (
-    <Container withHairline darkBg borderSize={20}>
+    <IncContainer withHairline darkBg borderSize={20}>
       <div style={{ padding: 10 }}>
         <h1>Declarar guerra a {alliance.short_name}</h1>
         {alliance.hoods.map(hood => {
@@ -69,6 +69,6 @@ function DeclareWar({ alliance, onRequestClose }) {
         })}
         <button onClick={declareWar}>Declarar guerra</button>
       </div>
-    </Container>
+    </IncContainer>
   )
 }

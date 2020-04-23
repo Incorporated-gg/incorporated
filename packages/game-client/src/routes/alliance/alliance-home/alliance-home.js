@@ -1,13 +1,13 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
-import UserLink from 'components/UI/UserLink'
+import UserLink from 'components/UI/user-link'
 import api from 'lib/api'
-import RankItem from 'components/UI/RankItem'
+import RankItem from 'components/UI/rank-item'
 import styles from './alliance-home.module.scss'
 import { useUserData, reloadUserData } from 'lib/user'
 import NewMessageModal from '../../../components/messages/components/new-message-modal'
-import Container from 'components/UI/container'
-import AllianceDetails from 'components/UI/alliance-details'
+import IncContainer from 'components/UI/inc-container'
+import AllianceDetails from 'components/alliance/alliance-details/alliance-details'
 import AllianceMemberRequests from 'components/alliance/alliance-member-requests'
 import IncButton from 'components/UI/inc-button'
 import { useHistory } from 'react-router-dom'
@@ -43,7 +43,7 @@ export default function AllianceHome({ alliance, reloadAllianceData }) {
       {userData.alliance_user_rank.permission_accept_and_kick_members && (
         <AllianceMemberRequests reloadAllianceData={reloadAllianceData} />
       )}
-      <Container darkBg>
+      <IncContainer darkBg>
         <div className={`${styles.container} ${styles.membersContainer}`}>
           <h3>Lista de miembros</h3>
           <IncButton
@@ -71,13 +71,13 @@ export default function AllianceHome({ alliance, reloadAllianceData }) {
             )
           })}
         </div>
-      </Container>
+      </IncContainer>
       <br />
-      <Container darkBg>
+      <IncContainer darkBg>
         <div className={styles.container}>
           <IncButton onClick={leaveAlliance}>Salir</IncButton>
         </div>
-      </Container>
+      </IncContainer>
 
       <NewMessageModal
         user={{ username: `alliance:${alliance.short_name}` }}

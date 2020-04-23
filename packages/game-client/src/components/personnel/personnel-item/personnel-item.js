@@ -5,7 +5,8 @@ import Card, { cardStyles } from 'components/card'
 import api from 'lib/api'
 import styles from './personnel-item.module.scss'
 import Icon from 'components/icon'
-import Container from 'components/UI/container'
+import IncContainer from 'components/UI/inc-container'
+import IncInput from 'components/UI/inc-input'
 
 const personnelImages = {
   sabots: require('./img/gangster.png'),
@@ -63,12 +64,13 @@ export default function PersonnelItem({ personnelInfo, resourceAmount }) {
       <br />
 
       <div>
-        <input
+        <IncInput
+          showBorder
           className={styles.input}
           placeholder="0"
           type="number"
           value={hireAmount}
-          onChange={e => setHireAmount(e.target.value)}
+          onChangeText={setHireAmount}
         />
         <div className={styles.statContainer}>
           <div>
@@ -84,20 +86,21 @@ export default function PersonnelItem({ personnelInfo, resourceAmount }) {
             </div>
           </div>
         </div>
-        <Container outerClassName={`${cardStyles.button} ${styles.button}`} onClick={hireClicked}>
+        <IncContainer outerClassName={`${cardStyles.button} ${styles.button}`} onClick={hireClicked}>
           <h2 className={styles.buttonTitle}>{'CONTRATAR'}</h2>
-        </Container>
+        </IncContainer>
       </div>
 
       <br />
 
       <div>
-        <input
+        <IncInput
+          showBorder
           className={styles.input}
           placeholder="0"
           type="number"
           value={fireAmount}
-          onChange={e => setFireAmount(e.target.value)}
+          onChangeText={setFireAmount}
         />
         <div>
           <div className={styles.statTitle}>Coste de despido</div>
@@ -105,9 +108,9 @@ export default function PersonnelItem({ personnelInfo, resourceAmount }) {
             {(personnelInfo.firingCost * fireAmount).toLocaleString()} <Icon iconName="money" size={16} />
           </div>
         </div>
-        <Container outerClassName={`${cardStyles.button} ${styles.button}`} onClick={fireClicked}>
+        <IncContainer outerClassName={`${cardStyles.button} ${styles.button}`} onClick={fireClicked}>
           <h2 className={styles.buttonTitle}>{'DESPEDIR'}</h2>
-        </Container>
+        </IncContainer>
       </div>
     </Card>
   )

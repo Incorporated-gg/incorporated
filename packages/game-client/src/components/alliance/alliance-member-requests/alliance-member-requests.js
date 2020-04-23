@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react'
 import api from '../../../lib/api'
 import PropTypes from 'prop-types'
-import Container from 'components/UI/container'
+import IncContainer from 'components/UI/inc-container'
 
 MemberRequests.propTypes = {
   reloadAllianceData: PropTypes.func.isRequired,
@@ -37,7 +37,7 @@ export default function MemberRequests({ reloadAllianceData }) {
   if (error) return <p>{error}</p>
   if (!memberRequests.length) return null
   return (
-    <Container darkBg outerStyle={{ marginBottom: 10 }}>
+    <IncContainer darkBg outerStyle={{ marginBottom: 10 }}>
       <div style={{ padding: 10 }}>
         <h3>Solicitudes de membresía</h3>
         <table>
@@ -56,6 +56,6 @@ export default function MemberRequests({ reloadAllianceData }) {
           </tbody>
         </table>
       </div>
-    </Container>
+    </IncContainer>
   )
 }

@@ -8,8 +8,8 @@ import styles from './single-message.module.scss'
 import ErrorBoundary from 'components/UI/ErrorBoundary'
 import AllianceLink from 'components/alliance/alliance-link'
 import NewMessageModal from './new-message-modal'
-import Container from 'components/UI/container'
-import UserLink from 'components/UI/UserLink'
+import IncContainer from 'components/UI/inc-container'
+import UserLink from 'components/UI/user-link'
 
 SingleMessage.propTypes = {
   message: PropTypes.object.isRequired,
@@ -46,7 +46,7 @@ export default function SingleMessage({ reloadMessagesData, message }) {
   }
 
   return (
-    <Container darkBg outerClassName={styles.outerContainer}>
+    <IncContainer darkBg outerClassName={styles.outerContainer}>
       <div className={styles.messageContainer}>
         <div className={styles.msgInfo}>
           <div>
@@ -84,7 +84,7 @@ export default function SingleMessage({ reloadMessagesData, message }) {
         )}
         {wasSentToMe && <button onClick={deleteMessage}>Borrar</button>}
       </div>
-    </Container>
+    </IncContainer>
   )
 }
 

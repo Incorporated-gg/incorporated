@@ -52,7 +52,7 @@ module.exports = app => {
     const moneyAmount = parseInt(req.body.money_amount)
 
     const MAX_INTEREST_RATE = 50
-    const MIN_INTEREST_RATE = 1
+    const MIN_INTEREST_RATE = 5
     if (Number.isNaN(interestRate) || interestRate < MIN_INTEREST_RATE || interestRate > MAX_INTEREST_RATE) {
       res.status(400).json({ error: 'Interés inválido' })
       return

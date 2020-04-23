@@ -4,9 +4,9 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
 }
+
 .statTitle {
   @include pascalText();
-  @include blackBorderText();
   color: #fff;
   text-transform: uppercase;
   font-family: $font-family-title;
@@ -16,10 +16,10 @@
 
 .button {
   margin-top: 5px;
+
   .buttonTitle {
     @include pascalText();
-    @include blackBorderText();
-    color: #fff;
+    color: rgba(0, 0, 0, 0.7);
     text-transform: uppercase;
     font-family: $font-family-title;
     font-weight: 600;
@@ -28,7 +28,7 @@
   }
 }
 
-input.input {
+.input {
   width: 100%;
   margin-bottom: 10px;
 }

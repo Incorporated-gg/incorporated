@@ -7,8 +7,8 @@ import { getServerDay } from 'shared-lib/serverTime'
 import ErrorBoundary from 'components/UI/ErrorBoundary'
 import MissionTimer from '../mission-timer/mission-timer'
 import Icon from 'components/icon'
-import UserLink from 'components/UI/UserLink'
-import Container from 'components/UI/container'
+import UserLink from 'components/UI/user-link'
+import IncContainer from 'components/UI/inc-container'
 import styles from './mission-row.module.scss'
 import AttackReport from '../attack-report/attack-report'
 import SpyReport from '../spy-report/spy-report'
@@ -75,14 +75,14 @@ export default function MissionRow({ mission, reloadMissionsCallback, showcaseUs
             <div className={styles.secondRow}>Día {getServerDay(mission.will_finish_at * 1000)}</div>
             <div className={styles.thirdRow}>
               <div className={styles.missionTypeContainer} onClick={clickedShowDetails}>
-                <Container outerClassName={styles.missionTypeOuter} className={styles.missionTypeInner}>
+                <IncContainer outerClassName={styles.missionTypeOuter} className={styles.missionTypeInner}>
                   <span style={{ color: resultColor, fontWeight: 700 }}>{resultText}</span>
                   <Icon
                     className={styles.missionTypeIcon}
                     svg={iconSvg}
                     alt={mission.mission_type === 'attack' ? 'Ataque' : 'Espionaje'}
                   />
-                </Container>
+                </IncContainer>
                 <div className={styles.detailsText}>{showDetails ? 'Ocultar detalles' : 'Ver detalles'}</div>
               </div>
             </div>

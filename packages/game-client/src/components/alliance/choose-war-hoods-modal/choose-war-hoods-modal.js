@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import Modal from 'react-modal'
-import Container from 'components/UI/container'
+import IncContainer from 'components/UI/inc-container'
 import IncButton from 'components/UI/inc-button'
 import api from 'lib/api'
 
@@ -50,7 +50,7 @@ function ChooseWarHoods({ war, onRequestClose }) {
   }
 
   return (
-    <Container withHairline darkBg borderSize={20}>
+    <IncContainer withHairline darkBg borderSize={20}>
       <div style={{ padding: 10 }}>
         {!enemyAlliance
           ? 'Cargando...'
@@ -78,6 +78,6 @@ function ChooseWarHoods({ war, onRequestClose }) {
             })}
         <IncButton onClick={chooseHoods}>Escoger barrios</IncButton>
       </div>
-    </Container>
+    </IncContainer>
   )
 }

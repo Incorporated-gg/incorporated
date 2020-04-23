@@ -3,12 +3,12 @@ import api from 'lib/api'
 import { useParams } from 'react-router-dom'
 import { useUserData, reloadUserData } from 'lib/user'
 import styles from './AllianceProfile.module.scss'
-import RankItem from 'components/UI/RankItem'
+import RankItem from 'components/UI/rank-item'
 import WarInfo from 'components/alliance/alliance-war-info'
-import Container from 'components/UI/container'
+import IncContainer from 'components/UI/inc-container'
 import DeclareWarModal from 'components/alliance/declare-war-modal'
-import UserLink from 'components/UI/UserLink'
-import AllianceDetails from 'components/UI/alliance-details'
+import UserLink from 'components/UI/user-link'
+import AllianceDetails from 'components/alliance/alliance-details/alliance-details'
 
 export default function Ranking() {
   const { allianceShortName } = useParams()
@@ -58,7 +58,7 @@ export default function Ranking() {
     <>
       <AllianceDetails alliance={alliance} />
       <br />
-      <Container darkBg>
+      <IncContainer darkBg>
         <div className={styles.container}>
           {!userData.alliance ? (
             <button onClick={createMemberRequest}>Pedir ser miembro</button>
@@ -70,9 +70,9 @@ export default function Ranking() {
             )
           )}
         </div>
-      </Container>
+      </IncContainer>
       <br />
-      <Container darkBg>
+      <IncContainer darkBg>
         <div className={styles.container}>
           {alliance.members.map(member => {
             return (
@@ -89,25 +89,25 @@ export default function Ranking() {
             )
           })}
         </div>
-      </Container>
+      </IncContainer>
       <br />
-      <Container darkBg>
+      <IncContainer darkBg>
         <div className={styles.container}>
           <h2>Guerras activas</h2>
           {alliance.active_wars.map(war => {
             return <WarInfo war={war} key={war.id} />
           })}
         </div>
-      </Container>
+      </IncContainer>
       <br />
-      <Container darkBg>
+      <IncContainer darkBg>
         <div className={styles.container}>
           <h2>Guerras pasadas</h2>
           {alliance.past_wars.map(war => {
             return <WarInfo war={war} key={war.id} />
           })}
         </div>
-      </Container>
+      </IncContainer>
       <DeclareWarModal
         isOpen={isDeclareWarModalOpen}
         onRequestClose={() => setIsDeclareWarModalOpen(false)}

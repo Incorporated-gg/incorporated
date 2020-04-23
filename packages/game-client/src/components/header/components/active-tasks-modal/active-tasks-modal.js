@@ -5,10 +5,10 @@ import api from 'lib/api'
 import { buildingsList } from 'shared-lib/buildingsUtils'
 import PropTypes from 'prop-types'
 import Modal from 'react-modal'
-import Container from 'components/UI/container'
+import IncContainer from 'components/UI/inc-container'
 import { numberToAbbreviation } from 'lib/utils'
 import Icon from 'components/icon'
-import ProgressBar from 'components/UI/progress-bar'
+import IncProgressBar from 'components/UI/inc-progress-bar'
 import IncChevron from 'components/UI/inc-chevron'
 import IncButton from 'components/UI/inc-button'
 
@@ -20,14 +20,14 @@ export default function ActiveTasksModal({ isOpen, onRequestClose }) {
   const userData = useUserData()
   return (
     <Modal overlayClassName="backdropBlur" isOpen={isOpen} onRequestClose={onRequestClose}>
-      <Container darkBg noBackground>
+      <IncContainer darkBg noBackground>
         <div>
           <div className={styles.title}>TAREAS</div>
         </div>
         {userData.activeTasks.map(task => (
           <ActiveTask key={task.id} task={task} />
         ))}
-      </Container>
+      </IncContainer>
     </Modal>
   )
 }
@@ -117,12 +117,12 @@ function ActiveTask({ task }) {
     <div key={task.id} className={styles.innerContainer}>
       <div className={styles.taskTitle}>{taskElm}</div>
       <br />
-      <Container className={styles.progressContainer}>
+      <IncContainer className={styles.progressContainer}>
         <div className={styles.progressTotal}>{numberToAbbreviation(task.requirements.amount)}</div>
-        <ProgressBar direction="horizontal" progressPercentage={task.progressPercentage}>
+        <IncProgressBar direction="horizontal" progressPercentage={task.progressPercentage}>
           {numberToAbbreviation(progressAmount)}
-        </ProgressBar>
-      </Container>
+        </IncProgressBar>
+      </IncContainer>
       <br />
       <IncButton disabled={!isCompleted} outerClassName={styles.rewardContainer} onClick={completeTask}>
         <div style={{ display: 'flex', alignItems: 'center' }}>

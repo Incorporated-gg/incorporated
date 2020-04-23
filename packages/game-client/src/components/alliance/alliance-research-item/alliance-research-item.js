@@ -9,10 +9,12 @@ import {
   calcResourceMaxByResearchID,
 } from 'shared-lib/allianceUtils'
 import api from 'lib/api'
-import ProgressBar from 'components/UI/progress-bar'
+import IncProgressBar from 'components/UI/inc-progress-bar'
 import Icon from 'components/icon'
-import Container from 'components/UI/container'
+import IncContainer from 'components/UI/inc-container'
 import { numberToAbbreviation } from 'lib/utils'
+import IncInput from 'components/UI/inc-input'
+import IncButton from 'components/UI/inc-button'
 
 const researchImages = {
   1: require('./img/attack-buff.png'),
@@ -47,14 +49,14 @@ export default function AllianceResearchItem({ researchData, reloadAllianceData 
 
   return (
     <Card image={researchImages[researchData.id]} title={researchInfo.name} ribbon={`Lvl. ${researchData.level}`}>
-      <Container style={{ display: 'flex', alignItems: 'center' }}>
+      <IncContainer style={{ display: 'flex', alignItems: 'center' }}>
         <div className={styles.price}>{numberToAbbreviation(researchData.price)}</div>
-        <ProgressBar>
+        <IncProgressBar progressPercentage={(researchData.progress_money / researchData.price) * 100}>
           <div>
             {researchData.progress_money.toLocaleString()} <Icon iconName="money" size={20} />
           </div>
-        </ProgressBar>
-      </Container>
+        </IncProgressBar>
+      </IncContainer>
       {researchInfo.type === 'resource' && (
         <>
           <p>
@@ -77,12 +79,10 @@ export default function AllianceResearchItem({ researchData, reloadAllianceData 
           <p>Se puede activar durante 1h y tiene un cooldown de 2 días.</p>
         </>
       )}
-      <Container>
-        <form>
-          <input type="number" value={amount} onChange={e => setAmount(e.target.value)} />{' '}
-          <button onClick={doResearch}>Aportar</button>
-        </form>
-      </Container>
+      <IncButton onClick={doResearch}>
+        <IncInput onClick={e => e.stopPropagation()} type="number" value={amount} onChangeText={setAmount} />
+        <div className={styles.doResearchTitle}>APORTAR</div>
+      </IncButton>
     </Card>
   )
 }

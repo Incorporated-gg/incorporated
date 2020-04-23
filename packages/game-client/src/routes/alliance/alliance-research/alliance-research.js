@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import styles from './alliance-research.module.scss'
-import Container from 'components/UI/container'
+import IncContainer from 'components/UI/inc-container'
 import AllianceResearchItem from 'components/alliance/alliance-research-item/alliance-research-item'
 import CardList from 'components/card/card-list'
 
@@ -33,12 +33,12 @@ export default function AllianceResearch({ alliance, reloadAllianceData }) {
         })}
       </CardList>
       <br />
-      <Container darkBg>
+      <IncContainer darkBg>
         <div style={{ padding: 10 }}>
           <h2>Aportes</h2>
           <img className={styles.aportesImg} src={chartImgUrl} alt="" />
         </div>
-      </Container>
+      </IncContainer>
     </>
   )
 }
