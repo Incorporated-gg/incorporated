@@ -22,7 +22,8 @@
   align-items: center;
 
   .title {
-    @include titleText();
+    text-transform: uppercase;
+    font-family: $font-family-title;
     color: #00000099;
     line-height: 1em;
     font-weight: 700;

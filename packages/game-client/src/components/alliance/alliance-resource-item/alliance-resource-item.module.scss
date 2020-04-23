@@ -1,7 +1,9 @@
 @import '../../../variables';
 
 .title {
-  @include pascalGradientTitle();
+  color: #fff;
+  text-transform: uppercase;
+  font-family: $font-family-title;
   font-size: $font-size-large;
   margin-bottom: 7px;
   font-weight: 900;

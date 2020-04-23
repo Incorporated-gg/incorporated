@@ -5,7 +5,7 @@
   flex-direction: row;
   max-width: $breakpoint-desktop;
   margin: auto;
-  background-color: #343434;
+  background-color: $color-bg;
 
   >a {
     position: relative;
@@ -46,24 +46,21 @@
       overflow: hidden; // In small devices (or other languages), the title text might overflow. Alternatively, we could make the text smaller
     
       .title {
+        @include pascalText();
         font-family: $font-family-title;
         text-transform: uppercase;
         display: inline-block;
-        font-size: $font-size-large;
         font-size: 0;
         text-shadow: -2px 2px 0px #00000080;
-        &::first-letter {
-          font-size: 1.3em;
-        }
       }
     }
 
     &.active {
-      background: linear-gradient(0deg, #CC8C20 0%, #EECF82 100%);
+      background: $gradient-brand;
       width: 30%;
 
       .title {
-        font-size: 1em;
+        font-size: $font-size-large;
       }
 
       .svgIcon {

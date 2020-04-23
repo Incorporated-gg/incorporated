@@ -1,7 +1,25 @@
 @import '../../../variables';
 
-.researchButton {
-  @include pascalShadowTitle();
-  font-size: $font-size-medium;
-  padding: 2px;
+.rowsContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  font-family: $font-family-title;
+  font-weight: 500;
+}
+.title {
+  @include pascalText();
+  flex-grow: 1;
+  font-size: $font-size-large;
+  padding: 0 10px;
+  text-align: right;
+  color: #000000B3;
+}
+.priceChevron {
+  color: $color-text-light;
+}
+.remainingTimeText {
+  text-align: center;
+  padding: 0 5px;
+  min-width: 70px;
 }

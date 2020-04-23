@@ -33,7 +33,7 @@
     height: 100%;
 
     >img {
-      border: 10px solid #EECF82;
+      border: 10px solid $color-brand;
       width: 100%;
       height: 100%;
     }
@@ -42,10 +42,10 @@
       display: block;
       padding: 0.15em;
       background-color: #000;
-      font-size: 2em;
+      font-size: $font-size-large;
 
       @media (min-width: $breakpoint-desktop) {
-        font-size: 3em;
+        font-size: $font-size-xlarge;
       }
 
       position: absolute;

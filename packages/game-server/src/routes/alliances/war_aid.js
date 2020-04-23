@@ -30,12 +30,12 @@ module.exports = app => {
       return
     }
 
-    const doesWarExist = await mysql.selectOne(
-      'SELECT 1 FROM alliances_wars WHERE id=? AND (alliance1_id=? OR alliance2_id=?)',
+    const doesWarExistAndIsActive = await mysql.selectOne(
+      'SELECT 1 FROM alliances_wars WHERE id=? AND completed=0 AND (alliance1_id=? OR alliance2_id=?)',
       [warID, userRank.alliance_id, userRank.alliance_id]
     )
-    if (!doesWarExist) {
-      res.status(401).json({ error: 'Detalles inválidos' })
+    if (!doesWarExistAndIsActive) {
+      res.status(401).json({ error: 'Guerra no encontrada' })
       return
     }
 

@@ -85,7 +85,7 @@ export default function PersonnelItem({ personnelInfo, resourceAmount }) {
           </div>
         </div>
         <Container outerClassName={`${cardStyles.button} ${styles.button}`} onClick={hireClicked}>
-          <h2 className={`titleText shadow pascal ${styles.buttonTitle}`}>{'CONTRATAR'}</h2>
+          <h2 className={styles.buttonTitle}>{'CONTRATAR'}</h2>
         </Container>
       </div>
 
@@ -106,7 +106,7 @@ export default function PersonnelItem({ personnelInfo, resourceAmount }) {
           </div>
         </div>
         <Container outerClassName={`${cardStyles.button} ${styles.button}`} onClick={fireClicked}>
-          <h2 className={`titleText shadow pascal ${styles.buttonTitle}`}>{'DESPEDIR'}</h2>
+          <h2 className={styles.buttonTitle}>{'DESPEDIR'}</h2>
         </Container>
       </div>
     </Card>

@@ -11,8 +11,8 @@ LoanList.propTypes = {
 export default function LoanList({ loans, refreshLoansList }) {
   return (
     <Container darkBg>
-      <div className={styles.title}>PRÉSTAMOS</div>
       <div className={styles.contentContainer}>
+        <div className={styles.title}>PRÉSTAMOS</div>
         {loans.length ? (
           loans.map((loan, i) => <LoanListItem loan={loan} refreshLoansList={refreshLoansList} key={i} />)
         ) : (

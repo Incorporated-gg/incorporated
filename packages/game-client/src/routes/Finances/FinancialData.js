@@ -4,6 +4,7 @@ import { useUserData } from '../../lib/user'
 import api from '../../lib/api'
 import { personnelObj } from 'shared-lib/personnelUtils'
 import styles from './Finances.module.scss'
+import { LOAN_DAYS_DURATION } from 'shared-lib/loansUtils'
 
 export default function FinancialData() {
   const userData = useUserData()
@@ -21,7 +22,6 @@ export default function FinancialData() {
     refreshLoansList()
   }, [refreshLoansList])
 
-  const LOAN_DAYS_DURATION = 7
   const gainedFromLoans =
     givenLoan && givenLoan.borrower
       ? Math.round((givenLoan.money_amount * (givenLoan.interest_rate / 100 + 1)) / LOAN_DAYS_DURATION)

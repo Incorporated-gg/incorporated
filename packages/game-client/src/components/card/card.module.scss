@@ -1,5 +1,4 @@
 @import '../../variables';
-@import '../../mixins.scss';
 
 .card {
   position: relative;
@@ -16,7 +15,7 @@
   .cardHeader {
     padding: 5px;
     padding-bottom: 0;
-    background: linear-gradient(#CC8C20, #EECF82);
+    background: $gradient-brand;
 
     .image img {
       display: block;
@@ -30,10 +29,10 @@
       top: 4px;
       left: 4px;
       width: calc(100% - 8px);
-      background-color: #343434B2;
+      background-color: rgba($color-bg, 0.7);
       color: #ffffff;
       padding: 4px 15px;
-      font-size: $font-size-large;
+      font-size: $font-size-medium;
       font-weight: 700;
       text-align: right;
     }
@@ -42,8 +41,8 @@
 
   .darkBg {
     font-weight: bold;
-    background: #343434 0% 0% no-repeat padding-box;
-    border: 5px solid #EECF82;
+    background: $color-bg;
+    border: 5px solid $color-brand;
     flex-grow: 1;
     display: flex;
     flex-direction: column;
@@ -52,19 +51,20 @@
 
     .name {
       @include gradientText();
+      @include pascalText();
       font-family: $font-family-title;
       text-transform: uppercase;
       transition: all ease-in-out .3s;
       font-weight: 700;
       font-size: $font-size-large;
       margin-bottom: 10px;
-      &::first-letter {
-        font-size: 1.3em;
-      }
     }
 
     .children {
-      // flex-grow: 1; // Disabled due to ios safari bug, calculating too much extra height
+      @supports not (-webkit-touch-callout: none) {
+        // Disabled on ios due to safari bug, calculating too much extra height
+        flex-grow: 1; 
+      }
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -79,7 +79,7 @@
 }
 
 .buttonNumberContainer {
-  background-color: #343434;
+  background-color: $color-bg;
   position: relative;
 
   .buttonNumberProgress {

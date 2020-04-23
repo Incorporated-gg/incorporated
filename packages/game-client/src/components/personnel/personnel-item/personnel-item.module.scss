@@ -5,14 +5,24 @@
   grid-template-columns: 1fr 1fr;
 }
 .statTitle {
-  @include pascalShadowTitle();
+  @include pascalText();
+  @include blackBorderText();
+  color: #fff;
+  text-transform: uppercase;
+  font-family: $font-family-title;
+  font-weight: 600;
 }
 
 
 .button {
   margin-top: 5px;
   .buttonTitle {
-    @include pascalShadowTitle();
+    @include pascalText();
+    @include blackBorderText();
+    color: #fff;
+    text-transform: uppercase;
+    font-family: $font-family-title;
+    font-weight: 600;
     font-size: $font-size-medium;
     padding: 2px;
   }

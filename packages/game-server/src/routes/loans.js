@@ -51,15 +51,16 @@ module.exports = app => {
     const interestRate = parseInt(req.body.interest_rate)
     const moneyAmount = parseInt(req.body.money_amount)
 
-    const MAX_INTEREST_RATE = 40
-    const MIN_INTEREST_RATE = 5
+    const MAX_INTEREST_RATE = 50
+    const MIN_INTEREST_RATE = 1
     if (Number.isNaN(interestRate) || interestRate < MIN_INTEREST_RATE || interestRate > MAX_INTEREST_RATE) {
       res.status(400).json({ error: 'Interés inválido' })
       return
     }
 
-    if (Number.isNaN(moneyAmount) || moneyAmount < 1000) {
-      res.status(400).json({ error: 'Cantidad de dinero inválida' })
+    const MIN_AMOUNT = 1000
+    if (Number.isNaN(moneyAmount) || moneyAmount < MIN_AMOUNT) {
+      res.status(400).json({ error: `Cantidad de dinero inválida (Mínimo: ${MIN_AMOUNT.toLocaleString()})` })
       return
     }
 

@@ -95,11 +95,11 @@ function BuyButton({ buildingID, coste, hasEnoughOptimizeLvl }) {
   return (
     <IncButton {...buyHoldPress} disabled={!canBuy} outerStyle={{ marginTop: 10 }}>
       <div className={styles.buttonInfoText}>
-        <IncChevron direction="right" padding={12} />
+        <IncChevron padding={12} direction="right" />
         <span style={{ flexGrow: 1 }}>
           {numberToAbbreviation(coste)} <Icon iconName="money" style={{ marginLeft: 3 }} size={20} />
         </span>
-        <IncChevron direction="left" padding={12} />
+        <IncChevron padding={12} direction="left" />
       </div>
       <h2 className={styles.actionButton}>{'CONSTRUIR'}</h2>
     </IncButton>

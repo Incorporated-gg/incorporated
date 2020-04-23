@@ -11,7 +11,7 @@
 
 .formContainer {
   padding: 10px;
-  background: transparent linear-gradient(180deg, #EECF82 0%, #CC8C20 100%) 0% 0% no-repeat padding-box;
+  background: $gradient-brand;
   input {
     width: 100%;
     margin-bottom: 15px;
@@ -21,7 +21,12 @@
     text-align: center;
   }
   .buttonText {
-    @include pascalShadowTitle();
+    @include pascalText();
+    @include blackBorderText();
+    color: #fff;
+    text-transform: uppercase;
+    font-family: $font-family-title;
+    font-weight: 600;
     width: 100%;
     font-size: $font-size-large;
     padding-top: 5px;

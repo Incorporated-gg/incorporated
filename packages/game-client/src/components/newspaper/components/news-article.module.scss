@@ -52,13 +52,10 @@
   }
 
   .corpus {
+    @include pascalText();
     flex-grow: 1;
     flex-basis: 1px;
     filter: url(#newspaperGrainFilter);
-
-    &:first-letter {
-      font-size: 1.3em;
-    }
   }
 
   .image {

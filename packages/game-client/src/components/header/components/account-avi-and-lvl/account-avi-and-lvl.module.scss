@@ -29,11 +29,11 @@
     left: 4px;
     width: calc(100% - 8px);
     padding: 2px;
-    font-size: 11px;
+    font-size: $font-size-small;
     font-weight: 700;
     color: #fff;
     display: flex;
-    background-color: #343434B2;
+    background-color: rgba($color-bg, 0.7);
     justify-content: space-between;
     >span {
       word-break: keep-all;

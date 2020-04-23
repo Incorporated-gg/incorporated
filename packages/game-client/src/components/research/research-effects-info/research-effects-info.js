@@ -57,7 +57,7 @@ export default function ResearchEffectsInfo({ researchID, currentLevel, price })
       return (
         <div>
           Ingresos diarios ganados: {numberToAbbreviation(gainedDailyIncome)} <Icon iconName="money" size={16} />. PRI:{' '}
-          {pri.toLocaleString()} días
+          {pri} días
         </div>
       )
     }

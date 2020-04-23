@@ -1,23 +1,21 @@
-@import './mixins.scss';
-
 // Screen sizes
 $breakpoint-small: 425px;
 $breakpoint-medium: 768px;
 $breakpoint-desktop: 1024px;
 
-// the :export directive is the magic sauce for webpack
+// the :export directive is used by webpack to extract values for js
 :export {
   breakpointDesktop: $breakpoint-desktop;
 }
 
 // Font sizes. Ratio: 1.3333
-$font-size-xsmall: 10px;
-$font-size-small: 12px;
-$font-size-medium: 16px;
-$font-size-large: 21px;
-$font-size-xlarge: 28px;
-$font-size-xxlarge: 38px;
+$font-size-small: 11px; // 11
+$font-size-medium: 15px; // 14.666
+$font-size-large: 20px; // 19.555
+$font-size-xlarge: 26px; // 26.07
+$font-size-xxlarge: 35px; // 34.765
 
+$font-family-text: 'Lato', Arial, sans-serif;
 $font-family-title: 'Oswald', 'Lato', Arial, 'sans-serif';
 
 // Colors
@@ -25,12 +23,12 @@ $color-brand: #EECF82;
 $color-brand-light: #F6DEA0;
 $color-brand-dark: #DDAE52;
 $color-hairline: #FFD880;
-$gradient-brand: linear-gradient(180deg, $color-brand-light 0%, $color-brand-dark 100%);
+$gradient-brand: linear-gradient($color-brand-light, $color-brand-dark);
 
 $color-green-light: #1FD070;
 $color-green-dark: #00793C;
-$gradient-green-horizontal: linear-gradient(-90deg, $color-green-light 0%, $color-green-dark 100%);
-$gradient-green-vertical: linear-gradient(180deg, $color-green-light 0%, $color-green-dark 100%);
+$gradient-green-horizontal: linear-gradient(-90deg, $color-green-light, $color-green-dark);
+$gradient-green-vertical: linear-gradient($color-green-light, $color-green-dark);
 
 $color-text-light: #FFF8E6;
 $color-bg: #343434;
@@ -38,3 +36,21 @@ $color-red: #A7000099;
 
 // Header specific
 $header--color-text: #fafafa;
+
+// Mixins
+@mixin gradientText {
+  color: $color-brand-dark;
+  background: $gradient-brand;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+@mixin pascalText {
+  &::first-letter {
+    font-size: 1.3em;
+  }
+}
+
+@mixin blackBorderText {
+  text-shadow: #000 -1px 0px 0px, #000 -1px 1px 0px, #000 -1px -1px 0px, #000 1px -1px 0px,#000 1px -2px 0px,#000 0px 0px 0px, #000 0px 1px 0px, #000 0px -1px 0px, #000 1px 0px 0px, #000 1px 1px 0px, #000 -2px 0px 0px, #000 -2px 2px 0px, #000 -2px -2px 0px, #000 2px -2px 0px,#000 0px 2px 0px, #000 0px -2px 0px, #000 2px 0px 0px, #000 2px 1px 0px, #000 2px 2px 0px, #000 -2px -2px 0px;
+}

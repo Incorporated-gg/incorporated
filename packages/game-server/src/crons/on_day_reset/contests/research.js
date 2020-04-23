@@ -17,6 +17,9 @@ export async function getResearchScoreboard(weekFirstServerDay) {
     user.researchs_count_diff = researchsCount - user.initial_researchs_count
   })
 
+  // TODO: Score should be money spent, not number of researchs
+  // Additionally, we should count currenctly active researchs
+
   return allUsers
     .sort((a, b) => {
       return a.researchs_count_diff > b.researchs_count_diff ? -1 : 1

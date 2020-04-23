@@ -20,6 +20,7 @@ export default function WarInfo({ war }) {
   const isMyAllianceAttackerOrDefender =
     userData.alliance && (userData.alliance.id === war.alliance1.id || userData.alliance.id === war.alliance2.id)
 
+  const hasFinished = Boolean(war.winner)
   const hasStarted = Object.keys(war.days).length > 0
   let warLineGraphData = null
   let extraData = {
@@ -54,7 +55,8 @@ export default function WarInfo({ war }) {
     })
   }
 
-  const canAskForWarAid = isMyAllianceAttackerOrDefender && userData.alliance_user_rank.permission_declare_war
+  const canAskForWarAid =
+    !hasFinished && isMyAllianceAttackerOrDefender && userData.alliance_user_rank.permission_declare_war
   const [isAskForWarAidModalOpen, setIsAskForWarAidModalOpen] = useState(false)
   const openAskForWarAidModal = () => {
     setIsAskForWarAidModalOpen(true)
@@ -142,7 +144,7 @@ export default function WarInfo({ war }) {
           </div>
         </>
       )}
-      {war.winner && (
+      {hasFinished && (
         <div>
           Ganador: <AllianceLink alliance={war[`alliance${war.winner}`]} />
         </div>

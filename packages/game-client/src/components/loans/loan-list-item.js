@@ -4,6 +4,8 @@ import { useUserData } from '../../lib/user'
 import { LOAN_DAYS_DURATION } from 'shared-lib/loansUtils'
 import api from 'lib/api'
 import UserLink from 'components/UI/UserLink'
+import IncButton from 'components/UI/inc-button'
+import styles from './loans.module.scss'
 
 LoanListItem.propTypes = {
   loan: PropTypes.object.isRequired,
@@ -38,28 +40,30 @@ export default function LoanListItem({ loan, refreshLoansList }) {
     [refreshLoansList]
   )
 
-  return (
-    <div key={loan.lender.id}>
-      <UserLink user={loan.lender} />
-      <p>
-        <b>Interés</b>: {loan.interest_rate.toLocaleString()}%
-      </p>
-      <p>
-        <b>Dinero</b>: {loan.money_amount.toLocaleString()}€
-      </p>
-      <p>
-        <b>Duración</b>: {LOAN_DAYS_DURATION.toLocaleString()} días
-      </p>
+  const pri = 1 / (loan.interest_rate / 100 / LOAN_DAYS_DURATION)
 
-      {isMine ? (
-        <button type="button" onClick={cancelLoan}>
-          Cancelar préstamo
-        </button>
-      ) : (
-        <button type="button" onClick={takeLoan(loan.lender.id)}>
-          Coger préstamo
-        </button>
-      )}
+  return (
+    <div className={styles.loanItem} key={loan.lender.id}>
+      <div>
+        <UserLink user={loan.lender} />
+      </div>
+
+      <div>
+        <p>
+          <b>Interés</b>: {loan.interest_rate.toLocaleString()}%
+        </p>
+        <p>
+          <b>Retorno de Inversión</b>: {Math.round(pri * 10) / 10} días
+        </p>
+      </div>
+
+      <div>
+        <IncButton onClick={isMine ? cancelLoan : takeLoan(loan.lender.id)}>
+          {isMine ? 'Cancelar' : 'Solicitar'}
+        </IncButton>
+      </div>
+
+      <div>{loan.money_amount.toLocaleString()}€</div>
     </div>
   )
 }

@@ -1,8 +1,8 @@
 import mysql from '../lib/mysql'
-const { sendMessage } = require('../lib/db/users')
+import { LOAN_DAYS_DURATION } from 'shared-lib/loansUtils'
+import { sendMessage } from '../lib/db/users'
 const frequencyMs = 60 * 1000
 
-const LOAN_DAYS_DURATION = 7
 const run = async () => {
   const tsNow = Math.floor(Date.now() / 1000)
   const loans = await mysql.query(

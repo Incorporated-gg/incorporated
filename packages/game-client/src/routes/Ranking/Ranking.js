@@ -96,7 +96,7 @@ function SearchUsers() {
       {search.length >= 3 && (
         <>
           <div className={styles.rankingContainer}>
-            <div className={`titleText shadow`}>Resultados de &quot;{search}&quot;</div>
+            <div>Resultados de &quot;{search}&quot;</div>
             {loading ? (
               <div>Cargando...</div>
             ) : (

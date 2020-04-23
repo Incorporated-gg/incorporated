@@ -126,11 +126,11 @@ function ActiveTask({ task }) {
       <br />
       <IncButton disabled={!isCompleted} outerClassName={styles.rewardContainer} onClick={completeTask}>
         <div style={{ display: 'flex', alignItems: 'center' }}>
-          <IncChevron direction="right" className={styles.taskRewardChevron} />
+          <IncChevron padding={10} direction="right" className={styles.taskRewardChevron} />
           <div className={styles.taskRewardText}>
             Recompensa: {numberToAbbreviation(task.reward)} <Icon iconName="money" size={20} />
           </div>
-          <IncChevron direction="left" className={styles.taskRewardChevron} />
+          <IncChevron padding={10} direction="left" className={styles.taskRewardChevron} />
         </div>
         {isCompleted && <div className={styles.claimReward}>RECLAMAR</div>}
       </IncButton>

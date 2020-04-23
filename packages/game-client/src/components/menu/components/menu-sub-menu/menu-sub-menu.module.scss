@@ -6,7 +6,7 @@
   flex-direction: row;
   max-width: $breakpoint-desktop;
   margin: auto;
-  background-color: #343434;
+  background-color: $color-bg;
   border-bottom: 15px solid #EACA77;
   border-top: 3px solid #EACC77;
 
@@ -35,10 +35,7 @@
     }
 
     &.active .subMenuItem {
-      color: #E9C574;
-      background: linear-gradient(#CC8C20 0%, #D6A03E 5%, #DFB157 11%, #E5BE6A 17%, #EAC877 24%, #EDCD7F 33%, #EECF82 50%, #EDCD7F 64%, #E9C676 73%, #E4BC67 81%, #DDAD51 89%, #D39B35 96%, #CC8C20 100%);
-      background-clip: text;
-      -webkit-text-fill-color: transparent;
+      @include gradientText();
     }
   }
 

@@ -1,6 +1,5 @@
 @import '../../variables';
 
-
 .buildingLocked {
   font-size: 40px;
   margin: 10px 0;
@@ -23,15 +22,12 @@
 }
 
 .actionButton {
+  @include pascalText();
   margin-top: 5px;
   color: #000000B3;
   font-family: $font-family-title;
   font-size: $font-size-medium;
   font-weight: 700;
-
-  &::first-letter {
-    font-size: 1.3em;
-  }
 }
 
 .buttonInfoText {

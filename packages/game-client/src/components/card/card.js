@@ -22,7 +22,7 @@ export default function Card({ image, title, ribbon, children, disabled = false 
       </div>
 
       <div className={styles.darkBg}>
-        <div className={`titleText gradient pascal ${styles.name}`}>{title}</div>
+        <div className={styles.name}>{title}</div>
         <div className={styles.children}>{children}</div>
       </div>
     </div>
