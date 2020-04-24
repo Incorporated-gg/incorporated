@@ -1,6 +1,6 @@
 import mysql from '../lib/mysql'
-import { getBasicData } from '../lib/db/alliances'
-import { getData as getUserData } from '../lib/db/users'
+import { getAllianceBasicData } from '../lib/db/alliances'
+import { getUserData } from '../lib/db/users'
 
 module.exports = app => {
   app.get('/v1/search', async function(req, res) {
@@ -42,7 +42,7 @@ module.exports = app => {
       [`%${req.query.query}%`, `%${req.query.query}%`]
     )
 
-    alliances = await Promise.all(alliances.map(a => getBasicData(a.id)))
+    alliances = await Promise.all(alliances.map(a => getAllianceBasicData(a.id)))
 
     res.json({
       alliances,

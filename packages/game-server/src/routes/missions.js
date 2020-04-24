@@ -3,16 +3,15 @@ import { hoods } from '../lib/map'
 import mysql from '../lib/mysql'
 import {
   getUserTodaysMissionsLimits,
-  getPersonnel,
-  hasActiveMission,
-  getData as getUserData,
+  getUserPersonnel,
+  getHasActiveMission,
+  getUserData,
   getUnreadReportsCount,
 } from '../lib/db/users'
 import { parseMissionFromDB } from '../lib/db/missions'
-import { getMembers } from '../lib/db/alliances'
-const { getUserAllianceID } = require('../lib/db/alliances')
-const { buildingsList } = require('shared-lib/buildingsUtils')
-const { calculateMissionTime, calculateIsInAttackRange } = require('shared-lib/missionsUtils')
+import { getAllianceMembers, getUserAllianceID } from '../lib/db/alliances'
+import { buildingsList } from 'shared-lib/buildingsUtils'
+import { calculateMissionTime, calculateIsInAttackRange } from 'shared-lib/missionsUtils'
 
 module.exports = app => {
   app.get('/v1/missions', async function(req, res) {
@@ -63,7 +62,7 @@ module.exports = app => {
         return
       }
 
-      const allianceMembers = await getMembers(allianceID)
+      const allianceMembers = await getAllianceMembers(allianceID)
       const allianceMemberIDs = allianceMembers.map(user => user.user.id)
 
       userWhere = `WHERE ${sendType === 'sent' ? 'user_id' : 'target_user'} IN (?)`
@@ -124,7 +123,7 @@ module.exports = app => {
     // Locks
     const lockName = `activeMission:${req.userData.id}`
     const removeLock = () => locks.remove(lockName)
-    if ((await hasActiveMission(req.userData.id)) || locks.get(lockName)) {
+    if ((await getHasActiveMission(req.userData.id)) || locks.get(lockName)) {
       res.status(400).json({
         error: 'Ya tienes una misión en curso',
       })
@@ -151,7 +150,7 @@ module.exports = app => {
     const sentThieves = parseInt(req.body.sent_thieves) || 0
     const attackUserTargetBuilding = req.body.target_building ? parseInt(req.body.target_building) : undefined
 
-    const userPersonnel = await getPersonnel(req.userData.id)
+    const userPersonnel = await getUserPersonnel(req.userData.id)
     switch (missionType) {
       case 'attack': {
         if (targetUser) {

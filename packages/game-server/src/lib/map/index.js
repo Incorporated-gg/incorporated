@@ -1,7 +1,7 @@
 import Alea from 'alea'
 import generateHoodName from './generate-hood-name'
 import mysql from '../mysql'
-import { getBasicData as getAllianceBasicData } from '../db/alliances'
+import { getAllianceBasicData } from '../db/alliances'
 
 const districts = [
   {

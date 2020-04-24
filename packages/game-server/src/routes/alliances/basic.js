@@ -1,8 +1,20 @@
 import mysql from '../../lib/mysql'
-const alliances = require('../../lib/db/alliances')
-const { getActiveMission } = require('../../lib/db/users')
-const personnel = require('../../lib/db/personnel')
-const { calcResourceMax, calcResearchPrice } = require('shared-lib/allianceUtils')
+import {
+  getUserAllianceID,
+  getAllianceBasicData,
+  getAllianceMembers,
+  getAllianceResearchs,
+  getAllianceResources,
+  getAllianceResourcesLog,
+  getAllianceResearchShares,
+  getAllianceBuffsData,
+  getAllianceActiveWars,
+  getAlliancePastWars,
+  getUserAllianceRank,
+} from '../../lib/db/alliances'
+import { getActiveMission } from '../../lib/db/users'
+import { updatePersonnelAmount } from '../../lib/db/personnel'
+import { calcResourceMax, calcResearchPrice } from 'shared-lib/allianceUtils'
 
 module.exports = app => {
   app.get('/v1/alliance', async function(req, res) {
@@ -11,12 +23,12 @@ module.exports = app => {
       return
     }
 
-    const allianceID = await alliances.getUserAllianceID(req.userData.id)
+    const allianceID = await getUserAllianceID(req.userData.id)
     if (!allianceID) {
       res.json({ alliance: false })
       return
     }
-    const basicData = await alliances.getBasicData(allianceID)
+    const basicData = await getAllianceBasicData(allianceID)
     if (!basicData) {
       res.json({ alliance: false })
       return
@@ -32,20 +44,20 @@ module.exports = app => {
       activeWars,
       pastWars,
     ] = await Promise.all([
-      alliances.getMembers(allianceID),
-      alliances.getResearchs(allianceID),
-      alliances.getResources(allianceID),
-      alliances.getResourcesLog(allianceID),
-      alliances.getResearchShares(allianceID),
-      alliances.getBuffsData(allianceID),
-      alliances.getAllianceActiveWars(allianceID),
-      alliances.getAlliancePastWars(allianceID),
+      getAllianceMembers(allianceID),
+      getAllianceResearchs(allianceID),
+      getAllianceResources(allianceID),
+      getAllianceResourcesLog(allianceID),
+      getAllianceResearchShares(allianceID),
+      getAllianceBuffsData(allianceID),
+      getAllianceActiveWars(allianceID),
+      getAlliancePastWars(allianceID),
     ])
 
     const ranks = await Promise.all(
       members.map(async member => ({
         user: member.user,
-        rank: await alliances.getUserRank(member.user.id),
+        rank: await getUserAllianceRank(member.user.id),
       }))
     )
 
@@ -74,12 +86,12 @@ module.exports = app => {
       res.status(400).json({ error: 'Faltan datos' })
       return
     }
-    const allianceID = await alliances.getUserAllianceID(req.userData.id)
+    const allianceID = await getUserAllianceID(req.userData.id)
     if (!allianceID) {
       res.status(401).json({ error: 'No tienes una alianza' })
       return
     }
-    const allianceResearchs = await alliances.getResearchs(allianceID)
+    const allianceResearchs = await getAllianceResearchs(allianceID)
 
     const researchID = req.body.research_id
 
@@ -141,7 +153,7 @@ module.exports = app => {
       res.status(401).json({ error: 'Necesitas estar conectado', error_code: 'not_logged_in' })
       return
     }
-    const userRank = await alliances.getUserRank(req.userData.id)
+    const userRank = await getUserAllianceRank(req.userData.id)
     const allianceID = userRank.alliance_id
     if (!userRank) {
       res.status(401).json({ error: 'No tienes alianza' })
@@ -153,8 +165,8 @@ module.exports = app => {
       return
     }
 
-    const allianceResources = await alliances.getResources(allianceID)
-    const allianceResearchs = await alliances.getResearchs(allianceID)
+    const allianceResources = await getAllianceResources(allianceID)
+    const allianceResearchs = await getAllianceResearchs(allianceID)
 
     const resourceID = req.body.resource_id
     const resourceAmount = parseInt(req.body.amount)
@@ -210,7 +222,7 @@ module.exports = app => {
           res.status(401).json({ error: 'No puedes meter o sacar tropas con dinero negativo' })
           return
         }
-        await personnel.updatePersonnelAmount(req, resourceID, -resourceAmount)
+        await updatePersonnelAmount(req, resourceID, -resourceAmount)
 
         break
       default:

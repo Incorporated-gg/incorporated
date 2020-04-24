@@ -1,6 +1,13 @@
 import mysql from '../lib/mysql'
-const users = require('../lib/db/users')
-const alliances = require('../lib/db/alliances')
+import {
+  getAllianceBasicData,
+  getAllianceIDFromShortName,
+  getAllianceMembers,
+  getAllianceActiveWars,
+  getAlliancePastWars,
+  getAllianceHoods,
+} from '../lib/db/alliances'
+import { getUserData, getUserIDFromUsername } from '../lib/db/users'
 
 const entriesPerPage = 50
 
@@ -28,7 +35,7 @@ module.exports = app => {
           rankingData.map(async rankUser => ({
             rank: rankUser.rank,
             points: rankUser.points,
-            user: await users.getData(rankUser.user_id),
+            user: await getUserData(rankUser.user_id),
           }))
         )
         const [{ numEntries }] = await mysql.query('SELECT COUNT(user_id) as numEntries FROM ranking_income')
@@ -44,7 +51,7 @@ module.exports = app => {
           rankingData.map(async rankUser => ({
             rank: rankUser.rank,
             points: rankUser.points,
-            user: await users.getData(rankUser.user_id),
+            user: await getUserData(rankUser.user_id),
           }))
         )
         const [{ numEntries }] = await mysql.query('SELECT COUNT(user_id) as numEntries FROM ranking_research')
@@ -60,7 +67,7 @@ module.exports = app => {
           rankingData.map(async rankAliance => ({
             rank: rankAliance.rank,
             points: rankAliance.points,
-            alliance: await alliances.getBasicData(rankAliance.alliance_id),
+            alliance: await getAllianceBasicData(rankAliance.alliance_id),
           }))
         )
         const [{ numEntries }] = await mysql.query('SELECT COUNT(alliance_id) as numEntries FROM ranking_alliances')
@@ -80,14 +87,14 @@ module.exports = app => {
       return
     }
 
-    const userID = await users.getIDFromUsername(req.query.username)
+    const userID = await getUserIDFromUsername(req.query.username)
 
     if (!userID) {
       res.status(401).json({ error: 'Usuario no encontrado' })
       return
     }
 
-    const userData = await users.getData(userID)
+    const userData = await getUserData(userID)
 
     res.json({
       user: userData,
@@ -100,7 +107,7 @@ module.exports = app => {
       return
     }
 
-    const allianceID = await alliances.getIDFromShortName(req.params.allianceShortName)
+    const allianceID = await getAllianceIDFromShortName(req.params.allianceShortName)
 
     if (!allianceID) {
       res.status(401).json({ error: 'Alianza no encontrada' })
@@ -108,11 +115,11 @@ module.exports = app => {
     }
 
     const [basicData, members, activeWars, pastWars, allianceHoods] = await Promise.all([
-      alliances.getBasicData(allianceID),
-      alliances.getMembers(allianceID),
-      alliances.getAllianceActiveWars(allianceID),
-      alliances.getAlliancePastWars(allianceID),
-      alliances.getAllianceHoods(allianceID),
+      getAllianceBasicData(allianceID),
+      getAllianceMembers(allianceID),
+      getAllianceActiveWars(allianceID),
+      getAlliancePastWars(allianceID),
+      getAllianceHoods(allianceID),
     ])
 
     const alliance = Object.assign(basicData, {

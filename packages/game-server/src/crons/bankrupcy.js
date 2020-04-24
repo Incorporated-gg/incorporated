@@ -1,9 +1,10 @@
 import mysql from '../lib/mysql'
-import { getPersonnel } from '../lib/db/users'
+import { getUserPersonnel, getHasActiveMission } from '../lib/db/users'
 import { personnelObj } from 'shared-lib/personnelUtils'
 const frequencyMs = 60 * 1000
 
 const BANKRUPCY_TIME_LIMIT = 60 * 60 // 1h
+const TROOPS_LOSS_COEFICIENT = 0.001
 
 const run = async () => {
   const tsNow = Math.floor(Date.now() / 1000)
@@ -18,13 +19,18 @@ const run = async () => {
   await Promise.all(
     bankruptedUsers.map(async bankruptedUser => {
       const userID = bankruptedUser.id
-      const personnel = await getPersonnel(userID)
+
+      const hasActiveMission = await getHasActiveMission(userID)
+      if (hasActiveMission) return
+
+      const personnel = await getUserPersonnel(userID)
 
       const troopsOrder = ['spies', 'sabots', 'thieves', 'guards']
       for (const troopType of troopsOrder) {
         if (personnel[troopType] <= 0) continue
 
-        const lost = Math.ceil((personnel[troopType] * personnelObj[troopType].dailyMaintenanceCost) / 24 / 60 / 200)
+        const troopDailyMaintenanceCost = personnel[troopType] * personnelObj[troopType].dailyMaintenanceCost
+        const lost = Math.ceil((troopDailyMaintenanceCost / 24 / 60) * TROOPS_LOSS_COEFICIENT)
         await mysql.query('UPDATE users_resources SET quantity=quantity-? WHERE user_id=? AND resource_id=?', [
           lost,
           userID,

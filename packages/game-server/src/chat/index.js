@@ -1,8 +1,8 @@
-const users = require('../lib/db/users')
-const sessions = require('../lib/db/sessions')
+import { getUserData } from '../lib/db/users'
+import { getUserIDFromSessionID } from '../lib/db/sessions'
 let connectedUsers = 0
 
-module.exports.setupChat = io => {
+export const setupChat = io => {
   const chatrooms = [
     {
       name: 'Global',
@@ -33,10 +33,10 @@ module.exports.setupChat = io => {
         const sessionID = socket.handshake.query.sessionID
         if (!sessionID) return next(new Error('Session not provided'))
 
-        const userID = await sessions.getUserIDFromSessionID(sessionID)
+        const userID = await getUserIDFromSessionID(sessionID)
         if (!userID) return next(new Error('User session not found'))
 
-        const user = await users.getData(userID)
+        const user = await getUserData(userID)
         socket.user = user
         next()
       } else {

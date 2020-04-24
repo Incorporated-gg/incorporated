@@ -1,7 +1,7 @@
-const fs = require('fs')
-const path = require('path')
+import fs from 'fs'
+import path from 'path'
 
-module.exports = () => {
+export default function setupCron() {
   const files = fs.readdirSync(__dirname).filter(f => f !== 'index.js')
 
   if (!files.length) {

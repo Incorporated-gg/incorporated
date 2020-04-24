@@ -1,5 +1,5 @@
 import mysql from '../../lib/mysql'
-import * as alliances from '../../lib/db/alliances'
+import { getUserAllianceRank, getWarData, getAllianceBasicData } from '../../lib/db/alliances'
 
 module.exports = app => {
   app.post('/v1/alliance/war_aid/accept', async function(req, res) {
@@ -16,7 +16,7 @@ module.exports = app => {
       return
     }
 
-    const userRank = await alliances.getUserRank(req.userData.id)
+    const userRank = await getUserAllianceRank(req.userData.id)
     if (!userRank || !userRank.permission_declare_war) {
       res.status(401).json({ error: 'No tienes permiso para hacer esto' })
       return
@@ -75,7 +75,7 @@ module.exports = app => {
       return
     }
 
-    const userRank = await alliances.getUserRank(req.userData.id)
+    const userRank = await getUserAllianceRank(req.userData.id)
     if (!userRank || !userRank.permission_declare_war) {
       res.status(401).json({ error: 'No tienes permiso para hacer esto' })
       return
@@ -88,10 +88,10 @@ module.exports = app => {
 
     const warRequests = await Promise.all(
       warRequestsRaw.map(async warRequestRaw => {
-        const warData = await alliances.getWarData(warRequestRaw.war_id)
+        const warData = await getWarData(warRequestRaw.war_id)
         return {
           war: warData,
-          alliance: await alliances.getBasicData(warRequestRaw.aided_alliance_id),
+          alliance: await getAllianceBasicData(warRequestRaw.aided_alliance_id),
         }
       })
     )
@@ -103,7 +103,7 @@ async function acceptOrRejectAidRequest({ req, res, isAccepting }) {
   const warID = req.body.war_id
   const aidedAllianceID = req.body.aided_alliance_id
 
-  const userRank = await alliances.getUserRank(req.userData.id)
+  const userRank = await getUserAllianceRank(req.userData.id)
   if (!userRank || !userRank.permission_declare_war) {
     res.status(401).json({ error: 'No tienes permiso para hacer esto' })
     return

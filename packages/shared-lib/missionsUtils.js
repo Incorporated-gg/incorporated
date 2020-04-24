@@ -1,5 +1,5 @@
-const { buildingsList, calcBuildingPrice, calcBuildingResistance } = require('./buildingsUtils')
-const { personnelObj } = require('./personnelUtils')
+import { buildingsList, calcBuildingPrice, calcBuildingResistance } from './buildingsUtils'
+import { personnelObj } from './personnelUtils'
 
 export const NEWBIE_ZONE_DAILY_INCOME = 750000
 export const MAX_DAILY_ATTACKS = process.env.NODE_ENV === 'development' ? 999 : 3

@@ -1,6 +1,6 @@
 import mysql from '../../../lib/mysql'
 import { calcSpiesCaptured, calcInformationObtained } from './calcs'
-import { getUserResearchs, getBuildings, getPersonnel, runUserMoneyUpdate } from '../../../lib/db/users'
+import { getUserResearchs, getUserBuildings, getUserPersonnel, runUserMoneyUpdate } from '../../../lib/db/users'
 
 export async function doSpyMissions() {
   const tsNow = Math.floor(Date.now() / 1000)
@@ -59,8 +59,8 @@ async function completeSpyMission(mission) {
   const intelReport = {
     captured_spies: spiesCaptured,
   }
-  if (informationObtained.buildings) intelReport.buildings = await getBuildings(defender.id)
-  if (informationObtained.personnel) intelReport.personnel = await getPersonnel(defender.id)
+  if (informationObtained.buildings) intelReport.buildings = await getUserBuildings(defender.id)
+  if (informationObtained.personnel) intelReport.personnel = await getUserPersonnel(defender.id)
   if (informationObtained.research) intelReport.researchs = defensorResearchs
 
   // Update mission status

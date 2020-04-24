@@ -1,5 +1,5 @@
 import mysql from '../lib/mysql'
-const users = require('../lib/db/users')
+import { getUserData } from '../lib/db/users'
 
 module.exports = app => {
   app.get('/v1/contests', async function(req, res) {
@@ -44,7 +44,7 @@ module.exports = app => {
         return {
           score: score.score,
           rank: score.rank,
-          user: await users.getData(score.user_id),
+          user: await getUserData(score.user_id),
         }
       })
     )

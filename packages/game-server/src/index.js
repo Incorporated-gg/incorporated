@@ -1,18 +1,18 @@
-const express = require('express')
-const app = express()
-const server = require('http').Server(app)
-const io = require('socket.io')
-  .listen(server)
-  .path('/api/socket.io')
-const { setupRoutes } = require('./routes')
-const { setupChat } = require('./chat')
-const setupCrons = require('./crons')
-
-require('./express-async-errors-patch')
-app.disable('x-powered-by')
+import express from 'express'
+import http from 'http'
+import socketIO from 'socket.io'
+import { setupRoutes } from './routes'
+import { setupChat } from './chat'
+import setupCron from './crons'
+import './express-async-errors-patch'
 
 // Parse application/json
-var bodyParser = require('body-parser')
+import bodyParser from 'body-parser'
+
+const app = express()
+const server = http.Server(app)
+const io = socketIO.listen(server).path('/api/socket.io')
+app.disable('x-powered-by')
 app.use(bodyParser.json())
 
 // CORS middleware
@@ -59,4 +59,4 @@ server.listen(3101, () => {
 })
 
 // Setup crons
-setupCrons()
+setupCron()

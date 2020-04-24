@@ -1,8 +1,8 @@
 import mysql from '../lib/mysql'
-const users = require('../lib/db/users')
+import { getUserData, getUserDailyIncome, sendMessage } from '../lib/db/users'
 
 async function parseLoan(loan) {
-  ;[loan.lender, loan.borrower] = await Promise.all([users.getData(loan.lender_id), users.getData(loan.borrower_id)])
+  ;[loan.lender, loan.borrower] = await Promise.all([getUserData(loan.lender_id), getUserData(loan.borrower_id)])
   delete loan.lender_id
   delete loan.borrower_id
   return loan
@@ -75,7 +75,7 @@ module.exports = app => {
       return
     }
 
-    const lenderIncome = await users.getUserDailyIncome(lenderID)
+    const lenderIncome = await getUserDailyIncome(lenderID)
     const loanIncomeRatio = moneyAmount / lenderIncome
     if (loanIncomeRatio > 4) {
       res.status(400).json({ error: 'Necesitas más ingresos para anunciar este préstamo' })
@@ -126,7 +126,7 @@ module.exports = app => {
       return
     }
 
-    const borrower = await users.getData(borrowerID)
+    const borrower = await getUserData(borrowerID)
     const loanIncomeRatio = loanData.money_amount / borrower.income
     if (loanIncomeRatio > 4) {
       res.status(400).json({ error: 'Necesitas más ingresos para pedir este préstamo' })
@@ -148,13 +148,13 @@ module.exports = app => {
       money_amount: loanData.money_amount,
       interest_rate: loanData.interest_rate,
     }
-    await users.sendMessage({
+    await sendMessage({
       receiverID: borrowerID,
       senderID: null,
       type: 'loan_started',
       data: msgData,
     })
-    await users.sendMessage({
+    await sendMessage({
       receiverID: lenderID,
       senderID: null,
       type: 'loan_started',

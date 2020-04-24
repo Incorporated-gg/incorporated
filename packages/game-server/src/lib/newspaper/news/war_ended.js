@@ -1,5 +1,5 @@
 import mysql from '../../../lib/mysql'
-import { getAllianceRankData, getBasicData as getAllianceBasicData } from '../../../lib/db/alliances'
+import { getAllianceRankData, getAllianceBasicData } from '../../../lib/db/alliances'
 import NewsItem, { newsItemTypes, rankPositionToWeightVal } from '../NewsItem'
 import { WAR_DAYS_DURATION } from 'shared-lib/allianceUtils'
 

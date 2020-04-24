@@ -1,4 +1,4 @@
-const { calcBuildingResistance } = require('./buildingsUtils')
+import { calcBuildingResistance } from './buildingsUtils'
 
 test('Infra', () => {
   expect(calcBuildingResistance(1, 1)).toBe(25)

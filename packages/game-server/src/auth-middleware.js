@@ -1,16 +1,16 @@
 import { getUserActiveTasks } from './lib/db/tasks'
 import { getAccountData } from './lib/accountInternalApi'
 import mysql from './lib/mysql'
-const {
+import {
   getUserResearchs,
-  getPersonnel,
+  getUserPersonnel,
   getUnreadMessagesCount,
   getUnreadReportsCount,
-  getBuildings,
+  getUserBuildings,
   runUserMoneyUpdate,
-} = require('./lib/db/users')
-const { parseMissionFromDB } = require('./lib/db/missions')
-const { getUserIDFromSessionID } = require('./lib/db/sessions')
+  getActiveMission,
+} from './lib/db/users'
+import { getUserIDFromSessionID } from './lib/db/sessions'
 
 module.exports = app => {
   app.use(authMiddleware)
@@ -30,8 +30,8 @@ async function authMiddleware(req, res, next) {
 
       const [researchs, personnel, buildings] = await Promise.all([
         getUserResearchs(req.userData.id),
-        getPersonnel(req.userData.id),
-        getBuildings(req.userData.id),
+        getUserPersonnel(req.userData.id),
+        getUserBuildings(req.userData.id),
       ])
 
       req.userData.researchs = researchs
@@ -83,16 +83,4 @@ function modifyResponseBody(req, res, next) {
     oldJson.apply(res, arguments)
   }
   next()
-}
-
-async function getActiveMission(userID) {
-  const [
-    mission,
-  ] = await mysql.query(
-    'SELECT user_id, target_user, data, mission_type, started_at, will_finish_at, completed, result, profit FROM missions WHERE user_id=? AND completed=0',
-    [userID]
-  )
-  if (!mission) return null
-
-  return await parseMissionFromDB(mission)
 }

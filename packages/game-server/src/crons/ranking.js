@@ -1,6 +1,6 @@
 import mysql from '../lib/mysql'
+import { getUserDailyIncome } from '../lib/db/users'
 const frequencyMs = 5 * 60 * 1000
-const { getUserDailyIncome } = require('../lib/db/users')
 
 async function doIncomeRanking() {
   const users = await mysql.query('SELECT id FROM users')

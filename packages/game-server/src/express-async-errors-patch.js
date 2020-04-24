@@ -1,5 +1,5 @@
-const Layer = require('express/lib/router/layer')
-const Router = require('express/lib/router')
+import Layer from 'express/lib/router/layer'
+import Router from 'express/lib/router'
 
 const last = (arr = []) => arr[arr.length - 1]
 const noop = Function.prototype

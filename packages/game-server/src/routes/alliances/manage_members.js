@@ -1,8 +1,7 @@
-import { sendMessage } from '../../lib/db/users'
+import { getUserData, sendMessage } from '../../lib/db/users'
 import mysql from '../../lib/mysql'
-const alliances = require('../../lib/db/alliances')
-const users = require('../../lib/db/users')
-const { MAX_ALLIANCE_MEMBERS } = require('shared-lib/allianceUtils')
+import { getUserAllianceRank, getUserAllianceID, getAllianceMembers } from '../../lib/db/alliances'
+import { MAX_ALLIANCE_MEMBERS } from 'shared-lib/allianceUtils'
 
 module.exports = app => {
   app.get('/v1/alliance/member_request/list', async function(req, res) {
@@ -11,7 +10,7 @@ module.exports = app => {
       return
     }
 
-    const userRank = await alliances.getUserRank(req.userData.id)
+    const userRank = await getUserAllianceRank(req.userData.id)
     if (!userRank || !userRank.permission_accept_and_kick_members) {
       res.status(401).json({ error: 'No tienes permiso para hacer esto' })
       return
@@ -21,7 +20,7 @@ module.exports = app => {
       'SELECT user_id FROM alliances_member_requests WHERE alliance_id=? ORDER BY created_at DESC',
       [userRank.alliance_id]
     )
-    const memberRequests = await Promise.all(memberReqRaw.map(memberReq => users.getData(memberReq.user_id)))
+    const memberRequests = await Promise.all(memberReqRaw.map(memberReq => getUserData(memberReq.user_id)))
 
     res.json({ member_requests: memberRequests })
   })
@@ -32,14 +31,14 @@ module.exports = app => {
       return
     }
 
-    const hasAlliance = await alliances.getUserAllianceID(req.userData.id)
+    const hasAlliance = await getUserAllianceID(req.userData.id)
     if (hasAlliance) {
       res.status(401).json({ error: 'Ya eres miembro de una alianza' })
       return
     }
 
     const allianceID = req.body.alliance_id
-    const allianceMembers = await alliances.getMembers(allianceID)
+    const allianceMembers = await getAllianceMembers(allianceID)
     if (allianceMembers.length === 0) {
       res.status(401).json({ error: 'Esta alianza no existe' })
       return
@@ -88,14 +87,14 @@ module.exports = app => {
       res.status(401).json({ error: 'Necesitas estar conectado', error_code: 'not_logged_in' })
       return
     }
-    const userRank = await alliances.getUserRank(req.userData.id)
+    const userRank = await getUserAllianceRank(req.userData.id)
     if (!userRank || !userRank.permission_accept_and_kick_members) {
       res.status(401).json({ error: 'No tienes permiso para hacer esto' })
       return
     }
 
     const userBeingKickedID = parseInt(req.body.user_id)
-    const memberBeingKicked = await alliances.getUserRank(userBeingKickedID)
+    const memberBeingKicked = await getUserAllianceRank(userBeingKickedID)
     if (!memberBeingKicked || memberBeingKicked.alliance_id !== userRank.alliance_id) {
       res.status(401).json({ error: 'Miembro no encontrado' })
       return
@@ -117,7 +116,7 @@ module.exports = app => {
       return
     }
 
-    const userRank = await alliances.getUserRank(req.userData.id)
+    const userRank = await getUserAllianceRank(req.userData.id)
     if (!userRank || !userRank.permission_admin) {
       res.status(401).json({ error: 'No tienes permiso para hacer esto' })
       return
@@ -144,14 +143,14 @@ module.exports = app => {
       return
     }
 
-    const allianceMembers = await alliances.getMembers(userRank.alliance_id)
+    const allianceMembers = await getAllianceMembers(userRank.alliance_id)
 
     const switchingUser = allianceMembers.find(member => member.user.username === req.body.username)
     if (!switchingUser) {
       res.status(401).json({ error: 'Nombre de usuario no encontrado' })
       return
     }
-    const switchingUserRank = await alliances.getUserRank(switchingUser.user.id)
+    const switchingUserRank = await getUserAllianceRank(switchingUser.user.id)
 
     if (!permissions.permission_admin) {
       const adminsCount = allianceMembers.reduce((prev, curr) => prev + (curr.permission_admin ? 1 : 0), 0)
@@ -194,14 +193,14 @@ function memberRequestAction(action) {
       return
     }
 
-    const userRank = await alliances.getUserRank(req.userData.id)
+    const userRank = await getUserAllianceRank(req.userData.id)
     if (!userRank || !userRank.permission_accept_and_kick_members) {
       res.status(401).json({ error: 'No tienes permiso para hacer esto' })
       return
     }
 
     const userID = req.body.user_id
-    const allianceMembers = await alliances.getMembers(userRank.alliance_id)
+    const allianceMembers = await getAllianceMembers(userRank.alliance_id)
     const [
       requestExists,
     ] = await mysql.query('SELECT 1 FROM alliances_member_requests WHERE user_id=? AND alliance_id=?', [

@@ -2,13 +2,9 @@ import tasksProgressHook from '../../../lib/db/tasks/tasksProgressHook'
 import { sendAccountHook } from '../../../lib/accountInternalApi'
 import mysql from '../../../lib/mysql'
 import { hoods } from '../../../lib/map'
-const {
-  getUserAllianceID,
-  getResearchBonusFromBuffs,
-  getBasicData: getAllianceBasicData,
-} = require('../../../lib/db/alliances')
-const { simulateAttack } = require('shared-lib/missionsUtils')
-const { getUserResearchs } = require('../../../lib/db/users')
+import { getUserAllianceID, getAllianceResearchBonusFromBuffs, getAllianceBasicData } from '../../../lib/db/alliances'
+import { simulateAttack } from 'shared-lib/missionsUtils'
+import { getUserResearchs } from '../../../lib/db/users'
 
 export async function completeHoodAttackMission(mission) {
   const data = JSON.parse(mission.data)
@@ -27,7 +23,7 @@ export async function completeHoodAttackMission(mission) {
     getUserAllianceID(attacker.id),
   ])
 
-  const attackerResearchBonusFromBuffs = await getResearchBonusFromBuffs(attackerAllianceID)
+  const attackerResearchBonusFromBuffs = await getAllianceResearchBonusFromBuffs(attackerAllianceID)
   const attackerSabotageLevel = attackerResearchs[2] + attackerResearchBonusFromBuffs[2]
   const defenderSecurityLevel = attackerSabotageLevel
   const defenderInfraLevel = 1

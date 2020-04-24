@@ -1,5 +1,5 @@
 import mysql from '../../lib/mysql'
-import { getMembers, getBasicData as getAllianceBasicData, getWarData } from '../../lib/db/alliances'
+import { getAllianceMembers, getAllianceBasicData, getWarData } from '../../lib/db/alliances'
 import { sendAccountHook } from '../../lib/accountInternalApi'
 import { sendMessage } from '../../lib/db/users'
 import { getServerDay, getInitialUnixTimestampOfServerDay } from 'shared-lib/serverTime'
@@ -40,8 +40,8 @@ async function updateWarDayData(serverDay, warData, isRunningAtEndOfDay) {
   // Get day war data
   const firstTsOfDay = getInitialUnixTimestampOfServerDay(getServerDay(warData.created_at * 1000) + warDay) / 1000
 
-  const membersAlliance1 = (await getMembers(warData.alliance1.id)).map(m => m.user.id)
-  const membersAlliance2 = (await getMembers(warData.alliance2.id)).map(m => m.user.id)
+  const membersAlliance1 = (await getAllianceMembers(warData.alliance1.id)).map(m => m.user.id)
+  const membersAlliance2 = (await getAllianceMembers(warData.alliance2.id)).map(m => m.user.id)
 
   const attacksAlliance1 = await getAttacksFromUsers({
     userIDs: membersAlliance1,
@@ -167,7 +167,7 @@ async function getAidingAllianceData(firstTsOfDay, allianceAids) {
 
   const members = await Promise.all(
     allianceAids.map(async ({ alliance }) => {
-      return (await getMembers(alliance.id)).map(m => m.user.id)
+      return (await getAllianceMembers(alliance.id)).map(m => m.user.id)
     })
   )
 
@@ -209,8 +209,8 @@ function attackToPoints(attack) {
 }
 
 async function endWar(warData) {
-  const alliance1UserIDs = (await getMembers(warData.alliance1.id)).map(m => m.user.id)
-  const alliance2UserIDs = (await getMembers(warData.alliance2.id)).map(m => m.user.id)
+  const alliance1UserIDs = (await getAllianceMembers(warData.alliance1.id)).map(m => m.user.id)
+  const alliance2UserIDs = (await getAllianceMembers(warData.alliance2.id)).map(m => m.user.id)
 
   const days = Object.values(warData._data.days)
 

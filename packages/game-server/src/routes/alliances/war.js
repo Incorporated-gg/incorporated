@@ -2,9 +2,15 @@ import { hoods } from '../../lib/map'
 import { getMaxHoodsAttackedPerWar } from 'shared-lib/allianceUtils'
 import { getServerDay } from 'shared-lib/serverTime'
 import mysql from '../../lib/mysql'
-import { getWarData } from '../../lib/db/alliances'
-const alliances = require('../../lib/db/alliances')
-const { sendMessage } = require('../../lib/db/users')
+import {
+  getAllianceBasicData,
+  getUserAllianceRank,
+  getActiveWarBetweenAlliances,
+  getAllianceRankData,
+  getAllianceMembers,
+  getWarData,
+} from '../../lib/db/alliances'
+import { sendMessage } from '../../lib/db/users'
 
 module.exports = app => {
   app.post('/v1/alliance/declare_war', async function(req, res) {
@@ -14,20 +20,20 @@ module.exports = app => {
     }
 
     const attackedAllianceID = parseInt(req.body.alliance_id)
-    const allianceExists = await alliances.getBasicData(attackedAllianceID)
+    const allianceExists = await getAllianceBasicData(attackedAllianceID)
     if (!allianceExists) {
       res.status(401).json({ error: 'Esa alianza no existe' })
       return
     }
 
-    const userRank = await alliances.getUserRank(req.userData.id)
+    const userRank = await getUserAllianceRank(req.userData.id)
     if (!userRank || !userRank.permission_declare_war) {
       res.status(401).json({ error: 'No tienes permiso para hacer esto' })
       return
     }
 
-    const ourRankData = await alliances.getAllianceRankData(userRank.alliance_id)
-    const theirRankData = await alliances.getAllianceRankData(attackedAllianceID)
+    const ourRankData = await getAllianceRankData(userRank.alliance_id)
+    const theirRankData = await getAllianceRankData(attackedAllianceID)
     if (
       !ourRankData ||
       !theirRankData ||
@@ -38,7 +44,7 @@ module.exports = app => {
       return
     }
 
-    const activeWarBetweenBoth = await alliances.getActiveWarBetweenAlliances(userRank.alliance_id, attackedAllianceID)
+    const activeWarBetweenBoth = await getActiveWarBetweenAlliances(userRank.alliance_id, attackedAllianceID)
     if (activeWarBetweenBoth) {
       res.status(401).json({ error: 'Ya tenéis una guerra activa' })
       return
@@ -62,8 +68,8 @@ module.exports = app => {
       [tsNow, userRank.alliance_id, attackedAllianceID, JSON.stringify(data), alliance2Hoods]
     )
 
-    const attackedAllianceMembers = await alliances.getMembers(attackedAllianceID)
-    const myAllianceMembers = await alliances.getMembers(userRank.alliance_id)
+    const attackedAllianceMembers = await getAllianceMembers(attackedAllianceID)
+    const myAllianceMembers = await getAllianceMembers(userRank.alliance_id)
 
     await Promise.all(
       [...attackedAllianceMembers, ...myAllianceMembers].map(member =>
@@ -88,7 +94,7 @@ module.exports = app => {
     const warID = parseInt(req.body.war_id)
     const attackedHoods = req.body.hoods.map(n => parseInt(n))
 
-    const userRank = await alliances.getUserRank(req.userData.id)
+    const userRank = await getUserAllianceRank(req.userData.id)
     if (!userRank || !userRank.permission_declare_war) {
       res.status(401).json({ error: 'No tienes permiso para hacer esto' })
       return

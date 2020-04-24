@@ -1,6 +1,6 @@
 import mysql from '../lib/mysql'
-const alliances = require('../lib/db/alliances')
-const { calcResourceGeneration, calcResourceMax } = require('shared-lib/allianceUtils')
+import { getAllianceResources, getAllianceResearchs } from '../lib/db/alliances'
+import { calcResourceGeneration, calcResourceMax } from 'shared-lib/allianceUtils'
 const frequencyMs = 15 * 1000 // 15 for dev. 60 should be fine for prod, but can be tuned if needed
 
 async function generateResource(allianceID, resourceID, resources, researchs) {
@@ -36,8 +36,8 @@ const run = async () => {
   await Promise.all(
     alliancesList.map(async alliance => {
       const [resources, researchs] = await Promise.all([
-        alliances.getResources(alliance.id),
-        alliances.getResearchs(alliance.id),
+        getAllianceResources(alliance.id),
+        getAllianceResearchs(alliance.id),
       ])
 
       await Promise.all([

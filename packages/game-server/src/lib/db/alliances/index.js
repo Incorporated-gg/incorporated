@@ -1,8 +1,8 @@
 import { hoods } from '../../map'
 import { parseBadgeJSONFromDB } from './badge'
 import mysql from '../../mysql'
-const users = require('../users')
-const { RESEARCHS_LIST, RESOURCES_LIST, calcResearchPrice } = require('shared-lib/allianceUtils')
+import { getUserData } from '../users'
+import { RESEARCHS_LIST, RESOURCES_LIST, calcResearchPrice } from 'shared-lib/allianceUtils'
 
 export const MAX_MEMBERS = 10
 
@@ -11,7 +11,7 @@ export async function getUserAllianceID(userID) {
   return memberQuery ? memberQuery.alliance_id : false
 }
 
-export async function getUserRank(userID) {
+export async function getUserAllianceRank(userID) {
   const [
     allianceMember,
   ] = await mysql.query(
@@ -36,7 +36,7 @@ export async function getUserRank(userID) {
   }
 }
 
-export async function getBasicData(allianceID) {
+export async function getAllianceBasicData(allianceID) {
   if (!allianceID) return false
   // Get basic alliance data
   const [
@@ -59,19 +59,19 @@ export async function getBasicData(allianceID) {
   }
 }
 
-export async function getIDFromShortName(shortName) {
+export async function getAllianceIDFromShortName(shortName) {
   const [allianceData] = await mysql.query('SELECT id FROM alliances WHERE short_name=?', [shortName])
   return allianceData ? allianceData.id : false
 }
 
-export async function getMembers(allianceID) {
+export async function getAllianceMembers(allianceID) {
   let members = await mysql.query(
     'SELECT user_id, rank_name, permission_admin FROM alliances_members WHERE alliance_id=?',
     [allianceID]
   )
   members = await Promise.all(
     members.map(async member => ({
-      user: await users.getData(member.user_id),
+      user: await getUserData(member.user_id),
       rank_name: member.rank_name,
       permission_admin: Boolean(member.permission_admin),
     }))
@@ -80,7 +80,7 @@ export async function getMembers(allianceID) {
   return members
 }
 
-export async function getResearchs(allianceID) {
+export async function getAllianceResearchs(allianceID) {
   const rawResearchs = await mysql.query(
     'SELECT id, level, progress_money FROM alliances_research WHERE alliance_id=?',
     [allianceID]
@@ -101,7 +101,7 @@ export async function getResearchs(allianceID) {
   return researchs
 }
 
-export async function getResources(allianceID) {
+export async function getAllianceResources(allianceID) {
   const rawResources = await mysql.query('SELECT resource_id, quantity FROM alliances_resources WHERE alliance_id=?', [
     allianceID,
   ])
@@ -119,7 +119,7 @@ export async function getResources(allianceID) {
   return resources
 }
 
-export async function getResourcesLog(allianceID) {
+export async function getAllianceResourcesLog(allianceID) {
   const rawLog = await mysql.query(
     'SELECT user_id, created_at, resource_id, quantity FROM alliances_resources_log WHERE alliance_id=? ORDER BY created_at DESC LIMIT 20',
     [allianceID]
@@ -127,7 +127,7 @@ export async function getResourcesLog(allianceID) {
   const resourcesLog = await Promise.all(
     rawLog.map(async raw => {
       return {
-        user: await users.getData(raw.user_id),
+        user: await getUserData(raw.user_id),
         created_at: raw.created_at,
         resource_id: raw.resource_id,
         quantity: raw.quantity,
@@ -137,7 +137,7 @@ export async function getResourcesLog(allianceID) {
   return resourcesLog
 }
 
-export async function getResearchShares(allianceID) {
+export async function getAllianceResearchShares(allianceID) {
   const rawShares = await mysql.query(
     'SELECT user_id, SUM(money) as total FROM alliances_research_log WHERE alliance_id=? GROUP BY user_id ORDER BY total DESC',
     [allianceID]
@@ -145,7 +145,7 @@ export async function getResearchShares(allianceID) {
   const researchShares = await Promise.all(
     rawShares.map(async raw => {
       return {
-        user: await users.getData(raw.user_id),
+        user: await getUserData(raw.user_id),
         total: parseInt(raw.total),
       }
     })
@@ -153,7 +153,7 @@ export async function getResearchShares(allianceID) {
   return researchShares
 }
 
-export async function getBuffsData(allianceID) {
+export async function getAllianceBuffsData(allianceID) {
   const [
     buffsLastUsed,
   ] = await mysql.query('SELECT buff_attack_last_used, buff_defense_last_used FROM alliances WHERE id=?', [allianceID])
@@ -174,14 +174,14 @@ export async function getBuffsData(allianceID) {
   }
 }
 
-export async function getResearchBonusFromBuffs(allianceID) {
+export async function getAllianceResearchBonusFromBuffs(allianceID) {
   if (!allianceID) {
     return {
       2: 0,
       3: 0,
     }
   }
-  const [buffsData, researchs] = await Promise.all([getBuffsData(allianceID), getResearchs(allianceID)])
+  const [buffsData, researchs] = await Promise.all([getAllianceBuffsData(allianceID), getAllianceResearchs(allianceID)])
 
   const bonusAttackLvls = buffsData.attack.active ? researchs[5].level + 1 : 0
   const bonusDefenseLvls = buffsData.defense.active ? researchs[6].level + 1 : 0
@@ -232,8 +232,8 @@ export async function getWarData(warID, { includeRawData = false } = {}) {
     [warID]
   )
 
-  const alliance1 = await getBasicData(war.alliance1_id)
-  const alliance2 = await getBasicData(war.alliance2_id)
+  const alliance1 = await getAllianceBasicData(war.alliance1_id)
+  const alliance2 = await getAllianceBasicData(war.alliance2_id)
 
   // alliance2_hoods is set when war is declared, but alliance1_hoods might take up to 24h
   let alliance1Hoods = []
@@ -255,7 +255,7 @@ export async function getWarData(warID, { includeRawData = false } = {}) {
   )
   await Promise.all(
     warAids.map(async aid => {
-      const aidingAlliance = await getBasicData(aid.aiding_alliance_id)
+      const aidingAlliance = await getAllianceBasicData(aid.aiding_alliance_id)
       const arrayToAppend = aid.aided_alliance_id === alliance1.id ? alliance1Aids : alliance2Aids
       arrayToAppend.push({
         alliance: aidingAlliance,

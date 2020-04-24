@@ -1,5 +1,5 @@
-const { doAttackMissions } = require('./missions/attacks')
-const { doSpyMissions } = require('./missions/spying')
+import { doAttackMissions } from './missions/attacks'
+import { doSpyMissions } from './missions/spying'
 const frequencyMs = 10 * 1000
 
 const run = async () => {

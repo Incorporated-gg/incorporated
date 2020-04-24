@@ -1,5 +1,5 @@
 import { hoods } from '../map'
-const users = require('./users')
+import users from './users'
 
 export async function parseMissionFromDB(mission) {
   if (!mission) throw new Error(`Unknown mission: ${JSON.stringify(mission)}`)

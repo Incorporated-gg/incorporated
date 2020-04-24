@@ -1,16 +1,17 @@
 import { getAccountData } from '../accountInternalApi'
 import { MAX_DAILY_ATTACKS, calculateMaxDailyReceivedAttacks } from 'shared-lib/missionsUtils'
 import mysql from '../mysql'
-const alliances = require('./alliances')
-const { researchList } = require('shared-lib/researchUtils')
-const { personnelObj } = require('shared-lib/personnelUtils')
-const { getInitialUnixTimestampOfServerDay } = require('shared-lib/serverTime')
-const { calcBuildingDailyIncome, buildingsList, calcBuildingMaxMoney } = require('shared-lib/buildingsUtils')
+import { parseMissionFromDB } from './missions'
+import { getUserAllianceID, getAllianceBasicData } from './alliances'
+import { researchList } from 'shared-lib/researchUtils'
+import { personnelObj } from 'shared-lib/personnelUtils'
+import { getInitialUnixTimestampOfServerDay } from 'shared-lib/serverTime'
+import { calcBuildingDailyIncome, buildingsList, calcBuildingMaxMoney } from 'shared-lib/buildingsUtils'
 
-export async function getData(userID) {
+export async function getUserData(userID) {
   const userDataPromise = mysql.selectOne('SELECT username FROM users WHERE id=?', [userID])
   const rankingDataPromise = mysql.selectOne('SELECT rank, points FROM ranking_income WHERE user_id=?', [userID])
-  const alliancePromise = alliances.getUserAllianceID(userID).then(alliances.getBasicData)
+  const alliancePromise = getUserAllianceID(userID).then(getAllianceBasicData)
   const accountDataPromise = getAccountData(userID)
 
   const [userData, rankingData, allianceData, accountData] = await Promise.all([
@@ -31,14 +32,14 @@ export async function getData(userID) {
   }
 }
 
-export async function getIDFromUsername(username) {
+export async function getUserIDFromUsername(username) {
   const userData = await mysql.selectOne('SELECT id FROM users WHERE username=?', [username])
   return userData ? userData.id : null
 }
 
 export async function getUserPersonnelCosts(userID) {
   let personnelCost = 0
-  const userPersonnel = await getPersonnel(userID)
+  const userPersonnel = await getUserPersonnel(userID)
   Object.entries(userPersonnel).forEach(([resourceID, quantity]) => {
     const personnelInfo = personnelObj[resourceID]
     if (!personnelInfo) return
@@ -73,7 +74,7 @@ export async function getUserResearchs(userID) {
   return researchs
 }
 
-export async function getPersonnel(userID) {
+export async function getUserPersonnel(userID) {
   const personnels = {
     guards: 0,
     sabots: 0,
@@ -87,7 +88,7 @@ export async function getPersonnel(userID) {
   return personnels
 }
 
-export async function getBuildings(userID) {
+export async function getUserBuildings(userID) {
   const buildings = buildingsList.reduce((curr, building) => {
     curr[building.id] = {
       quantity: 0,
@@ -128,22 +129,20 @@ export async function getUserTodaysMissionsLimits(userID) {
   }
 }
 
-export async function hasActiveMission(userID) {
+export async function getHasActiveMission(userID) {
   const activeMissions = await mysql.query('SELECT 1 FROM missions WHERE user_id=? AND completed=0', [userID])
 
   return activeMissions.length > 0
 }
 
 export async function getActiveMission(userID) {
-  const activeMission = await mysql.selectOne('SELECT mission_type FROM missions WHERE user_id=? AND completed=0', [
-    userID,
-  ])
+  const mission = await mysql.selectOne(
+    'SELECT user_id, target_user, data, mission_type, started_at, will_finish_at, completed, result, profit FROM missions WHERE user_id=? AND completed=0',
+    [userID]
+  )
+  if (!mission) return null
 
-  if (!activeMission) return null
-
-  return {
-    mission_type: activeMission.mission_type,
-  }
+  return await parseMissionFromDB(mission)
 }
 
 export async function sendMessage({ receiverID, senderID, type, data }) {

@@ -1,7 +1,7 @@
 import { getActiveResearchs } from '../lib/db/researchs'
 import mysql from '../lib/mysql'
-const users = require('../lib/db/users')
-const alliances = require('../lib/db/alliances')
+import { getUserAllianceRank } from '../lib/db/alliances'
+import { getUserData } from '../lib/db/users'
 
 module.exports = app => {
   app.get('/v1/my_data', async function(req, res) {
@@ -11,8 +11,8 @@ module.exports = app => {
     }
 
     const [userData, userRank, activeResearchs] = await Promise.all([
-      users.getData(req.userData.id),
-      alliances.getUserRank(req.userData.id),
+      getUserData(req.userData.id),
+      getUserAllianceRank(req.userData.id),
       getActiveResearchs(req.userData.id),
     ])
 

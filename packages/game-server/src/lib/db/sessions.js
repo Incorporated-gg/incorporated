@@ -3,7 +3,7 @@ import { getSessionUserFromAccountService } from '../accountInternalApi'
 
 const initialMoney = 100000
 
-module.exports.getUserIDFromSessionID = async sessionID => {
+export async function getUserIDFromSessionID(sessionID) {
   if (!sessionID) return
   const sessionUser = await getSessionUserFromAccountService(sessionID)
   if (!sessionUser) return

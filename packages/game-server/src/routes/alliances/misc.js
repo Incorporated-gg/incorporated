@@ -1,7 +1,7 @@
 import { parseBadgeFromUserRequest } from '../../lib/db/alliances/badge'
 import mysql from '../../lib/mysql'
 import { CREATE_ALLIANCE_PRICE } from 'shared-lib/allianceUtils'
-const alliances = require('../../lib/db/alliances')
+import { getUserAllianceID, deleteAlliance, getUserAllianceRank, getAllianceBuffsData } from '../../lib/db/alliances'
 
 const alphanumericRegexp = /^[a-z0-9]+$/i
 
@@ -47,7 +47,7 @@ module.exports = app => {
       return
     }
 
-    const hasAlliance = await alliances.getUserAllianceID(req.userData.id)
+    const hasAlliance = await getUserAllianceID(req.userData.id)
     if (hasAlliance) {
       res.status(401).json({ error: 'Ya tienes una alianza' })
       return
@@ -80,13 +80,13 @@ module.exports = app => {
       return
     }
 
-    const userRank = await alliances.getUserRank(req.userData.id)
+    const userRank = await getUserAllianceRank(req.userData.id)
     if (!userRank || !userRank.permission_admin) {
       res.status(401).json({ error: 'No eres admin de una alianza' })
       return
     }
 
-    await alliances.deleteAlliance(userRank.alliance_id)
+    await deleteAlliance(userRank.alliance_id)
 
     res.json({ success: true })
   })
@@ -97,7 +97,7 @@ module.exports = app => {
       return
     }
 
-    const userRank = await alliances.getUserRank(req.userData.id)
+    const userRank = await getUserAllianceRank(req.userData.id)
     if (!userRank) {
       res.status(401).json({ error: 'No eres miembro de una alianza' })
       return
@@ -121,7 +121,7 @@ module.exports = app => {
       return
     }
 
-    const userRank = await alliances.getUserRank(req.userData.id)
+    const userRank = await getUserAllianceRank(req.userData.id)
     if (!userRank || !userRank.permission_activate_buffs) {
       res.status(401).json({ error: 'No tienes permiso para hacer esto' })
       return
@@ -134,7 +134,7 @@ module.exports = app => {
 
     const buffID = req.body.buff_id
 
-    const buffsData = await alliances.getBuffsData(userRank.alliance_id)
+    const buffsData = await getAllianceBuffsData(userRank.alliance_id)
     const buff = buffsData[buffID]
 
     if (!buff) {
@@ -162,7 +162,7 @@ module.exports = app => {
       return
     }
 
-    const userRank = await alliances.getUserRank(req.userData.id)
+    const userRank = await getUserAllianceRank(req.userData.id)
     if (!userRank || !userRank.permission_admin) {
       res.status(401).json({ error: 'No tienes permiso para hacer esto' })
       return
@@ -191,7 +191,7 @@ module.exports = app => {
       return
     }
 
-    const userRank = await alliances.getUserRank(req.userData.id)
+    const userRank = await getUserAllianceRank(req.userData.id)
     if (!userRank || !userRank.permission_admin) {
       res.status(401).json({ error: 'No tienes permiso para hacer esto' })
       return

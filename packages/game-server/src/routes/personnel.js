@@ -1,7 +1,7 @@
 import mysql from '../lib/mysql'
-const personnel = require('../lib/db/personnel')
-const { hasActiveMission } = require('../lib/db/users')
-const { personnelObj } = require('shared-lib/personnelUtils')
+import * as personnel from '../lib/db/personnel'
+import { getHasActiveMission } from '../lib/db/users'
+import { personnelObj } from 'shared-lib/personnelUtils'
 
 const handlePersonnelRequest = async (req, res, operationType) => {
   if (!req.userData) {
@@ -12,7 +12,7 @@ const handlePersonnelRequest = async (req, res, operationType) => {
     res.status(400).json({ error: 'Faltan datos' })
     return
   }
-  if (await hasActiveMission(req.userData.id)) {
+  if (await getHasActiveMission(req.userData.id)) {
     res.status(400).json({ error: 'Tienes una misión en curso' })
     return
   }

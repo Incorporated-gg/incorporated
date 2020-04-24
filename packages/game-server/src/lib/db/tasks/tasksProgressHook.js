@@ -1,7 +1,7 @@
 import mysql from '../../mysql'
 import { getUserActiveTasks, getUserTaskData } from '.'
 import { calcBuildingDailyIncome } from 'shared-lib/buildingsUtils'
-import { getBuildings, getUserResearchs } from '../users'
+import { getUserBuildings, getUserResearchs } from '../users'
 
 const CENTRAL_OFFICE_RESEARCH_ID = 5
 
@@ -25,7 +25,7 @@ export default async function tasksProgressHook(userID, hookType, hookData) {
 
       const incomeTasks = userActiveTasks.filter(task => task.type === 'cyclic_income')
       if (incomeTasks.length) {
-        const userBuildings = await getBuildings(userID)
+        const userBuildings = await getUserBuildings(userID)
         const userResearchs = await getUserResearchs(userID)
 
         const newIncome = calculateIncome(userBuildings, userResearchs[CENTRAL_OFFICE_RESEARCH_ID])
@@ -70,7 +70,7 @@ export default async function tasksProgressHook(userID, hookType, hookData) {
         // Central Office: affects cyclic_income tasks, but doesn't count for cyclic_research
         const incomeTasks = userActiveTasks.filter(task => task.type === 'cyclic_income')
         if (incomeTasks.length) {
-          const userBuildings = await getBuildings(userID)
+          const userBuildings = await getUserBuildings(userID)
           const userResearchs = await getUserResearchs(userID)
 
           const oldIncome = calculateIncome(userBuildings, userResearchs[CENTRAL_OFFICE_RESEARCH_ID] - 1)

@@ -3,16 +3,20 @@ import { sendAccountHook } from '../../../lib/accountInternalApi'
 import mysql from '../../../lib/mysql'
 import {
   getUserResearchs,
-  getPersonnel,
-  getBuildings,
+  getUserPersonnel,
+  getUserBuildings,
   sendMessage,
   runUserMoneyUpdate,
   getUserTodaysMissionsLimits,
 } from '../../../lib/db/users'
-import { getUserAllianceID, getResearchBonusFromBuffs, getActiveWarBetweenAlliances } from '../../../lib/db/alliances'
-const { calcBuildingMaxMoney } = require('shared-lib/buildingsUtils')
-const { simulateAttack } = require('shared-lib/missionsUtils')
-const { onNewWarAttack } = require('../../on_day_reset/alliance_wars')
+import {
+  getUserAllianceID,
+  getAllianceResearchBonusFromBuffs,
+  getActiveWarBetweenAlliances,
+} from '../../../lib/db/alliances'
+import { calcBuildingMaxMoney } from 'shared-lib/buildingsUtils'
+import { simulateAttack } from 'shared-lib/missionsUtils'
+import { onNewWarAttack } from '../../on_day_reset/alliance_wars'
 
 export async function completeUserAttackMission(mission) {
   const data = JSON.parse(mission.data)
@@ -43,8 +47,8 @@ export async function completeUserAttackMission(mission) {
     getUserResearchs(attacker.id),
     getUserAllianceID(attacker.id),
     getUserResearchs(defender.id),
-    getPersonnel(defender.id),
-    getBuildings(defender.id),
+    getUserPersonnel(defender.id),
+    getUserBuildings(defender.id),
     getUserAllianceID(defender.id),
     getUserTodaysMissionsLimits(defender.id),
   ])
@@ -64,8 +68,8 @@ export async function completeUserAttackMission(mission) {
   }
 
   const [attackerResearchBonusFromBuffs, defenderResearchBonusFromBuffs] = await Promise.all([
-    getResearchBonusFromBuffs(attackerAllianceID),
-    getResearchBonusFromBuffs(defenderAllianceID),
+    getAllianceResearchBonusFromBuffs(attackerAllianceID),
+    getAllianceResearchBonusFromBuffs(defenderAllianceID),
   ])
   const attackerSabotageLevel = attackerResearchs[2] + attackerResearchBonusFromBuffs[2]
   const defenderSecurityLevel = defenderResearchs[3] + defenderResearchBonusFromBuffs[3]

@@ -1,6 +1,6 @@
 import mysql from '../lib/mysql'
-const { buildingsList } = require('shared-lib/buildingsUtils')
-const { getServerDate } = require('shared-lib/serverTime')
+import { buildingsList } from 'shared-lib/buildingsUtils'
+import { getServerDate } from 'shared-lib/serverTime'
 const frequencyMs = 60 * 1000
 
 const run = async () => {

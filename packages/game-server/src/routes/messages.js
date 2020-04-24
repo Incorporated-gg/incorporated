@@ -1,6 +1,11 @@
 import mysql from '../lib/mysql'
-const users = require('../lib/db/users')
-const alliances = require('../lib/db/alliances')
+import {
+  getAllianceIDFromShortName,
+  getAllianceMembers,
+  getUserAllianceRank,
+  getAllianceBasicData,
+} from '../lib/db/alliances'
+import { getUserIDFromUsername, getUserData } from '../lib/db/users'
 
 module.exports = app => {
   app.get('/v1/messages', async function(req, res) {
@@ -55,21 +60,21 @@ module.exports = app => {
 
     if (allianceMessage) {
       const allianceName = allianceMessage[1]
-      const allianceID = await alliances.getIDFromShortName(allianceName)
+      const allianceID = await getAllianceIDFromShortName(allianceName)
 
       if (!allianceID) {
         res.status(400).json({ error: 'No se ha encontrado la alianza' })
         return
       }
 
-      const members = await alliances.getMembers(allianceID)
+      const members = await getAllianceMembers(allianceID)
 
       if (!members.find(m => m.user.id === req.userData.id)) {
         res.status(400).json({ error: 'No perteneces a esta alianza' })
         return
       }
 
-      const userPermissions = await alliances.getUserRank(req.userData.id)
+      const userPermissions = await getUserAllianceRank(req.userData.id)
 
       if (!userPermissions.permission_send_circular_msg) {
         res.status(400).json({ error: 'No tienes permiso para enviar mensajes circulares' })
@@ -78,7 +83,7 @@ module.exports = app => {
 
       receiversIDs = members.map(member => member.user.id).filter(m => !!m)
     } else {
-      receiversIDs = [await users.getIDFromUsername(req.body.addressee)].filter(m => !!m)
+      receiversIDs = [await getUserIDFromUsername(req.body.addressee)].filter(m => !!m)
     }
 
     if (!receiversIDs.length) {
@@ -124,26 +129,26 @@ async function parseMessage(msg) {
     id: msg.id,
     created_at: msg.created_at,
     type: msg.type,
-    receiver: await users.getData(msg.user_id),
-    sender: await users.getData(msg.sender_id),
+    receiver: await getUserData(msg.user_id),
+    sender: await getUserData(msg.sender_id),
     data,
   }
   try {
     switch (msg.type) {
       case 'loan_started':
       case 'loan_ended': {
-        result.data.borrower = await users.getData(result.data.borrower_id)
-        result.data.lender = await users.getData(result.data.lender_id)
+        result.data.borrower = await getUserData(result.data.borrower_id)
+        result.data.lender = await getUserData(result.data.lender_id)
         delete result.data.borrower_id
         delete result.data.lender_id
         break
       }
       case 'attack_cancelled': {
-        result.data.target_user = await users.getData(result.data.target_user_id)
+        result.data.target_user = await getUserData(result.data.target_user_id)
         break
       }
       case 'new_alli_member_req': {
-        result.data.sender_user = await users.getData(result.data.sender_id)
+        result.data.sender_user = await getUserData(result.data.sender_id)
         break
       }
       case 'war_started':
@@ -151,8 +156,8 @@ async function parseMessage(msg) {
         const war = await mysql.selectOne('SELECT alliance1_id, alliance2_id, data FROM alliances_wars WHERE id=?', [
           result.data.war_id,
         ])
-        result.data.attacker_alliance = await alliances.getBasicData(war.alliance1_id)
-        result.data.defender_alliance = await alliances.getBasicData(war.alliance2_id)
+        result.data.attacker_alliance = await getAllianceBasicData(war.alliance1_id)
+        result.data.defender_alliance = await getAllianceBasicData(war.alliance2_id)
         if (msg.type === 'war_ended') result.data.winner = JSON.parse(war.data).winner
         delete result.data.war_id
         break

@@ -1,5 +1,5 @@
 import mysql from '../lib/mysql'
-const users = require('../lib/db/users')
+import { getUserData } from '../lib/db/users'
 
 module.exports = app => {
   app.get('/v1/monopolies', async function(req, res) {
@@ -14,7 +14,7 @@ module.exports = app => {
         return {
           building_id: monopoly.building_id,
           building_quantity: monopoly.building_quantity,
-          user: await users.getData(monopoly.user_id),
+          user: await getUserData(monopoly.user_id),
         }
       })
     )
