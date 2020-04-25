@@ -41,6 +41,26 @@
     right: 70px;
   }
 
+  &.selectingRoom {
+    .chatWindow {
+      @media screen and (min-width: $breakpoint-desktop) {
+        &:not(.fullScreen) {
+          width: 684px;
+        }
+      }
+      .chatWindowSidebar {
+        .chatWindowSidebarHeader {
+          flex-direction: row;
+
+          .chatWindowSidebarToggle {
+            margin-top: 0;
+            transform: none;
+          }
+        }
+      }
+    }
+  }
+
   .chatWindow {
     position: fixed;
     background: $gradient-brand;
@@ -69,17 +89,6 @@
       overflow-y: auto;
       overflow-x: hidden;
 
-      &.active {
-        .chatWindowSidebarHeader {
-          flex-direction: row;
-
-          .chatWindowSidebarToggle {
-            margin-top: 0;
-            transform: none;
-          }
-        }
-      }
-
       .chatWindowSidebarHeader {
         display: flex;
         flex-direction: column;
@@ -96,6 +105,8 @@
           border: 0;
           text-align: left;
           cursor: pointer;
+          transition: transform .25s ease;
+          outline: none;
 
           svg * {
             fill: $color-brand-light !important;
@@ -116,7 +127,8 @@
         max-width: 220px;
 
         .chatRoomCategory {
-          color: #fff;
+          @include gradientText();
+          @include pascalText();
           text-transform: uppercase;
           font-family: $font-family-title;
           font-weight: 600;
@@ -195,7 +207,8 @@
         .chatWindowBodyHeaderTop {
           display: flex;
           h3 {
-            color: #fff;
+            @include gradientText();
+            @include pascalText();
             text-transform: uppercase;
             font-family: $font-family-title;
             margin-bottom: 5px;

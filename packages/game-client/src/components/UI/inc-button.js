@@ -13,7 +13,7 @@ IncButton.propTypes = {
 export default function IncButton({ children, onClick, outerClassName, outerStyle, disabled, ...props }) {
   const runOnClick = e => {
     if (disabled || e.defaultPrevented) return
-    onClick(e)
+    if (onClick) onClick(e)
   }
   return (
     <IncContainer
