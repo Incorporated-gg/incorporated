@@ -1,10 +1,11 @@
 import mysql from '../../lib/mysql'
-import { getAllianceMembers, getAllianceBasicData, getWarData } from '../../lib/db/alliances'
+import { getAllianceMembers, getWarData } from '../../lib/db/alliances'
 import { sendAccountHook } from '../../lib/accountInternalApi'
 import { sendMessage } from '../../lib/db/users'
 import { getServerDay, getInitialUnixTimestampOfServerDay } from 'shared-lib/serverTime'
 import { personnelObj } from 'shared-lib/personnelUtils'
 import { WAR_DAYS_DURATION } from 'shared-lib/allianceUtils'
+import { changeHoodsOwner } from '../../lib/db/hoods'
 
 const EXTRA_POINTS_PER_OBJECTIVE = 40
 const WAR_POINTS_LIMIT_FOR_AUTOFINISH = WAR_DAYS_DURATION * 50 + 1 + EXTRA_POINTS_PER_OBJECTIVE * 3
@@ -242,20 +243,12 @@ async function endWar(warData) {
 
   if (winner === 1) {
     // The attacker won. Change hoods owner
-    const attackerAllianceData = await getAllianceBasicData(warData.alliance1.id)
-    warData.alliance1_hoods.forEach(hood => {
-      hood.owner = attackerAllianceData // Changes global hoods object
-    })
-    const hoodIDs = warData.alliance1_hoods.map(hood => hood.id)
-    await mysql.query('UPDATE hoods SET owner=? WHERE id IN (?)', [warData.alliance1.id, hoodIDs])
+    const hoodIDs = warData.alliance2_hoods.map(hood => hood.id)
+    await changeHoodsOwner(hoodIDs, warData.alliance1.id)
   } else {
     // The defensor won. Change hoods owner
-    const defenderAllianceData = await getAllianceBasicData(warData.alliance2.id)
-    warData.alliance2_hoods.forEach(hood => {
-      hood.owner = defenderAllianceData // Changes global hoods object
-    })
     const hoodIDs = warData.alliance2_hoods.map(hood => hood.id)
-    await mysql.query('UPDATE hoods SET owner=? WHERE id IN (?)', [warData.alliance2.id, hoodIDs])
+    await changeHoodsOwner(hoodIDs, warData.alliance1.id)
   }
 
   await mysql.query('UPDATE alliances_wars SET completed=1, data=? WHERE id=?', [

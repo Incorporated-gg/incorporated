@@ -1,4 +1,4 @@
-import { hoods } from '../lib/map'
+import { getAllHoodsData } from '../lib/db/hoods'
 
 module.exports = app => {
   app.get('/v1/map', async function(req, res) {
@@ -6,6 +6,8 @@ module.exports = app => {
       res.status(401).json({ error: 'Necesitas estar conectado', error_code: 'not_logged_in' })
       return
     }
+
+    const hoods = await getAllHoodsData()
 
     res.json({
       hoods,

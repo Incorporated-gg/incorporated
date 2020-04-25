@@ -5,9 +5,9 @@ import {
   getAllianceMembers,
   getAllianceActiveWars,
   getAlliancePastWars,
-  getAllianceHoods,
 } from '../lib/db/alliances'
 import { getUserData, getUserIDFromUsername } from '../lib/db/users'
+import { getAllianceHoods } from '../lib/db/hoods'
 
 const entriesPerPage = 50
 

@@ -1,8 +1,8 @@
-import { hoods } from '../../map'
 import { parseBadgeJSONFromDB } from './badge'
 import mysql from '../../mysql'
 import { getUserData } from '../users'
 import { RESEARCHS_LIST, RESOURCES_LIST, calcResearchPrice } from 'shared-lib/allianceUtils'
+import { getHoodData } from '../hoods'
 
 export const MAX_MEMBERS = 10
 
@@ -239,9 +239,9 @@ export async function getWarData(warID, { includeRawData = false } = {}) {
   let alliance1Hoods = []
   let alliance2Hoods = []
   if (war.alliance1_hoods) {
-    alliance1Hoods = war.alliance1_hoods.split(',').map(hoodID => hoods.find(h => h.id === parseInt(hoodID)))
+    alliance1Hoods = await Promise.all(war.alliance1_hoods.split(',').map(getHoodData))
   }
-  alliance2Hoods = war.alliance2_hoods.split(',').map(hoodID => hoods.find(h => h.id === parseInt(hoodID)))
+  alliance2Hoods = await Promise.all(war.alliance2_hoods.split(',').map(getHoodData))
 
   const data = JSON.parse(war.data)
   const days = data.days
@@ -302,8 +302,4 @@ export async function getAllianceRankData(allianceID) {
     rank: rankRow.rank,
     points: rankRow.points,
   }
-}
-
-export function getAllianceHoods(allianceID) {
-  return hoods.filter(hood => hood.owner && hood.owner.id === allianceID)
 }

@@ -1,5 +1,5 @@
-import { hoods } from '../map'
 import users from './users'
+import { getHoodData } from './hoods'
 
 export async function parseMissionFromDB(mission) {
   if (!mission) throw new Error(`Unknown mission: ${JSON.stringify(mission)}`)
@@ -41,7 +41,7 @@ export async function parseMissionFromDB(mission) {
       result.target_user = await users.getData(mission.target_user)
     }
     if (data.hood) {
-      result.target_hood = hoods.find(hood => hood.id === data.hood)
+      result.target_hood = await getHoodData(data.hood)
     }
     return result
   } else throw new Error(`Unknown mission type: ${mission.mission_type}`)

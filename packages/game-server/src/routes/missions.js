@@ -1,5 +1,4 @@
 import locks from '../lib/locks'
-import { hoods } from '../lib/map'
 import mysql from '../lib/mysql'
 import {
   getUserTodaysMissionsLimits,
@@ -12,6 +11,7 @@ import { parseMissionFromDB } from '../lib/db/missions'
 import { getAllianceMembers, getUserAllianceID } from '../lib/db/alliances'
 import { buildingsList } from 'shared-lib/buildingsUtils'
 import { calculateMissionTime, calculateIsInAttackRange } from 'shared-lib/missionsUtils'
+import { getHoodData } from '../lib/db/hoods'
 
 module.exports = app => {
   app.get('/v1/missions', async function(req, res) {
@@ -133,11 +133,11 @@ module.exports = app => {
 
     // Find target (hood or user)
     const missionType = req.body.mission_type
-    const targetHood = missionType === 'attack' && hoods.find(hood => hood.id === req.body.target_hood)
+    const targetHoodData = missionType === 'attack' && (await getHoodData(req.body.target_hood))
     const targetUser =
-      !targetHood && (await mysql.selectOne('SELECT id FROM users WHERE username = ?', [req.body.target_user]))
+      !targetHoodData && (await mysql.selectOne('SELECT id FROM users WHERE username = ?', [req.body.target_user]))
 
-    if (!targetUser && !targetHood) {
+    if (!targetUser && !targetHoodData) {
       res.status(400).json({
         error: 'El usuario indicado no existe',
       })
@@ -180,9 +180,9 @@ module.exports = app => {
             return
           }
         }
-        if (targetHood) {
+        if (targetHoodData) {
           // Detect possible errors when attacking hoods
-          if (targetHood.owner) {
+          if (targetHoodData.owner) {
             res.status(400).json({ error: 'Este barrio ya tiene dueño' })
             removeLock()
             return
@@ -263,8 +263,8 @@ module.exports = app => {
       if (targetUser) {
         data.building = attackUserTargetBuilding
       }
-      if (targetHood) {
-        data.hood = targetHood.id
+      if (targetHoodData) {
+        data.hood = targetHoodData.id
       }
       data.sabots = sentSabots
       data.thieves = sentThieves

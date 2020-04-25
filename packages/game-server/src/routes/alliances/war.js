@@ -1,4 +1,3 @@
-import { hoods } from '../../lib/map'
 import { getMaxHoodsAttackedPerWar } from 'shared-lib/allianceUtils'
 import { getServerDay } from 'shared-lib/serverTime'
 import mysql from '../../lib/mysql'
@@ -11,6 +10,7 @@ import {
   getWarData,
 } from '../../lib/db/alliances'
 import { sendMessage } from '../../lib/db/users'
+import { getHoodData } from '../../lib/db/hoods'
 
 module.exports = app => {
   app.post('/v1/alliance/declare_war', async function(req, res) {
@@ -132,14 +132,19 @@ module.exports = app => {
 
 async function checkHoodsAreValidForWar(attackedHoods, enemyAllianceID) {
   // Check hoods param is valid and hoods exist
-  const areHoodsValid =
-    Array.isArray(attackedHoods) &&
-    attackedHoods.length > 0 &&
-    attackedHoods.every(hoodID => {
-      const hood = hoods.find(_h => _h.id === parseInt(hoodID))
-      return hood && hood.owner && hood.owner.id === enemyAllianceID
-    })
-  if (!areHoodsValid) {
+  if (!Array.isArray(attackedHoods) || attackedHoods.length === 0) {
+    throw new Error('Barrios inválidos')
+  }
+
+  const areHoodsFromAlliance = (
+    await Promise.all(
+      attackedHoods.map(async hoodID => {
+        const hoodData = await getHoodData(hoodID)
+        return hoodData && hoodData.owner && hoodData.owner.id === enemyAllianceID
+      })
+    )
+  ).every(Boolean)
+  if (!areHoodsFromAlliance) {
     throw new Error('Barrios inválidos')
   }
 

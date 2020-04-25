@@ -1,17 +1,17 @@
 import tasksProgressHook from '../../../lib/db/tasks/tasksProgressHook'
 import { sendAccountHook } from '../../../lib/accountInternalApi'
 import mysql from '../../../lib/mysql'
-import { hoods } from '../../../lib/map'
-import { getUserAllianceID, getAllianceResearchBonusFromBuffs, getAllianceBasicData } from '../../../lib/db/alliances'
+import { getUserAllianceID, getAllianceResearchBonusFromBuffs } from '../../../lib/db/alliances'
 import { simulateAttack } from 'shared-lib/missionsUtils'
 import { getUserResearchs } from '../../../lib/db/users'
+import { getHoodData, changeHoodGuards } from '../../../lib/db/hoods'
 
 export async function completeHoodAttackMission(mission) {
   const data = JSON.parse(mission.data)
   // Complete the mission
-  const hood = hoods.find(h => h.id === data.hood)
+  const hoodData = await getHoodData(data.hood)
   const attacker = await mysql.selectOne('SELECT id FROM users WHERE id=?', [mission.user_id])
-  if (!attacker || !hood || hood.owner) {
+  if (!attacker || !hoodData || hoodData.owner) {
     // Either the attacker does not exist anymore, or the hood was already conquered
     await mysql.query('DELETE FROM missions WHERE id=?', [mission.id])
     return
@@ -30,7 +30,7 @@ export async function completeHoodAttackMission(mission) {
 
   const buildingAmount = 0
   const unprotectedMoney = 0
-  const guards = Math.floor(hood.guards)
+  const guards = Math.floor(hoodData.guards)
 
   const {
     result,
@@ -80,10 +80,7 @@ export async function completeHoodAttackMission(mission) {
   ])
 
   // Update troops
-  if (killedGuards > 0) {
-    hood.guards -= killedGuards
-    await mysql.query('UPDATE hoods SET guards=guards-? WHERE id=?', [killedGuards, hood.id])
-  }
+  await changeHoodGuards(hoodData.id, -killedGuards)
 
   if (killedSabots > 0) {
     await mysql.query('UPDATE users_resources SET quantity=quantity-? WHERE user_id=? AND resource_id=?', [
@@ -101,9 +98,8 @@ export async function completeHoodAttackMission(mission) {
   }
 
   // Update hood owner
-  if (hood.guards < 1) {
-    hood.owner = await getAllianceBasicData(attackerAllianceID)
-    await mysql.query('UPDATE hoods SET owner=? WHERE id=?', [attackerAllianceID, hood.id])
+  if (hoodData.guards < 1) {
+    await mysql.query('UPDATE hoods SET owner=? WHERE id=?', [attackerAllianceID, hoodData.id])
   }
 
   // Give money to attacker
