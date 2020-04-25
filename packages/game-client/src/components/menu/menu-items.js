@@ -11,13 +11,12 @@ export default [
         alternativePaths: [/\/ranking\/*/],
       },
       {
-        path: '/contests/monopolies',
-        alt: 'Competiciones',
-        alternativePaths: [/\/contests\/*/],
+        path: '/monopolies',
+        alt: 'Monopolios',
       },
       {
-        path: '/personnel',
-        alt: 'Personal',
+        path: '/contest',
+        alt: 'Competición',
       },
       {
         path: '/reports',
@@ -62,8 +61,8 @@ export default [
         alt: 'Préstamos',
       },
       {
-        path: '/finances',
-        alt: 'Finanzas',
+        path: '/personnel',
+        alt: 'Personal',
       },
     ],
   },

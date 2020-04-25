@@ -11,7 +11,7 @@ import Home from 'routes/home'
 import Buildings from 'routes/Buildings/Buildings'
 import Research from 'routes/Research/Research'
 import Ranking from 'routes/Ranking/Router'
-import Contests from 'routes/Contests/Router'
+import Contest from 'routes/contest'
 import Alliance from 'routes/alliance/alliance'
 import Personnel from 'routes/Personnel/Personnel'
 import Messages from 'routes/Messages/Messages'
@@ -21,6 +21,7 @@ import Map from 'routes/Map/Map'
 import Newspaper from 'routes/Newspaper/Newspaper'
 import Reports from 'routes/Reports/Reports'
 import Settings from 'routes/settings/settings'
+import Monopolies from 'routes/monopolies/monopolies'
 
 export default function LoggedInRouter() {
   return (
@@ -39,8 +40,11 @@ export default function LoggedInRouter() {
             <Route path="/ranking">
               <Ranking />
             </Route>
-            <Route path="/contests">
-              <Contests />
+            <Route path="/monopolies">
+              <Monopolies />
+            </Route>
+            <Route path="/contest">
+              <Contest />
             </Route>
             <Route path="/alliance">
               <Alliance />

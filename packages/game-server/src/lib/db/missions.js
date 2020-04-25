@@ -1,12 +1,12 @@
-import users from './users'
 import { getHoodData } from './hoods'
+import { getUserData } from './users'
 
 export async function parseMissionFromDB(mission) {
   if (!mission) throw new Error(`Unknown mission: ${JSON.stringify(mission)}`)
 
   if (mission.mission_type === 'spy') {
-    const defensorData = await users.getData(mission.target_user)
-    const attackerData = await users.getData(mission.user_id)
+    const defensorData = await getUserData(mission.target_user)
+    const attackerData = await getUserData(mission.user_id)
     const data = JSON.parse(mission.data)
     return {
       user: attackerData,
@@ -20,7 +20,7 @@ export async function parseMissionFromDB(mission) {
       report: data.report,
     }
   } else if (mission.mission_type === 'attack') {
-    const attackerData = await users.getData(mission.user_id)
+    const attackerData = await getUserData(mission.user_id)
     const data = JSON.parse(mission.data)
     const result = {
       user: attackerData,
@@ -38,7 +38,7 @@ export async function parseMissionFromDB(mission) {
       report: data.report,
     }
     if (mission.target_user) {
-      result.target_user = await users.getData(mission.target_user)
+      result.target_user = await getUserData(mission.target_user)
     }
     if (data.hood) {
       result.target_hood = await getHoodData(data.hood)

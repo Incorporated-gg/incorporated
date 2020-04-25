@@ -7,6 +7,7 @@ import { debounce } from '../../lib/utils'
 import Pagination from 'components/UI/pagination'
 import api from 'lib/api'
 import UserLink from 'components/UI/user-link'
+import IncInput from 'components/UI/inc-input'
 
 export default function Ranking() {
   const [ranking, setRanking] = useState([])
@@ -86,11 +87,11 @@ function SearchUsers() {
 
   return (
     <>
-      <input
+      <IncInput
+        showBorder
         className={styles.searchUser}
-        type="text"
         value={search}
-        onChange={e => setSearch(e.target.value)}
+        onChangeText={setSearch}
         placeholder={'Buscar usuario'}
       />
       {search.length >= 3 && (

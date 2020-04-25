@@ -13,10 +13,17 @@ IncInput.propTypes = {
   onChangeText: PropTypes.func.isRequired,
 }
 
-export default function IncInput({ multiline = false, showBorder = false, onChangeText, className, ...props }) {
+export default function IncInput({
+  multiline = false,
+  showBorder = false,
+  type = 'string',
+  onChangeText,
+  className,
+  ...props
+}) {
   className = `${styles.incInput} ${showBorder ? styles.border : ''} ${className || ''}`
   const onChange = e => onChangeText(e.target.value)
 
   if (multiline) return <textarea className={className} onChange={onChange} {...props} />
-  return <input className={className} onChange={onChange} {...props} />
+  return <input type={type} className={className} onChange={onChange} {...props} />
 }

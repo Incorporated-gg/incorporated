@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import api from '../../lib/api'
 import { buildingsList } from 'shared-lib/buildingsUtils'
-import styles from './contests.module.scss'
+import styles from './monopolies.module.scss'
 import IncContainer from 'components/UI/inc-container'
 import UserLink from 'components/UI/user-link'
 

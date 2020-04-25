@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react'
-import { useParams } from 'react-router-dom'
 import api from '../../lib/api'
 import UserActionLinks from '../../components/UI/user-action-links'
 import IncContainer from 'components/UI/inc-container'
 import UserLink from 'components/UI/user-link'
+import PropTypes from 'prop-types'
 
-export default function Monopolies() {
-  const { contestName } = useParams()
+Contest.propTypes = {
+  contestName: PropTypes.string.isRequired,
+}
+export default function Contest({ contestName }) {
   const [contestScores, setContestScores] = useState([])
   const [error, setError] = useState(false)
 
@@ -36,7 +38,7 @@ export default function Monopolies() {
           <tbody>
             {contestScores && contestScores.length ? (
               contestScores.map(contestScore => (
-                <tr key={contestScore.id}>
+                <tr key={contestScore.user.id}>
                   <td>{contestScore.rank && contestScore.rank.toLocaleString()}</td>
                   <td>
                     <UserLink user={contestScore.user} />
