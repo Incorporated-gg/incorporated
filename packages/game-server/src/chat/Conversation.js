@@ -4,7 +4,7 @@ import ChatUser from './ChatUser'
 import { getUserData } from '../lib/db/users'
 
 const client = redis.createClient(
-  `redis://root:root@${process.env.NODE_ENV === 'development' ? 'redis' : 'localhost'}:6379`
+  `redis://root:${process.env.REDIS_PASS}@${process.env.NODE_ENV === 'development' ? 'redis' : 'localhost'}:6379`
 )
 const hGetAllAsync = promisify(client.hgetall).bind(client)
 const sAddAsync = promisify(client.sadd).bind(client)

@@ -3,7 +3,7 @@ import { promisify } from 'util'
 import Conversation from './Conversation'
 
 const client = redis.createClient(
-  `redis://root:root@${process.env.NODE_ENV === 'development' ? 'redis' : 'localhost'}:6379`
+  `redis://root:${process.env.REDIS_PASS}@${process.env.NODE_ENV === 'development' ? 'redis' : 'localhost'}:6379`
 )
 const sAddAsync = promisify(client.sadd).bind(client)
 const hGetAsync = promisify(client.hget).bind(client)
