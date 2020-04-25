@@ -2,7 +2,9 @@ import redis from 'redis'
 import { promisify } from 'util'
 import Conversation from './Conversation'
 
-const client = redis.createClient(`redis://root:root@redis:6379`)
+const client = redis.createClient(
+  `redis://root:root@${process.env.NODE_ENV === 'development' ? 'redis' : 'localhost'}:6379`
+)
 const sAddAsync = promisify(client.sadd).bind(client)
 const hGetAsync = promisify(client.hget).bind(client)
 const sisMemberAsync = promisify(client.sismember).bind(client)

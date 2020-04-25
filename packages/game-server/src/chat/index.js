@@ -5,7 +5,9 @@ import redis from 'redis'
 import ChatUser from './ChatUser'
 import Conversation from './Conversation'
 
-const client = redis.createClient(`redis://root:${process.env.REDIS_PASS}@localhost:6379`)
+const client = redis.createClient(
+  `redis://root:${process.env.REDIS_PASS}@${process.env.NODE_ENV === 'development' ? 'redis' : 'localhost'}:6379`
+)
 const hGetAsync = promisify(client.hget).bind(client)
 
 const publicChannels = [
