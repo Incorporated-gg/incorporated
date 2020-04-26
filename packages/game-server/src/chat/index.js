@@ -134,7 +134,7 @@ export const setupChat = io => {
 
       socket.on('createChat', async withUserName => {
         const userId = await getUserIDFromUsername(withUserName)
-        if (!userId) return
+        if (!userId || userId === socket.user.id) return
         const withUser = await getUserData(userId)
         const newConv = new Conversation({
           name: withUser.username,

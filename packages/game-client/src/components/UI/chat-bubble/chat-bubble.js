@@ -145,7 +145,7 @@ export default function ChatBubble() {
       chatRoom => chatRoom.type === 'individual' && chatRoom.users.find(u => u.username === userName)
     )
     if (existingChat) return changeRoom(existingChat)
-    if (userName === userData.username) return false
+    if (userName.toLowerCase() === userData.username.toLowerCase()) return false
     client.current.emit('createChat', userName)
   }
 
