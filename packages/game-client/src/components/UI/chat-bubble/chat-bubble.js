@@ -262,7 +262,7 @@ export default function ChatBubble() {
                   <h3>
                     {currentRoom && currentRoom.type === 'individual'
                       ? currentRoom.users.find(u => parseInt(u.id) !== userData.id).username
-                      : currentRoom.name}
+                      : 'No hay conversaciones activas'}
                   </h3>
                   <button type="button" className={styles.chatOptionsButton} onClick={() => showChatOptions()}>
                     <Icon
@@ -275,11 +275,13 @@ export default function ChatBubble() {
                   </button>
                 </div>
                 <span className={styles.chatWindowBodyHeaderBottom}>
-                  {currentRoom.users.filter(u => u.online).length} usuarios conectados
+                  {currentRoom && currentRoom.users.filter(u => u.online).length} usuarios conectados
                 </span>
               </header>
               <div className={styles.chatMessagesWrapper} ref={chatMessagesWrapper} /* onScroll={captureChatScroll} */>
-                {messagesList.find(m => m.room === currentRoom.id) &&
+                {messagesList &&
+                  currentRoom &&
+                  messagesList.find(m => m.room === currentRoom.id) &&
                   messagesList
                     .find(m => m.room === currentRoom.id)
                     .messagesArray.map((message, i) => (
