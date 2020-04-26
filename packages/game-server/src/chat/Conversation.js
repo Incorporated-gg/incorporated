@@ -50,7 +50,8 @@ class Conversation {
       } else {
         const userIds = await sMembersAsync(`${conversationKey}:userIds`)
         const messages = await sMembersAsync(`${conversationKey}:messages`)
-        if (messages) conver.messages = messages.map(message => JSON.parse(message))
+        if (messages)
+          conver.messages = messages.map(message => JSON.parse(message)).sort((m1, m2) => (m1.date > m2.date ? 1 : -1))
         this.name = conver.name
         this.messages = conver.messages || []
         this.userIds = userIds
@@ -62,8 +63,9 @@ class Conversation {
   }
   async syncUsers() {
     await hDelAsync(`conversations:${this.id}`, 'userIds')
-    await this.userIds.forEach(async userId => {
-      return await sAddAsync(`conversations:${this.id}:userIds`, userId)
+    this.userIds.forEach(async userId => {
+      await sAddAsync(`conversations:${this.id}:userIds`, userId)
+      await this.addUser(userId)
     })
   }
   async addUser(userId) {

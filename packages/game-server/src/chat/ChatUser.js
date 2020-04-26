@@ -7,6 +7,8 @@ const client = redis.createClient(
 )
 const sAddAsync = promisify(client.sadd).bind(client)
 const hGetAsync = promisify(client.hget).bind(client)
+const sMembersAsync = promisify(client.smembers).bind(client)
+const hGetAllAsync = promisify(client.hgetall).bind(client)
 const sisMemberAsync = promisify(client.sismember).bind(client)
 
 const CONNECTED_USERS_SET_KEY = 'connectedUsers'
@@ -19,17 +21,28 @@ class ChatUser {
   }
   async init() {
     const isOnline = await sisMemberAsync(`chat:${CONNECTED_USERS_SET_KEY}`, this.id)
-    const rawConversations = await hGetAsync(`users:${this.id}`, 'conversations')
-    const parsedConversations = rawConversations.map(async conversation => {
-      const instance = new Conversation(conversation)
-      await instance.init()
-      return instance
-    })
+    const rawConversations = await sMembersAsync(`users:${this.id}:conversations`)
+    const parsedConversations = rawConversations
+      ? await Promise.all(
+          rawConversations.map(async conversation => {
+            const instance = new Conversation({ id: conversation })
+            await instance.init()
+            return await instance.toJSON()
+          })
+        )
+      : []
     this.online = isOnline === 1
-    return parsedConversations
+    this.conversations = parsedConversations
   }
   async joinConversation(conversationId) {
     await sAddAsync(`users:${this.id}:conversations`, conversationId)
+  }
+  async toJSON() {
+    return {
+      id: this.id,
+      conversations: this.conversations,
+      online: this.online,
+    }
   }
 }
 

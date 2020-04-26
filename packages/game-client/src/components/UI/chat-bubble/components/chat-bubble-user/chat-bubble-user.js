@@ -14,7 +14,7 @@ export default function ChatBubbleUser({ user, className }) {
       <Link className={styles.avatarLink} to={`/ranking/user/${user.username}`}>
         <img src={user.avatar} alt="" className={styles.avatar} />
       </Link>
-      <AllianceBadge badge={user.alliance.badge} className={styles.badge} />
+      {user.alliance && <AllianceBadge badge={user.alliance.badge} className={styles.badge} />}
     </div>
   )
 }

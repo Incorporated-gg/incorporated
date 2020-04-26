@@ -34,7 +34,7 @@ export default function ChatBubble() {
   const changeRoom = useCallback(chatRoom => {
     setCurrentRoom(chatRoom)
     setIsSelectingRoom(false)
-    setLastReadMessageDates(records => {
+    /* setLastReadMessageDates(records => {
       const existingRecord = records.find(r => r.room === chatRoom.name)
       if (!existingRecord) {
         return Array.prototype.concat(records, [{ room: chatRoom.name, date: Date.now() / 1000 }])
@@ -45,7 +45,7 @@ export default function ChatBubble() {
         }
         return r
       })
-    })
+    }) */
     chatInput.current && chatInput.current.focus()
     setTimeout(() => scrollDown())
   }, [])
@@ -65,9 +65,7 @@ export default function ChatBubble() {
         }
         return originalList.map(list => {
           if (list.room === room) {
-            const filteredMessages = messagesArray.filter(
-              message => !list.messagesArray.find(m => m.id === message.id && m.date < message.date)
-            )
+            const filteredMessages = messagesArray.filter(message => !list.messagesArray.find(m => m.id === message.id))
             list.messagesArray = Array.prototype.concat(list.messagesArray, filteredMessages)
           }
           return list
@@ -143,13 +141,12 @@ export default function ChatBubble() {
   }
 
   const createChat = userName => {
-    if (
-      !chatRoomList.find(
-        chatRoom => chatRoom.type === 'individual' && chatRoom.users.find(u => parseInt(u.username) === userName)
-      ) &&
-      userName !== userData.username
+    const existingChat = chatRoomList.find(
+      chatRoom => chatRoom.type === 'individual' && chatRoom.users.find(u => u.username === userName)
     )
-      client.current.emit('createChat', userName)
+    if (existingChat) return changeRoom(existingChat)
+    if (userName === userData.username) return false
+    client.current.emit('createChat', userName)
   }
 
   const toggleChat = status => {

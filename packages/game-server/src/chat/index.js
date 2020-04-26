@@ -84,32 +84,17 @@ export const setupChat = io => {
     })
     .on('connection', async socket => {
       console.log(socket.user.id + ' connected')
-      const userRoomNames = await hGetAsync(`users:${socket.user.id}`, 'conversations')
-      const privateRooms =
-        userRoomNames &&
-        userRoomNames.map(async roomName => {
-          return await hGetAsync('conver', roomName)
-        })
-      privateRooms &&
-        privateRooms.forEach(privateRoom => {
-          socket.join(privateRoom.name)
+      const user = new ChatUser(socket.user.id)
+      await user.init()
+      user.conversations.length &&
+        user.conversations.forEach(conversation => {
+          socket.join(conversation.id)
           socket.emit('messages', {
-            room: privateRoom.name,
-            messagesArray: privateRoom.messages.slice(
-              Math.max(privateRoom.messages.length - 25, 0),
-              privateRoom.messages.length
-            ),
+            room: conversation.id,
+            messagesArray: conversation.messages,
           })
         })
-      publicChannels.forEach(room => {
-        socket.join(room.name)
-        socket.emit('messages', {
-          room: room.name,
-          messagesArray: room.messages.slice(Math.max(room.messages.length - 25, 0), room.messages.length),
-        })
-      })
-
-      socket.emit('chatRoomList', publicChannels)
+      socket.emit('chatRoomList', user.conversations)
 
       socket.on('message', async ({ room: conversationId, text }) => {
         const thisRoom = new Conversation({
