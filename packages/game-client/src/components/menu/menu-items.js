@@ -3,7 +3,6 @@ export default [
     mainPath: '/ranking',
     svgIcon: require('./img/icon-missions.svg'),
     title: 'Misiones',
-    extra: ['unread_reports'],
     items: [
       {
         path: '/ranking',
@@ -18,19 +17,19 @@ export default [
         path: '/contest',
         alt: 'Competición',
       },
+    ],
+  },
+  {
+    mainPath: '/reports',
+    svgIcon: require('./img/icon-newspaper.svg'),
+    title: 'Buzón',
+    extra: ['unread_reports', 'unread_messages'],
+    items: [
       {
         path: '/reports',
         alt: 'Reportes',
         extra: ['unread_reports'],
       },
-    ],
-  },
-  {
-    mainPath: '/newspaper',
-    svgIcon: require('./img/icon-newspaper.svg'),
-    title: 'Periódico',
-    extra: ['unread_messages'],
-    items: [
       {
         path: '/newspaper',
         alt: 'Periódico',

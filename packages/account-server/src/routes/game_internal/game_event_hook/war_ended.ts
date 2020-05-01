@@ -5,7 +5,7 @@ type EventDataWarEnded = {
   alliance1UserIDs: number[]
   alliance2UserIDs: number[]
   winner: number
-  mvpPlayer: number
+  mvpPlayer?: number
 }
 export default async function hookWarEnded(data: EventDataWarEnded): Promise<void> {
   const winnerUserIDs = data.winner === 1 ? data.alliance1UserIDs : data.alliance2UserIDs
@@ -22,6 +22,6 @@ export default async function hookWarEnded(data: EventDataWarEnded): Promise<voi
         return Promise.all([giveXPToUser(uID, 10), increaseUserStat(uID, 'war_lose', 1)])
       })
     ),
-    increaseUserStat(data.mvpPlayer, 'war_mvp', 1),
+    data.mvpPlayer ? increaseUserStat(data.mvpPlayer, 'war_mvp', 1) : null,
   ])
 }

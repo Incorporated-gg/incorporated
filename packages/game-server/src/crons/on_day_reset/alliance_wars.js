@@ -306,5 +306,6 @@ async function getMvpPlayerFromWar(warCreatedAtTimestamp, alliance1UserIDs, alli
     return a[1] > b[1] ? -1 : 1
   })
 
+  if (!mvp.length) return null
   return parseInt(mvp[0][0])
 }

@@ -1,7 +1,6 @@
 import mysql from '../mysql'
 
-module.exports.updatePersonnelAmount = updatePersonnelAmount
-async function updatePersonnelAmount(req, resourceID, resourceAmount) {
+export async function updatePersonnelAmount(req, resourceID, resourceAmount) {
   let personnelRowExists = true
   if (req.userData.personnel[resourceID] === 0) {
     ;[personnelRowExists] = await mysql.query('SELECT 1 FROM users_resources WHERE user_id=? AND resource_id=?', [
