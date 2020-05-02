@@ -223,17 +223,17 @@ export function calcSpionageDefensePower(spyResearchLvl) {
 }
 
 export function calcSpyFailProbabilities({ resLvlAttacker, resLvLDefender, spiesSent }) {
-  let spiesProbability = (0.04 * spiesSent) / resLvlAttacker
+  let spiesProbability = (4 * spiesSent) / resLvlAttacker
   spiesProbability = Math.min(100, Math.max(0, spiesProbability))
 
-  let lvlProbability = (resLvLDefender / 50) * (resLvLDefender - resLvlAttacker)
-  lvlProbability = Math.min(100, Math.max(-100, lvlProbability))
+  let lvlProbability = (Math.max(resLvLDefender, resLvlAttacker) / 5) * (resLvLDefender - resLvlAttacker)
+  lvlProbability = Math.min(100, Math.max(-999, lvlProbability))
 
   const baseProbability = 5
   return {
     base: baseProbability,
     spies: spiesProbability,
     level: lvlProbability,
-    total: Math.min(100, spiesProbability + lvlProbability + baseProbability),
+    total: Math.min(100, Math.max(0, spiesProbability + lvlProbability + baseProbability)),
   }
 }

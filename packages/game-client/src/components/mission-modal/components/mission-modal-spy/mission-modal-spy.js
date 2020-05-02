@@ -58,6 +58,7 @@ export default function MissionModalSpy({ user, onRequestClose }) {
             Su nivel de espionaje:
             <input
               type="number"
+              min="1"
               placeholder={'Desconocido'}
               value={theirLvl}
               onChange={e => setTheirLvl(e.target.value)}
@@ -78,7 +79,7 @@ export default function MissionModalSpy({ user, onRequestClose }) {
       <div>
         <label>
           {troopName}:
-          <input type="number" value={numTroops} onChange={e => setNumTroops(e.target.value)} />
+          <input min="1" type="number" value={numTroops} onChange={e => setNumTroops(e.target.value)} />
         </label>
       </div>
       <div>Tiempo de mision: {missionSeconds}s</div>

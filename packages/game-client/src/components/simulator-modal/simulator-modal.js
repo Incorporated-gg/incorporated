@@ -14,7 +14,7 @@ SimulatorModal.propTypes = {
 export default function SimulatorModal({ spyReport, isOpen, onRequestClose }) {
   return (
     <Modal isOpen={isOpen} onRequestClose={onRequestClose}>
-      {isOpen && spyReport ? <SimulatorWithSpyReport spyReport={spyReport} /> : <SimulatorFromScratch />}
+      {isOpen && (spyReport ? <SimulatorWithSpyReport spyReport={spyReport} /> : <SimulatorFromScratch />)}
     </Modal>
   )
 }
