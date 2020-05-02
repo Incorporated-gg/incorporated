@@ -4,6 +4,7 @@ import api from 'lib/api'
 import AllianceLink from 'components/alliance/alliance-link'
 import MissionModal from 'components/mission-modal'
 import { numberToAbbreviation } from 'lib/utils'
+import MapRenderer from './map-renderer/map-renderer'
 
 export default function Map() {
   const [hoods, setHoods] = useState()
@@ -21,6 +22,7 @@ export default function Map() {
   if (!hoods) return <div style={{ padding: 10 }}>Loading</div>
   return (
     <>
+      {hoods && <MapRenderer hoods={hoods} />}
       <div className={styles.container}>
         {hoods.map(hood => {
           return (

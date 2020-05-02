@@ -1,0 +1,8 @@
+@import '../../../variables';
+
+.canvas {
+  display: block;
+  width: 100%;
+  max-width: $breakpoint-medium;
+  margin: 0 auto;
+}
