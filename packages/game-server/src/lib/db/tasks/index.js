@@ -93,7 +93,7 @@ async function getTaskCompletionPercentage(userID, taskInfo, taskData) {
       break
     }
   }
-  return Math.min(Math.floor(progress), 100)
+  return Math.min(Math.floor(progress * 100) / 100, 100)
 }
 
 async function researchLevelRequirement(userID, amountNeeded, researchID) {

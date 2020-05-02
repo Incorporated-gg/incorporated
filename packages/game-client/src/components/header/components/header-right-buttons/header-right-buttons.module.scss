@@ -11,10 +11,18 @@
   justify-content: space-between;
 }
 
-.rightButtonContainer {
+.linkButtonContainer {
   width: 100%;
 }
 
+.rightButtonOuter {
+  width: 100%;
+  display: block;
+  margin-top: 5px;
+  &:first-child {
+    margin-top: 0;
+  }
+}
 .rightButtonInner {
   position: relative; // For .finishedActiveTasksCounter
   display: flex;
@@ -36,6 +44,7 @@
 }
 
 .finishedActiveTasksCounter {
+  color: $header--color-text;
   position: absolute;
   top: 0px;
   right: 0px;

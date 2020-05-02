@@ -6,6 +6,7 @@
   max-width: $breakpoint-desktop;
   margin: auto;
   background-color: $color-bg;
+  user-select: none;
 
   >a {
     position: relative;
@@ -38,7 +39,7 @@
 
     .titleContainer {
       position: absolute;
-      bottom: env(safe-area-inset-bottom);
+      bottom: calc(env(safe-area-inset-bottom) + 3px);
       left: 0;
       width: 100%;
       text-align: center;
@@ -56,8 +57,12 @@
     }
 
     &.active {
-      background: $gradient-brand;
+      background: linear-gradient($menu--color-border, $color-brand);
       width: 30%;
+
+      @media (min-width: $breakpoint-desktop) {
+        background: linear-gradient(0deg, $menu--color-border, $color-brand);
+      }
 
       .title {
         font-size: $font-size-large;

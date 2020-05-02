@@ -7,11 +7,12 @@
   max-width: $breakpoint-desktop;
   margin: auto;
   background-color: $color-bg;
-  border-bottom: 15px solid #EACA77;
-  border-top: 3px solid #EACC77;
+  border-bottom: 15px solid $menu--color-border;
+  border-top: 3px solid $color-brand;
+  user-select: none;
 
   &.desktop {
-    border-top: 15px solid #EACA77;
+    border-top: 15px solid $menu--color-border;
     border-bottom: 0;
   }
 

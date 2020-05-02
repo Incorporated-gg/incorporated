@@ -8,6 +8,9 @@
   align-items: center;
   background: $gradient-brand;
   padding: 3px;
+  &:active {
+    transform: translateY(1px);
+  }
 }
 
 .avatar {

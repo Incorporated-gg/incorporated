@@ -1,5 +1,9 @@
 @import '../../../../variables';
 
+.linkButtonContainer {
+  width: 100%;
+}
+
 .moneyAndGoldContainer {
   flex-grow: 1;
   flex-shrink: 1;
@@ -9,7 +13,6 @@
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  color: $color-text-light;
   margin: 0 5px;
 
   .statContainer {
@@ -19,6 +22,7 @@
 
   .stat {
     display: flex;
+    color: $color-text-light;
     justify-content: space-between;
     align-items: center;
     padding: 4.5px 3px;

@@ -3,9 +3,9 @@ import styles from './header-right-buttons.module.scss'
 import { useUserData } from 'lib/user'
 import { Link } from 'react-router-dom'
 import Icon from 'components/icon'
-import IncContainer from 'components/UI/inc-container'
 import PropTypes from 'prop-types'
 import IncChevron from 'components/UI/inc-chevron'
+import IncButton from 'components/UI/inc-button'
 
 HeaderRightButtons.propTypes = {
   setIsActiveTasksModalOpen: PropTypes.func.isRequired,
@@ -13,26 +13,30 @@ HeaderRightButtons.propTypes = {
 export default function HeaderRightButtons({ setIsActiveTasksModalOpen }) {
   return (
     <div className={styles.rightButtonsContainer}>
-      <Link className={styles.rightButtonContainer} to="/finances">
-        <IncContainer borderSize={4} withHairline className={styles.rightButtonInner}>
+      <Link className={styles.linkButtonContainer} to="/finances">
+        <IncButton
+          borderSize={4}
+          withHairline
+          outerClassName={styles.rightButtonOuter}
+          className={styles.rightButtonInner}>
           <IncChevron padding={3} chevronSize={10} direction="right">
             <Icon width={26} height={16} svg={require('./img/finances.svg')} alt="Finances" />
           </IncChevron>
           <div className={styles.title}>TIENDA</div>
-        </IncContainer>
+        </IncButton>
       </Link>
-      <div
-        className={styles.rightButtonContainer}
+      <IncButton
+        borderSize={4}
+        withHairline
         onClick={() => setIsActiveTasksModalOpen(true)}
-        style={{ cursor: 'pointer', marginTop: 5 }}>
-        <IncContainer borderSize={4} withHairline className={styles.rightButtonInner}>
-          <IncChevron padding={3} chevronSize={10} direction="right">
-            <Icon width={26} height={16} svg={require('./img/tasks.svg')} alt="Tareas" />
-          </IncChevron>
-          <div className={styles.title}>TAREAS</div>
-          <FinishedActiveTasksCounter />
-        </IncContainer>
-      </div>
+        outerClassName={styles.rightButtonOuter}
+        className={styles.rightButtonInner}>
+        <IncChevron padding={3} chevronSize={10} direction="right">
+          <Icon width={26} height={16} svg={require('./img/tasks.svg')} alt="Tareas" />
+        </IncChevron>
+        <div className={styles.title}>TAREAS</div>
+        <FinishedActiveTasksCounter />
+      </IncButton>
     </div>
   )
 }

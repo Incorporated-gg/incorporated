@@ -374,6 +374,7 @@ hoodsList.map(async hoodInfo => {
 
 export async function getHoodData(hoodID) {
   hoodID = parseInt(hoodID)
+  if (Number.isNaN(hoodID)) return null
   const hoodInfo = hoodsList.find(h => h.id === hoodID)
   const hoodData = await mysql.selectOne('SELECT owner, guards FROM hoods WHERE id=?', [hoodID])
 

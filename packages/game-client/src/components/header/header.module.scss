@@ -18,15 +18,14 @@
   background-color: $color-bg;
 
   .containerBottomBorder {
-    padding-top: 4px;
-    background: $color-brand;
-    border-bottom: 4px solid $color-brand-dark;
-
-    &::after {
-      content: "";
-      width: 100%;
-      display: block;
-      border-bottom: 1px solid $color-hairline;
+    @media (max-width: $breakpoint-desktop - 1) {
+      padding-top: 1px;
+      background: $color-hairline;
+      border-top: 4px solid $color-brand;
+      border-bottom: 4px solid $color-brand-dark;
+    }
+    @media (min-width: $breakpoint-desktop) {
+      border-top: 8px solid $color-brand;
     }
   }
 }
