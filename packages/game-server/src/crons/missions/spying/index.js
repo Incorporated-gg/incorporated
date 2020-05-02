@@ -1,5 +1,5 @@
 import mysql from '../../../lib/mysql'
-import { calcSpiesCaptured, calcInformationObtained } from './calcs'
+import { calcSpiesCaptured, calcInformationPercentageObtained } from './calcs'
 import { getUserResearchs, getUserBuildings, getUserPersonnel, runUserMoneyUpdate } from '../../../lib/db/users'
 
 export async function doSpyMissions() {
@@ -38,7 +38,8 @@ async function completeSpyMission(mission) {
     spiesSent,
   })
   const spiesRemaining = spiesSent - spiesCaptured
-  const informationObtained = calcInformationObtained({
+  const informationPercentageObtained = calcInformationPercentageObtained({
+    resLvlAttacker: attackerResearchs[1],
     resLvLDefender: defensorResearchs[1],
     spiesRemaining,
   })
@@ -56,12 +57,12 @@ async function completeSpyMission(mission) {
   await runUserMoneyUpdate(defender.id)
 
   // Generate report
-  const intelReport = {
-    captured_spies: spiesCaptured,
-  }
-  if (informationObtained.buildings) intelReport.buildings = await getUserBuildings(defender.id)
-  if (informationObtained.personnel) intelReport.personnel = await getUserPersonnel(defender.id)
-  if (informationObtained.research) intelReport.researchs = defensorResearchs
+  const intelReport = await getIntelReport({
+    informationPercentageObtained,
+    spiesCaptured,
+    defenderID: defender.id,
+    defensorResearchs,
+  })
 
   // Update mission status
   const result = spiesCaptured > 0 ? 'caught' : 'not_caught'
@@ -70,4 +71,54 @@ async function completeSpyMission(mission) {
     report: intelReport,
   })
   await mysql.query('UPDATE missions SET completed=1, result=?, data=? WHERE id=?', [result, newData, mission.id])
+}
+
+async function getIntelReport({ informationPercentageObtained, spiesCaptured, defenderID, defensorResearchs }) {
+  const defensorBuildings = await getUserBuildings(defenderID)
+  const defensorPersonnel = await getUserPersonnel(defenderID)
+  const intelReport = {
+    captured_spies: spiesCaptured,
+    buildings: {},
+    personnel: {},
+    researchs: {},
+  }
+
+  let percentageLeft = informationPercentageObtained
+  const discoverables = [
+    { type: 'buildings', id: 1 },
+    { type: 'buildings', id: 2 },
+    { type: 'buildings', id: 3 },
+    { type: 'buildings', id: 4 },
+    { type: 'buildings', id: 5 },
+    { type: 'buildings', id: 6 },
+    { type: 'personnel', id: 'spies' },
+    { type: 'personnel', id: 'sabots' },
+    { type: 'personnel', id: 'thieves' },
+    { type: 'personnel', id: 'guards' },
+    { type: 'researchs', id: 1 },
+    { type: 'researchs', id: 2 },
+    { type: 'researchs', id: 3 },
+    { type: 'researchs', id: 4 },
+    { type: 'researchs', id: 5 },
+    { type: 'researchs', id: 6 },
+  ]
+  while (1) {
+    percentageLeft -= 100 / discoverables.length
+    if (percentageLeft <= 0 || !discoverables.length) break
+    const nextDiscoverable = discoverables.shift()
+
+    const infoObj =
+      nextDiscoverable.type === 'buildings'
+        ? defensorBuildings
+        : nextDiscoverable.type === 'personnel'
+        ? defensorPersonnel
+        : nextDiscoverable.type === 'researchs'
+        ? defensorResearchs
+        : null
+    if (!infoObj) throw new Error(`Unknown infoObj for discoverable: ${JSON.stringify(nextDiscoverable)}`)
+
+    intelReport[nextDiscoverable.type][nextDiscoverable.id] = infoObj[nextDiscoverable.id]
+  }
+
+  return intelReport
 }

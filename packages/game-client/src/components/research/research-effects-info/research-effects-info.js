@@ -1,5 +1,5 @@
 import React from 'react'
-import { calcSendableSpies, calcSabotsPower, calcGuardsPower } from 'shared-lib/missionsUtils'
+import { calcSpiesPower, calcSabotsPower, calcGuardsPower } from 'shared-lib/missionsUtils'
 import PropTypes from 'prop-types'
 import { userData } from 'lib/user'
 import { getTimeUntil, numberToAbbreviation } from 'lib/utils'
@@ -14,12 +14,11 @@ ResearchEffectsInfo.propTypes = {
 export default function ResearchEffectsInfo({ researchID, currentLevel, price }) {
   switch (researchID) {
     case 1: {
-      const sendableNow = calcSendableSpies(currentLevel)
-      const sendableThen = calcSendableSpies(currentLevel + 1)
+      const powerNow = calcSpiesPower(currentLevel)
+      const powerThen = calcSpiesPower(currentLevel + 1)
       return (
         <div>
-          Número máximo ideal de espías por espionaje actual: {sendableNow.toLocaleString()}, al subir:{' '}
-          {sendableThen.toLocaleString()}
+          Fuerza de espías actual: {powerNow.toLocaleString()}, al subir: {powerThen.toLocaleString()}
         </div>
       )
     }

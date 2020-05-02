@@ -64,8 +64,9 @@ export default function MissionModalSpy({ user, onRequestClose }) {
             />
           </label>
         </p>
+        <p>Base: {espionageProbabilities.base}%</p>
         <p>Por nivel: {Math.round(espionageProbabilities.level * 10) / 10}%</p>
-        <p>Por número de espías: {Math.round(espionageProbabilities.spies * 10) / 10}%</p>
+        <p>Por nº de espías: {Math.round(espionageProbabilities.spies * 10) / 10}%</p>
         <p>Total: {Math.round(espionageProbabilities.total * 10) / 10}%</p>
       </div>
       <div>

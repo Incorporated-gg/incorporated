@@ -215,26 +215,25 @@ export function simulateAttack({
   }
 }
 
-export function calcSendableSpies(spyResearchLvl) {
-  return Math.ceil(3 * Math.pow(Math.E, 0.11 * spyResearchLvl))
+export function calcSpiesPower(spyResearchLvl) {
+  return 2 * spyResearchLvl
+}
+export function calcSpionageDefensePower(spyResearchLvl) {
+  return 10 * Math.pow(spyResearchLvl, 2)
 }
 
 export function calcSpyFailProbabilities({ resLvlAttacker, resLvLDefender, spiesSent }) {
-  const sendableSpies = calcSendableSpies(resLvlAttacker)
-  const sentSpiesPercentage = spiesSent / sendableSpies
-  const valueDiff =
-    resLvLDefender < resLvlAttacker
-      ? (0.18 * resLvLDefender) / Math.pow(resLvlAttacker - resLvLDefender, 1.3)
-      : 0.18 * resLvLDefender * Math.pow(resLvLDefender - resLvlAttacker, 1.3)
-  const spiesProbability =
-    sentSpiesPercentage > 1
-      ? 0.1 + Math.pow(1.03, resLvlAttacker) * Math.pow(sentSpiesPercentage - 1, 2)
-      : sentSpiesPercentage / 10
-  const lvlProbability = valueDiff / 100
+  let spiesProbability = (0.04 * spiesSent) / resLvlAttacker
+  spiesProbability = Math.min(100, Math.max(0, spiesProbability))
 
+  let lvlProbability = (resLvLDefender / 50) * (resLvLDefender - resLvlAttacker)
+  lvlProbability = Math.min(100, Math.max(-100, lvlProbability))
+
+  const baseProbability = 5
   return {
-    spies: Math.min(100, spiesProbability),
-    level: Math.min(100, lvlProbability),
-    total: Math.min(100, spiesProbability + lvlProbability),
+    base: baseProbability,
+    spies: spiesProbability,
+    level: lvlProbability,
+    total: Math.min(100, spiesProbability + lvlProbability + baseProbability),
   }
 }

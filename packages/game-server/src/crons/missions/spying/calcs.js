@@ -1,7 +1,7 @@
-import { calcSendableSpies, calcSpyFailProbabilities } from 'shared-lib/missionsUtils'
+import { calcSpiesPower, calcSpionageDefensePower, calcSpyFailProbabilities } from 'shared-lib/missionsUtils'
 
 export function calcSpiesCaptured({ resLvlAttacker, resLvLDefender, spiesSent }) {
-  const failProbability = calcSpyFailProbabilities({ resLvlAttacker, resLvLDefender, spiesSent }).total
+  const failProbability = calcSpyFailProbabilities({ resLvlAttacker, resLvLDefender, spiesSent }).total / 100
 
   const randomNum = Math.random()
   const caught = randomNum < failProbability
@@ -15,51 +15,13 @@ export function calcSpiesCaptured({ resLvlAttacker, resLvLDefender, spiesSent })
   return spiesCaptured
 }
 
-export function _calcInformationObtainedProbabilities({ resLvLDefender, spiesRemaining }) {
-  const neededSpies = calcSendableSpies(resLvLDefender)
-  const sentSpiesPercentage = spiesRemaining / neededSpies
+export function calcInformationPercentageObtained({ resLvlAttacker, resLvLDefender, spiesRemaining }) {
+  const defensePower = calcSpionageDefensePower(resLvLDefender)
+  const attackPower = calcSpiesPower(resLvlAttacker) * spiesRemaining
 
-  const MINIMUM_FOR_RESEARCH = 1
-  const MINIMUM_FOR_PERSONNEL = 0.66
-  const MINIMUM_FOR_BUILDINGS = 0.33
+  const randomPercentage = Math.random() * 20 - 10
+  const powerPercentage = (attackPower / defensePower) * 100
+  const obtainedInformationPercentage = powerPercentage + randomPercentage
 
-  const spiesSectionRelation =
-    sentSpiesPercentage < MINIMUM_FOR_BUILDINGS
-      ? sentSpiesPercentage / MINIMUM_FOR_BUILDINGS
-      : sentSpiesPercentage < MINIMUM_FOR_PERSONNEL
-      ? (sentSpiesPercentage - MINIMUM_FOR_BUILDINGS) / MINIMUM_FOR_BUILDINGS
-      : sentSpiesPercentage < MINIMUM_FOR_RESEARCH
-      ? (sentSpiesPercentage - MINIMUM_FOR_PERSONNEL) / MINIMUM_FOR_BUILDINGS
-      : MINIMUM_FOR_RESEARCH
-
-  const maxInfo =
-    sentSpiesPercentage < MINIMUM_FOR_BUILDINGS
-      ? 'buildings'
-      : sentSpiesPercentage < MINIMUM_FOR_PERSONNEL
-      ? 'personnel'
-      : 'research'
-  const minInfo =
-    sentSpiesPercentage < MINIMUM_FOR_BUILDINGS
-      ? 'nothing'
-      : sentSpiesPercentage < MINIMUM_FOR_PERSONNEL
-      ? 'buildings'
-      : 'personnel'
-
-  const maxInfoProb = spiesSectionRelation
-  return {
-    maxInfo,
-    minInfo,
-    maxInfoProb,
-  }
-}
-
-export function calcInformationObtained({ resLvLDefender, spiesRemaining }) {
-  const { maxInfo, minInfo, maxInfoProb } = _calcInformationObtainedProbabilities({ resLvLDefender, spiesRemaining })
-  const randomNum = Math.random()
-  const infoObtained = randomNum < maxInfoProb ? maxInfo : minInfo
-  return {
-    buildings: infoObtained === 'buildings' || infoObtained === 'personnel' || infoObtained === 'research',
-    personnel: infoObtained === 'personnel' || infoObtained === 'research',
-    research: infoObtained === 'research',
-  }
+  return Math.floor(obtainedInformationPercentage * 100) / 100
 }

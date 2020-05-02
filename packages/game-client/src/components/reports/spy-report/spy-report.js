@@ -17,7 +17,9 @@ SpyReport.propTypes = {
 }
 export default function SpyReport({ mission }) {
   const isTargetMe = mission.target_user && userData.id === mission.target_user.id
+  const canSimulateAttack = mission.report.researchs?.[5] !== undefined
   const [isSimulatorModalOpen, setIsSimulatorModalOpen] = useState(false)
+  if (!mission.report.researchs) return null // Old spy reports format. Can be deleted by Dec 2020
 
   if (isTargetMe) {
     return (
@@ -41,58 +43,62 @@ export default function SpyReport({ mission }) {
           espionaje.
         </div>
       )}
-      {mission.report.buildings && (
+      <div>
+        <br />
+        <table>
+          <thead>
+            <tr>
+              <th>Edificio</th>
+              <th>Cantidad</th>
+              <th>Dinero almacenado</th>
+            </tr>
+          </thead>
+          <tbody>
+            {buildingsList.map(buildingInfo => {
+              const reportBuilding = mission.report.buildings[buildingInfo.id]
+              const quantity = reportBuilding ? reportBuilding.quantity.toLocaleString() : '?'
+              const money = reportBuilding ? numberToAbbreviation(reportBuilding.money) : '?'
+              return (
+                <tr key={buildingInfo.id}>
+                  <td>{buildingInfo.name}</td>
+                  <td>{quantity}</td>
+                  <td>
+                    {money} <Icon iconName="money" size={16} />
+                  </td>
+                </tr>
+              )
+            })}
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <br />
+        <b>{'Personal'}:</b>
+        {Object.values(personnelObj).map(personnelInfo => {
+          const reportPersonnel = mission.report.personnel[personnelInfo.resource_id]
+          const quantity = reportPersonnel !== undefined ? reportPersonnel.toLocaleString() : '?'
+          return (
+            <div key={personnelInfo.resource_id}>
+              {personnelInfo.name}: {quantity}
+            </div>
+          )
+        })}
+      </div>
+      <div>
+        <br />
+        <b>{'Investigaciones'}:</b>
+        {researchList.map(researchInfo => {
+          const reportResearch = mission.report.researchs[researchInfo.id]
+          const level = reportResearch !== undefined ? reportResearch.toLocaleString() : '?'
+          return (
+            <div key={researchInfo.id}>
+              {researchInfo.name}: Nivel {level}
+            </div>
+          )
+        })}
+      </div>
+      {canSimulateAttack && (
         <div>
-          <br />
-          <table>
-            <thead>
-              <tr>
-                <th>Edificio</th>
-                <th>Cantidad</th>
-                <th>Dinero almacenado</th>
-              </tr>
-            </thead>
-            <tbody>
-              {buildingsList.map(buildingInfo => {
-                const building = mission.report.buildings[buildingInfo.id]
-                return (
-                  <tr key={buildingInfo.id}>
-                    <td>{buildingInfo.name}</td>
-                    <td>{building.quantity.toLocaleString()}</td>
-                    <td>
-                      {numberToAbbreviation(building.money)} <Icon iconName="money" size={16} />
-                    </td>
-                  </tr>
-                )
-              })}
-            </tbody>
-          </table>
-        </div>
-      )}
-      {mission.report.personnel && (
-        <div>
-          <br />
-          <b>{'Personal'}:</b>
-          {Object.values(personnelObj).map(personnelInfo => {
-            return (
-              <div key={personnelInfo.resource_id}>
-                {personnelInfo.name}: {mission.report.personnel[personnelInfo.resource_id]}
-              </div>
-            )
-          })}
-        </div>
-      )}
-      {mission.report.researchs && (
-        <div>
-          <br />
-          <b>{'Investigaciones'}:</b>
-          {researchList.map(researchInfo => {
-            return (
-              <div key={researchInfo.id}>
-                {researchInfo.name}: Nivel {mission.report.researchs[researchInfo.id]}
-              </div>
-            )
-          })}
           <br />
           <IncButton
             onClick={() => {
@@ -109,7 +115,7 @@ export default function SpyReport({ mission }) {
           />
         </div>
       )}
-      {!mission.report.buildings &&
+      {!mission.report.buildings[1] &&
         (mission.report.captured_spies === 0 ? (
           <div>
             <br />
