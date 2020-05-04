@@ -72,5 +72,6 @@ async function setupMapCanvas(canvas, hoods) {
   setOnHoodClickEventListener(hoodID => {
     const hood = hoods.find(h => h.id === hoodID)
     console.log(hood)
+    window.alert(hood.name)
   })
 }

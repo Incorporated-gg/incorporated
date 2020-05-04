@@ -1,4 +1,5 @@
-import { islandSize, hoodsFromSvg, MINIMUM_ZOOM_FOR_HOODS } from './mapData'
+import { mapSize, hoodsFromSvg } from './svgData'
+import { MINIMUM_ZOOM_FOR_HOODS } from './utils'
 
 export function setupZoomAndPan({ ctx, drawCanvas }) {
   addTouchEvents({ ctx, drawCanvas })
@@ -6,7 +7,7 @@ export function setupZoomAndPan({ ctx, drawCanvas }) {
 }
 export function centerIsland({ ctx, drawCanvas }) {
   // Add initial zoom + pan to center island
-  const factor = ctx.canvas.width / islandSize.width
+  const factor = ctx.canvas.width / mapSize.width
   ctx.scale(factor, factor)
   ctx.translate(0, (ctx.canvas.height - ctx.canvas.width) / 2 / factor)
 
@@ -15,8 +16,8 @@ export function centerIsland({ ctx, drawCanvas }) {
     drawCanvas,
     delta: 2,
     currentPointerPos: {
-      x: islandSize.width * 0.8,
-      y: islandSize.height * 0.2,
+      x: mapSize.width * 0.8,
+      y: mapSize.height * 0.2,
     },
   })
 }
@@ -71,7 +72,7 @@ function updatePointerPosition(ctx, x, y) {
 }
 
 function updateZoom({ ctx, drawCanvas, delta, currentPointerPos }) {
-  const minZoomLevel = ctx.canvas.width / islandSize.width
+  const minZoomLevel = ctx.canvas.width / mapSize.width
   const maxZoomLevel = minZoomLevel * (768 / ctx.canvas.width) * 6 // min 6, but scales on smaller devices
 
   ctx.translate(currentPointerPos.x, currentPointerPos.y)
