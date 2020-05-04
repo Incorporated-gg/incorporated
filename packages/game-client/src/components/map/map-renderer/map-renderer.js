@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import styles from './map-renderer.module.scss'
-import { trackTransforms, setupZoomAndPan, centerIsland } from './setupZoomAndPan'
+import { trackTransforms, setupZoomAndPan, centerIsland, setOnHoodClickEventListener } from './setupZoomAndPan'
 import { drawCanvas } from './drawCanvas'
 
 MapRenderer.propTypes = {
@@ -11,16 +11,29 @@ export default function MapRenderer({ hoods }) {
   const canvasRef = useRef()
 
   useEffect(() => {
-    setupMapCanvas(canvasRef.current)
-  }, [])
+    setupMapCanvas(canvasRef.current, hoods)
+  }, [hoods])
 
   return <canvas ref={canvasRef} className={styles.canvas} />
+}
+
+function getMapTilesUrl() {
+  // Image splitted with https://www.pictools.net/split/
+  const images = {}
+  for (let row = 1; row <= 10; row++) {
+    for (let col = 1; col <= 10; col++) {
+      images[`mapTile${row}${col}`] = require(`./img/map-tiles/image_${col}_${row}.jpeg`)
+    }
+  }
+  return images
 }
 
 async function loadAssets() {
   const images = {
     base: require('./img/base.jpg'),
+    ...getMapTilesUrl(),
   }
+
   const imagesPromises = Object.entries(images).map(([key, src]) => {
     return new Promise((resolve, reject) => {
       const imgElm = new Image()
@@ -36,7 +49,7 @@ async function loadAssets() {
   }
 }
 
-async function setupMapCanvas(canvas) {
+async function setupMapCanvas(canvas, hoods) {
   const ctx = canvas.getContext('2d')
   const canvasBox = canvas.getBoundingClientRect()
   canvas.width = canvasBox.width
@@ -45,7 +58,7 @@ async function setupMapCanvas(canvas) {
   const assets = await loadAssets()
 
   function drawCanvasHelper() {
-    drawCanvas({ ctx, assets })
+    drawCanvas({ ctx, assets, hoods })
   }
 
   trackTransforms(ctx)
@@ -55,4 +68,9 @@ async function setupMapCanvas(canvas) {
   })
   centerIsland({ ctx, drawCanvas: drawCanvasHelper })
   drawCanvasHelper()
+
+  setOnHoodClickEventListener(hoodID => {
+    const hood = hoods.find(h => h.id === hoodID)
+    console.log(hood)
+  })
 }

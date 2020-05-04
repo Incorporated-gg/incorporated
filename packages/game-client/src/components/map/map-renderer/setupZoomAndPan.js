@@ -1,4 +1,4 @@
-import { islandSize } from './mapData'
+import { islandSize, hoodsFromSvg, MINIMUM_ZOOM_FOR_HOODS } from './mapData'
 
 export function setupZoomAndPan({ ctx, drawCanvas }) {
   addTouchEvents({ ctx, drawCanvas })
@@ -15,7 +15,7 @@ export function centerIsland({ ctx, drawCanvas }) {
     drawCanvas,
     delta: 2,
     currentPointerPos: {
-      x: islandSize.width * 0.7,
+      x: islandSize.width * 0.8,
       y: islandSize.height * 0.2,
     },
   })
@@ -43,6 +43,31 @@ export function getViewport(ctx) {
     width,
     height,
   }
+}
+
+function onClick(ctx) {
+  const hoodFromSvg = getIntersectingHoodFromSvg(ctx, ctx._pointerPos.x, ctx._pointerPos.y)
+  if (!hoodFromSvg) return
+  onHoodClickEventListeners.forEach(cb => cb(hoodFromSvg.id))
+}
+
+const onHoodClickEventListeners = []
+export function setOnHoodClickEventListener(callback) {
+  onHoodClickEventListeners.push(callback)
+}
+
+function getIntersectingHoodFromSvg(ctx, x, y) {
+  if (getZoom(ctx) < MINIMUM_ZOOM_FOR_HOODS) return null
+  for (const hoodFromSvg of hoodsFromSvg) {
+    if (!ctx.isPointInPath(hoodFromSvg.path, x, y)) continue
+    return hoodFromSvg
+  }
+  return null
+}
+
+function updatePointerPosition(ctx, x, y) {
+  ctx._pointerPos = { x, y }
+  ctx.canvas.style.cursor = getIntersectingHoodFromSvg(ctx, x, y) ? 'pointer' : 'default'
 }
 
 function updateZoom({ ctx, drawCanvas, delta, currentPointerPos }) {
@@ -75,6 +100,8 @@ function addTouchEvents({ ctx, drawCanvas }) {
   const canvas = ctx.canvas
   const touchStartingPoints = {}
   let lastSpaceBetweenTouches = null
+  let touchStartTimestamp
+  let touchStartCanvasPosition
 
   function clearTouchData(e) {
     e.preventDefault()
@@ -85,8 +112,28 @@ function addTouchEvents({ ctx, drawCanvas }) {
     // Clear data for 2-finger zoom
     lastSpaceBetweenTouches = null
   }
-  canvas.addEventListener('touchstart', clearTouchData)
-  canvas.addEventListener('touchend', clearTouchData)
+  canvas.addEventListener('touchstart', e => {
+    clearTouchData(e)
+
+    if (e.touches.length === 1) {
+      touchStartTimestamp = Date.now()
+      const touch = e.changedTouches[0]
+      touchStartCanvasPosition = { x: touch.pageX - canvas.offsetLeft, y: touch.pageY - canvas.offsetTop }
+      updatePointerPosition(ctx, touchStartCanvasPosition.x, touchStartCanvasPosition.y)
+    }
+  })
+  canvas.addEventListener('touchend', e => {
+    clearTouchData(e)
+
+    if (e.touches.length === 0) {
+      const msElapsed = Date.now() - touchStartTimestamp
+      const touch = e.changedTouches[0]
+      const posNow = { x: touch.pageX - canvas.offsetLeft, y: touch.pageY - canvas.offsetTop }
+      if (msElapsed < 500 && getDistanceBetweenNPoints([touchStartCanvasPosition, posNow]) < 3) {
+        onClick(ctx)
+      }
+    }
+  })
 
   canvas.addEventListener('touchmove', e => {
     e.preventDefault()
@@ -94,7 +141,9 @@ function addTouchEvents({ ctx, drawCanvas }) {
     // 1-finger pan
     if (e.touches.length === 1) {
       const touch = e.touches[0]
-      const pt = ctx.transformedPoint(touch.pageX - canvas.offsetLeft, touch.pageY - canvas.offsetTop)
+      const touchPos = { x: touch.pageX - canvas.offsetLeft, y: touch.pageY - canvas.offsetTop }
+      updatePointerPosition(ctx, touchPos.x, touchPos.y)
+      const pt = ctx.transformedPoint(touchPos.x, touchPos.y)
       const startingPoint = touchStartingPoints[touch.identifier]
       if (!startingPoint) {
         touchStartingPoints[touch.identifier] = { x: pt.x, y: pt.y }
@@ -164,7 +213,9 @@ function addMouseEvents({ ctx, drawCanvas }) {
   let lastX = canvas.width / 2
   let lastY = canvas.height / 2
   let isMouseDown = false
+  let clickStartTimestamp
   let clickStartPoint
+  let clickStartCanvasPos
 
   canvas.addEventListener('mousedown', e => {
     e.preventDefault()
@@ -172,12 +223,22 @@ function addMouseEvents({ ctx, drawCanvas }) {
     lastX = e.offsetX || e.pageX - canvas.offsetLeft
     lastY = e.offsetY || e.pageY - canvas.offsetTop
     isMouseDown = true
+    clickStartTimestamp = Date.now()
+    clickStartCanvasPos = { x: lastX, y: lastY }
     clickStartPoint = ctx.transformedPoint(lastX, lastY)
   })
   canvas.addEventListener('mouseup', e => {
     e.preventDefault()
 
     isMouseDown = null
+
+    lastX = e.offsetX || e.pageX - canvas.offsetLeft
+    lastY = e.offsetY || e.pageY - canvas.offsetTop
+
+    const msElapsed = Date.now() - clickStartTimestamp
+    if (msElapsed <= 500 && getDistanceBetweenNPoints([clickStartCanvasPos, { x: lastX, y: lastY }]) <= 3) {
+      onClick(ctx)
+    }
   })
   canvas.addEventListener('mouseleave', e => {
     e.preventDefault()
@@ -191,6 +252,7 @@ function addMouseEvents({ ctx, drawCanvas }) {
 
       lastX = e.offsetX || e.pageX - canvas.offsetLeft
       lastY = e.offsetY || e.pageY - canvas.offsetTop
+      updatePointerPosition(ctx, lastX, lastY)
       if (!isMouseDown) return
 
       const pt = ctx.transformedPoint(lastX, lastY)
@@ -210,6 +272,7 @@ function addMouseEvents({ ctx, drawCanvas }) {
     if (delta) {
       const currentPointerPos = ctx.transformedPoint(lastX, lastY)
       updateZoom({ ctx, drawCanvas, delta, currentPointerPos })
+      updatePointerPosition(ctx, lastX, lastY)
     }
     return false
   })
@@ -217,6 +280,7 @@ function addMouseEvents({ ctx, drawCanvas }) {
 
 // Adds ctx.getTransform() - returns an SVGMatrix
 // Adds ctx.transformedPoint(x,y) - returns an SVGPoint
+// Adds ctx.unTransformedPoint(x,y) - returns an SVGPoint
 export function trackTransforms(ctx) {
   const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
   let xform = svg.createSVGMatrix()

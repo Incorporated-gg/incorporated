@@ -10,7 +10,7 @@ domSvg.style.left = -99999
 domSvg.style.pointerEvents = 'none'
 document.body.append(domSvg)
 
-const svgRect = domSvg.getBoundingClientRect()
+const svgRect = domSvg.getBBox()
 export const islandSize = {
   width: svgRect.width,
   height: svgRect.height,
@@ -22,8 +22,8 @@ export const texts = Array.from(domSvg.getElementById('Nombres').getElementsByTa
     const [, left, top] = /([\d.]+) ([\d.]+)/.exec(text.attributes.transform.value)
     return {
       text: text.textContent,
-      x: parseInt(left),
-      y: parseInt(top),
+      x: parseFloat(left),
+      y: parseFloat(top),
     }
   })
   .map(name => {
@@ -31,25 +31,41 @@ export const texts = Array.from(domSvg.getElementById('Nombres').getElementsByTa
     return {
       ...name,
       fontSize: fontScale * islandSize.width,
-      maxZoom: 0.8,
     }
   })
 
 // Parse Hoods
-export const hoods = Array.from(domSvg.getElementById('Fronteras_Bloques_2.0').children).map((hood, index) => {
+export const hoodsFromSvg = Array.from(domSvg.getElementById('Fronteras_Bloques_2.0').children).map((hood, index) => {
   let d = hood.attributes.d?.value
+  let centerPoint
+  let returnWidth
   if (!d) {
-    const x = parseInt(hood.attributes.x.value)
-    const y = parseInt(hood.attributes.y.value)
-    const height = parseInt(hood.attributes.height.value)
-    const width = parseInt(hood.attributes.width.value)
+    const x = parseFloat(hood.attributes.x.value)
+    const y = parseFloat(hood.attributes.y.value)
+    const height = parseFloat(hood.attributes.height.value)
+    const width = parseFloat(hood.attributes.width.value)
     d = `M${x},${y} l${width},${0} l${0},${height} l${-width},${0} l${0},${-height}`
+    centerPoint = { x: x + width / 2, y: y + height / 2 }
+    returnWidth = width
+  } else {
+    const box = hood.getBBox()
+    const x = box.x
+    const y = box.y
+    const width = box.width
+    const height = box.height
+    centerPoint = { x: x + width / 2, y: y + height / 2 }
+    returnWidth = Math.max(50, width)
   }
 
   return {
     id: index + 1,
+    centerPoint,
     path: new Path2D(d),
+    width: returnWidth,
   }
 })
 
 domSvg.remove()
+
+export const MINIMUM_ZOOM_FOR_HOODS = 0.8
+export const MAX_ZOOM_FOR_TEXTS = 0.8
