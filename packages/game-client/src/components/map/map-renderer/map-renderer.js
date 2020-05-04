@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import styles from './map-renderer.module.scss'
-import { trackTransforms, setupZoomAndPan } from './setupZoomAndPan'
+import { trackTransforms, setupZoomAndPan, centerIsland } from './setupZoomAndPan'
 import { drawCanvas } from './drawCanvas'
 
 MapRenderer.propTypes = {
@@ -20,7 +20,6 @@ export default function MapRenderer({ hoods }) {
 async function loadAssets() {
   const images = {
     base: require('./img/base.jpg'),
-    baseDetailed: require('./img/baseDetailed.jpg'),
   }
   const imagesPromises = Object.entries(images).map(([key, src]) => {
     return new Promise((resolve, reject) => {
@@ -46,14 +45,14 @@ async function setupMapCanvas(canvas) {
   const assets = await loadAssets()
 
   function drawCanvasHelper() {
-    drawCanvas({ canvas, ctx, assets })
+    drawCanvas({ ctx, assets })
   }
 
   trackTransforms(ctx)
   setupZoomAndPan({
-    canvas,
     ctx,
     drawCanvas: drawCanvasHelper,
   })
+  centerIsland({ ctx, drawCanvas: drawCanvasHelper })
   drawCanvasHelper()
 }

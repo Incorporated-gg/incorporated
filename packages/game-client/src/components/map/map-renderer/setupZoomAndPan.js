@@ -1,83 +1,136 @@
-export function setupZoomAndPan({ canvas, ctx, drawCanvas }) {
-  addTouchEvents({ canvas, ctx, drawCanvas })
-  addMouseEvents({ canvas, ctx, drawCanvas })
+import { islandSize } from './mapData'
+
+export function setupZoomAndPan({ ctx, drawCanvas }) {
+  addTouchEvents({ ctx, drawCanvas })
+  addMouseEvents({ ctx, drawCanvas })
+}
+export function centerIsland({ ctx, drawCanvas }) {
+  // Add initial zoom + pan to center island
+  const factor = ctx.canvas.width / islandSize.width
+  ctx.scale(factor, factor)
+  ctx.translate(0, (ctx.canvas.height - ctx.canvas.width) / 2 / factor)
+
+  updateZoom({
+    ctx,
+    drawCanvas,
+    delta: 2,
+    currentPointerPos: {
+      x: islandSize.width * 0.7,
+      y: islandSize.height * 0.2,
+    },
+  })
 }
 
-export function getZoomAndPan({ ctx }) {
+export function getZoom(ctx) {
   const transform = ctx.getTransform()
+  return transform.a
+}
+export function getPan(ctx) {
+  const transform = ctx.getTransform()
+  const zoom = getZoom(ctx)
+  return { x: -transform.e / zoom, y: -transform.f / zoom }
+}
+export function getViewport(ctx) {
+  const zoom = getZoom(ctx)
+  const pan = getPan(ctx)
+  const width = ctx.canvas.width / zoom
+  const height = ctx.canvas.height / zoom
   return {
-    // TODO scrap zoomLevel in favor of transform.a
-    zoom: zoomLevel,
-    // TODO: Fix pan values
-    pan: { x: transform.e / zoomLevel, y: transform.f / zoomLevel },
+    top: pan.y,
+    left: pan.x,
+    right: pan.x + width,
+    bottom: pan.y + height,
+    width,
+    height,
   }
 }
 
-let zoomLevel = 1
 function updateZoom({ ctx, drawCanvas, delta, currentPointerPos }) {
+  const minZoomLevel = ctx.canvas.width / islandSize.width
+  const maxZoomLevel = minZoomLevel * (768 / ctx.canvas.width) * 6 // min 6, but scales on smaller devices
+
   ctx.translate(currentPointerPos.x, currentPointerPos.y)
 
   const scaleFactor = 1.1
   const factor = Math.pow(scaleFactor, delta)
-  zoomLevel *= factor
   ctx.scale(factor, factor)
+  let zoomLevel = getZoom(ctx)
 
-  const maxZoomLevel = 7
-  const minZoomLevel = 1
   if (zoomLevel > maxZoomLevel) {
     const diff = maxZoomLevel / zoomLevel
-    zoomLevel *= diff
     ctx.scale(diff, diff)
+    zoomLevel = getZoom(ctx)
   }
   if (zoomLevel < minZoomLevel) {
     const diff = minZoomLevel / zoomLevel
-    zoomLevel *= diff
     ctx.scale(diff, diff)
+    zoomLevel = getZoom(ctx)
   }
 
   ctx.translate(-currentPointerPos.x, -currentPointerPos.y)
   drawCanvas()
 }
 
-function addTouchEvents({ canvas, ctx, drawCanvas }) {
+function addTouchEvents({ ctx, drawCanvas }) {
+  const canvas = ctx.canvas
   const touchStartingPoints = {}
-  canvas.addEventListener('touchstart', e => {
-    e.preventDefault()
-  })
-
   let lastSpaceBetweenTouches = null
+
+  function clearTouchData(e) {
+    e.preventDefault()
+    // Clear data for 1-finger pan
+    Array.from(e.touches).forEach(touch => {
+      delete touchStartingPoints[touch.identifier]
+    })
+    // Clear data for 2-finger zoom
+    lastSpaceBetweenTouches = null
+  }
+  canvas.addEventListener('touchstart', clearTouchData)
+  canvas.addEventListener('touchend', clearTouchData)
+
   canvas.addEventListener('touchmove', e => {
     e.preventDefault()
 
     // 1-finger pan
-    if (e.changedTouches.length === 1) {
-      const touch = e.changedTouches[0]
+    if (e.touches.length === 1) {
+      const touch = e.touches[0]
       const pt = ctx.transformedPoint(touch.pageX - canvas.offsetLeft, touch.pageY - canvas.offsetTop)
       const startingPoint = touchStartingPoints[touch.identifier]
       if (!startingPoint) {
         touchStartingPoints[touch.identifier] = { x: pt.x, y: pt.y }
       } else {
-        const diff = { x: pt.x - startingPoint.x, y: pt.y - startingPoint.y }
-        ctx.translate(diff.x, diff.y)
+        const diff = {
+          x: startingPoint.x - pt.x,
+          y: startingPoint.y - pt.y,
+        }
+        ctx.translate(-diff.x, -diff.y)
       }
     } else {
       // 2-finger zoom
-      const touch1 = e.changedTouches[0]
-      const pt1 = ctx.transformedPoint(touch1.pageX - canvas.offsetLeft, touch1.pageY - canvas.offsetTop)
-      delete touchStartingPoints[touch1.identifier]
 
-      const touch2 = e.changedTouches[1]
-      const pt2 = ctx.transformedPoint(touch2.pageX - canvas.offsetLeft, touch2.pageY - canvas.offsetTop)
-      delete touchStartingPoints[touch2.identifier]
+      const touchesArray = Array.from(e.touches)
 
-      const spaceBetweenTouches = Math.abs(pt1.x - pt2.x) + Math.abs(pt1.y - pt2.y)
-      if (!lastSpaceBetweenTouches) {
+      const spaceBetweenTouches = getDistanceBetweenNPoints(
+        touchesArray.map(touch => ({ x: touch.pageX, y: touch.pageY }))
+      )
+      if (lastSpaceBetweenTouches === null) {
         lastSpaceBetweenTouches = spaceBetweenTouches
       } else {
-        const delta = (spaceBetweenTouches - lastSpaceBetweenTouches) / 8
+        const delta = (spaceBetweenTouches - lastSpaceBetweenTouches) / 10
+        lastSpaceBetweenTouches = spaceBetweenTouches
+
+        const sumPts = touchesArray
+          .map(touch => ctx.transformedPoint(touch.pageX - canvas.offsetLeft, touch.pageY - canvas.offsetTop))
+          .reduce(
+            (prev, pt) => ({
+              x: prev.x + pt.x,
+              y: prev.y + pt.y,
+            }),
+            { x: 0, y: 0 }
+          )
         const avgPos = {
-          x: (pt1.x + pt2.x) / 2,
-          y: (pt1.y + pt2.y) / 2,
+          x: sumPts.x / touchesArray.length,
+          y: sumPts.y / touchesArray.length,
         }
 
         updateZoom({
@@ -91,16 +144,23 @@ function addTouchEvents({ canvas, ctx, drawCanvas }) {
 
     drawCanvas()
   })
-
-  canvas.addEventListener('touchend', e => {
-    e.preventDefault()
-    const touch = e.changedTouches[0]
-    delete touchStartingPoints[touch.identifier]
-    lastSpaceBetweenTouches = null
-  })
 }
 
-function addMouseEvents({ canvas, ctx, drawCanvas }) {
+function getDistanceBetweenNPoints(pointsArray) {
+  let distance = 0
+  for (let i = 0; i < pointsArray.length; i++) {
+    for (let j = i + 1; j < pointsArray.length; j++) {
+      // shortest distance between point i and j.
+      distance += Math.sqrt(
+        Math.pow(pointsArray[i].x - pointsArray[j].x, 2) + Math.pow(2 + (pointsArray[i].y - pointsArray[j].y), 2)
+      )
+    }
+  }
+  return distance
+}
+
+function addMouseEvents({ ctx, drawCanvas }) {
+  const canvas = ctx.canvas
   let lastX = canvas.width / 2
   let lastY = canvas.height / 2
   let isMouseDown = false
@@ -134,7 +194,11 @@ function addMouseEvents({ canvas, ctx, drawCanvas }) {
       if (!isMouseDown) return
 
       const pt = ctx.transformedPoint(lastX, lastY)
-      ctx.translate(pt.x - clickStartPoint.x, pt.y - clickStartPoint.y)
+      const diff = {
+        x: clickStartPoint.x - pt.x,
+        y: clickStartPoint.y - pt.y,
+      }
+      ctx.translate(-diff.x, -diff.y)
       drawCanvas()
     },
     false

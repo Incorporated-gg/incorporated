@@ -1,9 +1,12 @@
-import { getZoomAndPan } from './setupZoomAndPan'
+import { getZoom } from './setupZoomAndPan'
+import { texts, islandSize, hoods } from './mapData'
 
-export function drawCanvas({ canvas, ctx, assets }) {
+const FONT_FAMILY = 'Oswald, Arial, serif'
+
+export function drawCanvas({ ctx, assets }) {
+  const canvas = ctx.canvas
   const BG_COLOR = '#023249'
-  const FONT_FAMILY = 'Oswald, Arial, serif'
-  const zoomLevel = getZoomAndPan({ ctx }).zoom
+  const zoom = getZoom(ctx)
 
   // BG
   ctx.save()
@@ -13,12 +16,34 @@ export function drawCanvas({ canvas, ctx, assets }) {
   ctx.restore()
 
   // Base
-  const bgImage = zoomLevel <= 2 ? assets.images.base : assets.images.baseDetailed
-  ctx.drawImage(bgImage, 0, (canvas.height - canvas.width) / 2, canvas.width, canvas.width)
+  const bgImage = assets.images.base
+  ctx.drawImage(bgImage, 0, 0, islandSize.width, islandSize.height)
 
-  // Texts
-  ctx.textAlign = 'center'
+  drawHoods({ ctx })
+  drawTexts({ ctx, zoom })
+}
+
+function drawHoods({ ctx }) {
+  ctx.fillStyle = 'rgba(10, 10, 10, 0.4)'
+  hoods.forEach(hood => {
+    ctx.fill(hood.path)
+    // TODO: mouse collision detection with ctx.isPointInPath(hood.path)
+  })
+}
+
+function drawTexts({ ctx, zoom }) {
+  ctx.save()
+  ctx.textAlign = 'left'
+  ctx.verticalAlign = 'top'
   ctx.fillStyle = '#fff'
-  ctx.font = '50px ' + FONT_FAMILY
-  ctx.fillText('City of Argentas', canvas.width / 2, canvas.height * 0.15)
+  ctx.shadowColor = '#000'
+  ctx.shadowBlur = 4
+
+  texts.forEach(text => {
+    if (zoom > text.maxZoom) return
+    const fontSize = text.fontSize
+    ctx.font = `${fontSize}px ${FONT_FAMILY}`
+    ctx.fillText(text.text, text.x, text.y)
+  })
+  ctx.restore()
 }
