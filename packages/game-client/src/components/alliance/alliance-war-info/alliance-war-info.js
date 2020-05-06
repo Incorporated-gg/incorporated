@@ -55,8 +55,7 @@ export default function WarInfo({ war }) {
     })
   }
 
-  const canAskForWarAid =
-    !hasFinished && isMyAllianceAttackerOrDefender && userData.alliance_user_rank.permission_declare_war
+  const canAskForWarAid = !hasFinished && isMyAllianceAttackerOrDefender && userData.alliance_user_rank.permission_admin
   const [isAskForWarAidModalOpen, setIsAskForWarAidModalOpen] = useState(false)
   const openAskForWarAidModal = () => {
     setIsAskForWarAidModalOpen(true)

@@ -27,7 +27,7 @@ module.exports = app => {
     }
 
     const userRank = await getUserAllianceRank(req.userData.id)
-    if (!userRank || !userRank.permission_declare_war) {
+    if (!userRank || !userRank.permission_admin) {
       res.status(401).json({ error: 'No tienes permiso para hacer esto' })
       return
     }
@@ -95,7 +95,7 @@ module.exports = app => {
     const attackedHoods = req.body.hoods.map(n => parseInt(n))
 
     const userRank = await getUserAllianceRank(req.userData.id)
-    if (!userRank || !userRank.permission_declare_war) {
+    if (!userRank || !userRank.permission_admin) {
       res.status(401).json({ error: 'No tienes permiso para hacer esto' })
       return
     }

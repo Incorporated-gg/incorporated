@@ -1,7 +1,7 @@
 import { getUserData, sendMessage } from '../../lib/db/users'
 import mysql from '../../lib/mysql'
 import { getUserAllianceRank, getUserAllianceID, getAllianceMembers } from '../../lib/db/alliances'
-import { MAX_ALLIANCE_MEMBERS } from 'shared-lib/allianceUtils'
+import { MAX_ALLIANCE_MEMBERS, PERMISSIONS_LIST } from 'shared-lib/allianceUtils'
 
 module.exports = app => {
   app.get('/v1/alliance/member_request/list', async function(req, res) {
@@ -123,17 +123,8 @@ module.exports = app => {
     }
 
     const newRankName = req.body.rank_name
-    const permissionsList = [
-      'permission_admin',
-      'permission_accept_and_kick_members',
-      'permission_extract_money',
-      'permission_extract_troops',
-      'permission_send_circular_msg',
-      'permission_activate_buffs',
-      'permission_declare_war',
-    ]
     const permissions = {}
-    permissionsList.forEach(permissionName => {
+    PERMISSIONS_LIST.forEach(permissionName => {
       permissions[permissionName] = Boolean(req.body[permissionName])
     })
 
@@ -162,18 +153,15 @@ module.exports = app => {
 
     await mysql.query(
       'UPDATE alliances_members SET rank_name=?, \
-      permission_admin=?, permission_accept_and_kick_members=?, permission_extract_money=?, permission_extract_troops=?, \
-      permission_send_circular_msg=?, permission_activate_buffs=?, permission_declare_war=? \
+      permission_admin=?, permission_accept_and_kick_members=?, permission_extract_resources=?, \
+      permission_activate_buffs=?, \
       WHERE alliance_id=? AND user_id=?',
       [
         newRankName,
         permissions.permission_admin,
         permissions.permission_accept_and_kick_members,
-        permissions.permission_extract_money,
-        permissions.permission_extract_troops,
-        permissions.permission_send_circular_msg,
+        permissions.permission_extract_resources,
         permissions.permission_activate_buffs,
-        permissions.permission_declare_war,
         userRank.alliance_id,
         switchingUser.user.id,
       ]

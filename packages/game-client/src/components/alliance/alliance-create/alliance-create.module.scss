@@ -1,0 +1,19 @@
+@import '../../../variables';
+
+.title {
+  @include gradientText();
+  @include pascalText();
+  font-family: $font-family-title;
+  font-size: $font-size-large;
+  margin-top: 10px;
+  margin-bottom: 5px;
+  &.supertitle {
+    font-size: $font-size-xlarge;
+    margin-top: 0;
+    margin-bottom: 20px;
+  }
+}
+.descInput {
+  width: 100%;
+  min-height: 5em;
+}

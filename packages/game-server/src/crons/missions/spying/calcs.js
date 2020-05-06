@@ -1,4 +1,4 @@
-import { calcSpiesPower, calcSpionageDefensePower, calcSpyFailProbabilities } from 'shared-lib/missionsUtils'
+import { calcSpyFailProbabilities, calcSpyInformationPercentageRange } from 'shared-lib/missionsUtils'
 
 export function calcSpiesCaptured({ resLvlAttacker, resLvLDefender, spiesSent }) {
   const failProbability = calcSpyFailProbabilities({ resLvlAttacker, resLvLDefender, spiesSent }).total / 100
@@ -16,12 +16,9 @@ export function calcSpiesCaptured({ resLvlAttacker, resLvLDefender, spiesSent })
 }
 
 export function calcInformationPercentageObtained({ resLvlAttacker, resLvLDefender, spiesRemaining }) {
-  const defensePower = calcSpionageDefensePower(resLvLDefender)
-  const attackPower = calcSpiesPower(resLvlAttacker) * spiesRemaining
+  const range = calcSpyInformationPercentageRange({ resLvlAttacker, resLvLDefender, spiesRemaining })
 
-  const randomPercentage = Math.random() * 20 - 10
-  const powerPercentage = (attackPower / defensePower) * 100
-  const obtainedInformationPercentage = powerPercentage + randomPercentage
+  const result = Math.random() * (range.max - range.min) + range.min
 
-  return Math.floor(obtainedInformationPercentage * 100) / 100
+  return Math.floor(result * 100) / 100
 }

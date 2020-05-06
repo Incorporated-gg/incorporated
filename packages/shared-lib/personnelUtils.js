@@ -1,12 +1,4 @@
 export const personnelObj = {
-  guards: {
-    name: 'Guardias',
-    resource_id: 'guards',
-    price: 100,
-    firingCost: 50,
-    combatPower: 1,
-    dailyMaintenanceCost: 500,
-  },
   sabots: {
     name: 'Gangsters',
     resource_id: 'sabots',
@@ -21,6 +13,14 @@ export const personnelObj = {
     price: 2500,
     firingCost: 500,
     dailyMaintenanceCost: 1000,
+  },
+  guards: {
+    name: 'Guardias',
+    resource_id: 'guards',
+    price: 100,
+    firingCost: 50,
+    combatPower: 1,
+    dailyMaintenanceCost: 500,
   },
   thieves: {
     name: 'Ladrones',

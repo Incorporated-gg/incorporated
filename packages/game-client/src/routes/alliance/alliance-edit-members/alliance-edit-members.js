@@ -5,6 +5,7 @@ import { reloadUserData } from 'lib/user'
 import IncContainer from 'components/UI/inc-container'
 import IncButton from 'components/UI/inc-button'
 import { useHistory } from 'react-router-dom'
+import { PERMISSIONS_OBJECT, PERMISSIONS_LIST } from 'shared-lib/allianceUtils'
 
 AllianceEditMembers.propTypes = {
   alliance: PropTypes.object.isRequired,
@@ -68,17 +69,6 @@ export default function AllianceEditMembers({ alliance, reloadAllianceData }) {
     setRankEdits(Object.assign({}, rankEdits))
   }
 
-  const permissionsList = Object.keys(alliance.ranks[0].rank).filter(column => column.startsWith('permission_'))
-  const permissionsIDToName = {
-    permission_admin: 'Admin',
-    permission_accept_and_kick_members: 'Aceptar y echar miembros',
-    permission_extract_money: 'Extraer dinero',
-    permission_extract_troops: 'Extraer tropas',
-    permission_send_circular_msg: 'Enviar mensaje circular',
-    permission_activate_buffs: 'Activar buffs',
-    permission_declare_war: 'Declarar guerra',
-  }
-
   const exitPressed = () => {
     history.push('/alliance')
   }
@@ -96,8 +86,8 @@ export default function AllianceEditMembers({ alliance, reloadAllianceData }) {
               <tr>
                 <th>Miembro</th>
                 <th>Nombre de rol</th>
-                {permissionsList.map(permissionName => (
-                  <th key={permissionName}>{permissionsIDToName[permissionName] || permissionName}</th>
+                {PERMISSIONS_LIST.map(permissionName => (
+                  <th key={permissionName}>{PERMISSIONS_OBJECT[permissionName] || permissionName}</th>
                 ))}
               </tr>
             </thead>
@@ -118,7 +108,7 @@ export default function AllianceEditMembers({ alliance, reloadAllianceData }) {
                         />
                       </label>
                     </td>
-                    {permissionsList.map(permissionName => {
+                    {PERMISSIONS_LIST.map(permissionName => {
                       return (
                         <td key={permissionName}>
                           <label>

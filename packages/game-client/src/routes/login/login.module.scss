@@ -22,7 +22,6 @@
   }
   .buttonText {
     @include pascalText();
-    @include blackBorderText();
     color: #fff;
     text-transform: uppercase;
     font-family: $font-family-title;

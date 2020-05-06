@@ -65,7 +65,7 @@ export default function Ranking() {
           ) : userData.alliance.id === alliance.id ? (
             <button onClick={leaveAlliance}>Salir</button>
           ) : (
-            userData.alliance_user_rank.permission_declare_war && (
+            userData.alliance_user_rank.permission_admin && (
               <button onClick={() => setIsDeclareWarModalOpen(true)}>Declarar guerra</button>
             )
           )}

@@ -3,8 +3,12 @@ import { generateSession } from '../lib/db/sessions'
 import bcrypt from 'bcryptjs'
 import express from 'express'
 
+const ACCOUNT_NAMING_REQUIREMENTS = {
+  minLength: 4,
+  maxLength: 16,
+  regExp: /^[a-z0-9_-]+$/i,
+}
 const emailRegexp = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
-const alphanumericRegexp = /^[a-z0-9]+$/i
 
 export default (app: express.Application): void => {
   app.post('/v1/register', async function(req, res) {
@@ -26,7 +30,10 @@ export default (app: express.Application): void => {
     }
 
     const isValidUsername =
-      typeof username === 'string' && username.length >= 4 && username.length <= 20 && alphanumericRegexp.test(username)
+      typeof username === 'string' &&
+      username.length >= ACCOUNT_NAMING_REQUIREMENTS.minLength &&
+      username.length <= ACCOUNT_NAMING_REQUIREMENTS.maxLength &&
+      ACCOUNT_NAMING_REQUIREMENTS.regExp.test(username)
     if (!isValidUsername) {
       res.status(400).json({ error: 'Username inválido' })
       return

@@ -30,6 +30,27 @@ export const RESOURCES_LIST = [
   },
 ]
 
+export const PERMISSIONS_OBJECT = {
+  permission_admin: 'Admin',
+  permission_accept_and_kick_members: 'Aceptar y echar miembros',
+  permission_extract_resources: 'Extraer recursos',
+  permission_activate_buffs: 'Activar buffs',
+}
+export const PERMISSIONS_LIST = Object.keys(PERMISSIONS_OBJECT)
+
+export const NAMING_REQUIREMENTS = {
+  short_name: {
+    regExp: /^[a-z0-9]+$/i,
+    minChars: 2,
+    maxChars: 5,
+  },
+  long_name: {
+    regExp: /^[a-z0-9 ]+$/i,
+    minChars: 2,
+    maxChars: 20,
+  },
+}
+
 export function calcResearchPrice(researchID, researchLevel) {
   const data = RESEARCHS_LIST.find(raw => raw.id === researchID)
   if (!data) return false

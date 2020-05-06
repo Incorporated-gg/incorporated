@@ -195,7 +195,7 @@ module.exports = app => {
     // Make sure the user has enough resources/space for them
     switch (resourceID) {
       case 'money':
-        if (resourceAmount < 0 && !userRank.permission_extract_money) {
+        if (resourceAmount < 0 && !userRank.permission_extract_resources) {
           res.status(401).json({ error: 'No tienes permiso para hacer esto' })
           return
         }
@@ -210,7 +210,7 @@ module.exports = app => {
       case 'sabots':
       case 'guards':
       case 'thieves':
-        if (resourceAmount < 0 && !userRank.permission_extract_troops) {
+        if (resourceAmount < 0 && !userRank.permission_extract_resources) {
           res.status(401).json({ error: 'No tienes permiso para hacer esto' })
           return
         }

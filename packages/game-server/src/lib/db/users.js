@@ -20,7 +20,7 @@ export async function getUserData(userID) {
     alliancePromise,
     accountDataPromise,
   ])
-  if (!userData) return null
+  if (!userData || !accountData) return null
 
   return {
     id: userID,

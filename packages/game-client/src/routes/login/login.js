@@ -2,6 +2,13 @@ import React, { useState } from 'react'
 import styles from './login.module.scss'
 import api from '../../lib/api'
 import { setNewSessionID } from '../../lib/user'
+import IncInput from 'components/UI/inc-input'
+
+const ACCOUNT_NAMING_REQUIREMENTS = {
+  minLength: 4,
+  maxLength: 16,
+  regExp: /^[a-z0-9_-]+$/i,
+}
 
 export default function LoginRoute() {
   const [active, setActive] = useState('login')
@@ -53,16 +60,18 @@ function Login() {
 
   return (
     <form className={styles.formContainer} onSubmit={loginClicked}>
-      <input
+      <IncInput
+        maxLength={ACCOUNT_NAMING_REQUIREMENTS.maxLength}
         type="text"
         placeholder={'Nombre de usuario'}
         value={username}
-        onChange={e => setUsername(e.target.value)}
+        onChangeText={setUsername}
       />
-      <input type="password" placeholder={'Contraseña'} value={password} onChange={e => setPassword(e.target.value)} />
+      <IncInput type="password" placeholder={'Contraseña'} value={password} onChangeText={setPassword} />
       <div className={styles.buttonText} onClick={loginClicked}>
         INICIAR SESIÓN
       </div>
+      <button type="submit" style={{ display: 'none' }}></button>
     </form>
   )
 }
@@ -90,12 +99,19 @@ function Register() {
 
   return (
     <form className={styles.formContainer} onSubmit={registerClicked}>
-      <input type="text" placeholder="Nombre de usuario" value={username} onChange={e => setUsername(e.target.value)} />
-      <input type="password" placeholder="Contraseña" value={password} onChange={e => setPassword(e.target.value)} />
-      <input type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} />
+      <IncInput
+        maxLength={ACCOUNT_NAMING_REQUIREMENTS.maxLength}
+        type="text"
+        placeholder="Nombre de usuario"
+        value={username}
+        onChangeText={setUsername}
+      />
+      <IncInput type="password" placeholder="Contraseña" value={password} onChangeText={setPassword} />
+      <IncInput type="email" placeholder="Email" value={email} onChangeText={setEmail} />
       <div className={styles.buttonText} onClick={registerClicked}>
         CREAR CUENTA
       </div>
+      <button type="submit" style={{ display: 'none' }}></button>
     </form>
   )
 }

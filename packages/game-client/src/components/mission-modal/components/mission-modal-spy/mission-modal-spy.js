@@ -2,7 +2,11 @@ import React, { useState, useCallback, useEffect } from 'react'
 import api from 'lib/api'
 import { useUserData } from 'lib/user'
 import { personnelObj } from 'shared-lib/personnelUtils'
-import { calculateMissionTime, calcSpyFailProbabilities } from 'shared-lib/missionsUtils'
+import {
+  calculateMissionTime,
+  calcSpyFailProbabilities,
+  calcSpyInformationPercentageRange,
+} from 'shared-lib/missionsUtils'
 import PropTypes from 'prop-types'
 import IncButton from 'components/UI/inc-button'
 
@@ -21,6 +25,11 @@ export default function MissionModalSpy({ user, onRequestClose }) {
     resLvlAttacker: userData.researchs[1],
     resLvLDefender: parseInt(theirLvl) || userData.researchs[1],
     spiesSent: numTroops,
+  })
+  const informationPercentageRange = calcSpyInformationPercentageRange({
+    resLvlAttacker: userData.researchs[1],
+    resLvLDefender: parseInt(theirLvl) || userData.researchs[1],
+    spiesRemaining: numTroops,
   })
 
   useEffect(() => {
@@ -52,24 +61,32 @@ export default function MissionModalSpy({ user, onRequestClose }) {
   return (
     <>
       <div>
-        <p>Probabilidades de fallo:</p>
-        <p>
-          <label>
-            Su nivel de espionaje:
-            <input
-              type="number"
-              min="1"
-              placeholder={'Desconocido'}
-              value={theirLvl}
-              onChange={e => setTheirLvl(e.target.value)}
-            />
-          </label>
-        </p>
+        <label>
+          Su nivel de espionaje:
+          <input
+            type="number"
+            min="1"
+            placeholder={'Desconocido'}
+            value={theirLvl}
+            onChange={e => setTheirLvl(e.target.value)}
+          />
+        </label>
+      </div>
+      <br />
+      <div>
+        <p>Probabilidades de ser detectados:</p>
         <p>Base: {espionageProbabilities.base}%</p>
         <p>Por nivel: {Math.round(espionageProbabilities.level * 10) / 10}%</p>
         <p>Por nº de espías: {Math.round(espionageProbabilities.spies * 10) / 10}%</p>
         <p>Total: {Math.round(espionageProbabilities.total * 10) / 10}%</p>
       </div>
+      <br />
+      <div>
+        <p>Información obtenida con {numTroops.toLocaleString()} espías:</p>
+        <p>Mínimo: {Math.floor(informationPercentageRange.min * 10) / 10}%</p>
+        <p>Máximo: {Math.floor(informationPercentageRange.max * 10) / 10}%</p>
+      </div>
+      <br />
       <div>
         <label>
           Usuario a espiar:

@@ -12,7 +12,7 @@ AllianceWars.propTypes = {
 export default function AllianceWars({ alliance, reloadAllianceData }) {
   return (
     <>
-      {userData.alliance_user_rank.permission_declare_war && <AllianceWarAidRequests />}
+      {userData.alliance_user_rank.permission_admin && <AllianceWarAidRequests />}
       <IncContainer darkBg>
         <div style={{ padding: 10 }}>
           <h2>Guerras activas</h2>

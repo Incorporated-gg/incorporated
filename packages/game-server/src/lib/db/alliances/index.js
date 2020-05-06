@@ -16,8 +16,7 @@ export async function getUserAllianceRank(userID) {
     allianceMember,
   ] = await mysql.query(
     'SELECT alliance_id, rank_name, \
-    permission_admin, permission_accept_and_kick_members, permission_extract_money, permission_extract_troops, \
-    permission_send_circular_msg, permission_activate_buffs, permission_declare_war \
+    permission_admin, permission_accept_and_kick_members, permission_extract_resources, permission_activate_buffs \
     FROM alliances_members WHERE user_id=?',
     [userID]
   )
@@ -28,11 +27,8 @@ export async function getUserAllianceRank(userID) {
     rank_name: allianceMember.rank_name,
     permission_admin: Boolean(allianceMember.permission_admin),
     permission_accept_and_kick_members: Boolean(allianceMember.permission_accept_and_kick_members),
-    permission_extract_money: Boolean(allianceMember.permission_extract_money),
-    permission_extract_troops: Boolean(allianceMember.permission_extract_troops),
-    permission_send_circular_msg: Boolean(allianceMember.permission_send_circular_msg),
+    permission_extract_resources: Boolean(allianceMember.permission_extract_resources),
     permission_activate_buffs: Boolean(allianceMember.permission_activate_buffs),
-    permission_declare_war: Boolean(allianceMember.permission_declare_war),
   }
 }
 

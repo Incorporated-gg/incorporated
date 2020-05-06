@@ -218,7 +218,7 @@ export function simulateAttack({
 export function calcSpiesPower(spyResearchLvl) {
   return 2 * spyResearchLvl
 }
-export function calcSpionageDefensePower(spyResearchLvl) {
+function calcSpionageDefensePower(spyResearchLvl) {
   return 10 * Math.pow(spyResearchLvl, 2)
 }
 
@@ -226,7 +226,7 @@ export function calcSpyFailProbabilities({ resLvlAttacker, resLvLDefender, spies
   let spiesProbability = (4 * spiesSent) / resLvlAttacker
   spiesProbability = Math.min(100, Math.max(0, spiesProbability))
 
-  let lvlProbability = (Math.max(resLvLDefender, resLvlAttacker) / 5) * (resLvLDefender - resLvlAttacker)
+  let lvlProbability = (4 + Math.max(resLvLDefender, resLvlAttacker) / 4) * (resLvLDefender - resLvlAttacker)
   lvlProbability = Math.min(100, Math.max(-999, lvlProbability))
 
   const baseProbability = 5
@@ -235,5 +235,18 @@ export function calcSpyFailProbabilities({ resLvlAttacker, resLvLDefender, spies
     spies: spiesProbability,
     level: lvlProbability,
     total: Math.min(100, Math.max(0, spiesProbability + lvlProbability + baseProbability)),
+  }
+}
+
+export function calcSpyInformationPercentageRange({ resLvlAttacker, resLvLDefender, spiesRemaining }) {
+  const defensePower = calcSpionageDefensePower(resLvLDefender)
+  const attackPower = calcSpiesPower(resLvlAttacker) * spiesRemaining
+
+  const randomPercentage = { min: -10, max: 10 }
+  const powerPercentage = (attackPower / defensePower) * 100
+
+  return {
+    min: Math.max(0, Math.min(100, powerPercentage + randomPercentage.min)),
+    max: Math.max(0, Math.min(100, powerPercentage + randomPercentage.max)),
   }
 }

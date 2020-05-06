@@ -1,9 +1,7 @@
 import { parseBadgeFromUserRequest } from '../../lib/db/alliances/badge'
 import mysql from '../../lib/mysql'
-import { CREATE_ALLIANCE_PRICE } from 'shared-lib/allianceUtils'
+import { NAMING_REQUIREMENTS, CREATE_ALLIANCE_PRICE } from 'shared-lib/allianceUtils'
 import { getUserAllianceID, deleteAlliance, getUserAllianceRank, getAllianceBuffsData } from '../../lib/db/alliances'
-
-const alphanumericRegexp = /^[a-z0-9]+$/i
 
 module.exports = app => {
   app.post('/v1/alliance/create', async function(req, res) {
@@ -23,9 +21,9 @@ module.exports = app => {
 
     const isValidLongName =
       typeof longName === 'string' &&
-      longName.length >= 2 &&
-      longName.length <= 20 &&
-      alphanumericRegexp.test(longName.replace(/ /g, '')) // Test for alphanumeric but allow spaces
+      longName.length >= NAMING_REQUIREMENTS.long_name.minChars &&
+      longName.length <= NAMING_REQUIREMENTS.long_name.maxChars &&
+      NAMING_REQUIREMENTS.long_name.regExp.test(longName)
     if (!isValidLongName) {
       res.status(400).json({ error: 'Nombre inválido' })
       return
@@ -33,9 +31,9 @@ module.exports = app => {
 
     const isValidShortName =
       typeof shortName === 'string' &&
-      shortName.length >= 2 &&
-      shortName.length <= 5 &&
-      alphanumericRegexp.test(shortName)
+      shortName.length >= NAMING_REQUIREMENTS.short_name.minChars &&
+      shortName.length <= NAMING_REQUIREMENTS.short_name.maxChars &&
+      NAMING_REQUIREMENTS.short_name.regExp.test(shortName)
     if (!isValidShortName) {
       res.status(400).json({ error: 'Iniciales inválidas' })
       return
@@ -67,8 +65,10 @@ module.exports = app => {
       [allianceCreatedAt, null, longName, shortName, description]
     )
     await mysql.query(
-      'INSERT INTO alliances_members (created_at, alliance_id, user_id, rank_name, permission_admin) VALUES (?, ?, ?, ?, ?)',
-      [allianceCreatedAt, newAllianceID, req.userData.id, 'Admin', true]
+      'INSERT INTO alliances_members \
+      (created_at, alliance_id, user_id, rank_name, permission_admin, permission_accept_and_kick_members, permission_extract_resources, permission_activate_buffs) \
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+      [allianceCreatedAt, newAllianceID, req.userData.id, 'Admin', true, true, true, true]
     )
 
     res.json({ success: true, new_alliance_id: newAllianceID })

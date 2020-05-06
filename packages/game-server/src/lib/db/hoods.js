@@ -378,6 +378,8 @@ export async function getHoodData(hoodID) {
   const hoodInfo = hoodsList.find(h => h.id === hoodID)
   const hoodData = await mysql.selectOne('SELECT owner, guards FROM hoods WHERE id=?', [hoodID])
 
+  if (!hoodData) return null
+
   return {
     ...hoodInfo,
     guards: parseInt(hoodData.guards),

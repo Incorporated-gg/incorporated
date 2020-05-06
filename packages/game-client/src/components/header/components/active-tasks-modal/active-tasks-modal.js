@@ -106,7 +106,7 @@ function ActiveTask({ task }) {
   }
 
   const isCompleted = task.progressPercentage >= 100
-  const progressAmount = Math.floor((task.progressPercentage / 100) * task.requirements.amount)
+  const progressAmount = Math.round((task.progressPercentage / 100) * task.requirements.amount)
 
   const completeTask = () => {
     if (!isCompleted) return

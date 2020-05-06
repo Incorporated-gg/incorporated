@@ -1,10 +1,5 @@
 import mysql from '../lib/mysql'
-import {
-  getAllianceIDFromShortName,
-  getAllianceMembers,
-  getUserAllianceRank,
-  getAllianceBasicData,
-} from '../lib/db/alliances'
+import { getAllianceIDFromShortName, getAllianceMembers, getAllianceBasicData } from '../lib/db/alliances'
 import { getUserIDFromUsername, getUserData } from '../lib/db/users'
 
 module.exports = app => {
@@ -71,13 +66,6 @@ module.exports = app => {
 
       if (!members.find(m => m.user.id === req.userData.id)) {
         res.status(400).json({ error: 'No perteneces a esta alianza' })
-        return
-      }
-
-      const userPermissions = await getUserAllianceRank(req.userData.id)
-
-      if (!userPermissions.permission_send_circular_msg) {
-        res.status(400).json({ error: 'No tienes permiso para enviar mensajes circulares' })
         return
       }
 
