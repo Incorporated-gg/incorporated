@@ -1,11 +1,12 @@
 import React from 'react'
 import AvatarChange from './avatar-change'
 import { logout } from 'lib/user'
+import IncButton from 'components/UI/inc-button'
 
 export default function Settings() {
   return (
     <>
-      <button onClick={logout}>{'Logout'}</button>
+      <IncButton onClick={logout}>{'Logout'}</IncButton>
       <AvatarChange />
     </>
   )

@@ -1,5 +1,5 @@
 import mysql from '../../../lib/mysql'
-import { getServerDate, getInitialUnixTimestampOfServerDay, getServerDay } from 'shared-lib/serverTime'
+import { getServerDate, getInitialUnixTimestampOfServerDay, getServerDay } from '../../../lib/serverTime'
 import { getIncomeScoreboard } from './income'
 import { getDestructionScoreboard } from './destruction'
 import { getResearchScoreboard } from './research'

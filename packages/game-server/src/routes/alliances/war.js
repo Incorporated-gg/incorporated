@@ -1,5 +1,5 @@
 import { getMaxHoodsAttackedPerWar } from 'shared-lib/allianceUtils'
-import { getServerDay } from 'shared-lib/serverTime'
+import { getServerDay } from '../../lib/serverTime'
 import mysql from '../../lib/mysql'
 import {
   getAllianceBasicData,

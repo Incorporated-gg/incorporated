@@ -2,6 +2,7 @@ import { getActiveResearchs } from '../lib/db/researchs'
 import mysql from '../lib/mysql'
 import { getUserAllianceRank } from '../lib/db/alliances'
 import { getUserData } from '../lib/db/users'
+import { SERVER_DATE_OFFSET_OVER_GMT, SERVER_DAY_OFFSET } from '../lib/serverTime'
 
 module.exports = app => {
   app.get('/v1/my_data', async function(req, res) {
@@ -17,6 +18,10 @@ module.exports = app => {
     ])
 
     res.json({
+      server_data: {
+        SERVER_DATE_OFFSET_OVER_GMT,
+        SERVER_DAY_OFFSET,
+      },
       user_data: {
         id: userData.id,
         username: userData.username,

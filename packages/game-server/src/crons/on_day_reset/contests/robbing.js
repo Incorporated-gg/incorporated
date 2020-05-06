@@ -1,5 +1,5 @@
 import mysql from '../../../lib/mysql'
-import { getInitialUnixTimestampOfServerDay } from 'shared-lib/serverTime'
+import { getInitialUnixTimestampOfServerDay } from '../../../lib/serverTime'
 
 // Has to return an array of objects containing { score, user_id }
 export async function getRobbingScoreboard(weekFirstServerDay) {

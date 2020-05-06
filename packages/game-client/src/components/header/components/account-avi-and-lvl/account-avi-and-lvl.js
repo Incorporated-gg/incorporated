@@ -3,7 +3,7 @@ import { useUserData } from 'lib/user'
 import styles from './account-avi-and-lvl.module.scss'
 import { useHistory } from 'react-router-dom'
 import IncProgressBar from 'components/UI/inc-progress-bar'
-import { getServerDate, getServerDay } from 'shared-lib/serverTime'
+import { getServerDate, getServerDay } from 'lib/serverTime'
 
 export default function AccountAviAndLvl() {
   let history = useHistory()

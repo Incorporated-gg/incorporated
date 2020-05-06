@@ -1,7 +1,7 @@
 import mysql from '../lib/mysql'
 import { getWarData } from '../lib/db/alliances'
 import { getMaxHoodsAttackedPerWar } from 'shared-lib/allianceUtils'
-import { getServerDay } from 'shared-lib/serverTime'
+import { getServerDay } from '../lib/serverTime'
 import { isHoodInWar } from '../routes/alliances/war'
 const frequencyMs = 5 * 60 * 1000
 

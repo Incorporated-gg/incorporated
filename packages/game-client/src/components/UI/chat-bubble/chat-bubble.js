@@ -6,7 +6,7 @@ import io from 'socket.io-client'
 import styles from './chat-bubble.module.scss'
 import Icon from 'components/icon'
 import IncButton from 'components/UI/inc-button'
-import { getServerDate } from 'shared-lib/serverTime'
+import { getServerDate } from 'lib/serverTime'
 
 export default function ChatBubble() {
   const [chatRoomList, setChatRoomList] = useState([])

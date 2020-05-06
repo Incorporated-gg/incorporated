@@ -1,4 +1,4 @@
-import { getInitialUnixTimestampOfServerDay } from 'shared-lib/serverTime'
+import { getInitialUnixTimestampOfServerDay } from '../../lib/serverTime'
 import NewsItem from './NewsItem'
 import { generateAllNews } from './news'
 

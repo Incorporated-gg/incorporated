@@ -1,5 +1,5 @@
 import mysql from '../../../lib/mysql'
-import { getInitialUnixTimestampOfServerDay } from 'shared-lib/serverTime'
+import { getInitialUnixTimestampOfServerDay } from '../../../lib/serverTime'
 import { personnelObj } from 'shared-lib/personnelUtils'
 
 // Has to return an array of objects containing { score, user_id }

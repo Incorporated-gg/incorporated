@@ -1,4 +1,4 @@
-import { getServerDay, getInitialUnixTimestampOfServerDay } from 'shared-lib/serverTime'
+import { getServerDay, getInitialUnixTimestampOfServerDay } from '../../lib/serverTime'
 import mysql from '../../lib/mysql'
 
 import usersDailyLog from './users_daily_log'

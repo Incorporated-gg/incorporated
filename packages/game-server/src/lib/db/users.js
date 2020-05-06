@@ -5,7 +5,7 @@ import { parseMissionFromDB } from './missions'
 import { getUserAllianceID, getAllianceBasicData } from './alliances'
 import { researchList } from 'shared-lib/researchUtils'
 import { personnelObj } from 'shared-lib/personnelUtils'
-import { getInitialUnixTimestampOfServerDay } from 'shared-lib/serverTime'
+import { getInitialUnixTimestampOfServerDay } from '../../lib/serverTime'
 import { calcBuildingDailyIncome, buildingsList, calcBuildingMaxMoney } from 'shared-lib/buildingsUtils'
 
 export async function getUserData(userID) {

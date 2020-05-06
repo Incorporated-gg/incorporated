@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import asyncStorage from './asyncStorage'
 import { reloadApp } from '../App'
 import api from 'lib/api'
+import { setServerTimeOffsets } from './serverTime'
 
 export let sessionID = null
 export let userData = null
@@ -30,6 +31,7 @@ export async function loadUserDataFromStorage() {
 // Game user data
 export async function reloadUserData() {
   const userDataFromAPI = await api.get('/v1/my_data')
+  setServerTimeOffsets(userDataFromAPI.server_data)
   userData = Object.assign(userDataFromAPI.user_data, userDataFromAPI._extra)
   fireUserDataListeners()
 }
