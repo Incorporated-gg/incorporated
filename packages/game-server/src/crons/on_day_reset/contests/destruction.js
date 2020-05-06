@@ -1,6 +1,6 @@
 import mysql from '../../../lib/mysql'
 import { getInitialUnixTimestampOfServerDay } from '../../../lib/serverTime'
-import { personnelObj } from 'shared-lib/personnelUtils'
+import { PERSONNEL_OBJ } from 'shared-lib/personnelUtils'
 
 // Has to return an array of objects containing { score, user_id }
 export async function getDestructionScoreboard(weekFirstServerDay) {
@@ -19,8 +19,8 @@ export async function getDestructionScoreboard(weekFirstServerDay) {
       const attackReport = JSON.parse(attack.data).report
       const incomeFromBuildings = attackReport.income_from_buildings
       const lostOnTroops =
-        attackReport.killed_sabots * personnelObj.sabots.price +
-        attackReport.killed_thieves * personnelObj.thieves.price
+        attackReport.killed_sabots * PERSONNEL_OBJ.sabots.price +
+        attackReport.killed_thieves * PERSONNEL_OBJ.thieves.price
       const gained = incomeFromBuildings - lostOnTroops
       if (gained <= 0) return
 

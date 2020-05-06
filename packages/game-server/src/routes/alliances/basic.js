@@ -91,9 +91,14 @@ module.exports = app => {
       res.status(401).json({ error: 'No tienes una alianza' })
       return
     }
-    const allianceResearchs = await getAllianceResearchs(allianceID)
 
+    const allianceResearchs = await getAllianceResearchs(allianceID)
     const researchID = req.body.research_id
+    const research = allianceResearchs[researchID]
+    if (!allianceID) {
+      res.status(401).json({ error: 'Investigación no encontrada' })
+      return
+    }
 
     // Check money
     const moneyAmount = parseInt(req.body.amount)
@@ -114,7 +119,6 @@ module.exports = app => {
     )
 
     // Update alliances_research table
-    const research = allianceResearchs[researchID]
     let newProgressMoney = research.progress_money + moneyAmount
     let newLevel = research.level
     let newPrice = research.price
@@ -194,19 +198,6 @@ module.exports = app => {
 
     // Make sure the user has enough resources/space for them
     switch (resourceID) {
-      case 'money':
-        if (resourceAmount < 0 && !userRank.permission_extract_resources) {
-          res.status(401).json({ error: 'No tienes permiso para hacer esto' })
-          return
-        }
-        if (resourceAmount > 0 && req.userData.money < resourceAmount) {
-          res.status(401).json({ error: 'No tienes suficiente dinero' })
-          return
-        }
-        req.userData.money -= resourceAmount
-        await mysql.query('UPDATE users SET money=money+? WHERE id=?', [-resourceAmount, req.userData.id])
-
-        break
       case 'sabots':
       case 'guards':
       case 'thieves':

@@ -1,10 +1,11 @@
 import mysql from '../lib/mysql'
 import { getUserPersonnel, getHasActiveMission } from '../lib/db/users'
-import { personnelObj } from 'shared-lib/personnelUtils'
+import { PERSONNEL_OBJ } from 'shared-lib/personnelUtils'
 const frequencyMs = 60 * 1000
 
 const BANKRUPCY_TIME_LIMIT = 60 * 60 // 1h
 const TROOPS_LOSS_COEFICIENT = 0.001
+const TROOPS_DELETION_ORDER = ['spies', 'sabots', 'thieves', 'guards']
 
 const run = async () => {
   const tsNow = Math.floor(Date.now() / 1000)
@@ -25,11 +26,10 @@ const run = async () => {
 
       const personnel = await getUserPersonnel(userID)
 
-      const troopsOrder = ['spies', 'sabots', 'thieves', 'guards']
-      for (const troopType of troopsOrder) {
+      for (const troopType of TROOPS_DELETION_ORDER) {
         if (personnel[troopType] <= 0) continue
 
-        const troopDailyMaintenanceCost = personnel[troopType] * personnelObj[troopType].dailyMaintenanceCost
+        const troopDailyMaintenanceCost = personnel[troopType] * PERSONNEL_OBJ[troopType].dailyMaintenanceCost
         const lost = Math.ceil((troopDailyMaintenanceCost / 24 / 60) * TROOPS_LOSS_COEFICIENT)
         await mysql.query('UPDATE users_resources SET quantity=quantity-? WHERE user_id=? AND resource_id=?', [
           lost,

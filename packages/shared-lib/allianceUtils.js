@@ -1,11 +1,12 @@
+import { PERSONNEL_OBJ } from './personnelUtils'
+
 export const CREATE_ALLIANCE_PRICE = 500000
 export const MAX_ALLIANCE_MEMBERS = 8
 export const WAR_DAYS_DURATION = 5
 
 export const RESEARCHS_LIST = [
-  { id: 1, name: 'Banco', pricePerLvl: 500000, type: 'resource' },
   { id: 2, name: 'Cabinas de guardias', pricePerLvl: 200000, type: 'resource' },
-  { id: 3, name: 'Barracones de saboteadores', pricePerLvl: 200000, type: 'resource' },
+  { id: 3, name: 'Barracones de gángsters', pricePerLvl: 200000, type: 'resource' },
   { id: 4, name: 'Academias de ladrones', pricePerLvl: 200000, type: 'resource' },
   { id: 5, name: 'Buff de ataque', pricePerLvl: 5000000, type: 'buff' },
   { id: 6, name: 'Buff de defensa', pricePerLvl: 5000000, type: 'buff' },
@@ -13,20 +14,16 @@ export const RESEARCHS_LIST = [
 
 export const RESOURCES_LIST = [
   {
-    resource_id: 'money',
-    name: 'Dinero',
-  },
-  {
     resource_id: 'sabots',
-    name: 'Saboteadores',
+    name: PERSONNEL_OBJ.sabots.name,
   },
   {
     resource_id: 'guards',
-    name: 'Guardias',
+    name: PERSONNEL_OBJ.guards.name,
   },
   {
     resource_id: 'thieves',
-    name: 'Ladrones',
+    name: PERSONNEL_OBJ.thieves.name,
   },
 ]
 

@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import { userData } from 'lib/user'
 import { buildingsList } from 'shared-lib/buildingsUtils'
-import { personnelObj } from 'shared-lib/personnelUtils'
+import { PERSONNEL_OBJ } from 'shared-lib/personnelUtils'
 import { researchList } from 'shared-lib/researchUtils'
 import { timestampFromEpoch } from 'shared-lib/commonUtils'
 import UserLink from 'components/UI/user-link'
@@ -74,7 +74,7 @@ export default function SpyReport({ mission }) {
       <div>
         <br />
         <b>{'Personal'}:</b>
-        {Object.values(personnelObj).map(personnelInfo => {
+        {Object.values(PERSONNEL_OBJ).map(personnelInfo => {
           const reportPersonnel = mission.report.personnel[personnelInfo.resource_id]
           const quantity = reportPersonnel !== undefined ? reportPersonnel.toLocaleString() : '?'
           return (

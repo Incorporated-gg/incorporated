@@ -2,6 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { buildingsList } from 'shared-lib/buildingsUtils'
 import { timestampFromEpoch } from 'shared-lib/commonUtils'
+import { PERSONNEL_OBJ } from 'shared-lib/personnelUtils'
 import UserLink from 'components/UI/user-link'
 import NotepadPage from 'components/UI/notepad-page'
 
@@ -69,7 +70,7 @@ export default function AttackReport({ mission }) {
         </thead>
         <tbody>
           <tr>
-            <td>Saboteadores</td>
+            <td>{PERSONNEL_OBJ.sabots.name}</td>
             <td>{mission.sent_sabots.toLocaleString()}</td>
             <td>{mission.report.killed_sabots.toLocaleString()}</td>
           </tr>

@@ -1,7 +1,7 @@
 import mysql from '../lib/mysql'
 import * as personnel from '../lib/db/personnel'
 import { getHasActiveMission } from '../lib/db/users'
-import { personnelObj } from 'shared-lib/personnelUtils'
+import { PERSONNEL_OBJ } from 'shared-lib/personnelUtils'
 
 const handlePersonnelRequest = async (req, res, operationType) => {
   if (!req.userData) {
@@ -20,7 +20,7 @@ const handlePersonnelRequest = async (req, res, operationType) => {
   const resourceAmount = parseInt(req.body.amount)
   const resourceID = req.body.resource_id
 
-  if (!personnelObj[resourceID]) {
+  if (!PERSONNEL_OBJ[resourceID]) {
     res.status(400).json({ error: 'Invalid resource_id' })
     return
   }
@@ -33,14 +33,14 @@ const handlePersonnelRequest = async (req, res, operationType) => {
   let price
   switch (operationType) {
     case 'hire':
-      price = personnelObj[resourceID].price * resourceAmount
+      price = PERSONNEL_OBJ[resourceID].price * resourceAmount
       break
     case 'fire':
       if (req.userData.personnel[resourceID] < resourceAmount) {
         res.status(400).json({ error: 'No tienes suficiente personal' })
         return
       }
-      price = personnelObj[resourceID].firingCost * resourceAmount
+      price = PERSONNEL_OBJ[resourceID].firingCost * resourceAmount
       break
     default:
       res.status(500).json({ error: 'No implementado' })

@@ -5,6 +5,7 @@ import { calculateMissionTime, simulateAttack } from 'shared-lib/missionsUtils'
 import PropTypes from 'prop-types'
 import Modal from 'react-modal'
 import IncContainer from 'components/UI/inc-container'
+import { PERSONNEL_OBJ } from 'shared-lib/personnelUtils'
 
 SimulatorModal.propTypes = {
   spyReport: PropTypes.object,
@@ -65,14 +66,14 @@ function SimulatorWithSpyReport({ spyReport }) {
       <div style={{ padding: 10 }}>
         <div>
           <label>
-            Saboteadores
+            {PERSONNEL_OBJ.sabots.name}
             {': '}
             <input type="number" value={attackerSabots} onChange={e => setAttackerSabots(e.target.value)} />
           </label>
         </div>
         <div>
           <label>
-            Ladrones
+            {PERSONNEL_OBJ.thieves.name}
             {': '}
             <input type="number" value={attackerThieves} onChange={e => setAttackerThieves(e.target.value)} />
           </label>
@@ -137,14 +138,14 @@ function SimulatorFromScratch() {
       <div style={{ padding: 10 }}>
         <div>
           <label>
-            Saboteadores
+            {PERSONNEL_OBJ.sabots.name}
             {': '}
             <input type="number" value={attackerSabots} onChange={e => setAttackerSabots(e.target.value)} />
           </label>
         </div>
         <div>
           <label>
-            Ladrones
+            {PERSONNEL_OBJ.thieves.name}
             {': '}
             <input type="number" value={attackerThieves} onChange={e => setAttackerThieves(e.target.value)} />
           </label>

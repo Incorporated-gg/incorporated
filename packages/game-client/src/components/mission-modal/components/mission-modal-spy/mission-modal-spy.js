@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react'
 import api from 'lib/api'
 import { useUserData } from 'lib/user'
-import { personnelObj } from 'shared-lib/personnelUtils'
+import { PERSONNEL_OBJ } from 'shared-lib/personnelUtils'
 import {
   calculateMissionTime,
   calcSpyFailProbabilities,
@@ -54,7 +54,7 @@ export default function MissionModalSpy({ user, onRequestClose }) {
     [isFormReady, numTroops, onRequestClose, toUser]
   )
 
-  const troopName = personnelObj.spies.name
+  const troopName = PERSONNEL_OBJ.spies.name
 
   const missionSeconds = calculateMissionTime('spy')
 

@@ -2,7 +2,7 @@ import React, { useCallback, useState, useEffect } from 'react'
 import { buildingsList, calcBuildingDailyIncome } from 'shared-lib/buildingsUtils'
 import { useUserData } from '../../lib/user'
 import api from '../../lib/api'
-import { personnelObj } from 'shared-lib/personnelUtils'
+import { PERSONNEL_OBJ } from 'shared-lib/personnelUtils'
 import styles from './Finances.module.scss'
 import { LOAN_DAYS_DURATION } from 'shared-lib/loansUtils'
 
@@ -43,7 +43,7 @@ export default function FinancialData() {
   // Personnel maintenance
   let totalPersonnel = 0
   Object.entries(userData.personnel).forEach(([resourceID, quantity]) => {
-    const personnelInfo = personnelObj[resourceID]
+    const personnelInfo = PERSONNEL_OBJ[resourceID]
     if (!personnelInfo) return
     const dailyCost = quantity * personnelInfo.dailyMaintenanceCost
     totalPersonnel += dailyCost

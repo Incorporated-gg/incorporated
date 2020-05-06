@@ -5,6 +5,7 @@ import { userData } from 'lib/user'
 import { getTimeUntil, numberToAbbreviation } from 'lib/utils'
 import Icon from 'components/icon'
 import { calcBuildingMaxMoney, calcBuildingDailyIncome } from 'shared-lib/buildingsUtils'
+import { PERSONNEL_OBJ } from 'shared-lib/personnelUtils'
 
 ResearchEffectsInfo.propTypes = {
   researchID: PropTypes.number.isRequired,
@@ -18,7 +19,8 @@ export default function ResearchEffectsInfo({ researchID, currentLevel, price })
       const powerThen = calcSpiesPower(currentLevel + 1)
       return (
         <div>
-          Fuerza de espías actual: {powerNow.toLocaleString()}, al subir: {powerThen.toLocaleString()}
+          Fuerza de {PERSONNEL_OBJ.spies.name} actual: {powerNow.toLocaleString()}, al subir:{' '}
+          {powerThen.toLocaleString()}
         </div>
       )
     }
@@ -27,7 +29,8 @@ export default function ResearchEffectsInfo({ researchID, currentLevel, price })
       const powerThen = calcSabotsPower(currentLevel + 1)
       return (
         <div>
-          Fuerza de saboteadores actual: {powerNow.toLocaleString()}, al subir: {powerThen.toLocaleString()}
+          Fuerza de {PERSONNEL_OBJ.sabots.name} actual: {powerNow.toLocaleString()}, al subir:{' '}
+          {powerThen.toLocaleString()}
         </div>
       )
     }
@@ -36,7 +39,8 @@ export default function ResearchEffectsInfo({ researchID, currentLevel, price })
       const powerThen = calcGuardsPower(currentLevel + 1)
       return (
         <div>
-          Fuerza de guardias actual: {powerNow.toLocaleString()}, al subir: {powerThen.toLocaleString()}
+          Fuerza de {PERSONNEL_OBJ.guards.name} actual: {powerNow.toLocaleString()}, al subir:{' '}
+          {powerThen.toLocaleString()}
         </div>
       )
     }
@@ -63,8 +67,7 @@ export default function ResearchEffectsInfo({ researchID, currentLevel, price })
     case 6: {
       return (
         <div>
-          Si tus guardias son derrotados, tus edificios aguantarán un número mayor de saboteadores antes de ser
-          derribados
+          Si tus guardias son derrotados, tus edificios aguantarán un número mayor de gángsters antes de ser derribados
         </div>
       )
     }

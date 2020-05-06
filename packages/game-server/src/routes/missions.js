@@ -191,14 +191,14 @@ module.exports = app => {
         // Detect common errors for attacking users or hoods
         if (sentSabots + sentThieves < 1) {
           res.status(400).json({
-            error: 'Debes enviar algunos saboteadores o ladrones',
+            error: 'Debes enviar algunos gángsters o ladrones',
           })
           removeLock()
           return
         }
         if (userPersonnel.sabots < sentSabots) {
           res.status(400).json({
-            error: 'No tienes suficientes saboteadores',
+            error: 'No tienes suficientes gángsters',
           })
           removeLock()
           return

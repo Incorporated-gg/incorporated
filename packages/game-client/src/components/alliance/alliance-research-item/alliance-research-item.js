@@ -17,7 +17,6 @@ import IncInput from 'components/UI/inc-input'
 import IncButton from 'components/UI/inc-button'
 
 const researchImages = {
-  1: require('./img/attack-buff.png'),
   2: require('./img/guards.png'),
   3: require('./img/gangsters.png'),
   4: require('./img/thieves.png'),
@@ -33,7 +32,7 @@ export default function AllianceResearchItem({ researchData, reloadAllianceData 
   useUserData()
 
   const researchInfo = RESEARCHS_LIST.find(r => r.id === researchData.id)
-  const [amount, setAmount] = useState(0)
+  const [amount, setAmount] = useState('')
 
   const doResearch = e => {
     e.preventDefault()
@@ -80,7 +79,14 @@ export default function AllianceResearchItem({ researchData, reloadAllianceData 
         </>
       )}
       <IncButton onClick={doResearch}>
-        <IncInput onClick={e => e.stopPropagation()} type="number" value={amount} onChangeText={setAmount} />
+        <IncInput
+          min={1}
+          placeholder={0}
+          onClick={e => e.stopPropagation()}
+          type="number"
+          value={amount}
+          onChangeText={setAmount}
+        />
         <div className={styles.doResearchTitle}>APORTAR</div>
       </IncButton>
     </Card>

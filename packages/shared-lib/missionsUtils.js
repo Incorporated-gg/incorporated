@@ -1,5 +1,5 @@
 import { buildingsList, calcBuildingPrice, calcBuildingResistance } from './buildingsUtils'
-import { personnelObj } from './personnelUtils'
+import { PERSONNEL_OBJ } from './personnelUtils'
 
 export const NEWBIE_ZONE_DAILY_INCOME = 750000
 export const MAX_DAILY_ATTACKS = process.env.NODE_ENV === 'development' ? 999 : 3
@@ -32,13 +32,13 @@ function getBuildingDestroyedProfit({ buildingID, buildingAmount, destroyedBuild
 }
 
 export function calcSabotsPower(sabotageResearchLvl) {
-  return 2 * personnelObj.sabots.combatPower * sabotageResearchLvl
+  return 2 * PERSONNEL_OBJ.sabots.combatPower * sabotageResearchLvl
 }
 function calcThievesPower(sabotageResearchLvl) {
-  return 2 * personnelObj.thieves.combatPower * sabotageResearchLvl
+  return 2 * PERSONNEL_OBJ.thieves.combatPower * sabotageResearchLvl
 }
 export function calcGuardsPower(securityResearchLvl) {
-  return 2 * personnelObj.guards.combatPower * securityResearchLvl
+  return 2 * PERSONNEL_OBJ.guards.combatPower * securityResearchLvl
 }
 
 function simulateCombat({
@@ -180,8 +180,8 @@ export function simulateAttack({
   const result = survivingGuards > 0 ? 'lose' : destroyedBuildings > 0 ? 'win' : 'draw'
 
   // Killed troops income
-  const killedGuardsPrice = deadGuards * personnelObj.guards.price
-  const killedSabotsPrice = deadSabots * personnelObj.sabots.price
+  const killedGuardsPrice = deadGuards * PERSONNEL_OBJ.guards.price
+  const killedSabotsPrice = deadSabots * PERSONNEL_OBJ.sabots.price
   const incomeForKilledTroops = killedGuardsPrice * 0.1
 
   // Destroyed buildings income
@@ -192,7 +192,7 @@ export function simulateAttack({
   })
 
   // Robbing income
-  const maxRobbedMoney = survivingThieves * personnelObj.thieves.robbingPower
+  const maxRobbedMoney = survivingThieves * PERSONNEL_OBJ.thieves.robbingPower
   const robbedMoney = Math.min(maxRobbedMoney, unprotectedMoney)
 
   // Misc calculations

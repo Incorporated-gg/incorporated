@@ -3,7 +3,7 @@ import { getAllianceMembers, getWarData } from '../../lib/db/alliances'
 import { sendAccountHook } from '../../lib/accountInternalApi'
 import { sendMessage } from '../../lib/db/users'
 import { getServerDay, getInitialUnixTimestampOfServerDay } from '../../lib/serverTime'
-import { personnelObj } from 'shared-lib/personnelUtils'
+import { PERSONNEL_OBJ } from 'shared-lib/personnelUtils'
 import { WAR_DAYS_DURATION } from 'shared-lib/allianceUtils'
 import { changeHoodsOwner } from '../../lib/db/hoods'
 
@@ -198,8 +198,8 @@ function attackToPoints(attack) {
 
   // Extra point for efficiency
   const incomeFromBuildings = attack.data.report.income_from_buildings
-  const moneyLostOnSabots = attack.data.report.killed_sabots * personnelObj.sabots.price
-  const moneyLostOnThieves = attack.data.report.killed_thieves * personnelObj.thieves.price
+  const moneyLostOnSabots = attack.data.report.killed_sabots * PERSONNEL_OBJ.sabots.price
+  const moneyLostOnThieves = attack.data.report.killed_thieves * PERSONNEL_OBJ.thieves.price
   const moneyLostOnTroops = moneyLostOnSabots + moneyLostOnThieves
   if (incomeFromBuildings > 0 && incomeFromBuildings > moneyLostOnTroops) {
     const efficiencyRatio = (incomeFromBuildings - moneyLostOnTroops) / incomeFromBuildings

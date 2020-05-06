@@ -4,7 +4,7 @@ import mysql from '../mysql'
 import { parseMissionFromDB } from './missions'
 import { getUserAllianceID, getAllianceBasicData } from './alliances'
 import { researchList } from 'shared-lib/researchUtils'
-import { personnelObj } from 'shared-lib/personnelUtils'
+import { PERSONNEL_OBJ } from 'shared-lib/personnelUtils'
 import { getInitialUnixTimestampOfServerDay } from '../../lib/serverTime'
 import { calcBuildingDailyIncome, buildingsList, calcBuildingMaxMoney } from 'shared-lib/buildingsUtils'
 
@@ -41,7 +41,7 @@ export async function getUserPersonnelCosts(userID) {
   let personnelCost = 0
   const userPersonnel = await getUserPersonnel(userID)
   Object.entries(userPersonnel).forEach(([resourceID, quantity]) => {
-    const personnelInfo = personnelObj[resourceID]
+    const personnelInfo = PERSONNEL_OBJ[resourceID]
     if (!personnelInfo) return
     const dailyCost = quantity * personnelInfo.dailyMaintenanceCost
     personnelCost += dailyCost
