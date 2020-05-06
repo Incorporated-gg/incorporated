@@ -105,7 +105,7 @@ async function getIntelReport({ informationPercentageObtained, spiesCaptured, de
   const iterationPercentageCost = 100 / discoverables.length 
   while (1) {
     percentageLeft -= iterationPercentageCost
-    if (percentageLeft <= 0 || !discoverables.length) break
+    if (percentageLeft < 0 || !discoverables.length) break
     const nextDiscoverable = discoverables.shift()
 
     const infoObj =
