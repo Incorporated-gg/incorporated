@@ -18,7 +18,7 @@ export function calcSpiesCaptured({ resLvlAttacker, resLvLDefender, spiesSent })
 export function calcInformationPercentageObtained({ resLvlAttacker, resLvLDefender, spiesRemaining }) {
   const range = calcSpyInformationPercentageRange({ resLvlAttacker, resLvLDefender, spiesRemaining })
 
-  const result = Math.random() * 100 * (range.max - range.min) + range.min
+  const result = Math.random() * (range.max - range.min) + range.min
 
   return Math.floor(result * 100) / 100
 }
