@@ -114,13 +114,13 @@ export async function getUserTodaysMissionsLimits(userID) {
   const [
     { receivedToday },
   ] = await mysql.query(
-    "SELECT COUNT(*) AS receivedToday FROM missions WHERE target_user=? AND mission_type='attack' AND started_at>? AND completed=1",
+    "SELECT COUNT(*) AS receivedToday FROM missions WHERE target_user=? AND mission_type='attack' AND will_finish_at>? AND completed=1",
     [userID, dailyCountStartedAt]
   )
   const [
     { sentToday },
   ] = await mysql.query(
-    "SELECT COUNT(*) AS sentToday FROM missions WHERE user_id=? AND mission_type='attack' AND started_at>? AND completed=1",
+    "SELECT COUNT(*) AS sentToday FROM missions WHERE user_id=? AND mission_type='attack' AND will_finish_at>? AND completed=1",
     [userID, dailyCountStartedAt]
   )
   const userMissionLimits = await getUserMissionLimits(userID)
