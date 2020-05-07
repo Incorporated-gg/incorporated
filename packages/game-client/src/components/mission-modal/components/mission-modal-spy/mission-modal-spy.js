@@ -60,6 +60,7 @@ export default function MissionModalSpy({ user, onRequestClose }) {
   return (
     <>
       <div>Usuario a espiar: {user.username}</div>
+      <div>Tiempo de mision: {missionSeconds}s</div>
       <br />
       <div>
         <p>Probabilidades de ser detectados:</p>
@@ -80,12 +81,10 @@ export default function MissionModalSpy({ user, onRequestClose }) {
           <IncInput showBorder min="1" type="number" value={numTroops} onChangeText={setNumTroops} />
         </label>
       </div>
-      <div>Tiempo de mision: {missionSeconds}s</div>
-      <div>
-        <IncButton onClick={startMission} disabled={!isFormReady}>
-          Enviar
-        </IncButton>
-      </div>
+      <br />
+      <IncButton onClick={startMission} disabled={!isFormReady}>
+        Enviar
+      </IncButton>
     </>
   )
 }

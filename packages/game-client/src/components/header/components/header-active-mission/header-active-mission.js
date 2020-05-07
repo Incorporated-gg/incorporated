@@ -45,8 +45,8 @@ export default function ActiveMission() {
           <div className={`${styles.stat} ${styles.statMission3}`}>
             <IncButton onClick={() => setIsModalOpen(true)}>Detalles</IncButton>
             <div style={{ width: 10 }} />
-            <IncButton onClick={cancelMission}>
-              <Icon svg={require('./img/cancel.svg')} size={20} />
+            <IncButton className={styles.cancelText} onClick={cancelMission}>
+              Cancelar
             </IncButton>
           </div>
         </IncContainer>

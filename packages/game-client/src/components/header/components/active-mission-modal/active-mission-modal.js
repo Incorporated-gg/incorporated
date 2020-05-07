@@ -8,6 +8,8 @@ import AllianceBadge from 'components/alliance/alliance-badge'
 import { buildingsList } from 'shared-lib/buildingsUtils'
 import MissionTimer from 'components/reports/mission-timer/mission-timer'
 import { cancelActiveMission } from 'lib/utils'
+import Icon from 'components/icon'
+import IncButton from 'components/UI/inc-button'
 
 ActiveMissionModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
@@ -83,7 +85,9 @@ function ActiveMissionModalContent({ onRequestClose }) {
             </div>
           </div>
           <div>
-            <button onClick={cancelMission}>Cancelar misión</button>
+            <IncButton onClick={cancelMission}>
+              <Icon svg={require('./img/cancel.svg')} size={20} />
+            </IncButton>
           </div>
         </div>
       </div>

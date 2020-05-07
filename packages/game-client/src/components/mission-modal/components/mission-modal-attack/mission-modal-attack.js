@@ -5,6 +5,8 @@ import { buildingsList } from 'shared-lib/buildingsUtils'
 import { PERSONNEL_OBJ } from 'shared-lib/personnelUtils'
 import { calculateMissionTime } from 'shared-lib/missionsUtils'
 import PropTypes from 'prop-types'
+import IncButton from 'components/UI/inc-button'
+import IncInput from 'components/UI/inc-input'
 
 MissionModalAttack.propTypes = {
   user: PropTypes.object,
@@ -52,20 +54,37 @@ export default function MissionModalAttack({ user, hood, onRequestClose }) {
     <>
       <div>{hood ? <span>Barrio a atacar: {hood.name}</span> : <span>Usuario a atacar: {user.username}</span>}</div>
       <div>Tiempo de mision: {missionSeconds}s</div>
+      <br />
       <div>
         <label>
           {PERSONNEL_OBJ.sabots.name}
           {': '}
-          <input type="number" name="quantity" value={numSabots} onChange={e => setNumSabots(e.target.value)} />
+          <IncInput
+            showBorder
+            min={0}
+            max={userData.personnel.sabots}
+            type="number"
+            value={numSabots}
+            onChangeText={setNumSabots}
+          />
         </label>
       </div>
+      <br />
       <div>
         <label>
           {PERSONNEL_OBJ.thieves.name}
           {': '}
-          <input type="number" name="quantity" value={numThieves} onChange={e => setNumThieves(e.target.value)} />
+          <IncInput
+            showBorder
+            min={0}
+            max={userData.personnel.thieves}
+            type="number"
+            value={numThieves}
+            onChangeText={setNumThieves}
+          />
         </label>
       </div>
+      <br />
       <div>
         {user && (
           <label>
@@ -80,9 +99,8 @@ export default function MissionModalAttack({ user, hood, onRequestClose }) {
           </label>
         )}
       </div>
-      <div>
-        <button onClick={startMission}>Enviar</button>
-      </div>
+      <br />
+      <IncButton onClick={startMission}>Enviar</IncButton>
     </>
   )
 }
