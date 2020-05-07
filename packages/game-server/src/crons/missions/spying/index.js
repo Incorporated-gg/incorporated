@@ -1,6 +1,12 @@
 import mysql from '../../../lib/mysql'
 import { calcSpiesCaptured, calcInformationPercentageObtained } from './calcs'
-import { getUserResearchs, getUserBuildings, getUserPersonnel, runUserMoneyUpdate } from '../../../lib/db/users'
+import {
+  getUserResearchs,
+  getUserBuildings,
+  getUserPersonnel,
+  runUserMoneyUpdate,
+  getUserTodaysMissionsLimits,
+} from '../../../lib/db/users'
 
 export async function doSpyMissions() {
   const tsNow = Math.floor(Date.now() / 1000)
@@ -60,6 +66,7 @@ async function completeSpyMission(mission) {
   const intelReport = await getIntelReport({
     informationPercentageObtained,
     spiesCaptured,
+    attackerID: attacker.id,
     defenderID: defender.id,
     defensorResearchs,
   })
@@ -73,52 +80,70 @@ async function completeSpyMission(mission) {
   await mysql.query('UPDATE missions SET completed=1, result=?, data=? WHERE id=?', [result, newData, mission.id])
 }
 
-async function getIntelReport({ informationPercentageObtained, spiesCaptured, defenderID, defensorResearchs }) {
+async function getIntelReport({
+  informationPercentageObtained,
+  spiesCaptured,
+  attackerID,
+  defenderID,
+  defensorResearchs,
+}) {
+  // building upon last report, if any
+  const minWillFinishAt = Math.floor(Date.now() / 1000) - 60 * 90
+  const recentSpyReport = await mysql.selectOne(
+    'SELECT id, data FROM missions WHERE completed=1 AND mission_type=? AND user_id=? AND target_user=? AND will_finish_at>? ORDER BY will_finish_at DESC LIMIT 1',
+    ['spy', attackerID, defenderID, minWillFinishAt]
+  )
+  if (recentSpyReport) {
+    const missionData = JSON.parse(recentSpyReport.data)
+    if (missionData.report.obtainedInfo < 100) {
+      await mysql.query('DELETE FROM missions WHERE id=?', [recentSpyReport.id])
+      informationPercentageObtained = Math.min(100, informationPercentageObtained + missionData.report.obtainedInfo)
+    }
+  }
+
   const defensorBuildings = await getUserBuildings(defenderID)
   const defensorPersonnel = await getUserPersonnel(defenderID)
+  const missionLimits = await getUserTodaysMissionsLimits(defenderID)
   const intelReport = {
+    obtainedInfo: Math.floor(informationPercentageObtained),
     captured_spies: spiesCaptured,
     buildings: {},
     personnel: {},
     researchs: {},
+    dailyLimits: {
+      maxAttacks: missionLimits.maxAttacks,
+      maxDefenses: missionLimits.maxDefenses,
+    },
   }
 
   let percentageLeft = informationPercentageObtained
   const discoverables = [
-    { type: 'buildings', id: 1 },
-    { type: 'buildings', id: 2 },
-    { type: 'buildings', id: 3 },
-    { type: 'buildings', id: 4 },
-    { type: 'buildings', id: 5 },
-    { type: 'buildings', id: 6 },
-    { type: 'personnel', id: 'sabots' },
-    { type: 'personnel', id: 'spies' },
-    { type: 'personnel', id: 'guards' },
-    { type: 'personnel', id: 'thieves' },
-    { type: 'researchs', id: 1 },
-    { type: 'researchs', id: 2 },
-    { type: 'researchs', id: 3 },
-    { type: 'researchs', id: 4 },
-    { type: 'researchs', id: 5 },
-    { type: 'researchs', id: 6 },
+    { type: 'buildings', info: defensorBuildings[1], id: 1 },
+    { type: 'buildings', info: defensorBuildings[2], id: 2 },
+    { type: 'buildings', info: defensorBuildings[3], id: 3 },
+    { type: 'buildings', info: defensorBuildings[4], id: 4 },
+    { type: 'buildings', info: defensorBuildings[5], id: 5 },
+    { type: 'buildings', info: defensorBuildings[6], id: 6 },
+    { type: 'personnel', info: defensorPersonnel.sabots, id: 'sabots' },
+    { type: 'personnel', info: defensorPersonnel.spies, id: 'spies' },
+    { type: 'personnel', info: defensorPersonnel.guards, id: 'guards' },
+    { type: 'personnel', info: defensorPersonnel.thieves, id: 'thieves' },
+    { type: 'researchs', info: defensorResearchs[1], id: 1 },
+    { type: 'researchs', info: defensorResearchs[2], id: 2 },
+    { type: 'researchs', info: defensorResearchs[3], id: 3 },
+    { type: 'researchs', info: defensorResearchs[4], id: 4 },
+    { type: 'researchs', info: defensorResearchs[5], id: 5 },
+    { type: 'researchs', info: defensorResearchs[6], id: 6 },
+    { type: 'dailyLimits', info: missionLimits.sentToday, id: 'sentToday' },
+    { type: 'dailyLimits', info: missionLimits.receivedToday, id: 'receivedToday' },
   ]
-  const iterationPercentageCost = 100 / discoverables.length 
+  const iterationPercentageCost = 100 / discoverables.length
   while (1) {
     percentageLeft -= iterationPercentageCost
-    if (percentageLeft < 0 || !discoverables.length) break
+    if (percentageLeft < -0.01 || !discoverables.length) break // -0.01 to account for rounding errors
     const nextDiscoverable = discoverables.shift()
 
-    const infoObj =
-      nextDiscoverable.type === 'buildings'
-        ? defensorBuildings
-        : nextDiscoverable.type === 'personnel'
-        ? defensorPersonnel
-        : nextDiscoverable.type === 'researchs'
-        ? defensorResearchs
-        : null
-    if (!infoObj) throw new Error(`Unknown infoObj for discoverable: ${JSON.stringify(nextDiscoverable)}`)
-
-    intelReport[nextDiscoverable.type][nextDiscoverable.id] = infoObj[nextDiscoverable.id]
+    intelReport[nextDiscoverable.type][nextDiscoverable.id] = nextDiscoverable.info
   }
 
   return intelReport

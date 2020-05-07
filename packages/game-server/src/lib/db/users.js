@@ -13,12 +13,14 @@ export async function getUserData(userID) {
   const rankingDataPromise = mysql.selectOne('SELECT rank, points FROM ranking_income WHERE user_id=?', [userID])
   const alliancePromise = getUserAllianceID(userID).then(getAllianceBasicData)
   const accountDataPromise = getAccountData(userID)
+  const researchsPromise = getUserResearchs(userID)
 
-  const [userData, rankingData, allianceData, accountData] = await Promise.all([
+  const [userData, rankingData, allianceData, accountData, researchs] = await Promise.all([
     userDataPromise,
     rankingDataPromise,
     alliancePromise,
     accountDataPromise,
+    researchsPromise,
   ])
   if (!userData || !accountData) return null
 
@@ -29,6 +31,7 @@ export async function getUserData(userID) {
     rank_position: rankingData ? rankingData.rank : 0,
     income: rankingData ? rankingData.points : 0,
     alliance: allianceData,
+    spy_research_level: researchs[1],
   }
 }
 

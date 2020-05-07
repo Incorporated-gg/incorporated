@@ -9,26 +9,25 @@ import {
 } from 'shared-lib/missionsUtils'
 import PropTypes from 'prop-types'
 import IncButton from 'components/UI/inc-button'
+import IncInput from 'components/UI/inc-input'
 
 MissionModalSpy.propTypes = {
-  user: PropTypes.object,
+  user: PropTypes.object.isRequired,
   onRequestClose: PropTypes.func.isRequired,
 }
 export default function MissionModalSpy({ user, onRequestClose }) {
   const userData = useUserData()
-  const [theirLvl, setTheirLvl] = useState('')
-  const [toUser, setToUser] = useState((user && user.username) || '')
   const [numTroops, setNumTroops] = useState(userData.personnel.spies)
-  const isFormReady = toUser && numTroops && numTroops > 0
+  const isFormReady = numTroops > 0
 
   const espionageProbabilities = calcSpyFailProbabilities({
     resLvlAttacker: userData.researchs[1],
-    resLvLDefender: parseInt(theirLvl) || userData.researchs[1],
+    resLvLDefender: user.spy_research_level,
     spiesSent: numTroops,
   })
   const informationPercentageRange = calcSpyInformationPercentageRange({
     resLvlAttacker: userData.researchs[1],
-    resLvLDefender: parseInt(theirLvl) || userData.researchs[1],
+    resLvLDefender: user.spy_research_level,
     spiesRemaining: numTroops,
   })
 
@@ -43,7 +42,7 @@ export default function MissionModalSpy({ user, onRequestClose }) {
       api
         .post('/v1/missions/create', {
           mission_type: 'spy',
-          target_user: toUser,
+          target_user: user.username,
           sent_spies: numTroops,
         })
         .then(() => {
@@ -51,7 +50,7 @@ export default function MissionModalSpy({ user, onRequestClose }) {
         })
         .catch(error => alert(error))
     },
-    [isFormReady, numTroops, onRequestClose, toUser]
+    [isFormReady, numTroops, onRequestClose, user.username]
   )
 
   const troopName = PERSONNEL_OBJ.spies.name
@@ -60,22 +59,10 @@ export default function MissionModalSpy({ user, onRequestClose }) {
 
   return (
     <>
-      <div>
-        <label>
-          Su nivel de espionaje:
-          <input
-            type="number"
-            min="1"
-            placeholder={'Desconocido'}
-            value={theirLvl}
-            onChange={e => setTheirLvl(e.target.value)}
-          />
-        </label>
-      </div>
+      <div>Usuario a espiar: {user.username}</div>
       <br />
       <div>
         <p>Probabilidades de ser detectados:</p>
-        <p>Base: {espionageProbabilities.base}%</p>
         <p>Por nivel: {Math.round(espionageProbabilities.level * 10) / 10}%</p>
         <p>Por nº de espías: {Math.round(espionageProbabilities.spies * 10) / 10}%</p>
         <p>Total: {Math.round(espionageProbabilities.total * 10) / 10}%</p>
@@ -89,14 +76,8 @@ export default function MissionModalSpy({ user, onRequestClose }) {
       <br />
       <div>
         <label>
-          Usuario a espiar:
-          <input type="text" value={toUser} onChange={e => setToUser(e.target.value)} />
-        </label>
-      </div>
-      <div>
-        <label>
           {troopName}:
-          <input min="1" type="number" value={numTroops} onChange={e => setNumTroops(e.target.value)} />
+          <IncInput showBorder min="1" type="number" value={numTroops} onChangeText={setNumTroops} />
         </label>
       </div>
       <div>Tiempo de mision: {missionSeconds}s</div>

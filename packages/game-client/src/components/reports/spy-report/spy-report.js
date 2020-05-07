@@ -97,6 +97,16 @@ export default function SpyReport({ mission }) {
           )
         })}
       </div>
+      <div>
+        <br />
+        <b>{'Límites de ataque diarios'}:</b>
+        <div>
+          Enviados: {mission.report.dailyLimits?.sentToday ?? '?'}/{mission.report.dailyLimits?.maxAttacks}
+        </div>
+        <div>
+          Recibidos: {mission.report.dailyLimits?.receivedToday ?? '?'}/{mission.report.dailyLimits?.maxDefenses}
+        </div>
+      </div>
       {canSimulateAttack && (
         <div>
           <br />

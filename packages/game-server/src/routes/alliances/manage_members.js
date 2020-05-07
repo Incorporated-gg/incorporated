@@ -154,7 +154,7 @@ module.exports = app => {
     await mysql.query(
       'UPDATE alliances_members SET rank_name=?, \
       permission_admin=?, permission_accept_and_kick_members=?, permission_extract_resources=?, \
-      permission_activate_buffs=?, \
+      permission_activate_buffs=? \
       WHERE alliance_id=? AND user_id=?',
       [
         newRankName,

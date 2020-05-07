@@ -226,15 +226,13 @@ export function calcSpyFailProbabilities({ resLvlAttacker, resLvLDefender, spies
   let spiesProbability = (4 * spiesSent) / resLvlAttacker
   spiesProbability = Math.min(100, Math.max(0, spiesProbability))
 
-  let lvlProbability = (4 + Math.max(resLvLDefender, resLvlAttacker) / 4) * (resLvLDefender - resLvlAttacker)
+  let lvlProbability = 5 + (4 + Math.max(resLvLDefender, resLvlAttacker) / 4) * (resLvLDefender - resLvlAttacker)
   lvlProbability = Math.min(100, Math.max(-999, lvlProbability))
 
-  const baseProbability = 5
   return {
-    base: baseProbability,
     spies: spiesProbability,
     level: lvlProbability,
-    total: Math.min(100, Math.max(0, spiesProbability + lvlProbability + baseProbability)),
+    total: Math.min(100, Math.max(0, spiesProbability + lvlProbability)),
   }
 }
 
