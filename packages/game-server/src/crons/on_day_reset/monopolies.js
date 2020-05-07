@@ -1,12 +1,11 @@
-import mysql from '../lib/mysql'
+import mysql from '../../lib/mysql'
 import { buildingsList } from 'shared-lib/buildingsUtils'
-import { getServerDate } from '../lib/serverTime'
-const frequencyMs = 60 * 1000
+import { getServerDate, getInitialUnixTimestampOfServerDay } from '../../lib/serverTime'
+import { sendAccountHook } from '../../lib/accountInternalApi'
 
-const run = async () => {
-  const serverDate = getServerDate()
-  const isMonopoliesMinute = serverDate.day === 6 && serverDate.hours === 23 && serverDate.minutes === 30
-  if (!isMonopoliesMinute) return
+export default async function monopolies(willFinishServerDay) {
+  const serverDate = getServerDate(getInitialUnixTimestampOfServerDay(willFinishServerDay))
+  if (serverDate.day_of_the_week !== 6) return
 
   // Update monopolies table
   await Promise.all(
@@ -37,7 +36,9 @@ const run = async () => {
 
   // Send monopolies reward
   const messagesCreatedAt = Math.floor(Date.now() / 1000)
-  const monopolyHolders = await mysql.query('SELECT building_id, user_id, building_quantity FROM monopolies')
+  const monopolyHolders = await mysql.query(
+    'SELECT building_id, user_id, building_quantity FROM monopolies ORDER BY building_id ASC'
+  )
   await Promise.all(
     monopolyHolders.map(async monopoly => {
       await mysql.query('INSERT INTO messages (user_id, sender_id, created_at, type, data) VALUES (?, ?, ?, ?, ?)', [
@@ -52,9 +53,9 @@ const run = async () => {
       ])
     })
   )
-}
 
-module.exports = {
-  run,
-  frequencyMs,
+  sendAccountHook('contest_ended', {
+    contestName: 'monopolies',
+    orderedWinnerIDs: monopolyHolders.map(rank => rank.user_id),
+  })
 }

@@ -4,6 +4,7 @@ import { getIncomeScoreboard } from './income'
 import { getDestructionScoreboard } from './destruction'
 import { getResearchScoreboard } from './research'
 import { getRobbingScoreboard } from './robbing'
+import { sendAccountHook } from '../../../lib/accountInternalApi'
 
 const contestsList = ['income', 'destruction', 'research', 'robbing']
 
@@ -28,6 +29,11 @@ export default async function runJustAfterNewDay(finishedServerDay) {
 }
 
 async function giveOutContestPrizesAndMessages(ongoingContest) {
+  const scoreBoard = await getContestCurrentScoreboard(ongoingContest.id)
+  sendAccountHook('contest_ended', {
+    contestName: ongoingContest.name,
+    orderedWinnerIDs: scoreBoard.slice(0, 100).map(rank => rank.user_id),
+  })
   // TODO
   console.log('TODO: giveOutContestPrizesAndMessages', ongoingContest)
 }
@@ -63,10 +69,11 @@ export async function updateCurrentContestScoreboard() {
   await updateOngoingContest(ongoingContest.id, topList)
 }
 
-const getPreviousScoreboard = async contestID => {
-  const scoreBoard = await mysql.query('SELECT user_id, score, rank FROM contests_scoreboards WHERE contest_id = ?', [
-    contestID,
-  ])
+async function getContestCurrentScoreboard(contestID) {
+  const scoreBoard = await mysql.query(
+    'SELECT user_id, score, rank FROM contests_scoreboards WHERE contest_id = ? ORDER BY rank ASC',
+    [contestID]
+  )
   return scoreBoard
 }
 
@@ -80,7 +87,7 @@ const updateOngoingContest = async (ongoingContestID, newScoreboardRaw) => {
       user_id: row.user_id,
     }
   })
-  const previousScoreboardRaw = await getPreviousScoreboard(ongoingContestID)
+  const previousScoreboardRaw = await getContestCurrentScoreboard(ongoingContestID)
   const previousScoreboard = previousScoreboardRaw.map(row => {
     const score = row.score ? parseInt(row.score) : 0
     return {

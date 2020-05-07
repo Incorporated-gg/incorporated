@@ -18,14 +18,17 @@ export function numberToAbbreviation(number) {
     if (number >= 1e9) {
       // Multi millions, after 1000M. No decimals
       numStr = Math.floor(number / 1e6).toLocaleString()
-    } else {
-      // Millions, between 1M and 1000M. 1 decimal
+    } else if (number >= 1e7) {
+      // Millions, between 10M and 1000M. 1 decimal
       numStr = (Math.floor((number / 1e6) * 10) / 10).toLocaleString()
+    } else {
+      // Single Millions, between 1M and 9.99M. 2 decimals
+      numStr = (Math.floor((number / 1e6) * 100) / 100).toLocaleString()
     }
     return symbolStr + numStr + 'M'
   }
 
-  if (number >= 1e3 * 100) {
+  if (number >= 1e5) {
     // Thousands, between 100,000 and 1M
     return symbolStr + Math.floor(number / 1e3) + 'K'
   }

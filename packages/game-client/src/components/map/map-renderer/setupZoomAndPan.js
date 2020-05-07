@@ -52,9 +52,12 @@ function onClick(ctx) {
   onHoodClickEventListeners.forEach(cb => cb(hoodFromSvg.id))
 }
 
-const onHoodClickEventListeners = []
+let onHoodClickEventListeners = []
 export function setOnHoodClickEventListener(callback) {
   onHoodClickEventListeners.push(callback)
+  return () => {
+    onHoodClickEventListeners = onHoodClickEventListeners.filter(cb => cb !== callback)
+  }
 }
 
 function getIntersectingHoodFromSvg(ctx, x, y) {

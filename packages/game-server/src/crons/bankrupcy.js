@@ -13,6 +13,7 @@ const run = async () => {
     'UPDATE users SET bankrupcy_started_at=? WHERE bankrupcy_started_at IS NULL AND money<0 AND (SELECT SUM(quantity) FROM users_resources WHERE users_resources.user_id=users.id)>0',
     [tsNow]
   )
+  await mysql.query('UPDATE users SET bankrupcy_started_at=NULL WHERE money>0')
 
   const bankruptedUsers = await mysql.query('SELECT id FROM users WHERE bankrupcy_started_at<?', [
     tsNow - BANKRUPCY_TIME_LIMIT,

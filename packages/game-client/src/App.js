@@ -15,6 +15,11 @@ function App() {
   staticReloadApp = () => setLoading(true)
 
   useEffect(() => {
+    // Change when translations are introduced
+    document.body.lang = 'es'
+  }, [])
+
+  useEffect(() => {
     if (!loading) return
 
     loadUserDataFromStorage()

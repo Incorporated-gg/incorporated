@@ -55,10 +55,13 @@ export async function giveXPToUser(userID: number, xp: number): Promise<void> {
   let newXP = userData.xp + xp
   let xpNeeded = userData.levelUpXP
   let levelsUp = 0
+  let levelUpGoldReward = 0
   while (newXP >= xpNeeded) {
     newXP -= xpNeeded
     levelsUp++
+    levelUpGoldReward += 1 + Math.floor((userData.level + levelsUp) / 2)
     xpNeeded = calculateLevelUpXP(userData.level + levelsUp)
   }
+  if (levelUpGoldReward) await giveGoldToUser(userID, levelUpGoldReward)
   await mysql.query('UPDATE users SET xp=?, level=? WHERE id=?', [newXP, userData.level + levelsUp, userID])
 }

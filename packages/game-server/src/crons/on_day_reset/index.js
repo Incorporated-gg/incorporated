@@ -5,9 +5,10 @@ import usersDailyLog from './users_daily_log'
 import newspaper from './newspaper'
 import allianceWars from './alliance_wars'
 import contests from './contests'
+import monopolies from './monopolies'
 
 export async function runOnce() {
-  setTimeoutForStartOfTomorrow()
+  setDayResetTimeout()
 
   // Catch up if server was down for a day change
   const serverDay = getServerDay()
@@ -15,19 +16,28 @@ export async function runOnce() {
   let day = last.day || 0
 
   while (day < serverDay - 1) {
-    await runJustAfterNewDay(++day)
+    day++
+    await run30minBeforeNewDay(day)
+    await runJustAfterNewDay(day)
   }
 }
 
-function setTimeoutForStartOfTomorrow() {
+function setDayResetTimeout() {
   // Run every server day just after reset
   const tsStartOfTomorrow = getInitialUnixTimestampOfServerDay(getServerDay() + 1)
+  const timeoutMs = tsStartOfTomorrow - Date.now() + 10
 
   setTimeout(() => {
-    setTimeoutForStartOfTomorrow()
+    setDayResetTimeout()
+
     const finishedServerDay = getServerDay() - 1
     runJustAfterNewDay(finishedServerDay)
-  }, tsStartOfTomorrow - Date.now() + 10)
+  }, timeoutMs)
+
+  setTimeout(() => {
+    const willFinishServerDay = getServerDay()
+    run30minBeforeNewDay(willFinishServerDay)
+  }, timeoutMs - 30 * 60 * 1000)
 }
 
 async function runJustAfterNewDay(finishedServerDay) {
@@ -53,6 +63,14 @@ async function runJustAfterNewDay(finishedServerDay) {
 
   try {
     await contests(finishedServerDay)
+  } catch (e) {
+    console.error(e)
+  }
+}
+
+async function run30minBeforeNewDay(willFinishServerDay) {
+  try {
+    await monopolies(willFinishServerDay)
   } catch (e) {
     console.error(e)
   }

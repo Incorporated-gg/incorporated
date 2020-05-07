@@ -18,7 +18,7 @@ module.exports = app => {
     }
     req.userData.money += taskCompletion.moneyReward
 
-    sendAccountHook('task_finished', { userID: req.userData.id })
+    sendAccountHook('task_finished', { userID: req.userData.id, taskID })
 
     res.json({
       success: true,

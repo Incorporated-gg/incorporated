@@ -10,9 +10,7 @@ MapRenderer.propTypes = {
 export default function MapRenderer({ hoods }) {
   const canvasRef = useRef()
 
-  useEffect(() => {
-    setupMapCanvas(canvasRef.current, hoods)
-  }, [hoods])
+  useSetupMapCanvas(canvasRef, hoods)
 
   return <canvas ref={canvasRef} className={styles.canvas} />
 }
@@ -49,29 +47,36 @@ async function loadAssets() {
   }
 }
 
-async function setupMapCanvas(canvas, hoods) {
-  const ctx = canvas.getContext('2d')
-  const canvasBox = canvas.getBoundingClientRect()
-  canvas.width = canvasBox.width
-  canvas.height = canvas.width * 1.3
+async function useSetupMapCanvas(canvasRef, hoods) {
+  useEffect(() => {
+    async function main() {
+      const canvas = canvasRef.current
+      const ctx = canvas.getContext('2d')
+      const canvasBox = canvas.getBoundingClientRect()
+      canvas.width = canvasBox.width
+      canvas.height = canvas.width * 1.3
 
-  const assets = await loadAssets()
+      const assets = await loadAssets()
 
-  function drawCanvasHelper() {
-    drawCanvas({ ctx, assets, hoods })
-  }
+      function drawCanvasHelper() {
+        drawCanvas({ ctx, assets, hoods })
+      }
 
-  trackTransforms(ctx)
-  setupZoomAndPan({
-    ctx,
-    drawCanvas: drawCanvasHelper,
-  })
-  centerIsland({ ctx, drawCanvas: drawCanvasHelper })
-  drawCanvasHelper()
+      trackTransforms(ctx)
+      setupZoomAndPan({
+        ctx,
+        drawCanvas: drawCanvasHelper,
+      })
+      centerIsland({ ctx, drawCanvas: drawCanvasHelper })
+      drawCanvasHelper()
+    }
+    main()
 
-  setOnHoodClickEventListener(hoodID => {
-    const hood = hoods.find(h => h.id === hoodID)
-    console.log(hood)
-    window.alert(hood.name)
-  })
+    const removeCallback = setOnHoodClickEventListener(hoodID => {
+      const hood = hoods.find(h => h.id === hoodID)
+      console.log(hood)
+      window.alert(hood.name)
+    })
+    return removeCallback
+  }, [canvasRef, hoods])
 }
