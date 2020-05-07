@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { useLocation, useHistory } from 'react-router-dom'
 import styles from './Ranking.module.scss'
-import RankItem from '../../components/UI/rank-item'
+import RankItem from '../../components/UI/rank-item/rank-item'
 import AllianceLink from 'components/alliance/alliance-link'
 import { debounce } from '../../lib/utils'
 import Pagination from 'components/UI/pagination'
 import api from 'lib/api'
 import UserLink from 'components/UI/user-link'
 import IncInput from 'components/UI/inc-input'
+import RankingMenu from './ranking-menu'
 
 export default function Ranking() {
   const [ranking, setRanking] = useState([])
@@ -39,11 +40,13 @@ export default function Ranking() {
 
   return (
     <>
+      <RankingMenu />
       {rankingItemType === 'users' && <SearchUsers />}
       <div className={styles.rankingContainer}>
         {ranking.map(rankItem => (
           <RankItem
             key={rankItem.user ? rankItem.user.id : rankItem.alliance ? rankItem.alliance.id : Math.random()}
+            user={rankItem.user}
             rank={rankItem.rank}
             pointsType={type}
             points={rankItem.points}>
@@ -52,7 +55,8 @@ export default function Ranking() {
           </RankItem>
         ))}
       </div>
-      {maxPages > 1 && <Pagination onPageChange={pageNum => setPage(pageNum)} maxPages={maxPages} />}
+      <br />
+      <Pagination onPageChange={pageNum => setPage(pageNum)} maxPages={maxPages} />
     </>
   )
 }
@@ -104,7 +108,12 @@ function SearchUsers() {
               users &&
               users.map(user => {
                 return (
-                  <RankItem key={user.id} rank={user.rank_position} pointsType="income" points={user.income}>
+                  <RankItem
+                    key={user.id}
+                    user={user}
+                    rank={user.rank_position}
+                    pointsType="income"
+                    points={user.income}>
                     <UserLink user={user} />
                   </RankItem>
                 )

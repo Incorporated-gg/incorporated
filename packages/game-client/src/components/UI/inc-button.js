@@ -9,8 +9,19 @@ IncButton.propTypes = {
   outerStyle: PropTypes.object,
   outerClassName: PropTypes.string,
   disabled: PropTypes.bool,
+  style: PropTypes.object,
+  noInnerBackground: PropTypes.bool,
 }
-export default function IncButton({ children, onClick, outerClassName, outerStyle, disabled, ...props }) {
+export default function IncButton({
+  children,
+  onClick,
+  outerClassName,
+  outerStyle,
+  disabled,
+  noInnerBackground,
+  style,
+  ...props
+}) {
   const runOnClick = e => {
     if (disabled || e.defaultPrevented) return
     if (onClick) onClick(e)
@@ -19,6 +30,7 @@ export default function IncButton({ children, onClick, outerClassName, outerStyl
     <IncContainer
       outerClassName={`${styles.button} ${disabled ? styles.disabled : ''} ${outerClassName || ''}`}
       outerStyle={outerStyle}
+      style={{ ...style, background: noInnerBackground ? 'none' : undefined }}
       onClick={runOnClick}
       onKeyDown={e => {
         if (e.key === 'Enter') runOnClick(e)

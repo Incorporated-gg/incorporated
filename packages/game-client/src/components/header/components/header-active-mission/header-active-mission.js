@@ -7,6 +7,7 @@ import IncContainer from 'components/UI/inc-container'
 import IncButton from 'components/UI/inc-button'
 import UserLink from 'components/UI/user-link'
 import { cancelActiveMission } from 'lib/utils'
+import Icon from 'components/icon'
 
 export default function ActiveMission() {
   const userData = useUserData()
@@ -21,13 +22,16 @@ export default function ActiveMission() {
 
   if (!userData.active_mission) return null
 
+  const missionSvg =
+    userData.active_mission.mission_type === 'spy' ? require('./img/spy.svg') : require('./img/attack.svg')
   return (
     <>
       <div className={styles.container}>
         <IncContainer withHairline borderSize={4} darkBg style={{ display: 'flex' }}>
           <div className={`${styles.stat} ${styles.statMission1}`}>
-            {userData.active_mission.mission_type}
-            <span> -&gt; </span>
+            {}
+            <Icon svg={missionSvg} size={30} />
+            <Icon svg={require('./img/arrows.svg')} width={40} height={15} />
             {userData.active_mission.target_hood ? (
               userData.active_mission.target_hood.name
             ) : (
@@ -41,7 +45,9 @@ export default function ActiveMission() {
           <div className={`${styles.stat} ${styles.statMission3}`}>
             <IncButton onClick={() => setIsModalOpen(true)}>Detalles</IncButton>
             <div style={{ width: 10 }} />
-            <IncButton onClick={cancelMission}>Cancelar</IncButton>
+            <IncButton onClick={cancelMission}>
+              <Icon svg={require('./img/cancel.svg')} size={20} />
+            </IncButton>
           </div>
         </IncContainer>
       </div>

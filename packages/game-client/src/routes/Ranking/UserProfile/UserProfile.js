@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
-import UserActionLinks from 'components/UI/user-action-links'
+import UserActionButtons from 'components/UI/user-action-buttons/user-action-buttons'
 import styles from './UserProfile.module.scss'
 import IncContainer from 'components/UI/inc-container'
 import api from 'lib/api'
@@ -36,7 +36,7 @@ export default function Ranking() {
           Ingresos diarios: {user.income.toLocaleString()} <Icon iconName="money" size={16} />
         </div>
         <div className={styles.actionLinks}>
-          <UserActionLinks user={user} />
+          <UserActionButtons user={user} />
         </div>
       </div>
     </IncContainer>

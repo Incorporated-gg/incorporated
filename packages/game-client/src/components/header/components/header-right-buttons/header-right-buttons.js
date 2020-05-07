@@ -20,7 +20,7 @@ export default function HeaderRightButtons({ setIsActiveTasksModalOpen }) {
           outerClassName={styles.rightButtonOuter}
           className={styles.rightButtonInner}>
           <IncChevron padding={3} chevronSize={10} direction="right">
-            <Icon width={26} height={16} svg={require('./img/finances.svg')} alt="Finances" />
+            <Icon width={26} height={16} svg={require('./img/shop.svg')} alt="Finances" />
           </IncChevron>
           <div className={styles.title}>TIENDA</div>
         </IncButton>

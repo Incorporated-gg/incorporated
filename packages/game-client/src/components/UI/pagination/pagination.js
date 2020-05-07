@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import styles from './pagination.module.scss'
 import PropTypes from 'prop-types'
+import IncButton from '../inc-button'
 
 /**
  * Pagination
@@ -25,40 +26,47 @@ export default function Pagination({ paramName = 'page', maxPages, onPageChange 
 
   return (
     <div className={styles.pagination}>
-      <button onClick={() => setCurPage(1)} className={`${styles.prev} ${styles.navLink}`}>
+      <IncButton noInnerBackground onClick={() => setCurPage(1)} outerClassName={`${styles.prev} ${styles.navLink}`}>
         {'<<'}
-      </button>
+      </IncButton>
 
       {Array.from(new Array(numItems).keys()).map((x, pageCount, allItems) => {
         if (curPage - (numItems - pageCount - 1) > 1) {
           return (
-            <button
+            <IncButton
+              noInnerBackground
               key={`page${curPage - (numItems - pageCount)}`}
               onClick={() => setCurPage(curPage - (numItems - pageCount))}
-              className={`${styles.prev} ${styles.navLink}`}>
+              outerClassName={`${styles.prev} ${styles.navLink}`}>
               {curPage - (numItems - pageCount)}
-            </button>
+            </IncButton>
           )
         } else return null
       })}
 
-      <button className={`${styles.navLink} ${styles.current}`}>{curPage}</button>
+      <IncButton noInnerBackground outerClassName={`${styles.navLink} ${styles.current}`}>
+        {curPage}
+      </IncButton>
 
       {Array.from(new Array(numItems).keys()).map((x, pageCount) => {
         if (curPage + pageCount < maxPages) {
           return (
-            <button
+            <IncButton
+              noInnerBackground
               key={`page${curPage + (pageCount + 1)}`}
               onClick={() => setCurPage(curPage + (pageCount + 1))}
-              className={`${styles.prev} ${styles.navLink}`}>
+              outerClassName={`${styles.next} ${styles.navLink}`}>
               {curPage + (pageCount + 1)}
-            </button>
+            </IncButton>
           )
         } else return null
       })}
-      <button onClick={() => setCurPage(maxPages)} className={`${styles.prev} ${styles.navLink}`}>
+      <IncButton
+        noInnerBackground
+        onClick={() => setCurPage(maxPages)}
+        outerClassName={`${styles.next} ${styles.navLink}`}>
         {'>>'}
-      </button>
+      </IncButton>
     </div>
   )
 }

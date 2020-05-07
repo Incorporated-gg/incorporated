@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import api from '../../lib/api'
-import UserActionLinks from '../../components/UI/user-action-links'
+import UserActionButtons from '../../components/UI/user-action-buttons/user-action-buttons'
 import IncContainer from 'components/UI/inc-container'
 import UserLink from 'components/UI/user-link'
 import PropTypes from 'prop-types'
@@ -45,7 +45,7 @@ export default function Contest({ contestName }) {
                   </td>
                   <td>{contestScore.score && contestScore.score.toLocaleString()} puntos</td>
                   <td>
-                    <UserActionLinks user={contestScore.user} />
+                    <UserActionButtons user={contestScore.user} />
                   </td>
                 </tr>
               ))

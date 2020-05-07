@@ -2,6 +2,8 @@ import React, { useState, useCallback, useEffect } from 'react'
 import api from '../../../lib/api'
 import PropTypes from 'prop-types'
 import IncContainer from 'components/UI/inc-container'
+import Icon from 'components/icon'
+import IncButton from 'components/UI/inc-button'
 
 MemberRequests.propTypes = {
   reloadAllianceData: PropTypes.func.isRequired,
@@ -47,8 +49,12 @@ export default function MemberRequests({ reloadAllianceData }) {
                 <tr key={memberRequest.id}>
                   <td>{memberRequest.username}</td>
                   <td>
-                    <button onClick={memberRequestAction('reject', memberRequest)}>Rechazar</button>
-                    <button onClick={memberRequestAction('accept', memberRequest)}>Aceptar</button>
+                    <IncButton noInnerBackground onClick={memberRequestAction('reject', memberRequest)}>
+                      <Icon svg={require('./img/accept.svg')} size={12} />
+                    </IncButton>{' '}
+                    <IncButton noInnerBackground onClick={memberRequestAction('accept', memberRequest)}>
+                      <Icon svg={require('./img/reject.svg')} size={12} />
+                    </IncButton>
                   </td>
                 </tr>
               )

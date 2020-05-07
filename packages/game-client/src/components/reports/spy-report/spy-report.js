@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import { userData } from 'lib/user'
-import { buildingsList } from 'shared-lib/buildingsUtils'
+import { buildingsList, calcBuildingMaxMoney } from 'shared-lib/buildingsUtils'
 import { PERSONNEL_OBJ } from 'shared-lib/personnelUtils'
 import { researchList } from 'shared-lib/researchUtils'
 import { timestampFromEpoch } from 'shared-lib/commonUtils'
@@ -51,19 +51,32 @@ export default function SpyReport({ mission }) {
               <th>Edificio</th>
               <th>Cantidad</th>
               <th>Dinero almacenado</th>
+              <th>Dinero robable</th>
             </tr>
           </thead>
           <tbody>
             {buildingsList.map(buildingInfo => {
               const reportBuilding = mission.report.buildings[buildingInfo.id]
-              const quantity = reportBuilding ? reportBuilding.quantity.toLocaleString() : '?'
-              const money = reportBuilding ? numberToAbbreviation(reportBuilding.money) : '?'
+              const buildingAmount = reportBuilding ? reportBuilding.quantity.toLocaleString() : '?'
+              const accumulatedMoney = reportBuilding ? numberToAbbreviation(reportBuilding.money) : '?'
+              let robbableMoney = '?'
+              if (mission.report.researchs[4] !== undefined) {
+                const bankResearchLevel = mission.report.researchs[4]
+                robbableMoney =
+                  reportBuilding.money -
+                  calcBuildingMaxMoney({ buildingID: buildingInfo.id, buildingAmount, bankResearchLevel }).maxSafe
+
+                robbableMoney = robbableMoney <= 0 ? 0 : numberToAbbreviation(robbableMoney)
+              }
               return (
                 <tr key={buildingInfo.id}>
                   <td>{buildingInfo.name}</td>
-                  <td>{quantity}</td>
+                  <td>{buildingAmount}</td>
                   <td>
-                    {money} <Icon iconName="money" size={16} />
+                    {accumulatedMoney} <Icon iconName="money" size={16} />
+                  </td>
+                  <td>
+                    {robbableMoney} <Icon iconName="money" size={16} />
                   </td>
                 </tr>
               )
@@ -101,10 +114,10 @@ export default function SpyReport({ mission }) {
         <br />
         <b>{'Límites de ataque diarios'}:</b>
         <div>
-          Enviados: {mission.report.dailyLimits?.sentToday ?? '?'}/{mission.report.dailyLimits?.maxAttacks}
+          Enviados: {mission.report.dailyLimits?.sentToday ?? '?'} / {mission.report.dailyLimits?.maxAttacks}
         </div>
         <div>
-          Recibidos: {mission.report.dailyLimits?.receivedToday ?? '?'}/{mission.report.dailyLimits?.maxDefenses}
+          Recibidos: {mission.report.dailyLimits?.receivedToday ?? '?'} / {mission.report.dailyLimits?.maxDefenses}
         </div>
       </div>
       {canSimulateAttack && (

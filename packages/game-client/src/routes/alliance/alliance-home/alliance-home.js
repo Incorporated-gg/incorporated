@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import UserLink from 'components/UI/user-link'
 import api from 'lib/api'
-import RankItem from 'components/UI/rank-item'
+import RankItem from 'components/UI/rank-item/rank-item'
 import styles from './alliance-home.module.scss'
 import { useUserData, reloadUserData } from 'lib/user'
 import NewMessageModal from '../../../components/messages/components/new-message-modal'
@@ -62,6 +62,7 @@ export default function AllianceHome({ alliance, reloadAllianceData }) {
             return (
               <RankItem
                 key={member.user.id}
+                user={member.user}
                 rank={member.user.rank_position}
                 pointsType="income"
                 points={member.user.income}>

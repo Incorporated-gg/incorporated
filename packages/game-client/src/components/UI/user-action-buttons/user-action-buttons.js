@@ -3,13 +3,17 @@ import PropTypes from 'prop-types'
 import { useUserData, userData } from 'lib/user'
 import NewMessageModal from 'components/messages/components/new-message-modal'
 import { calculateIsInAttackRange } from 'shared-lib/missionsUtils'
-import MissionModal from '../mission-modal'
+import MissionModal from '../../mission-modal'
 import { calcBuildingDailyIncome } from 'shared-lib/buildingsUtils'
+import IncButton from '../inc-button'
+import Icon from 'components/icon'
+import styles from './user-action-buttons.module.scss'
 
-UserActionLinks.propTypes = {
+UserActionButtons.propTypes = {
   user: PropTypes.object.isRequired,
+  onActionClicked: PropTypes.func,
 }
-export default function UserActionLinks({ user }) {
+export default function UserActionButtons({ user, onActionClicked }) {
   useUserData()
   const [showMessageModal, setShowMessageModal] = useState(false)
   const [showAttackModal, setShowAttackModal] = useState(false)
@@ -21,15 +25,36 @@ export default function UserActionLinks({ user }) {
   const canAttack = getCanAttackUser(user)
   return (
     <>
-      <button onClick={() => setShowMessageModal(true)} disabled={isMe}>
-        Enviar mensaje
-      </button>{' '}
-      <button onClick={() => setShowAttackModal(true)} disabled={!canAttack}>
-        Atacar
-      </button>{' '}
-      <button onClick={() => setShowSpyModal(true)} disabled={isMe}>
-        Espiar
-      </button>
+      <IncButton
+        disabled={!canAttack}
+        onClick={() => {
+          setShowAttackModal(true)
+          if (onActionClicked) onActionClicked()
+        }}
+        outerClassName={styles.button}
+        borderSize={3}>
+        <Icon svg={require('./img/attack.svg')} size={20} />
+      </IncButton>
+      <IncButton
+        disabled={isMe}
+        onClick={() => {
+          setShowSpyModal(true)
+          if (onActionClicked) onActionClicked()
+        }}
+        outerClassName={styles.button}
+        borderSize={3}>
+        <Icon svg={require('./img/spy.svg')} size={20} />
+      </IncButton>
+      <IncButton
+        disabled={isMe}
+        onClick={() => {
+          setShowMessageModal(true)
+          if (onActionClicked) onActionClicked()
+        }}
+        outerClassName={styles.button}
+        borderSize={3}>
+        <Icon svg={require('./img/message.svg')} size={20} />
+      </IncButton>
       <NewMessageModal user={user} isOpen={showMessageModal} onRequestClose={() => setShowMessageModal(false)} />
       <MissionModal
         missionType="attack"

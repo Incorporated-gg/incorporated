@@ -1,8 +1,8 @@
-@import '../../variables';
+@import '../../../variables';
 
 .rankingItem {
   display: grid;
-  grid-template-columns: auto 1fr 0.5fr;
+  grid-template-columns: auto 1fr auto 0.5fr;
   align-items: center;
   width: 100%;
   padding: 5px;
@@ -37,6 +37,10 @@
 }
 .username {
   margin-left: 5px;
+}
+.actions {
+  margin-right: 5px;
+  position: relative;
 }
 .pointsContainer {
   text-align: center;

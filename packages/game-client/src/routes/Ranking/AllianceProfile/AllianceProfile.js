@@ -3,12 +3,13 @@ import api from 'lib/api'
 import { useParams } from 'react-router-dom'
 import { useUserData, reloadUserData } from 'lib/user'
 import styles from './AllianceProfile.module.scss'
-import RankItem from 'components/UI/rank-item'
+import RankItem from 'components/UI/rank-item/rank-item'
 import WarInfo from 'components/alliance/alliance-war-info'
 import IncContainer from 'components/UI/inc-container'
 import DeclareWarModal from 'components/alliance/declare-war-modal'
 import UserLink from 'components/UI/user-link'
 import AllianceDetails from 'components/alliance/alliance-details/alliance-details'
+import IncButton from 'components/UI/inc-button'
 
 export default function Ranking() {
   const { allianceShortName } = useParams()
@@ -61,12 +62,12 @@ export default function Ranking() {
       <IncContainer darkBg>
         <div className={styles.container}>
           {!userData.alliance ? (
-            <button onClick={createMemberRequest}>Pedir ser miembro</button>
+            <IncButton onClick={createMemberRequest}>Pedir ser miembro</IncButton>
           ) : userData.alliance.id === alliance.id ? (
-            <button onClick={leaveAlliance}>Salir</button>
+            <IncButton onClick={leaveAlliance}>Salir</IncButton>
           ) : (
             userData.alliance_user_rank.permission_admin && (
-              <button onClick={() => setIsDeclareWarModalOpen(true)}>Declarar guerra</button>
+              <IncButton onClick={() => setIsDeclareWarModalOpen(true)}>Declarar guerra</IncButton>
             )
           )}
         </div>
@@ -78,6 +79,7 @@ export default function Ranking() {
             return (
               <RankItem
                 key={member.user.id}
+                user={member.user}
                 rank={member.user.rank_position}
                 pointsType="income"
                 points={member.user.income}>

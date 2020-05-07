@@ -1,0 +1,36 @@
+.container {
+  position: absolute;
+  left: 50%;
+  top: 150%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: row;
+  background-color: #FFF8E6;
+  border-radius: 5px;
+  box-shadow: -2px 2px 8px #000000;
+  border: 5px solid #F6DEA0;
+  z-index: 100;
+  padding: 0 10px;
+
+  &:before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    margin-left: -15px;
+    top: -30px;
+    border: solid 15px transparent;
+    border-bottom-color: #F6DEA0;
+    pointer-events: none;
+  }
+
+  transition: opacity linear 100ms;
+
+  &.open {
+    opacity: 1;
+  }
+
+  &.closed {
+    pointer-events: none;
+    opacity: 0;
+  }
+}
