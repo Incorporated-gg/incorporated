@@ -17,7 +17,7 @@ RankItem.propTypes = {
 }
 export default function RankItem({ user, rank, children, pointsType, points }) {
   const [isActionsOpen, setIsActionsOpen] = useState(false)
-  const isMe = userData?.id === user.id
+  const isMe = userData?.id === user?.id
 
   const iconProps = {}
   if (pointsType === 'income' || pointsType === 'alliances') iconProps.iconName = 'money'

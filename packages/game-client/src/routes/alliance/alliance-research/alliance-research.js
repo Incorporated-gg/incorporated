@@ -4,6 +4,9 @@ import styles from './alliance-research.module.scss'
 import IncContainer from 'components/UI/inc-container'
 import AllianceResearchItem from 'components/alliance/alliance-research-item/alliance-research-item'
 import CardList from 'components/card/card-list'
+import UserLink from 'components/UI/user-link'
+import { ALLIANCE_RESEARCHS } from 'shared-lib/allianceUtils'
+import Icon from 'components/icon'
 
 AllianceResearch.propTypes = {
   alliance: PropTypes.object.isRequired,
@@ -37,6 +40,22 @@ export default function AllianceResearch({ alliance, reloadAllianceData }) {
         <div style={{ padding: 10 }}>
           <h2>Aportes</h2>
           <img className={styles.aportesImg} src={chartImgUrl} alt="" />
+        </div>
+      </IncContainer>
+      <br />
+      <IncContainer darkBg>
+        <div style={{ padding: 10 }}>
+          <h2>Historial de aportes</h2>
+          {alliance.research_log.map(logEntry => {
+            const researchInfo = ALLIANCE_RESEARCHS[logEntry.research_id]
+            const researchName = researchInfo?.name || '???'
+            return (
+              <div key={Math.random()}>
+                <UserLink user={logEntry.user} /> aportó {Math.abs(logEntry.money).toLocaleString()}{' '}
+                <Icon iconName="money" size={18} /> a {researchName}
+              </div>
+            )
+          })}
         </div>
       </IncContainer>
     </>

@@ -41,7 +41,7 @@ export default function AllianceResources({ alliance, reloadAllianceData }) {
           <h2>Historial de recursos</h2>
           {alliance.resources_log.map(logEntry => {
             const resourceInfo = PERSONNEL_OBJ[logEntry.resource_id]
-            const resourceName = resourceInfo?.name || 'Dinero'
+            const resourceName = resourceInfo?.name || '???'
             return (
               <div key={Math.random()}>
                 <UserLink user={logEntry.user} /> {logEntry.quantity > 0 ? 'metió' : 'sacó'}{' '}

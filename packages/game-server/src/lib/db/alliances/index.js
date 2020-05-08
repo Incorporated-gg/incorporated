@@ -1,7 +1,7 @@
 import { parseBadgeJSONFromDB } from './badge'
 import mysql from '../../mysql'
 import { getUserData } from '../users'
-import { RESEARCHS_LIST, RESOURCES_LIST, calcResearchPrice } from 'shared-lib/allianceUtils'
+import { ALLIANCE_RESEARCHS, ALLIANCE_RESOURCES_LIST, calcResearchPrice } from 'shared-lib/allianceUtils'
 import { getHoodData } from '../hoods'
 
 export const MAX_MEMBERS = 10
@@ -81,19 +81,21 @@ export async function getAllianceResearchs(allianceID) {
     'SELECT id, level, progress_money FROM alliances_research WHERE alliance_id=?',
     [allianceID]
   )
-  const researchs = RESEARCHS_LIST.map(research => {
-    const data = rawResearchs.find(raw => raw.id === research.id)
-    const level = data ? data.level : 0
-    return {
-      id: research.id,
-      level,
-      price: calcResearchPrice(research.id, level),
-      progress_money: data ? data.progress_money : 0,
-    }
-  }).reduce((prev, curr) => {
-    prev[curr.id] = curr
-    return prev
-  }, {})
+  const researchs = Object.values(ALLIANCE_RESEARCHS)
+    .map(research => {
+      const data = rawResearchs.find(raw => raw.id === research.id)
+      const level = data ? data.level : 0
+      return {
+        id: research.id,
+        level,
+        price: calcResearchPrice(research.id, level),
+        progress_money: data ? data.progress_money : 0,
+      }
+    })
+    .reduce((prev, curr) => {
+      prev[curr.id] = curr
+      return prev
+    }, {})
   return researchs
 }
 
@@ -101,7 +103,7 @@ export async function getAllianceResources(allianceID) {
   const rawResources = await mysql.query('SELECT resource_id, quantity FROM alliances_resources WHERE alliance_id=?', [
     allianceID,
   ])
-  const resources = RESOURCES_LIST.map(res => {
+  const resources = ALLIANCE_RESOURCES_LIST.map(res => {
     const resData = rawResources.find(raw => raw.resource_id === res.resource_id)
     return {
       resource_id: res.resource_id,
@@ -117,7 +119,7 @@ export async function getAllianceResources(allianceID) {
 
 export async function getAllianceResourcesLog(allianceID) {
   const rawLog = await mysql.query(
-    'SELECT user_id, created_at, resource_id, quantity FROM alliances_resources_log WHERE alliance_id=? ORDER BY created_at DESC LIMIT 20',
+    'SELECT user_id, created_at, resource_id, quantity FROM alliances_resources_log WHERE alliance_id=? ORDER BY created_at DESC LIMIT 30',
     [allianceID]
   )
   const resourcesLog = await Promise.all(
@@ -131,6 +133,24 @@ export async function getAllianceResourcesLog(allianceID) {
     })
   )
   return resourcesLog
+}
+
+export async function getAllianceResearchLog(allianceID) {
+  const rawLog = await mysql.query(
+    'SELECT user_id, created_at, research_id, money FROM alliances_research_log WHERE alliance_id=? ORDER BY created_at DESC LIMIT 20',
+    [allianceID]
+  )
+  const researchLog = await Promise.all(
+    rawLog.map(async raw => {
+      return {
+        user: await getUserData(raw.user_id),
+        created_at: raw.created_at,
+        research_id: raw.research_id,
+        money: raw.money,
+      }
+    })
+  )
+  return researchLog
 }
 
 export async function getAllianceResearchShares(allianceID) {

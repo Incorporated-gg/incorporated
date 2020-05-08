@@ -4,15 +4,15 @@ export const CREATE_ALLIANCE_PRICE = 500000
 export const MAX_ALLIANCE_MEMBERS = 8
 export const WAR_DAYS_DURATION = 5
 
-export const RESEARCHS_LIST = [
-  { id: 2, name: 'Cabinas de guardias', pricePerLvl: 200000, type: 'resource' },
-  { id: 3, name: 'Barracones de gángsters', pricePerLvl: 200000, type: 'resource' },
-  { id: 4, name: 'Academias de ladrones', pricePerLvl: 200000, type: 'resource' },
-  { id: 5, name: 'Buff de ataque', pricePerLvl: 5000000, type: 'buff' },
-  { id: 6, name: 'Buff de defensa', pricePerLvl: 5000000, type: 'buff' },
-]
+export const ALLIANCE_RESEARCHS = {
+  2: { id: 2, name: 'Cabinas de guardias', pricePerLvl: 200000, type: 'resource' },
+  3: { id: 3, name: 'Barracones de gángsters', pricePerLvl: 200000, type: 'resource' },
+  4: { id: 4, name: 'Academias de ladrones', pricePerLvl: 200000, type: 'resource' },
+  5: { id: 5, name: 'Buff de ataque', pricePerLvl: 5000000, type: 'buff' },
+  6: { id: 6, name: 'Buff de defensa', pricePerLvl: 5000000, type: 'buff' },
+}
 
-export const RESOURCES_LIST = [
+export const ALLIANCE_RESOURCES_LIST = [
   {
     resource_id: 'sabots',
     name: PERSONNEL_OBJ.sabots.name,
@@ -49,7 +49,7 @@ export const NAMING_REQUIREMENTS = {
 }
 
 export function calcResearchPrice(researchID, researchLevel) {
-  const data = RESEARCHS_LIST.find(raw => raw.id === researchID)
+  const data = ALLIANCE_RESEARCHS[researchID]
   if (!data) return false
 
   if (data.type === 'buff') {

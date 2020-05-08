@@ -1,11 +1,9 @@
-import mysql from '../../lib/mysql'
-import { getAllianceMembers, getWarData } from '../../lib/db/alliances'
-import { sendAccountHook } from '../../lib/accountInternalApi'
-import { sendMessage } from '../../lib/db/users'
-import { getServerDay, getInitialUnixTimestampOfServerDay } from '../../lib/serverTime'
+import mysql from '../../../lib/mysql'
+import { getAllianceMembers, getWarData } from '../../../lib/db/alliances'
+import { getServerDay, getInitialUnixTimestampOfServerDay } from '../../../lib/serverTime'
 import { PERSONNEL_OBJ } from 'shared-lib/personnelUtils'
 import { WAR_DAYS_DURATION } from 'shared-lib/allianceUtils'
-import { changeHoodsOwner } from '../../lib/db/hoods'
+import { endWar } from './endWar'
 
 const EXTRA_POINTS_PER_OBJECTIVE = 40
 const WAR_POINTS_LIMIT_FOR_AUTOFINISH = WAR_DAYS_DURATION * 50 + 1 + EXTRA_POINTS_PER_OBJECTIVE * 3
@@ -207,105 +205,4 @@ function attackToPoints(attack) {
   }
 
   return points
-}
-
-async function endWar(warData) {
-  const alliance1UserIDs = (await getAllianceMembers(warData.alliance1.id)).map(m => m.user.id)
-  const alliance2UserIDs = (await getAllianceMembers(warData.alliance2.id)).map(m => m.user.id)
-
-  const days = Object.values(warData._data.days)
-
-  let warPointsAlliance1 = days.reduce((prev, curr) => prev + curr.alliance1.war_points, 0)
-  let warPointsAlliance2 = days.reduce((prev, curr) => prev + curr.alliance2.war_points, 0)
-
-  // Extra points
-  const attackWinsAlliance1 = days.reduce((prev, curr) => prev + curr.alliance1.attack_wins, 0)
-  const attackWinsAlliance2 = days.reduce((prev, curr) => prev + curr.alliance2.attack_wins, 0)
-  if (attackWinsAlliance1 !== attackWinsAlliance2) {
-    if (attackWinsAlliance1 > attackWinsAlliance2) warPointsAlliance1 += EXTRA_POINTS_PER_OBJECTIVE
-    else warPointsAlliance2 += EXTRA_POINTS_PER_OBJECTIVE
-  }
-  const profitAlliance1 = days.reduce((prev, curr) => prev + curr.alliance1.profit, 0)
-  const profitAlliance2 = days.reduce((prev, curr) => prev + curr.alliance2.profit, 0)
-  if (profitAlliance1 !== profitAlliance2) {
-    if (profitAlliance1 > profitAlliance2) warPointsAlliance1 += EXTRA_POINTS_PER_OBJECTIVE
-    else warPointsAlliance2 += EXTRA_POINTS_PER_OBJECTIVE
-  }
-  const attackSmacksAlliance1 = days.reduce((prev, curr) => prev + curr.alliance1.attack_smacks, 0)
-  const attackSmacksAlliance2 = days.reduce((prev, curr) => prev + curr.alliance2.attack_smacks, 0)
-  if (attackSmacksAlliance1 !== attackSmacksAlliance2) {
-    if (attackSmacksAlliance1 > attackSmacksAlliance2) warPointsAlliance1 += EXTRA_POINTS_PER_OBJECTIVE
-    else warPointsAlliance2 += EXTRA_POINTS_PER_OBJECTIVE
-  }
-
-  const winner = warPointsAlliance1 > warPointsAlliance2 ? 1 : 2
-  warData._data.winner = winner
-
-  if (winner === 1) {
-    // The attacker won. Change hoods owner
-    const hoodIDs = warData.alliance2_hoods.map(hood => hood.id)
-    await changeHoodsOwner(hoodIDs, warData.alliance1.id)
-  } else {
-    // The defensor won. Change hoods owner
-    const hoodIDs = warData.alliance2_hoods.map(hood => hood.id)
-    await changeHoodsOwner(hoodIDs, warData.alliance1.id)
-  }
-
-  await mysql.query('UPDATE alliances_wars SET completed=1, data=? WHERE id=?', [
-    JSON.stringify(warData._data),
-    warData.id,
-  ])
-  await Promise.all(
-    [...alliance1UserIDs, ...alliance2UserIDs].map(userID =>
-      sendMessage({
-        receiverID: userID,
-        senderID: null,
-        type: 'war_ended',
-        data: { war_id: warData.id },
-      })
-    )
-  )
-
-  // Account hook
-  sendAccountHook('war_ended', {
-    winner,
-    alliance1UserIDs,
-    alliance2UserIDs,
-    mvpPlayer: await getMvpPlayerFromWar(warData.created_at, alliance1UserIDs, alliance2UserIDs),
-  })
-}
-
-async function getMvpPlayerFromWar(warCreatedAtTimestamp, alliance1UserIDs, alliance2UserIDs) {
-  const firstTsOfWar = getInitialUnixTimestampOfServerDay(getServerDay(warCreatedAtTimestamp * 1000)) / 1000
-  const tsNow = Math.floor(Date.now() / 1000)
-
-  const allWarAttacks = [
-    ...(await getAttacksFromUsers({
-      userIDs: alliance1UserIDs,
-      attackedUserIDs: alliance2UserIDs,
-      minTs: firstTsOfWar,
-      maxTs: tsNow,
-    })),
-    ...(await getAttacksFromUsers({
-      userIDs: alliance2UserIDs,
-      attackedUserIDs: alliance1UserIDs,
-      minTs: firstTsOfWar,
-      maxTs: tsNow,
-    })),
-  ]
-
-  const usersTotalIncomeByID = {}
-
-  allWarAttacks.forEach(attack => {
-    if (!usersTotalIncomeByID[attack.user_id]) usersTotalIncomeByID[attack.user_id] = 0
-
-    usersTotalIncomeByID[attack.user_id] += attack.data.report.attacker_total_income
-  })
-
-  const mvp = Object.entries(usersTotalIncomeByID).sort((a, b) => {
-    return a[1] > b[1] ? -1 : 1
-  })
-
-  if (!mvp.length) return null
-  return parseInt(mvp[0][0])
 }

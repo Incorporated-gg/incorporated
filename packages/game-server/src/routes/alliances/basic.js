@@ -11,6 +11,7 @@ import {
   getAllianceActiveWars,
   getAlliancePastWars,
   getUserAllianceRank,
+  getAllianceResearchLog,
 } from '../../lib/db/alliances'
 import { getActiveMission } from '../../lib/db/users'
 import { updatePersonnelAmount } from '../../lib/db/personnel'
@@ -39,6 +40,7 @@ module.exports = app => {
       researchs,
       resources,
       resourcesLog,
+      researchLog,
       researchShares,
       buffsData,
       activeWars,
@@ -48,6 +50,7 @@ module.exports = app => {
       getAllianceResearchs(allianceID),
       getAllianceResources(allianceID),
       getAllianceResourcesLog(allianceID),
+      getAllianceResearchLog(allianceID),
       getAllianceResearchShares(allianceID),
       getAllianceBuffsData(allianceID),
       getAllianceActiveWars(allianceID),
@@ -68,6 +71,7 @@ module.exports = app => {
       researchs,
       resources,
       resources_log: resourcesLog,
+      research_log: researchLog,
       research_shares: researchShares,
       buffs_data: buffsData,
       active_wars: activeWars,

@@ -4,7 +4,7 @@ import { useUserData } from 'lib/user'
 import Card from 'components/card'
 import styles from './alliance-research-item.module.scss'
 import {
-  RESEARCHS_LIST,
+  ALLIANCE_RESEARCHS,
   calcResourceGenerationByResearchID,
   calcResourceMaxByResearchID,
 } from 'shared-lib/allianceUtils'
@@ -31,7 +31,7 @@ AllianceResearchItem.propTypes = {
 export default function AllianceResearchItem({ researchData, reloadAllianceData }) {
   useUserData()
 
-  const researchInfo = RESEARCHS_LIST.find(r => r.id === researchData.id)
+  const researchInfo = ALLIANCE_RESEARCHS[researchData.id]
   const [amount, setAmount] = useState('')
 
   const doResearch = e => {
