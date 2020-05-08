@@ -6,6 +6,7 @@ import Icon from 'components/icon'
 import IncContainer from '../inc-container'
 import IncButton from '../inc-button'
 import ActionsDropdown from './actions-dropdown'
+import { userData } from 'lib/user'
 
 RankItem.propTypes = {
   children: PropTypes.node.isRequired,
@@ -16,6 +17,7 @@ RankItem.propTypes = {
 }
 export default function RankItem({ user, rank, children, pointsType, points }) {
   const [isActionsOpen, setIsActionsOpen] = useState(false)
+  const isMe = userData?.id === user.id
 
   const iconProps = {}
   if (pointsType === 'income' || pointsType === 'alliances') iconProps.iconName = 'money'
@@ -28,7 +30,7 @@ export default function RankItem({ user, rank, children, pointsType, points }) {
       <div className={styles.actions}>
         {user && (
           <>
-            <IncButton onClick={() => setIsActionsOpen(!isActionsOpen)} borderSize={3}>
+            <IncButton disabled={isMe} onClick={() => setIsActionsOpen(!isActionsOpen)} borderSize={3}>
               &nbsp;···&nbsp;
             </IncButton>
             <ActionsDropdown user={user} isOpen={isActionsOpen} onRequestClose={() => setIsActionsOpen(false)} />

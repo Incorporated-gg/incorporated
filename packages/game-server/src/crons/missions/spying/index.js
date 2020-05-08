@@ -90,7 +90,7 @@ async function getIntelReport({
   // building upon last report, if any
   const minWillFinishAt = Math.floor(Date.now() / 1000) - 60 * 30
   const recentSpyReport = await mysql.selectOne(
-    'SELECT id, data FROM missions WHERE completed=1 AND mission_type=? AND user_id=? AND target_user=? AND will_finish_at>? ORDER BY will_finish_at DESC LIMIT 1',
+    'SELECT id, data FROM missions WHERE completed=1 AND mission_type=? AND user_id=? AND target_user=? AND will_finish_at>=? ORDER BY will_finish_at DESC LIMIT 1',
     ['spy', attackerID, defenderID, minWillFinishAt]
   )
   if (recentSpyReport) {

@@ -9,7 +9,7 @@ import { getInitialUnixTimestampOfServerDay, getServerDay } from '../../lib/serv
 import { calcBuildingDailyIncome, buildingsList, calcBuildingMaxMoney } from 'shared-lib/buildingsUtils'
 
 const MAX_ACCUMULATED_ATTACKS = process.env.NODE_ENV === 'development' ? 60 : 6
-const ATTACKS_GAINED_PER_DAY = 3
+const ATTACKS_GAINED_PER_DAY = process.env.NODE_ENV === 'development' ? 30 : 3
 
 export async function getUserData(userID) {
   const userDataPromise = mysql.selectOne('SELECT username FROM users WHERE id=?', [userID])
@@ -119,31 +119,30 @@ export async function getUserTodaysMissionsLimits(userID) {
   const [
     { receivedToday },
   ] = await mysql.query(
-    "SELECT COUNT(*) AS receivedToday FROM missions WHERE target_user=? AND mission_type='attack' AND will_finish_at>? AND completed=1",
+    "SELECT COUNT(*) AS receivedToday FROM missions WHERE target_user=? AND mission_type='attack' AND will_finish_at>=? AND completed=1",
     [userID, dailyCountStartedAt]
   )
 
   // Calculate attacksLeft. Probably could be optimized, but it works well
-  let attacksLeft = MAX_ACCUMULATED_ATTACKS
+  let attacksLeft = 0
   {
     const serverDay = getServerDay()
-    const timestampLimit =
-      getInitialUnixTimestampOfServerDay(serverDay - MAX_ACCUMULATED_ATTACKS / ATTACKS_GAINED_PER_DAY) / 1000
+    const lookbackMinDay = Math.max(1, serverDay - MAX_ACCUMULATED_ATTACKS / ATTACKS_GAINED_PER_DAY)
+
+    const timestampLimit = getInitialUnixTimestampOfServerDay(lookbackMinDay) / 1000
     let lastAttacks = await mysql.query(
-      "SELECT will_finish_at FROM missions WHERE user_id=? AND mission_type='attack' AND completed=1 AND will_finish_at>? ORDER BY will_finish_at DESC",
+      "SELECT will_finish_at FROM missions WHERE user_id=? AND mission_type='attack' AND completed=1 AND will_finish_at>=? ORDER BY will_finish_at DESC",
       [userID, timestampLimit]
     )
     lastAttacks = lastAttacks.map(attack => getServerDay(attack.will_finish_at * 1000))
 
-    if (lastAttacks.length > 0) {
-      // Simulate every day to see how many attacks we have left
-      const firstAttackDay = Math.min(...lastAttacks)
-      for (let day = firstAttackDay; day <= serverDay; day++) {
-        // Add ATTACKS_GAINED_PER_DAY
-        attacksLeft = Math.min(MAX_ACCUMULATED_ATTACKS, attacksLeft + ATTACKS_GAINED_PER_DAY)
-        // Remove n attacks from this day
-        attacksLeft -= lastAttacks.filter(_day => _day === day).length
-      }
+    // Simulate every day to see how many attacks we have left
+    const simulationFirstDay = Math.min(lookbackMinDay, ...lastAttacks)
+    for (let day = simulationFirstDay; day <= serverDay; day++) {
+      // Add ATTACKS_GAINED_PER_DAY
+      attacksLeft = Math.min(MAX_ACCUMULATED_ATTACKS, attacksLeft + ATTACKS_GAINED_PER_DAY)
+      // Remove n attacks from this day
+      attacksLeft -= lastAttacks.filter(_day => _day === day).length
     }
   }
 
@@ -204,13 +203,13 @@ export async function getUnreadReportsCount(userID) {
   const {
     count: notSeenSentCount,
   } = await mysql.selectOne(
-    'SELECT COUNT(*) as count FROM missions WHERE completed=1 AND will_finish_at>? AND user_id=?',
+    'SELECT COUNT(*) as count FROM missions WHERE completed=1 AND will_finish_at>=? AND user_id=?',
     [lastCheckedReportsAt, userID]
   )
   const {
     count: notSeenReceivedCount,
   } = await mysql.selectOne(
-    'SELECT COUNT(*) as count FROM missions WHERE completed=1 AND will_finish_at>? AND target_user=? AND (mission_type="attack" OR (mission_type="spy" AND result="caught"))',
+    'SELECT COUNT(*) as count FROM missions WHERE completed=1 AND will_finish_at>=? AND target_user=? AND (mission_type="attack" OR (mission_type="spy" AND result="caught"))',
     [lastCheckedReportsAt, userID]
   )
 
