@@ -48,12 +48,12 @@ export default function AllianceBadgeCreator({ badge, setBadge }) {
             color={badge.icon.color}
             setColor={color => setBadge({ ...badge, icon: { ...badge.icon, color: color } })}
           />
-          <div className={styles.title}>COLOR PRIMARIO</div>
+          <div className={styles.title}>COLOR PRIMARIO FONDO</div>
           <ColorSelection
             color={badge.background.color1}
             setColor={color => setBadge({ ...badge, background: { ...badge.background, color1: color } })}
           />
-          <div className={styles.title}>COLOR SECUNDARIO</div>
+          <div className={styles.title}>COLOR SECUNDARIO FONDO</div>
           <ColorSelection
             color={badge.background.color2}
             setColor={color => setBadge({ ...badge, background: { ...badge.background, color2: color } })}

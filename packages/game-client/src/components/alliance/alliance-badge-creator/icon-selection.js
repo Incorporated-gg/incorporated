@@ -26,8 +26,8 @@ export default function IconSelection({ availableIcons, icon, setIcon }) {
               width: 40,
               height: 40,
               marginBottom: 10,
-              fill: isActive ? '#20bf55' : '#fff',
-              color: '#0089ff',
+              fill: isActive ? '#54a4eb' : '#fff',
+              color: '#222',
             }}
           />
         )

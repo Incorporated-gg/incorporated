@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
-const availableColors = ['#FFFFFF', '#000000', '#0089FF', '#20BF55', '#E50C68', '#FAFF00', '#EABA6B', '#FF0000']
+const availableColors = ['#FFFFFF', '#000000', '#B17FEB', '#54A4EB', '#9E7739', '#299E54', '#9E3D39', '#C0C0C0']
 
 ColorSelection.propTypes = {
   color: PropTypes.string,

@@ -16,8 +16,9 @@
   bottom: 0;
   right: 0;
   margin: auto;
-  width: 45%;
-  height: 45%;
+  width: 60%;
+  height: 60%;
+  filter: drop-shadow(-1px 1px 1px rgba(0, 0, 0, 0.5));
 
   path {
     fill: currentColor;

@@ -9,12 +9,21 @@ const TROOPS_DELETION_ORDER = ['spies', 'sabots', 'thieves', 'guards']
 
 const run = async () => {
   const tsNow = Math.floor(Date.now() / 1000)
+  // find newly bankrupted users
   await mysql.query(
-    'UPDATE users SET bankrupcy_started_at=? WHERE bankrupcy_started_at IS NULL AND money<0 AND (SELECT SUM(quantity) FROM users_resources WHERE users_resources.user_id=users.id)>0',
+    'UPDATE users SET bankrupcy_started_at=? WHERE bankrupcy_started_at IS NULL AND \
+    (money+(SELECT SUM(money) FROM buildings WHERE buildings.user_id=users.id))<0 AND \
+    (SELECT SUM(quantity) FROM users_resources WHERE users_resources.user_id=users.id)>0',
     [tsNow]
   )
-  await mysql.query('UPDATE users SET bankrupcy_started_at=NULL WHERE money>0')
+  // remove users who got enough money from banrukpcy
+  await mysql.query(
+    'UPDATE users SET bankrupcy_started_at=NULL WHERE \
+    bankrupcy_started_at IS NOT NULL AND \
+    (money+(SELECT SUM(money) FROM buildings WHERE buildings.user_id=users.id))>0'
+  )
 
+  // remove troops from bankrupted users
   const bankruptedUsers = await mysql.query('SELECT id FROM users WHERE bankrupcy_started_at<?', [
     tsNow - BANKRUPCY_TIME_LIMIT,
   ])
