@@ -222,8 +222,8 @@ module.exports = app => {
 
         // Ensure daily attacks limit
         const userMissionLimits = await getUserTodaysMissionsLimits(req.userData.id)
-        if (userMissionLimits.sentToday >= userMissionLimits.maxAttacks) {
-          res.status(400).json({ error: `Ya has atacado ${userMissionLimits.maxAttacks} veces hoy` })
+        if (userMissionLimits.attacksLeft <= 0) {
+          res.status(400).json({ error: 'No te quedan ataques disponibles' })
           removeLock()
           return
         }

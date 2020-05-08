@@ -5,12 +5,15 @@ import styles from './loans.module.scss'
 import IncContainer from 'components/UI/inc-container'
 import { LOAN_DAYS_DURATION } from 'shared-lib/loansUtils'
 import IncButton from 'components/UI/inc-button'
+import IncInput from 'components/UI/inc-input'
+import { userData, useUserData } from 'lib/user'
 
 CreateLoan.propTypes = {
   givenLoan: PropTypes.object,
   refreshLoansList: PropTypes.func.isRequired,
 }
 export default function CreateLoan({ refreshLoansList, givenLoan }) {
+  useUserData()
   const [moneyAmount, setMoneyAmount] = useState('')
   const [interestRate, setInterestRate] = useState(25)
 
@@ -57,7 +60,15 @@ export default function CreateLoan({ refreshLoansList, givenLoan }) {
         <div className={styles.createLoanRow}>
           <div>
             <div className={styles.smallTitle}>Cantidad</div>
-            <input value={moneyAmount} type="number" placeholder="0" onChange={e => setMoneyAmount(e.target.value)} />
+            <IncInput
+              min={0}
+              max={userData.money}
+              showBorder
+              value={moneyAmount}
+              type="number"
+              placeholder="0"
+              onChangeText={setMoneyAmount}
+            />
           </div>
           <div>
             <div className={styles.smallTitle}>Interés</div>

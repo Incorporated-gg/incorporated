@@ -2,7 +2,6 @@ import { buildingsList, calcBuildingPrice, calcBuildingResistance } from './buil
 import { PERSONNEL_OBJ } from './personnelUtils'
 
 export const NEWBIE_ZONE_DAILY_INCOME = 750000
-export const MAX_DAILY_ATTACKS = process.env.NODE_ENV === 'development' ? 999 : 3
 
 export function calculateIsInAttackRange(attackerDailyIncome, defenderDailyIncome) {
   if (process.env.NODE_ENV === 'development') return true

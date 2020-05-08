@@ -111,7 +111,6 @@ async function getIntelReport({
     personnel: {},
     researchs: {},
     dailyLimits: {
-      maxAttacks: missionLimits.maxAttacks,
       maxDefenses: missionLimits.maxDefenses,
     },
   }
@@ -134,7 +133,7 @@ async function getIntelReport({
     { type: 'researchs', info: defensorResearchs[4], id: 4 },
     { type: 'researchs', info: defensorResearchs[5], id: 5 },
     { type: 'researchs', info: defensorResearchs[6], id: 6 },
-    { type: 'dailyLimits', info: missionLimits.sentToday, id: 'sentToday' },
+    { type: 'dailyLimits', info: missionLimits.attacksLeft, id: 'attacksLeft' },
     { type: 'dailyLimits', info: missionLimits.receivedToday, id: 'receivedToday' },
   ]
   const iterationPercentageCost = 100 / discoverables.length

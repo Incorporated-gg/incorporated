@@ -27,13 +27,13 @@
     .svgIcon {
       margin: 1em 0;
       width: 2.5em;
-      height: 2em;
+      height: 3em;
       transition: transform .1s linear;
       transform: translateY(0px);
 
       svg {
         width: 2.5em;
-        height: 2em;
+        height: 3em;
       }
     }
 
@@ -65,11 +65,14 @@
       }
 
       .title {
-        font-size: $font-size-large;
+        font-size: $font-size-medium;
+        @media (min-width: $breakpoint-desktop) {
+          font-size: $font-size-large;
+        }
       }
 
       .svgIcon {
-        transform: translateY(-70%);
+        transform: translateY(-55%);
       }
     }
   }

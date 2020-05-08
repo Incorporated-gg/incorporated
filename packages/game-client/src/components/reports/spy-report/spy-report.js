@@ -11,6 +11,7 @@ import Icon from 'components/icon'
 import { numberToAbbreviation } from 'lib/utils'
 import IncButton from 'components/UI/inc-button'
 import SimulatorModal from 'components/simulator-modal/simulator-modal'
+import UserActionButtons from 'components/UI/user-action-buttons/user-action-buttons'
 
 SpyReport.propTypes = {
   mission: PropTypes.object.isRequired,
@@ -112,12 +113,11 @@ export default function SpyReport({ mission }) {
       </div>
       <div>
         <br />
-        <b>{'Límites de ataque diarios'}:</b>
+        <b>{'Límites'}:</b>
+        <div>Ataques disponibles: {mission.report.dailyLimits?.attacksLeft ?? '?'}</div>
         <div>
-          Enviados: {mission.report.dailyLimits?.sentToday ?? '?'} / {mission.report.dailyLimits?.maxAttacks}
-        </div>
-        <div>
-          Recibidos: {mission.report.dailyLimits?.receivedToday ?? '?'} / {mission.report.dailyLimits?.maxDefenses}
+          Ataques recibidos hoy: {mission.report.dailyLimits?.receivedToday ?? '?'} /{' '}
+          {mission.report.dailyLimits?.maxDefenses}
         </div>
       </div>
       {canSimulateAttack && (
@@ -150,6 +150,7 @@ export default function SpyReport({ mission }) {
             No hemos obtenido ninguna información! Nos han capturado a demasiados espías
           </div>
         ))}
+      <UserActionButtons user={mission.target_user} />
     </NotepadPage>
   )
 }

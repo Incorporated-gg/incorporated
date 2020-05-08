@@ -6,6 +6,8 @@ import PropTypes from 'prop-types'
 import Modal from 'react-modal'
 import IncContainer from 'components/UI/inc-container'
 import { PERSONNEL_OBJ } from 'shared-lib/personnelUtils'
+import SimulatorResult from './simulator-result'
+import IncInput from 'components/UI/inc-input'
 
 SimulatorModal.propTypes = {
   spyReport: PropTypes.object,
@@ -68,14 +70,14 @@ function SimulatorWithSpyReport({ spyReport }) {
           <label>
             {PERSONNEL_OBJ.sabots.name}
             {': '}
-            <input type="number" value={attackerSabots} onChange={e => setAttackerSabots(e.target.value)} />
+            <IncInput showBorder type="number" value={attackerSabots} onChangeText={setAttackerSabots} />
           </label>
         </div>
         <div>
           <label>
             {PERSONNEL_OBJ.thieves.name}
             {': '}
-            <input type="number" value={attackerThieves} onChange={e => setAttackerThieves(e.target.value)} />
+            <IncInput showBorder type="number" value={attackerThieves} onChangeText={setAttackerThieves} />
           </label>
         </div>
         <label>
@@ -89,7 +91,13 @@ function SimulatorWithSpyReport({ spyReport }) {
           </select>
         </label>
         <div>Tiempo de mision: {missionSeconds}s</div>
-        <div style={{ whiteSpace: 'pre-wrap' }}>{JSON.stringify(simulation, null, 2)}</div>
+        <SimulatorResult
+          simulation={simulation}
+          targetBuilding={targetBuilding}
+          guards={guards}
+          sabots={attackerSabots}
+          thieves={attackerThieves}
+        />
       </div>
     </IncContainer>
   )
@@ -210,7 +218,13 @@ function SimulatorFromScratch() {
           </label>
         </div>
         <div>Tiempo de mision: {missionSeconds}s</div>
-        <div style={{ whiteSpace: 'pre-wrap' }}>{JSON.stringify(simulation, null, 2)}</div>
+        <SimulatorResult
+          simulation={simulation}
+          targetBuilding={targetBuilding}
+          guards={guards}
+          sabots={attackerSabots}
+          thieves={attackerThieves}
+        />
       </div>
     </IncContainer>
   )

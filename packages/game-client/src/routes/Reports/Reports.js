@@ -4,13 +4,13 @@ import styles from './Reports.module.scss'
 import IncContainer from 'components/UI/inc-container'
 import MissionRow from 'components/reports/mission-row/mission-row'
 import SimulatorModal from 'components/simulator-modal/simulator-modal'
+import IncButton from 'components/UI/inc-button'
 
 const initialMissionsState = {
   missions: [],
   todaysMissionLimits: {
     receivedToday: 0,
-    sentToday: 0,
-    maxAttacks: 0,
+    attacksLeft: 0,
     maxDefenses: 0,
   },
   notSeenReceivedCount: 0,
@@ -44,12 +44,10 @@ export default function Reports() {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10 }}>
-        <button onClick={() => setShowSimulatorModal(true)}>Simulador</button>
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10, alignItems: 'center' }}>
+        <IncButton onClick={() => setShowSimulatorModal(true)}>Simulador</IncButton>
         <SimulatorModal isOpen={showSimulatorModal} onRequestClose={() => setShowSimulatorModal(false)} />
-        <span>
-          Enviadas hoy: {missions.todaysMissionLimits.sentToday}/{missions.todaysMissionLimits.maxAttacks}
-        </span>
+        <span>Ataques disponibles: {missions.todaysMissionLimits.attacksLeft}</span>
         <span>
           Recibidas hoy: {missions.todaysMissionLimits.receivedToday}/{missions.todaysMissionLimits.maxDefenses}
         </span>

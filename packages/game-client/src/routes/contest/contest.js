@@ -30,7 +30,7 @@ export default function Contest({ contestName }) {
           <thead>
             <tr>
               <th>Rank</th>
-              <th>Nombre de usuario</th>
+              <th>Usuario</th>
               <th>Puntos</th>
               <th>Acciones</th>
             </tr>
@@ -43,7 +43,7 @@ export default function Contest({ contestName }) {
                   <td>
                     <UserLink user={contestScore.user} />
                   </td>
-                  <td>{contestScore.score && contestScore.score.toLocaleString()} puntos</td>
+                  <td>{contestScore.score && contestScore.score.toLocaleString()}</td>
                   <td>
                     <UserActionButtons user={contestScore.user} />
                   </td>

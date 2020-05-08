@@ -1,12 +1,14 @@
 import { getAccountData } from '../accountInternalApi'
-import { MAX_DAILY_ATTACKS, calculateMaxDailyReceivedAttacks } from 'shared-lib/missionsUtils'
+import { calculateMaxDailyReceivedAttacks } from 'shared-lib/missionsUtils'
 import mysql from '../mysql'
 import { parseMissionFromDB } from './missions'
 import { getUserAllianceID, getAllianceBasicData } from './alliances'
 import { researchList } from 'shared-lib/researchUtils'
 import { PERSONNEL_OBJ } from 'shared-lib/personnelUtils'
-import { getInitialUnixTimestampOfServerDay } from '../../lib/serverTime'
+import { getInitialUnixTimestampOfServerDay, getServerDay } from '../../lib/serverTime'
 import { calcBuildingDailyIncome, buildingsList, calcBuildingMaxMoney } from 'shared-lib/buildingsUtils'
+
+const MAX_ACCUMULATED_ATTACKS = process.env.NODE_ENV === 'development' ? 60 : 6
 
 export async function getUserData(userID) {
   const userDataPromise = mysql.selectOne('SELECT username FROM users WHERE id=?', [userID])
@@ -110,6 +112,8 @@ export async function getUserBuildings(userID) {
 
 export async function getUserTodaysMissionsLimits(userID) {
   const dailyCountStartedAt = Math.floor(getInitialUnixTimestampOfServerDay() / 1000)
+  const userDailyIncome = await getUserDailyIncome(userID)
+  const maxDefenses = calculateMaxDailyReceivedAttacks(userDailyIncome)
 
   const [
     { receivedToday },
@@ -117,18 +121,20 @@ export async function getUserTodaysMissionsLimits(userID) {
     "SELECT COUNT(*) AS receivedToday FROM missions WHERE target_user=? AND mission_type='attack' AND will_finish_at>? AND completed=1",
     [userID, dailyCountStartedAt]
   )
-  const [
-    { sentToday },
-  ] = await mysql.query(
-    "SELECT COUNT(*) AS sentToday FROM missions WHERE user_id=? AND mission_type='attack' AND will_finish_at>? AND completed=1",
-    [userID, dailyCountStartedAt]
+  let last6Attacks = await mysql.query(
+    "SELECT will_finish_at FROM missions WHERE user_id=? AND mission_type='attack' AND completed=1 ORDER BY will_finish_at DESC",
+    [userID]
   )
-  const userMissionLimits = await getUserMissionLimits(userID)
+  last6Attacks = last6Attacks.map(attack => getServerDay(attack.will_finish_at * 1000))
 
+  const serverDay = getServerDay()
+  const attacksSentInLast2Days = last6Attacks.filter(day => day >= serverDay - 2).length
+
+  const attacksLeft = MAX_ACCUMULATED_ATTACKS - attacksSentInLast2Days
   return {
     receivedToday,
-    sentToday,
-    ...userMissionLimits,
+    attacksLeft,
+    maxDefenses,
   }
 }
 
@@ -243,12 +249,4 @@ export async function runUserMoneyUpdate(userID) {
   // Personnel Costs
   const personnelCosts = ((await getUserPersonnelCosts(userID)) / 24 / 60 / 60) * moneyUpdateElapsedS
   await mysql.query('UPDATE users SET money=money-? WHERE id=?', [personnelCosts, userID])
-}
-
-export async function getUserMissionLimits(userID) {
-  const userDailyIncome = await getUserDailyIncome(userID)
-  return {
-    maxAttacks: MAX_DAILY_ATTACKS,
-    maxDefenses: calculateMaxDailyReceivedAttacks(userDailyIncome),
-  }
 }

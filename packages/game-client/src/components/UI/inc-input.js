@@ -7,7 +7,7 @@ IncInput.propTypes = {
   showBorder: PropTypes.bool,
   placeholder: PropTypes.any,
   maxLength: PropTypes.any,
-  type: PropTypes.string,
+  type: PropTypes.oneOf(['string', 'number', 'password']),
   className: PropTypes.string,
   value: PropTypes.any.isRequired,
   onChangeText: PropTypes.func.isRequired,
@@ -22,7 +22,11 @@ export default function IncInput({
   ...props
 }) {
   className = `${styles.incInput} ${showBorder ? styles.border : ''} ${className || ''}`
-  const onChange = e => onChangeText(e.target.value)
+  const onChange = e => {
+    let value = e.target.value
+    if (type === 'number') value = parseInt(value)
+    onChangeText(value)
+  }
 
   if (multiline) return <textarea className={className} onChange={onChange} {...props} />
   return <input type={type} className={className} onChange={onChange} {...props} />
