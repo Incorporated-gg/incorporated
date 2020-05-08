@@ -130,8 +130,8 @@ export async function getUserTodaysMissionsLimits(userID) {
     const timestampLimit =
       getInitialUnixTimestampOfServerDay(serverDay - MAX_ACCUMULATED_ATTACKS / ATTACKS_GAINED_PER_DAY) / 1000
     let lastAttacks = await mysql.query(
-      "SELECT will_finish_at FROM missions WHERE user_id=? AND mission_type='attack' AND completed=1 AND will_finish_at>? ORDER BY will_finish_at DESC LIMIT ?",
-      [userID, timestampLimit, MAX_ACCUMULATED_ATTACKS]
+      "SELECT will_finish_at FROM missions WHERE user_id=? AND mission_type='attack' AND completed=1 AND will_finish_at>? ORDER BY will_finish_at DESC",
+      [userID, timestampLimit]
     )
     lastAttacks = lastAttacks.map(attack => getServerDay(attack.will_finish_at * 1000))
 
