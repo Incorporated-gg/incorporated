@@ -9,6 +9,7 @@ import { getInitialUnixTimestampOfServerDay, getServerDay } from '../../lib/serv
 import { calcBuildingDailyIncome, buildingsList, calcBuildingMaxMoney } from 'shared-lib/buildingsUtils'
 
 const MAX_ACCUMULATED_ATTACKS = process.env.NODE_ENV === 'development' ? 60 : 6
+const ATTACKS_GAINED_PER_DAY = 3
 
 export async function getUserData(userID) {
   const userDataPromise = mysql.selectOne('SELECT username FROM users WHERE id=?', [userID])
@@ -121,16 +122,31 @@ export async function getUserTodaysMissionsLimits(userID) {
     "SELECT COUNT(*) AS receivedToday FROM missions WHERE target_user=? AND mission_type='attack' AND will_finish_at>? AND completed=1",
     [userID, dailyCountStartedAt]
   )
-  let last6Attacks = await mysql.query(
-    "SELECT will_finish_at FROM missions WHERE user_id=? AND mission_type='attack' AND completed=1 ORDER BY will_finish_at DESC",
-    [userID]
-  )
-  last6Attacks = last6Attacks.map(attack => getServerDay(attack.will_finish_at * 1000))
 
-  const serverDay = getServerDay()
-  const attacksSentInLast2Days = last6Attacks.filter(day => day >= serverDay - 2).length
+  // Calculate attacksLeft. Probably could be optimized, but it works well
+  let attacksLeft = MAX_ACCUMULATED_ATTACKS
+  {
+    const serverDay = getServerDay()
+    const timestampLimit =
+      getInitialUnixTimestampOfServerDay(serverDay - MAX_ACCUMULATED_ATTACKS / ATTACKS_GAINED_PER_DAY) / 1000
+    let lastAttacks = await mysql.query(
+      "SELECT will_finish_at FROM missions WHERE user_id=? AND mission_type='attack' AND completed=1 AND will_finish_at>? ORDER BY will_finish_at DESC LIMIT ?",
+      [userID, timestampLimit, MAX_ACCUMULATED_ATTACKS]
+    )
+    lastAttacks = lastAttacks.map(attack => getServerDay(attack.will_finish_at * 1000))
 
-  const attacksLeft = MAX_ACCUMULATED_ATTACKS - attacksSentInLast2Days
+    if (lastAttacks.length > 0) {
+      // Simulate every day to see how many attacks we have left
+      const firstAttackDay = Math.min(...lastAttacks)
+      for (let day = firstAttackDay; day <= serverDay; day++) {
+        // Add ATTACKS_GAINED_PER_DAY
+        attacksLeft = Math.min(MAX_ACCUMULATED_ATTACKS, attacksLeft + ATTACKS_GAINED_PER_DAY)
+        // Remove n attacks from this day
+        attacksLeft -= lastAttacks.filter(_day => _day === day).length
+      }
+    }
+  }
+
   return {
     receivedToday,
     attacksLeft,
