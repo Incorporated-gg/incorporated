@@ -218,7 +218,7 @@ export function calcSpiesPower(spyResearchLvl) {
   return 2 * spyResearchLvl
 }
 function calcSpionageDefensePower(spyResearchLvl) {
-  return 10 * Math.pow(spyResearchLvl, 2)
+  return 5 * Math.pow(spyResearchLvl, 2.2)
 }
 
 export function calcSpyFailProbabilities({ resLvlAttacker, resLvLDefender, spiesSent }) {
