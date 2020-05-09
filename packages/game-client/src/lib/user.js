@@ -3,6 +3,8 @@ import asyncStorage from './asyncStorage'
 import { reloadApp } from '../App'
 import api from 'lib/api'
 import { setServerTimeOffsets } from './serverTime'
+import { PERSONNEL_OBJ } from 'shared-lib/personnelUtils'
+import { calcBuildingDailyIncome, calcBuildingMaxMoney } from 'shared-lib/buildingsUtils'
 
 export let sessionID = null
 export let userData = null
@@ -54,3 +56,47 @@ export function useUserData() {
   }, [])
   return userData
 }
+
+function setupPersonnelSalaryMoneyUpdater() {
+  function update() {
+    const deltaMs = Date.now() - userData.__last_money_update
+    userData.__last_money_update = Date.now()
+    if (Number.isNaN(deltaMs)) {
+      // First time since API call, ignore this time
+      return null
+    }
+
+    // Update money from personnel maintenance
+    let totalDailyCost = 0
+    Object.entries(userData.personnel).forEach(([troopID, amount]) => {
+      const troopsInfo = PERSONNEL_OBJ[troopID]
+      totalDailyCost += troopsInfo.dailyMaintenanceCost * amount
+    })
+    if (totalDailyCost === 0) return // no troops
+    const intervalCost = (deltaMs / 1000) * (totalDailyCost / 24 / 60 / 60)
+    userData.money -= intervalCost
+
+    // Update buildings accumulated money
+    Object.entries(userData.buildings).forEach(([buildingID, building]) => {
+      buildingID = parseInt(buildingID)
+      const dailyIncome = calcBuildingDailyIncome(buildingID, building.quantity, userData.researchs[5])
+      const intervalRevenue = (deltaMs / 1000) * (dailyIncome / 24 / 60 / 60)
+      const maxMoney = calcBuildingMaxMoney({
+        buildingID,
+        buildingAmount: building.quantity,
+        bankResearchLevel: userData.researchs[4],
+      })
+      if (building.money > maxMoney.maxTotal) return
+      building.money += intervalRevenue
+      if (building.money > maxMoney.maxTotal) building.money = maxMoney.maxTotal
+    })
+
+    fireUserDataListeners()
+  }
+  function tick() {
+    if (userData) update()
+    setTimeout(tick, 1000)
+  }
+  tick()
+}
+setupPersonnelSalaryMoneyUpdater()

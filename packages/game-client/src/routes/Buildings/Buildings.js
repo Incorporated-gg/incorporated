@@ -1,15 +1,9 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import Building from 'components/building'
-import { buildingsList, calcBuildingDailyIncome, calcBuildingMaxMoney } from 'shared-lib/buildingsUtils'
-import { userData, fireUserDataListeners } from 'lib/user'
+import { buildingsList } from 'shared-lib/buildingsUtils'
 import CardList from 'components/card/card-list'
 
 export default function Buildings() {
-  useEffect(() => {
-    const interval = setupBuildingsBankUpdater()
-    return () => clearInterval(interval)
-  }, [])
-
   return (
     <CardList>
       {buildingsList.map(buildingInfo => (
@@ -17,35 +11,4 @@ export default function Buildings() {
       ))}
     </CardList>
   )
-}
-
-function setupBuildingsBankUpdater() {
-  // Update every second userData.building money properties while the buildings screen is active
-
-  function updateBuildingsMoney() {
-    const deltaMs = Date.now() - userData.__buildings_last_buildings_money_update
-    userData.__buildings_last_buildings_money_update = Date.now()
-    if (Number.isNaN(deltaMs)) {
-      // First time since API call, ignore this time
-      return null
-    }
-
-    Object.entries(userData.buildings).forEach(([buildingID, building]) => {
-      buildingID = parseInt(buildingID)
-      const dailyIncome = calcBuildingDailyIncome(buildingID, building.quantity, userData.researchs[5])
-      const intervalRevenue = (deltaMs / 1000) * (dailyIncome / 24 / 60 / 60)
-      const maxMoney = calcBuildingMaxMoney({
-        buildingID,
-        buildingAmount: building.quantity,
-        bankResearchLevel: userData.researchs[4],
-      })
-      if (building.money > maxMoney.maxTotal) return
-      building.money += intervalRevenue
-      if (building.money > maxMoney.maxTotal) building.money = maxMoney.maxTotal
-    })
-
-    fireUserDataListeners()
-  }
-  setTimeout(updateBuildingsMoney, 0)
-  return setInterval(updateBuildingsMoney, 1000)
 }

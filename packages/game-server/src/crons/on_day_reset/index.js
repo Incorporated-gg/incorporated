@@ -1,7 +1,7 @@
 import { getServerDay, getInitialUnixTimestampOfServerDay } from '../../lib/serverTime'
 import mysql from '../../lib/mysql'
 
-import usersDailyLog from './users_daily_log'
+import miscUserUpdates from './miscUserUpdates'
 import newspaper from './newspaper'
 import allianceWars from './alliance_wars'
 import contests from './contests'
@@ -50,7 +50,7 @@ async function runJustAfterNewDay(finishedServerDay) {
   }
 
   try {
-    await usersDailyLog(finishedServerDay)
+    await miscUserUpdates(finishedServerDay)
   } catch (e) {
     console.error(e)
   }

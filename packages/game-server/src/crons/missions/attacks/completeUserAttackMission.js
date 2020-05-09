@@ -134,6 +134,7 @@ export async function completeUserAttackMission(mission) {
     attackData,
     mission.id,
   ])
+  await mysql.query('UPDATE users SET attacks_left=attacks_left-1 WHERE id=?', [attacker.id])
 
   // Update troops
   const allianceRestockGuards = await calcAllianceGuardsRestock(killedGuards, defenderAllianceID)

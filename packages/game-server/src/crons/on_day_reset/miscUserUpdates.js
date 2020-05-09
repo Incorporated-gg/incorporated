@@ -1,6 +1,25 @@
 import mysql from '../../lib/mysql'
 
 export default async function runJustAfterNewDay(finishedServerDay) {
+  await updateAttacksLeft()
+  await updateUsersDailyLog(finishedServerDay)
+}
+
+const MAX_ACCUMULATED_ATTACKS = process.env.NODE_ENV === 'development' ? 60 : 6
+const ATTACKS_GAINED_PER_DAY = process.env.NODE_ENV === 'development' ? 30 : 3
+
+async function updateAttacksLeft() {
+  await mysql.query('UPDATE users SET attacks_left=? WHERE attacks_left>=?', [
+    MAX_ACCUMULATED_ATTACKS,
+    MAX_ACCUMULATED_ATTACKS - ATTACKS_GAINED_PER_DAY,
+  ])
+  await mysql.query('UPDATE users SET attacks_left=attacks_left+? WHERE attacks_left<?', [
+    ATTACKS_GAINED_PER_DAY,
+    MAX_ACCUMULATED_ATTACKS - ATTACKS_GAINED_PER_DAY,
+  ])
+}
+
+async function updateUsersDailyLog(finishedServerDay) {
   const users = await getAllUsers()
   await Promise.all(
     users.map(async user => {

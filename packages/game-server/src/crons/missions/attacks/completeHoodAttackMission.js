@@ -78,6 +78,7 @@ export async function completeHoodAttackMission(mission) {
     attackData,
     mission.id,
   ])
+  await mysql.query('UPDATE users SET attacks_left=attacks_left-1 WHERE id=?', [attacker.id])
 
   // Update troops
   await changeHoodGuards(hoodData.id, -killedGuards)
