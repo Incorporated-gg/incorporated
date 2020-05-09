@@ -78,7 +78,7 @@ const maxResourcesPerLevel = {
   money: 500000,
   guards: 2000,
   sabots: 2000,
-  thieves: 1500,
+  thieves: 2500,
 }
 
 export function calcResourceMax(resourceID, researchs) {
