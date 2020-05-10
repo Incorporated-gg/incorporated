@@ -34,7 +34,7 @@ export default function generateTasksList() {
       case 'cyclic_build': {
         const initialBuildingID = 5 // Cinemas
         const buildingID = ((typeCounter + initialBuildingID - 1) % 6) + 1 // Start on building 2, and loop
-        const amount = Math.round(Math.pow(2, 6 - buildingID) * (typeCounter * 0.1665 + 1)) // Equivalent to +1 hotel every 6 loops (+0,1665 hotels every loop), starting with 1 cinema.
+        const amount = Math.floor(Math.pow(2, 6 - buildingID) * ((typeCounter - 1) * 0.167 + 1)) // Equivalent to +1 hotel every 6 loops (+0,1665 hotels every loop), starting with 1 cinema.
 
         requirements.buildingID = buildingID
         requirements.amount = amount
