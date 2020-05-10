@@ -56,12 +56,12 @@ export default [
         alt: 'Investigación',
       },
       {
-        path: '/loans',
-        alt: 'Préstamos',
-      },
-      {
         path: '/personnel',
         alt: 'Personal',
+      },
+      {
+        path: '/loans',
+        alt: 'Préstamos',
       },
     ],
   },
