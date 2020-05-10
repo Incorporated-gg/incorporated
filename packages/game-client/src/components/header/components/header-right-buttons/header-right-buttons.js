@@ -47,5 +47,5 @@ function FinishedActiveTasksCounter() {
 
   const count = userData.activeTasks.filter(task => task.progressPercentage >= 100).length
   if (!count) return null
-  return <span className={styles.finishedActiveTasksCounter}>{count}</span>
+  return <div className={styles.finishedActiveTasksCounter} />
 }

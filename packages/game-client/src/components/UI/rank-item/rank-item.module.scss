@@ -14,8 +14,10 @@
 
 .rankPosition {
     font-weight: bold;
+    font-size: $font-size-large;
     padding: 0.25em;
     color: $color-text-light;
+    min-width: 2em;
 
     &:global(.pos1) {
         color: $color-brand;
@@ -49,11 +51,11 @@
 
   .icon {
     position: absolute;
-    right: -20px;
-    top: 0;
+    right: -25px;
+    top: -15px;
     svg {
-      height: 20px;
-      width: auto;
+      height: 45px;
+      width: 45px;
     }
   }
 }

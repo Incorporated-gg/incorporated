@@ -4,6 +4,8 @@ import PropTypes from 'prop-types'
 import IncContainer from 'components/UI/inc-container'
 import Icon from 'components/icon'
 import IncButton from 'components/UI/inc-button'
+import UserLink from 'components/UI/user-link'
+import styles from './alliance-member-requests.module.scss'
 
 MemberRequests.propTypes = {
   reloadAllianceData: PropTypes.func.isRequired,
@@ -41,26 +43,24 @@ export default function MemberRequests({ reloadAllianceData }) {
   return (
     <IncContainer darkBg outerStyle={{ marginBottom: 10 }}>
       <div style={{ padding: 10 }}>
-        <h3>Solicitudes de membresía</h3>
-        <table>
-          <tbody>
-            {memberRequests.map(memberRequest => {
-              return (
-                <tr key={memberRequest.id}>
-                  <td>{memberRequest.username}</td>
-                  <td>
-                    <IncButton noInnerBackground onClick={memberRequestAction('reject', memberRequest)}>
-                      <Icon svg={require('./img/accept.svg')} size={12} />
-                    </IncButton>{' '}
-                    <IncButton noInnerBackground onClick={memberRequestAction('accept', memberRequest)}>
-                      <Icon svg={require('./img/reject.svg')} size={12} />
-                    </IncButton>
-                  </td>
-                </tr>
-              )
-            })}
-          </tbody>
-        </table>
+        <div className={styles.title}>Solicitudes de membresía</div>
+        {memberRequests.map(memberRequest => {
+          return (
+            <div className={styles.row} key={memberRequest.id}>
+              <div style={{ flexGrow: 1 }}>
+                <UserLink user={memberRequest} />
+              </div>
+              <div>
+                <IncButton borderSize={2} onClick={memberRequestAction('accept', memberRequest)}>
+                  <Icon svg={require('./img/accept.svg')} size={18} style={{ margin: 5 }} />
+                </IncButton>{' '}
+                <IncButton borderSize={2} onClick={memberRequestAction('reject', memberRequest)}>
+                  <Icon svg={require('./img/reject.svg')} size={18} style={{ margin: 5 }} />
+                </IncButton>
+              </div>
+            </div>
+          )
+        })}
       </div>
     </IncContainer>
   )

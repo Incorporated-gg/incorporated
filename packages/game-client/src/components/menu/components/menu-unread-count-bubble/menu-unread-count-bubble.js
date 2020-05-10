@@ -11,5 +11,5 @@ export default function UnreadCountBubble({ type }) {
   const count = userData[type === 'messages' ? 'unread_messages_count' : 'unread_reports_count']
   if (!count) return null
 
-  return <span className={styles.bubble}>{count}</span>
+  return <span className={styles.bubble} />
 }

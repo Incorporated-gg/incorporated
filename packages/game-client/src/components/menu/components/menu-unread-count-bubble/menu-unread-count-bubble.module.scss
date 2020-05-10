@@ -1,8 +1,9 @@
 .bubble {
-    display: inline-block;
-    color: white;
-    background-color: rgb(32, 140, 241);
-    border-radius: 1em;
-    margin-left: 0.3em;
-    padding: 0.2em 0.5em;
+    position: absolute;
+    right: 0.75em;
+    top: 0;
+    background: #E23434;
+    border-radius: 12px;
+    padding: 6px;
+    border: 4px solid #474747;
 }

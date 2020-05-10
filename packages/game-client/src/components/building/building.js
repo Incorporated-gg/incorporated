@@ -64,7 +64,7 @@ export default function Building({ buildingID }) {
             <span className={styles.statTitle}>Beneficios por día:</span>
             <span className={styles.statValue}>
               {numberToAbbreviation(income * buildingCount)}{' '}
-              <Icon iconName="money" style={{ marginLeft: 3 }} size={20} />
+              <Icon iconName="money" style={{ marginLeft: 3 }} size={22} />
             </span>
           </div>
           <ExtractButton buildingID={buildingID} buildingCount={buildingCount} />
@@ -97,7 +97,7 @@ function BuyButton({ buildingID, coste, hasEnoughOptimizeLvl }) {
       <div className={styles.buttonInfoText}>
         <IncChevron padding={12} direction="right" />
         <span style={{ flexGrow: 1 }}>
-          {numberToAbbreviation(coste)} <Icon iconName="money" style={{ marginLeft: 3 }} size={20} />
+          {numberToAbbreviation(coste)} <Icon iconName="money" style={{ marginLeft: 3 }} size={22} />
         </span>
         <IncChevron padding={12} direction="left" />
       </div>
@@ -139,7 +139,7 @@ function ExtractButton({ buildingID, buildingCount }) {
         <IncProgressBar direction="horizontal" progressPercentage={progress}>
           <span className={styles.progressText}>
             {numberToAbbreviation(accumulatedMoney)}
-            <Icon iconName="money" style={{ marginLeft: 3 }} size={20} />
+            <Icon iconName="money" style={{ marginLeft: 3 }} size={22} />
           </span>
         </IncProgressBar>
       </div>

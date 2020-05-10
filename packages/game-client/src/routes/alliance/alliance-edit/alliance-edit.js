@@ -7,7 +7,7 @@ import styles from './alliance-edit.module.scss'
 import api from 'lib/api'
 import { reloadUserData } from 'lib/user'
 import { useHistory } from 'react-router-dom'
-import IncInput from 'components/UI/inc-input'
+import IncInput from 'components/UI/inc-input/inc-input'
 
 AllianceEdit.propTypes = {
   alliance: PropTypes.object.isRequired,

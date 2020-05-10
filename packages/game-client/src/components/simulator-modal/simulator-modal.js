@@ -7,7 +7,7 @@ import Modal from 'react-modal'
 import IncContainer from 'components/UI/inc-container'
 import { PERSONNEL_OBJ } from 'shared-lib/personnelUtils'
 import SimulatorResult from './simulator-result'
-import IncInput from 'components/UI/inc-input'
+import IncInput from 'components/UI/inc-input/inc-input'
 
 SimulatorModal.propTypes = {
   spyReport: PropTypes.object,

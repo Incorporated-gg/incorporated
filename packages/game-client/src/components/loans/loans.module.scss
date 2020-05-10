@@ -14,6 +14,7 @@
   font-family: $font-family-title;
   font-size: $font-size-large;
   font-weight: 700;
+  margin-bottom: 5px;
 }
 
 .contentContainer {
@@ -23,14 +24,21 @@
 .createLoanRow {
   display: flex;
   margin-bottom: 10px;
+  align-items: flex-end;
 
   >* {
     flex-grow: 1;
     flex-basis: 1px;
+  }
 
-    &:nth-child(even) {
-      text-align: right;
-    }
+  .spacer {
+    width: 10px;
+    flex-grow: 0;
+    flex-basis: unset;
+  }
+
+  input[type="number"] {
+    height: 34px;
   }
 }
 

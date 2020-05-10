@@ -5,6 +5,7 @@ import AllianceLink from 'components/alliance/alliance-link'
 import MissionModal from 'components/mission-modal'
 import { numberToAbbreviation } from 'lib/utils'
 import MapRenderer from './map-renderer/map-renderer'
+import IncContainer from 'components/UI/inc-container'
 
 export default function Map() {
   const [hoods, setHoods] = useState()
@@ -23,26 +24,28 @@ export default function Map() {
   return (
     <>
       {hoods && <MapRenderer hoods={hoods} />}
-      <div className={styles.container}>
-        {hoods.map(hood => {
-          return (
-            <div key={hood.id}>
-              <div>{hood.name}</div>
-              {hood.owner && (
-                <div>
-                  <AllianceLink alliance={hood.owner} />
-                </div>
-              )}
-              {!hood.owner && (
-                <>
-                  <div>{numberToAbbreviation(hood.guards)} guardias</div>
-                  <button onClick={() => setAttackModalHood(hood)}>Atacar</button>
-                </>
-              )}
-            </div>
-          )
-        })}
-      </div>
+      <IncContainer darkBg>
+        <div className={styles.container}>
+          {hoods.map(hood => {
+            return (
+              <div key={hood.id}>
+                <div>{hood.name}</div>
+                {hood.owner && (
+                  <div>
+                    <AllianceLink alliance={hood.owner} />
+                  </div>
+                )}
+                {!hood.owner && (
+                  <>
+                    <div>{numberToAbbreviation(hood.guards)} guardias</div>
+                    <button onClick={() => setAttackModalHood(hood)}>Atacar</button>
+                  </>
+                )}
+              </div>
+            )
+          })}
+        </div>
+      </IncContainer>
       <MissionModal
         missionType="attack"
         hood={attackModalHood || undefined}

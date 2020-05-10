@@ -1,31 +1,33 @@
-import React from 'react'
+import React, { useRef, useCallback, useState, useEffect } from 'react'
 import { useLocation, Link } from 'react-router-dom'
 import styles from './menu-sub-menu.module.scss'
 import PropTypes from 'prop-types'
 import useIsDesktop from 'lib/useIsDesktop'
-import useWindowSize from 'lib/useWindowSize'
-import { DESKTOP_WIDTH_BREAKPOINT } from 'lib/utils'
 import UnreadCountBubble from '../menu-unread-count-bubble'
 
 const lastVisitedRoutes = {}
 
 SubMenu.propTypes = {
-  getActiveGroup: PropTypes.func.isRequired,
-  getActiveItemIndex: PropTypes.func.isRequired,
+  activeGroup: PropTypes.object.isRequired,
+  activeItemIndex: PropTypes.number.isRequired,
 }
-export default function SubMenu({ getActiveGroup, getActiveItemIndex }) {
+export default function SubMenu({ activeGroup, activeItemIndex }) {
+  const linkRefs = useRef({})
   const isDesktop = useIsDesktop()
-  const windowDimensions = useWindowSize()
   const location = useLocation()
+  const [markersStyle, setMarkersStyle] = useState({})
 
-  const activeGroup = getActiveGroup(location.pathname)
-  if (!activeGroup || activeGroup.items.length <= 1) return null
+  const reloadMarkerTransform = useCallback(() => {
+    const itemElm = linkRefs.current[activeItemIndex]
+    const translateX = itemElm.offsetLeft + itemElm.clientWidth / 2
+    setMarkersStyle({
+      transform: `translateX(${translateX}px)`,
+    })
+  }, [activeItemIndex])
 
-  const activeItemIndex = getActiveItemIndex(location.pathname, activeGroup.items)
-  const markersTranslateX = (activeItemIndex + 0.5) / activeGroup.items.length
-  const markersStyle = {
-    transform: `translateX(${markersTranslateX * Math.min(DESKTOP_WIDTH_BREAKPOINT, windowDimensions.width)}px)`,
-  }
+  useEffect(() => {
+    reloadMarkerTransform()
+  }, [activeGroup, reloadMarkerTransform])
 
   // Set lastVisitedRoutes
   if (!lastVisitedRoutes[activeGroup.mainPath]) lastVisitedRoutes[activeGroup.mainPath] = {}
@@ -42,7 +44,11 @@ export default function SubMenu({ getActiveGroup, getActiveItemIndex }) {
         const link = isActive ? item.path : lastVisitedRoutes[activeGroup.mainPath][index] || item.path
 
         return (
-          <Link className={isActive ? styles.active : ''} to={link} key={item.path}>
+          <Link
+            ref={ref => (linkRefs.current[index] = ref)}
+            className={isActive ? styles.active : ''}
+            to={link}
+            key={item.path}>
             <div className={styles.subMenuItem}>{item.alt}</div>
             {extra.includes('unread_messages') && <UnreadCountBubble type="messages" />}
             {extra.includes('unread_reports') && <UnreadCountBubble type="reports" />}

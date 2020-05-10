@@ -3,7 +3,8 @@ import api from '../../../lib/api'
 import PropTypes from 'prop-types'
 import Modal from 'react-modal'
 import IncContainer from 'components/UI/inc-container'
-import IncInput from 'components/UI/inc-input'
+import IncInput from 'components/UI/inc-input/inc-input'
+import IncButton from 'components/UI/inc-button'
 
 NewMessageModal.propTypes = {
   user: PropTypes.object,
@@ -28,19 +29,21 @@ export default function NewMessageModal({ user, isOpen, onRequestClose }) {
 
   return (
     <Modal isOpen={isOpen} onRequestClose={onRequestClose}>
-      <IncContainer withHairline darkBg borderSize={20}>
-        <form>
+      <IncContainer withHairline darkBg>
+        <form style={{ padding: 10 }}>
           <div>
             <label>
-              Para: <input type="text" value={addressee} onChange={e => setAddressee(e.target.value)} />
+              Para: <IncInput showBorder type="text" value={addressee} onChangeText={setAddressee} />
             </label>
           </div>
+          <br />
           <div>
             <label>
               Mensaje: <IncInput showBorder multiline value={message} onChangeText={setMessage} maxLength="500" />
             </label>
           </div>
-          <button onClick={sendClicked}>Enviar</button>
+          <br />
+          <IncButton onClick={sendClicked}>Enviar</IncButton>
         </form>
       </IncContainer>
     </Modal>

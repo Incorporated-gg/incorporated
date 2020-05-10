@@ -54,7 +54,7 @@ async function useSetupMapCanvas(canvasRef, hoods) {
       const ctx = canvas.getContext('2d')
       const canvasBox = canvas.getBoundingClientRect()
       canvas.width = canvasBox.width
-      canvas.height = canvas.width * 1.3
+      canvas.height = Math.min(900, canvas.width * 1.3)
 
       const assets = await loadAssets()
 

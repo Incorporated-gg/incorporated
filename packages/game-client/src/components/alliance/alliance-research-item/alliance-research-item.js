@@ -13,7 +13,7 @@ import IncProgressBar from 'components/UI/inc-progress-bar'
 import Icon from 'components/icon'
 import IncContainer from 'components/UI/inc-container'
 import { numberToAbbreviation } from 'lib/utils'
-import IncInput from 'components/UI/inc-input'
+import IncInput from 'components/UI/inc-input/inc-input'
 import IncButton from 'components/UI/inc-button'
 
 const researchImages = {
@@ -80,6 +80,7 @@ export default function AllianceResearchItem({ researchData, reloadAllianceData 
       )}
       <IncButton onClick={doResearch}>
         <IncInput
+          className={styles.input}
           min={1}
           placeholder={0}
           onClick={e => e.stopPropagation()}

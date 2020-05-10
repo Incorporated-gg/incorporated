@@ -19,7 +19,7 @@ export default function ContestsRouter() {
     <>
       {error && <h4>{error}</h4>}
 
-      {contests.length && <Contest contestName={contests[0].name} />}
+      {contests.length ? <Contest contestName={contests[0].name} /> : 'Cargando'}
     </>
   )
 }

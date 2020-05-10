@@ -48,11 +48,12 @@ function removeLoadingScreenDiv() {
   const loadingDiv = document.getElementById('loadingScreen')
   if (!loadingDiv) return
 
-  const loadTime = window.performance.now()
-  const animationMs = loadTime < 300 ? 0 : loadTime < 1000 ? 100 : 300
-  loadingDiv.style.transition = `opacity ${animationMs}ms linear`
-  loadingDiv.style.opacity = 0
   setTimeout(() => {
-    loadingDiv.remove()
-  }, animationMs)
+    const animationMs = 300
+    loadingDiv.style.transition = `opacity ${animationMs}ms linear`
+    loadingDiv.style.opacity = 0
+    setTimeout(() => {
+      loadingDiv.remove()
+    }, animationMs)
+  }, 500)
 }

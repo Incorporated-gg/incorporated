@@ -28,23 +28,20 @@ export default function ActiveMission() {
     <>
       <div className={styles.container}>
         <IncContainer withHairline borderSize={4} darkBg style={{ display: 'flex' }}>
-          <div className={`${styles.stat} ${styles.statMission1}`}>
-            {}
-            <Icon svg={missionSvg} size={30} />
-            <Icon svg={require('./img/arrows.svg')} width={40} height={15} />
+          <div className={`${styles.stat} ${styles.target}`}>
+            <Icon svg={missionSvg} width={37} height={28} />
+            <Icon className={styles.arrowsSvg} svg={require('./img/arrows.svg')} width={30} height={13} />
             {userData.active_mission.target_hood ? (
               userData.active_mission.target_hood.name
             ) : (
               <UserLink user={userData.active_mission.target_user} />
             )}
           </div>
-          <div className={`${styles.stat} ${styles.statMission2}`}>
-            <div>TIEMPO</div>
+          <div className={`${styles.stat} ${styles.timer}`}>
             <MissionTimer finishesAt={userData.active_mission.will_finish_at} isMyMission />
           </div>
-          <div className={`${styles.stat} ${styles.statMission3}`}>
+          <div className={`${styles.stat} ${styles.buttons}`}>
             <IncButton onClick={() => setIsModalOpen(true)}>Detalles</IncButton>
-            <div style={{ width: 10 }} />
             <IncButton className={styles.cancelText} onClick={cancelMission}>
               Cancelar
             </IncButton>

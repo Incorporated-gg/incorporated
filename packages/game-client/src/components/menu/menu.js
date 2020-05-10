@@ -4,14 +4,20 @@ import useIsDesktop from 'lib/useIsDesktop'
 import menuItems from './menu-items'
 import MainMenu from './components/menu-main-menu'
 import SubMenu from './components/menu-sub-menu'
+import { useLocation } from 'react-router-dom'
 
 export default function Menu() {
   const isDesktop = useIsDesktop()
+  const location = useLocation()
+  const activeGroup = getActiveGroup(location.pathname)
+
+  const hasSubMenu = activeGroup && activeGroup.items.length > 1
+  const activeItemIndex = hasSubMenu && getActiveItemIndex(location.pathname, activeGroup.items)
   return (
     <>
-      {!isDesktop && <SubMenu getActiveGroup={getActiveGroup} getActiveItemIndex={getActiveItemIndex} />}
+      {!hasSubMenu ? null : !isDesktop && <SubMenu activeGroup={activeGroup} activeItemIndex={activeItemIndex} />}
       <MainMenu menuItems={menuItems} getActiveGroup={getActiveGroup} />
-      {isDesktop && <SubMenu getActiveGroup={getActiveGroup} getActiveItemIndex={getActiveItemIndex} />}
+      {!hasSubMenu ? null : isDesktop && <SubMenu activeGroup={activeGroup} activeItemIndex={activeItemIndex} />}
     </>
   )
 }

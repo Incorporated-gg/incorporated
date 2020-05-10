@@ -6,7 +6,7 @@ import { PERSONNEL_OBJ } from 'shared-lib/personnelUtils'
 import { calculateMissionTime } from 'shared-lib/missionsUtils'
 import PropTypes from 'prop-types'
 import IncButton from 'components/UI/inc-button'
-import IncInput from 'components/UI/inc-input'
+import IncInput from 'components/UI/inc-input/inc-input'
 
 MissionModalAttack.propTypes = {
   user: PropTypes.object,
@@ -50,6 +50,11 @@ export default function MissionModalAttack({ user, hood, onRequestClose }) {
 
   const missionSeconds = calculateMissionTime('attack')
 
+  const buildingsOptionsObj = {}
+  buildingsList.forEach(building => {
+    buildingsOptionsObj[building.id] = building.name
+  })
+
   return (
     <>
       <div>{hood ? <span>Barrio a atacar: {hood.name}</span> : <span>Usuario a atacar: {user.username}</span>}</div>
@@ -89,13 +94,13 @@ export default function MissionModalAttack({ user, hood, onRequestClose }) {
         {user && (
           <label>
             <span>Edificio: </span>
-            <select value={targetBuilding} onChange={e => setTargetBuilding(parseInt(e.target.value))}>
-              {buildingsList.map(building => (
-                <option key={building.id} value={building.id}>
-                  {building.name}
-                </option>
-              ))}
-            </select>
+            <IncInput
+              type="select"
+              showBorder
+              value={targetBuilding}
+              onChangeText={setTargetBuilding}
+              options={buildingsOptionsObj}
+            />
           </label>
         )}
       </div>

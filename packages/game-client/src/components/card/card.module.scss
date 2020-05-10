@@ -17,17 +17,20 @@
     padding-bottom: 0;
     background: $gradient-brand;
 
-    .image img {
-      display: block;
-      width: 100%;
-      height: calc(100% * (300 / 586));
-      object-fit: cover;
-
+    .image {
       // Prevent content reflow from still loading images
-      &::before {
+      width: 100%;
+      padding-top: calc(100% * (300 / 586));
+      position: relative;
+
+      img {
+        position: absolute;
+        top: 0;
+        left: 0;
         display: block;
-        content: '';
-        padding-top: calc(100% * (300 / 586));
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
       }
     }
 
@@ -70,52 +73,12 @@
     .children {
       @supports not (-webkit-touch-callout: none) {
         // Disabled on ios due to safari bug, calculating too much extra height
-        flex-grow: 1; 
+        flex-grow: 1;
       }
+
       display: flex;
       flex-direction: column;
       justify-content: space-between;
     }
-  }
-}
-
-.statContainer {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  flex-grow: 1;
-}
-
-.buttonNumberContainer {
-  background-color: $color-bg;
-  position: relative;
-
-  .buttonNumberProgress {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    max-width: 100%;
-    transition: width .3s ease-in-out;
-    background: linear-gradient(90deg, #4A8B1A, #71B020);
-  }
-
-  .buttonNumberText {
-    position: relative;
-    font-size: $font-size-small;
-    font-weight: normal;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-}
-
-.button {
-  user-select: none;
-  cursor: pointer;
-  margin-top: 10px;
-
-  &:disabled,
-  &[disabled] {
-    opacity: 0.4;
   }
 }

@@ -9,7 +9,7 @@ import {
 } from 'shared-lib/missionsUtils'
 import PropTypes from 'prop-types'
 import IncButton from 'components/UI/inc-button'
-import IncInput from 'components/UI/inc-input'
+import IncInput from 'components/UI/inc-input/inc-input'
 
 MissionModalSpy.propTypes = {
   user: PropTypes.object.isRequired,

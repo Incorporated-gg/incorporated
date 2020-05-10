@@ -5,7 +5,7 @@ import styles from './loans.module.scss'
 import IncContainer from 'components/UI/inc-container'
 import { LOAN_DAYS_DURATION } from 'shared-lib/loansUtils'
 import IncButton from 'components/UI/inc-button'
-import IncInput from 'components/UI/inc-input'
+import IncInput from 'components/UI/inc-input/inc-input'
 import { userData, useUserData } from 'lib/user'
 
 CreateLoan.propTypes = {
@@ -60,27 +60,26 @@ export default function CreateLoan({ refreshLoansList, givenLoan }) {
         <div className={styles.createLoanRow}>
           <div>
             <div className={styles.smallTitle}>Cantidad</div>
-            <IncInput
-              min={0}
-              max={userData.money}
-              showBorder
-              value={moneyAmount}
-              type="number"
-              placeholder="0"
-              onChangeText={setMoneyAmount}
-            />
+            <IncContainer>
+              <IncInput
+                min={0}
+                max={userData.money}
+                value={moneyAmount}
+                style={{ width: '100%' }}
+                type="number"
+                placeholder="0"
+                onChangeText={setMoneyAmount}
+              />
+            </IncContainer>
           </div>
+          <div className={styles.spacer} />
           <div>
-            <div className={styles.smallTitle}>Interés</div>
-            <input
-              value={interestRate}
-              type="range"
-              min="5"
-              max="50"
-              step="1"
-              onChange={e => setInterestRate(e.target.value)}
-            />
-            {interestRate}%
+            <div className={styles.smallTitle}>Interés: {interestRate}%</div>
+            <IncContainer darkBg>
+              <div>
+                <IncInput value={interestRate} type="range" min={5} max={50} step={1} onChangeText={setInterestRate} />
+              </div>
+            </IncContainer>
           </div>
         </div>
         <div className={styles.createLoanRow}>

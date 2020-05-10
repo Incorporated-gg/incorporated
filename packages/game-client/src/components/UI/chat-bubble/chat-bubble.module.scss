@@ -1,28 +1,23 @@
 @import '../../../variables';
 
 .chatToggleButton {
+  z-index: 199;
   position: fixed;
   right: 0px;
   bottom: 135px;
-  z-index: 199;
 
   @media (min-width: $breakpoint-desktop) {
     bottom: 30px;
   }
 
   background: $gradient-brand;
-  width: 60px;
-  height: 60px;
   padding: 7px;
   padding-right: 0;
   cursor: pointer;
 
   >* {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    padding: 10px;
+    padding-bottom: 7px;
     background: $color-bg;
   }
 }
@@ -48,6 +43,7 @@
           width: 684px;
         }
       }
+
       .chatWindowSidebar {
         .chatWindowSidebarHeader {
           flex-direction: row;
@@ -112,6 +108,7 @@
             fill: $color-brand-light !important;
           }
         }
+
         .chatWindowSidebarToggle {
           transform: rotate(180deg);
           cursor: pointer;
@@ -134,16 +131,17 @@
           font-weight: 600;
           margin-bottom: 20px;
           font-size: $font-size-medium;
-          
+
           @media screen and (min-width: $breakpoint-desktop) {
             font-size: $font-size-large;
           }
         }
+
         .chatRoomCategoryList {
           margin-bottom: 30px;
           display: flex;
           flex-direction: column;
-          
+
           .chatRoomItemButton {
             flex-grow: 1;
             text-align: left;
@@ -153,7 +151,7 @@
             background: transparent;
             cursor: pointer;
             font-size: $font-size-small;
-            
+
             @media screen and (min-width: $breakpoint-desktop) {
               font-size: $font-size-medium;
             }
@@ -206,6 +204,7 @@
 
         .chatWindowBodyHeaderTop {
           display: flex;
+
           h3 {
             @include gradientText();
             @include pascalText();
@@ -215,22 +214,25 @@
             flex-grow: 1;
             font-weight: 600;
             font-size: $font-size-medium;
-            
+
             @media screen and (min-width: $breakpoint-desktop) {
               font-size: $font-size-large;
             }
           }
+
           .chatOptionsButton {
             border: 0;
             background: transparent;
             cursor: pointer;
           }
         }
+
         .chatWindowBodyHeaderBottom {
           color: rgba(255, 255, 255, 0.6);
           font-weight: bold;
         }
       }
+
       .chatRoomList {
         display: none;
         background-color: rgba(0, 0, 0, 0.2);
@@ -254,18 +256,21 @@
         .chatMessage {
           font-size: $font-size-medium;
           padding: 10px 0;
-          
+
           &:not(:last-child) {
             border-bottom: 1px solid $color-bg;
           }
+
           .chatMessageUserAvatar {
             float: left;
             margin-right: 10px;
           }
+
           .chatMessageUsername {
             color: $color-brand-light;
             font-weight: bold;
           }
+
           .chatMessageTimestamp {
             margin-left: 10px;
             font-size: $font-size-small;
@@ -289,6 +294,7 @@
           padding: 10px;
           margin-bottom: 10px;
         }
+
         .chatTextSubmit {
           align-self: flex-end;
           padding: 5px 30px;

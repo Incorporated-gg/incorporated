@@ -5,6 +5,7 @@ import IncContainer from 'components/UI/inc-container'
 import MissionRow from 'components/reports/mission-row/mission-row'
 import SimulatorModal from 'components/simulator-modal/simulator-modal'
 import IncButton from 'components/UI/inc-button'
+import IncInput from 'components/UI/inc-input/inc-input'
 
 const initialMissionsState = {
   missions: [],
@@ -35,6 +36,7 @@ export default function Reports() {
         ownerType,
       })
       .then(res => {
+        if (res.notSeenReceivedCount > 0) setSendType('received')
         setMissions(res)
       })
       .catch(err => alert(err.message))
@@ -53,21 +55,37 @@ export default function Reports() {
         </span>
       </div>
       <div style={{ marginBottom: 10 }}>
-        <select value={sendType} onChange={e => setSendType(e.target.value)}>
-          <option value="sent">Enviadas{missions.notSeenSentCount ? ` (${missions.notSeenSentCount})` : ''}</option>
-          <option value="received">
-            Recibidas{missions.notSeenReceivedCount ? ` (${missions.notSeenReceivedCount})` : ''}
-          </option>
-        </select>{' '}
-        <select value={missionType} onChange={e => setMissionType(e.target.value)}>
-          <option value="any">Cualquier tipo</option>
-          <option value="spy">Espionajes</option>
-          <option value="attack">Ataques</option>
-        </select>{' '}
-        <select value={ownerType} onChange={e => setOwnerType(e.target.value)}>
-          <option value="own">Propias</option>
-          <option value="alliance">Alianza</option>
-        </select>
+        <IncInput
+          showBorder
+          type="select"
+          options={{
+            sent: 'Enviadas',
+            received: 'Recibidas',
+          }}
+          value={sendType}
+          onChangeText={setSendType}
+        />{' '}
+        <IncInput
+          showBorder
+          type="select"
+          options={{
+            any: 'Cualquier tipo',
+            spy: 'Espionajes',
+            attack: 'Ataques',
+          }}
+          value={missionType}
+          onChangeText={setMissionType}
+        />{' '}
+        <IncInput
+          showBorder
+          type="select"
+          options={{
+            own: 'Propias',
+            alliance: 'Alianza',
+          }}
+          value={ownerType}
+          onChangeText={setOwnerType}
+        />
       </div>
 
       <IncContainer darkBg>

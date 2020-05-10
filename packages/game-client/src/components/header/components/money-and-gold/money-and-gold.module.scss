@@ -25,10 +25,16 @@
     color: $color-text-light;
     justify-content: space-between;
     align-items: center;
-    padding: 4.5px 3px;
     line-height: 1em;
     font-weight: 700;
-    font-size: $font-size-medium;
+    line-height: 1;
+
+    padding: 3.5px 3px;
+    font-size: $font-size-large;
+    @media (max-width: $breakpoint-small - 1) {
+      padding: 6.5px 3px;
+      font-size: $font-size-medium;
+    }
 
     &.statMission1 {
       cursor: pointer;

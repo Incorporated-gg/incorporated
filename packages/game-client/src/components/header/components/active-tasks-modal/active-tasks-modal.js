@@ -54,7 +54,7 @@ function ActiveTask({ task }) {
     case 'cyclic_rob': {
       taskElm = (
         <>
-          Roba {numberToAbbreviation(task.requirements.amount)} <Icon iconName="money" size={20} />
+          Roba {numberToAbbreviation(task.requirements.amount)} <Icon iconName="money" size={26} />
         </>
       )
       break
@@ -62,7 +62,7 @@ function ActiveTask({ task }) {
     case 'cyclic_income': {
       taskElm = (
         <>
-          Mejora tus ingresos en {numberToAbbreviation(task.requirements.amount)} <Icon iconName="money" size={20} />
+          Mejora tus ingresos en {numberToAbbreviation(task.requirements.amount)} <Icon iconName="money" size={26} />
         </>
       )
       break
@@ -70,7 +70,7 @@ function ActiveTask({ task }) {
     case 'barrier_income': {
       taskElm = (
         <>
-          Alcanza {numberToAbbreviation(task.requirements.amount)} <Icon iconName="money" size={20} /> de ingresos
+          Alcanza {numberToAbbreviation(task.requirements.amount)} <Icon iconName="money" size={26} /> de ingresos
           diarios
         </>
       )
@@ -91,7 +91,7 @@ function ActiveTask({ task }) {
     case 'cyclic_extract_money': {
       taskElm = (
         <>
-          Recoge {numberToAbbreviation(task.requirements.amount)} <Icon iconName="money" size={20} /> de tus edificios
+          Recoge {numberToAbbreviation(task.requirements.amount)} <Icon iconName="money" size={26} /> de tus edificios
         </>
       )
       break
@@ -128,7 +128,7 @@ function ActiveTask({ task }) {
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <IncChevron padding={10} direction="right" className={styles.taskRewardChevron} />
           <div className={styles.taskRewardText}>
-            Recompensa: {numberToAbbreviation(task.reward)} <Icon iconName="money" size={20} />
+            Recompensa: {numberToAbbreviation(task.reward)} <Icon iconName="money" size={22} />
           </div>
           <IncChevron padding={10} direction="left" className={styles.taskRewardChevron} />
         </div>

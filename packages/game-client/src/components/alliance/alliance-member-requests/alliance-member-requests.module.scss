@@ -1,0 +1,12 @@
+@import '../../../variables';
+
+.title {
+  @include gradientText();
+  font-family: $font-family-title;
+  font-size: $font-size-xlarge;
+  margin-bottom: 10px;
+}
+.row {
+  display: flex;
+  flex-direction: row;
+}

@@ -7,7 +7,7 @@ import { debounce } from '../../lib/utils'
 import Pagination from 'components/UI/pagination'
 import api from 'lib/api'
 import UserLink from 'components/UI/user-link'
-import IncInput from 'components/UI/inc-input'
+import IncInput from 'components/UI/inc-input/inc-input'
 import RankingMenu from './ranking-menu'
 
 export default function Ranking() {
@@ -27,6 +27,8 @@ export default function Ranking() {
   }, [history, page, pathname])
 
   useEffect(() => {
+    setRanking([])
+    setMaxPages(1)
     api
       .get('/v1/ranking', { type, page })
       .then(res => {

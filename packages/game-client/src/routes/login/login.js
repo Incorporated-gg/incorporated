@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import styles from './login.module.scss'
 import api from '../../lib/api'
 import { setNewSessionID } from '../../lib/user'
-import IncInput from 'components/UI/inc-input'
+import IncInput from 'components/UI/inc-input/inc-input'
 
 const ACCOUNT_NAMING_REQUIREMENTS = {
   minLength: 4,

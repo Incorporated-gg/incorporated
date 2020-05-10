@@ -13,18 +13,19 @@ export function numberToAbbreviation(number) {
   const symbolStr = number < 0 ? '-' : ''
   number = Math.abs(number)
 
+  if (number >= 1e9) {
+    // Multi millions, after 1000M. No decimals
+    const numStr = Math.floor(number / 1e6).toLocaleString()
+    return symbolStr + numStr + 'M'
+  }
+  if (number >= 1e7) {
+    // Millions, between 10M and 1000M. 1 decimal
+    const numStr = (Math.floor((number / 1e6) * 10) / 10).toLocaleString()
+    return symbolStr + numStr + 'M'
+  }
   if (number >= 1e6) {
-    let numStr
-    if (number >= 1e9) {
-      // Multi millions, after 1000M. No decimals
-      numStr = Math.floor(number / 1e6).toLocaleString()
-    } else if (number >= 1e7) {
-      // Millions, between 10M and 1000M. 1 decimal
-      numStr = (Math.floor((number / 1e6) * 10) / 10).toLocaleString()
-    } else {
-      // Single Millions, between 1M and 9.99M. 2 decimals
-      numStr = (Math.floor((number / 1e6) * 100) / 100).toLocaleString()
-    }
+    // Single Millions, between 1M and 9.99M. 2 decimals
+    let numStr = (Math.floor((number / 1e6) * 100) / 100).toLocaleString(undefined, { minimumFractionDigits: 2 })
     return symbolStr + numStr + 'M'
   }
 

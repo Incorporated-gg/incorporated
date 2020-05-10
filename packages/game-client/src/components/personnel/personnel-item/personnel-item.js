@@ -1,12 +1,12 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import { reloadUserData } from 'lib/user'
-import Card, { cardStyles } from 'components/card'
+import Card from 'components/card'
 import api from 'lib/api'
 import styles from './personnel-item.module.scss'
 import Icon from 'components/icon'
 import IncContainer from 'components/UI/inc-container'
-import IncInput from 'components/UI/inc-input'
+import IncInput from 'components/UI/inc-input/inc-input'
 
 const personnelImages = {
   sabots: require('./img/gangster.png'),
@@ -86,7 +86,7 @@ export default function PersonnelItem({ personnelInfo, resourceAmount }) {
             </div>
           </div>
         </div>
-        <IncContainer outerClassName={`${cardStyles.button} ${styles.button}`} onClick={hireClicked}>
+        <IncContainer outerClassName={styles.button} onClick={hireClicked}>
           <h2 className={styles.buttonTitle}>{'CONTRATAR'}</h2>
         </IncContainer>
       </div>
@@ -108,7 +108,7 @@ export default function PersonnelItem({ personnelInfo, resourceAmount }) {
             {(personnelInfo.firingCost * fireAmount).toLocaleString()} <Icon iconName="money" size={16} />
           </div>
         </div>
-        <IncContainer outerClassName={`${cardStyles.button} ${styles.button}`} onClick={fireClicked}>
+        <IncContainer outerClassName={styles.button} onClick={fireClicked}>
           <h2 className={styles.buttonTitle}>{'DESPEDIR'}</h2>
         </IncContainer>
       </div>

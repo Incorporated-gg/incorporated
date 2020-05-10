@@ -1,0 +1,85 @@
+@import '../../../variables';
+
+$track-color: #5b574a !default;
+$thumb-height: 22px !default;
+$thumb-width: 12px !default;
+$track-width: 100% !default;
+$track-height: 10px !default;
+
+@mixin incRangeTrack {
+  cursor: default;
+  height: $track-height;
+  transition: all .2s ease;
+  width: $track-width;
+}
+
+@mixin incRangeThumb {
+  background: $gradient-brand;
+  box-sizing: border-box;
+  cursor: default;
+  height: $thumb-height;
+  width: $thumb-width;
+}
+@mixin incRangeInput {
+  -webkit-appearance: none;
+  background: transparent;
+  margin: $thumb-height / 4 0;
+  width: $track-width;
+
+  &::-moz-focus-outer {
+    border: 0;
+  }
+
+  &:focus {
+    outline: 0;
+  }
+
+  &::-webkit-slider-runnable-track {
+    @include incRangeTrack;
+    background: $track-color;
+  }
+
+  &::-webkit-slider-thumb {
+    @include incRangeThumb;
+    -webkit-appearance: none;
+    margin-top: $track-height / 2 - $thumb-height / 2;
+  }
+
+  &::-moz-range-track {
+    @include incRangeTrack;
+    background: $track-color;
+    height: $track-height / 2;
+  }
+
+  &::-moz-range-thumb {
+    @include incRangeThumb;
+  }
+
+  &::-ms-track {
+    @include incRangeTrack;
+    background: transparent;
+    border-color: transparent;
+    border-width: ($thumb-height / 2) 0;
+    color: transparent;
+  }
+
+  &::-ms-fill-lower,  &::-ms-fill-upper {
+    background: $track-color;
+  }
+
+  &::-ms-thumb {
+    @include incRangeThumb;
+    margin-top: $track-height / 4;
+  }
+
+  &:disabled {
+    &::-webkit-slider-thumb,
+    &::-moz-range-thumb,
+    &::-ms-thumb,
+    &::-webkit-slider-runnable-track,
+    &::-ms-fill-lower,
+    &::-ms-fill-upper {
+      cursor: not-allowed;
+    }
+  }
+}

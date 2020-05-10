@@ -10,10 +10,10 @@ $breakpoint-desktop: 1024px;
 
 // Font sizes. Ratio: 1.3333
 $font-size-small: 11px; // 11
-$font-size-medium: 15px; // 14.666
-$font-size-large: 20px; // 19.555
+$font-size-medium: 13.5px; // 14.666
+$font-size-large: 19.5px; // 19.555
 $font-size-xlarge: 26px; // 26.07
-$font-size-xxlarge: 35px; // 34.765
+$font-size-xxlarge: 34.5px; // 34.765
 
 $font-family-text: 'Lato', Arial, sans-serif;
 $font-family-title: 'Oswald', 'Lato', Arial, 'sans-serif';
@@ -37,6 +37,7 @@ $color-red: #A70000;
 // Header/Fotoer specific
 $header--color-text: #fafafa;
 $menu--color-border: #EACA77;
+$menu--color-dark: #CC8C20;
 
 // Mixins
 @mixin gradientText {
@@ -48,6 +49,6 @@ $menu--color-border: #EACA77;
 
 @mixin pascalText {
   &::first-letter {
-    font-size: 1.3em;
+    font-size: 1.25em;
   }
 }

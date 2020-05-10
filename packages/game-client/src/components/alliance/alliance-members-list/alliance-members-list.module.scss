@@ -1,0 +1,19 @@
+@import '../../../variables';
+
+.container {
+  padding: 10px;
+}
+
+.header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 10px;
+
+  .title {
+    @include gradientText();
+    font-family: $font-family-title;
+    font-size: $font-size-xlarge;
+    flex-grow: 1;
+  }
+}

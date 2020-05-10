@@ -9,7 +9,7 @@ Contest.propTypes = {
   contestName: PropTypes.string.isRequired,
 }
 export default function Contest({ contestName }) {
-  const [contestScores, setContestScores] = useState([])
+  const [contestScores, setContestScores] = useState()
   const [error, setError] = useState(false)
 
   useEffect(() => {
@@ -36,7 +36,7 @@ export default function Contest({ contestName }) {
             </tr>
           </thead>
           <tbody>
-            {contestScores && contestScores.length ? (
+            {contestScores ? (
               contestScores.map(contestScore => (
                 <tr key={contestScore.user.id}>
                   <td>{contestScore.rank && contestScore.rank.toLocaleString()}</td>

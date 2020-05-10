@@ -314,13 +314,10 @@ export default function ChatBubble() {
           </div>
         )}
       </aside>
-      <div type="button" className={styles.chatToggleButton} onClick={() => toggleChat()}>
-        <Icon
-          width={46}
-          height={26}
-          svg={require('./img/chatIcon.svg')}
-          alt={`${isOpen ? 'Ocultar chat' : 'Mostrar chat'}`}
-        />
+      <div className={styles.chatToggleButton} onClick={() => toggleChat()}>
+        <div>
+          <Icon size={26} svg={require('./img/chatIcon.svg')} alt={`${isOpen ? 'Ocultar chat' : 'Mostrar chat'}`} />
+        </div>
       </div>
     </>
   )

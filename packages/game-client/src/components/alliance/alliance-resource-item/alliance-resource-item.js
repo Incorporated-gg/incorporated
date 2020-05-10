@@ -8,7 +8,7 @@ import IncContainer from 'components/UI/inc-container'
 import Icon from 'components/icon'
 import IncProgressBar from 'components/UI/inc-progress-bar'
 import IncButton from 'components/UI/inc-button'
-import IncInput from 'components/UI/inc-input'
+import IncInput from 'components/UI/inc-input/inc-input'
 
 AllianceResourceItem.propTypes = {
   resourceData: PropTypes.object.isRequired,

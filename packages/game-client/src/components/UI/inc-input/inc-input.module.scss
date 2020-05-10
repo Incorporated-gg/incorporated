@@ -1,4 +1,5 @@
-@import '../../variables';
+@import '../../../variables';
+@import './range-input.scss';
 
 .incInput {
   border-radius: 5px;
@@ -9,5 +10,9 @@
 
   &.border {
     border: 2px solid $color-brand-light;
+  }
+
+  &[type="range"] {
+    @include incRangeInput;
   }
 }

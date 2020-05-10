@@ -23,19 +23,41 @@
 }
 
 .stat {
-  padding: 10px;
 
-  &.statMission2 {
-    flex-grow: 1;
-    text-align: center;
-    margin-left: 8px;
-  }
-
-  &.statMission3 {
+  &.target {
     display: flex;
     align-items: center;
+    padding: 5px;
+
+    .arrowsSvg {
+      margin: 0 5px;
+    }
+  }
+
+  &.timer {
+    min-width: 3em;
+    padding: 5px;
+    flex-grow: 1;
+    flex-shrink: 0;
+    font-family: $font-family-title;
+    font-size: $font-size-large;
+    font-weight: 700;
+    text-align: center;
+    margin: 0 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &.buttons {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
     font-size: $font-size-small;
-    margin-left: 8px;
+
+    >* {
+      margin: 5px;
+    }
   }
 
   .cancelText {
