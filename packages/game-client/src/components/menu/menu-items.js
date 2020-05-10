@@ -1,25 +1,5 @@
 export default [
   {
-    mainPath: '/ranking',
-    svgIcon: require('./img/icon-missions.svg'),
-    title: 'Misiones',
-    items: [
-      {
-        path: '/ranking',
-        alt: 'Ranking',
-        alternativePaths: [/\/ranking\/*/],
-      },
-      {
-        path: '/monopolies',
-        alt: 'Monopolios',
-      },
-      {
-        path: '/contest',
-        alt: 'Competición',
-      },
-    ],
-  },
-  {
     mainPath: '/reports',
     svgIcon: require('./img/icon-newspaper.svg'),
     title: 'Buzón',
@@ -86,6 +66,26 @@ export default [
       {
         path: '/alliance/wars',
         alt: 'Guerras',
+      },
+    ],
+  },
+  {
+    mainPath: '/ranking',
+    svgIcon: require('./img/icon-missions.svg'),
+    title: 'Misiones',
+    items: [
+      {
+        path: '/ranking',
+        alt: 'Ranking',
+        alternativePaths: [/\/ranking\/*/],
+      },
+      {
+        path: '/monopolies',
+        alt: 'Monopolios',
+      },
+      {
+        path: '/contest',
+        alt: 'Competición',
       },
     ],
   },
