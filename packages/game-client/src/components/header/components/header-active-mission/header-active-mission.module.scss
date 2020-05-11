@@ -52,8 +52,10 @@
   &.buttons {
     display: flex;
     align-items: center;
+    justify-content: center;
     flex-wrap: wrap;
     font-size: $font-size-small;
+    word-break: normal;
 
     >* {
       margin: 5px;

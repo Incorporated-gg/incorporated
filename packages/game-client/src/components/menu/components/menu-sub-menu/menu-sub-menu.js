@@ -4,6 +4,7 @@ import styles from './menu-sub-menu.module.scss'
 import PropTypes from 'prop-types'
 import useIsDesktop from 'lib/useIsDesktop'
 import UnreadCountBubble from '../menu-unread-count-bubble'
+import useWindowSize from 'lib/useWindowSize'
 
 const lastVisitedRoutes = {}
 
@@ -15,6 +16,7 @@ export default function SubMenu({ activeGroup, activeItemIndex }) {
   const linkRefs = useRef({})
   const isDesktop = useIsDesktop()
   const location = useLocation()
+  const windowDimesions = useWindowSize()
   const [markersStyle, setMarkersStyle] = useState({})
 
   const reloadMarkerTransform = useCallback(() => {
@@ -27,7 +29,7 @@ export default function SubMenu({ activeGroup, activeItemIndex }) {
 
   useEffect(() => {
     reloadMarkerTransform()
-  }, [activeGroup, reloadMarkerTransform])
+  }, [reloadMarkerTransform, activeGroup, windowDimesions])
 
   // Set lastVisitedRoutes
   if (!lastVisitedRoutes[activeGroup.mainPath]) lastVisitedRoutes[activeGroup.mainPath] = {}

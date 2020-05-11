@@ -95,7 +95,7 @@ function getBuildingsTimeUntilFull(researchLevel) {
     .map(({ buildingID, buildingAmount }) => calcBuildingDailyIncome(buildingID, buildingAmount, optimizeResearchLevel))
     .reduce((a, b) => a + b, 0)
 
-  const secondsUntilFull = Math.round((maxMoneyTotal / dailyIncomeTotal) * 60 * 60 * 24 + Date.now() / 1000)
+  const secondsUntilFull = Math.floor((maxMoneyTotal / dailyIncomeTotal) * 60 * 60 * 24 + Date.now() / 1000)
 
   return getTimeUntil(secondsUntilFull, true)
 }

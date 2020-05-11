@@ -40,32 +40,24 @@ export function numberToAbbreviation(number) {
 
 export const getTimeUntil = (epochTimestamp, asString = false) => {
   // Set the date we're counting down to
-  const countDownDate = new Date(epochTimestamp * 1000).getTime()
+  const countDownDate = epochTimestamp * 1000
 
-  // Get todays date and time
-  const now = new Date().getTime()
+  const diff = countDownDate - Date.now()
+  let hours = Math.floor(diff / (1000 * 60 * 60))
+  let minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
+  let seconds = Math.floor((diff % (1000 * 60)) / 1000)
 
-  // Find the distance between now and the count down date
-  const distance = countDownDate - now
-
-  // Time calculations for days, hours, minutes and seconds
-  const hours = Math.floor(distance / (1000 * 60 * 60))
-  const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))
-  const seconds = Math.floor((distance % (1000 * 60)) / 1000)
-
-  const parsed = {
-    hours: String(hours).padStart(2, '0'),
-    minutes: String(minutes).padStart(2, '0'),
-    seconds: String(seconds).padStart(2, '0'),
-  }
+  hours = String(hours).padStart(2, '0')
+  minutes = String(minutes).padStart(2, '0')
+  seconds = String(seconds).padStart(2, '0')
 
   if (asString) {
     if (seconds < 0) return 'Completando...'
-    if (hours > 0) return `${parsed.hours}:${parsed.minutes}:${parsed.seconds}`
-    return `${parsed.minutes}:${parsed.seconds}`
+    if (hours > 0) return `${hours}:${minutes}:${seconds}`
+    return `${minutes}:${seconds}`
   }
 
-  return parsed
+  return { hours, minutes, seconds }
 }
 
 export function debounce(func, wait, immediate) {

@@ -109,7 +109,7 @@ export default function MissionRow({ mission, reloadMissionsCallback, showcaseUs
         )}
       </>
       {showDetails && (
-        <div style={{ gridColumn: '1 / 4' }}>
+        <div style={{ marginTop: 10, gridColumn: '1 / 4' }}>
           <ErrorBoundary>
             {mission.mission_type === 'attack' && <AttackReport mission={mission} />}
             {mission.mission_type === 'spy' && <SpyReport mission={mission} />}

@@ -95,11 +95,11 @@ export default function MissionModalAttack({ user, hood, onRequestClose }) {
           <label>
             <span>Edificio: </span>
             <IncInput
-              type="select"
               showBorder
-              value={targetBuilding}
-              onChangeText={setTargetBuilding}
+              type="select"
               options={buildingsOptionsObj}
+              value={targetBuilding}
+              onChangeText={bID => setTargetBuilding(parseInt(bID))}
             />
           </label>
         )}

@@ -9,6 +9,11 @@ import { PERSONNEL_OBJ } from 'shared-lib/personnelUtils'
 import SimulatorResult from './simulator-result'
 import IncInput from 'components/UI/inc-input/inc-input'
 
+const buildingsOptionsObj = {}
+buildingsList.forEach(building => {
+  buildingsOptionsObj[building.id] = building.name
+})
+
 SimulatorModal.propTypes = {
   spyReport: PropTypes.object,
   isOpen: PropTypes.bool.isRequired,
@@ -82,13 +87,13 @@ function SimulatorWithSpyReport({ spyReport }) {
         </div>
         <label>
           <span>Edificio: </span>
-          <select value={targetBuilding} onChange={e => setTargetBuilding(parseInt(e.target.value))}>
-            {buildingsList.map(building => (
-              <option key={building.id} value={building.id}>
-                {building.name}
-              </option>
-            ))}
-          </select>
+          <IncInput
+            showBorder
+            type="select"
+            options={buildingsOptionsObj}
+            value={targetBuilding}
+            onChangeText={bID => setTargetBuilding(parseInt(bID))}
+          />
         </label>
         <div>Tiempo de mision: {missionSeconds}s</div>
         <SimulatorResult
@@ -148,73 +153,73 @@ function SimulatorFromScratch() {
           <label>
             {PERSONNEL_OBJ.sabots.name}
             {': '}
-            <input type="number" value={attackerSabots} onChange={e => setAttackerSabots(e.target.value)} />
+            <IncInput showBorder type="number" value={attackerSabots} onChangeText={setAttackerSabots} />
           </label>
         </div>
         <div>
           <label>
             {PERSONNEL_OBJ.thieves.name}
             {': '}
-            <input type="number" value={attackerThieves} onChange={e => setAttackerThieves(e.target.value)} />
+            <IncInput showBorder type="number" value={attackerThieves} onChangeText={setAttackerThieves} />
           </label>
         </div>
         <div>
           <label>
             Lvl Ataque
             {': '}
-            <input type="number" value={attackerSabotageLvl} onChange={e => setAttackerSabotageLvl(e.target.value)} />
+            <IncInput showBorder type="number" value={attackerSabotageLvl} onChangeText={setAttackerSabotageLvl} />
           </label>
         </div>
         <label>
           <span>Edificio: </span>
-          <select value={targetBuilding} onChange={e => setTargetBuilding(parseInt(e.target.value))}>
-            {buildingsList.map(building => (
-              <option key={building.id} value={building.id}>
-                {building.name}
-              </option>
-            ))}
-          </select>
+          <IncInput
+            showBorder
+            type="select"
+            options={buildingsOptionsObj}
+            value={targetBuilding}
+            onChangeText={bID => setTargetBuilding(parseInt(bID))}
+          />
         </label>
         <div>
           <label>
             Guardias
             {': '}
-            <input type="number" value={guards} onChange={e => setGuards(e.target.value)} />
+            <IncInput showBorder type="number" value={guards} onChangeText={setGuards} />
           </label>
         </div>
         <div>
           <label>
             Lvl Defensa
             {': '}
-            <input type="number" value={defensorSecurityLvl} onChange={e => setDefensorSecurityLvl(e.target.value)} />
+            <IncInput showBorder type="number" value={defensorSecurityLvl} onChangeText={setDefensorSecurityLvl} />
           </label>
         </div>
         <div>
           <label>
             Lvl infra
             {': '}
-            <input type="number" value={infraResearchLvl} onChange={e => setInfraResearchLvl(e.target.value)} />
+            <IncInput showBorder type="number" value={infraResearchLvl} onChangeText={setInfraResearchLvl} />
           </label>
         </div>
         <div>
           <label>
             Lvl banco
             {': '}
-            <input type="number" value={bankResearchLvl} onChange={e => setBankResearchLvl(e.target.value)} />
+            <IncInput showBorder type="number" value={bankResearchLvl} onChangeText={setBankResearchLvl} />
           </label>
         </div>
         <div>
           <label>
             Num edificios
             {': '}
-            <input type="number" value={buildingAmount} onChange={e => setBuildingAmount(e.target.value)} />
+            <IncInput showBorder type="number" value={buildingAmount} onChangeText={setBuildingAmount} />
           </label>
         </div>
         <div>
           <label>
             Dinero almacenado en edificio
             {': '}
-            <input type="number" value={storedMoney} onChange={e => setStoredMoney(e.target.value)} />
+            <IncInput showBorder type="number" value={storedMoney} onChangeText={setStoredMoney} />
           </label>
         </div>
         <div>Tiempo de mision: {missionSeconds}s</div>

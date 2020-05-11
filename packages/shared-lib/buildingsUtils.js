@@ -1,4 +1,4 @@
-const buildingsList = [
+export const buildingsList = [
   {
     id: 1,
     name: 'Sastrerías',
@@ -60,10 +60,8 @@ const buildingsList = [
     fame: 32000,
   },
 ]
-module.exports.buildingsList = buildingsList
 
-module.exports.calcBuildingPrice = calcBuildingPrice
-function calcBuildingPrice(buildingID, currentAmount) {
+export function calcBuildingPrice(buildingID, currentAmount) {
   const buildingInfo = buildingsList.find(b => b.id === buildingID)
   if (!buildingInfo) throw new Error(`Building ${buildingID} not found`)
 
@@ -74,8 +72,7 @@ function calcBuildingPrice(buildingID, currentAmount) {
   return Math.round(price)
 }
 
-module.exports.calcBuildingDailyIncome = calcBuildingDailyIncome
-function calcBuildingDailyIncome(buildingID, currentAmount, optimizeResearchLevel) {
+export function calcBuildingDailyIncome(buildingID, currentAmount, optimizeResearchLevel) {
   const buildingInfo = buildingsList.find(b => b.id === buildingID)
   if (!buildingInfo) throw new Error(`Building ${buildingID} not found`)
 
@@ -87,8 +84,7 @@ function calcBuildingDailyIncome(buildingID, currentAmount, optimizeResearchLeve
   return Math.round(income * currentAmount)
 }
 
-module.exports.calcBuildingResistance = calcBuildingResistance
-function calcBuildingResistance(buildingID, infraLevel) {
+export function calcBuildingResistance(buildingID, infraLevel) {
   const buildingInfo = buildingsList.find(b => b.id === buildingID)
   if (!buildingInfo) throw new Error(`Building ${buildingID} not found`)
 
@@ -96,7 +92,7 @@ function calcBuildingResistance(buildingID, infraLevel) {
 }
 
 const BANK_UNSAFE_THRESHHOLD = 0.4
-function calcBuildingMaxMoney({ buildingID, buildingAmount, bankResearchLevel }) {
+export function calcBuildingMaxMoney({ buildingID, buildingAmount, bankResearchLevel }) {
   const buildingInfo = buildingsList.find(b => b.id === buildingID)
   if (buildingAmount < 1) buildingAmount = 1
 
@@ -110,4 +106,8 @@ function calcBuildingMaxMoney({ buildingID, buildingAmount, bankResearchLevel })
     maxTotal: maxTotalPer * buildingAmount,
   }
 }
-module.exports.calcBuildingMaxMoney = calcBuildingMaxMoney
+
+export function getBuildingDestroyedProfit({ buildingID, buildingAmount, destroyedBuildings }) {
+  const currentPrice = calcBuildingPrice(buildingID, buildingAmount)
+  return Math.round((currentPrice * destroyedBuildings) / 2)
+}

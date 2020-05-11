@@ -4,12 +4,12 @@ import styles from './active-mission-modal.module.scss'
 import Modal from 'react-modal'
 import IncContainer from 'components/UI/inc-container'
 import { useUserData } from 'lib/user'
-import AllianceBadge from 'components/alliance/alliance-badge'
 import { buildingsList } from 'shared-lib/buildingsUtils'
 import MissionTimer from 'components/reports/mission-timer/mission-timer'
 import { cancelActiveMission } from 'lib/utils'
 import Icon from 'components/icon'
-import IncButton from 'components/UI/inc-button'
+import NotepadPage from 'components/UI/notepad-page'
+import UserLink from 'components/UI/user-link'
 
 ActiveMissionModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
@@ -42,79 +42,74 @@ function ActiveMissionModalContent({ onRequestClose }) {
     })
   }
 
+  const buildingInfo = buildingsList.find(b => b.id === activeMision.target_building)
+
   return (
-    <IncContainer withHairline darkBg borderSize={20}>
+    <IncContainer withHairline darkBg>
       <div className={styles.container}>
-        <IncContainer onClick={onRequestClose} outerClassName={styles.closeButton}>
-          x
-        </IncContainer>
-        <h1>Misión activa</h1>
-        <div className={styles.vsContainer}>
-          <div className={styles.avatarContainer}>
-            <img src={activeMision.user.avatar} alt={activeMision.user.username} />
-            {activeMision.user.alliance && (
-              <div className={`${styles.allianceBadgeContainer} ${styles.first}`}>
-                <AllianceBadge badge={activeMision.user.alliance.badge} />
-              </div>
-            )}
-          </div>
-          <div>¡{activeMision.mission_type === 'attack' ? 'Ataque' : 'Espionaje'}!</div>
-          <div className={styles.avatarContainer}>
+        <NotepadPage>
+          <div style={{ padding: 10 }}>
+            <div className={styles.title}>
+              Detalles de {activeMision.mission_type === 'attack' ? 'ataque' : 'espionaje'}
+            </div>
+            <div className={styles.subtitle}>Objetivos</div>
+            <div className={styles.dottedLineSpacer} />
+
             {activeMision.target_hood ? (
-              activeMision.target_hood.name
+              <div>{activeMision.target_hood.name}</div>
             ) : (
-              <>
-                <img src={activeMision.target_user.avatar} alt={activeMision.target_user.username} />
-                {activeMision.target_user.alliance && (
-                  <div className={`${styles.allianceBadgeContainer} ${styles.second}`}>
-                    <AllianceBadge badge={activeMision.target_user.alliance.badge} />
-                  </div>
-                )}
-              </>
+              <UserLink colorScheme="dark" user={activeMision.target_user} />
             )}
-          </div>
-        </div>
-        {activeMision.mission_type === 'attack' && <AttackDetails activeMision={activeMision} />}
-        <div className={styles.optionsContainer}>
-          <div>
-            <h1>Tiempo Restante</h1>
-            <div>
-              <h1>
+
+            <div>{!buildingInfo ? '' : buildingInfo.name}</div>
+
+            <div className={styles.subtitle}>Tropas</div>
+            <div className={styles.dottedLineSpacer} />
+
+            <AttackTroopsDetails activeMision={activeMision} />
+            <div className={`${styles.troopsRow} ${styles.rowHighlight}`}>
+              <div>TIEMPO RESTANTE</div>
+              <div>
                 <MissionTimer finishesAt={activeMision.will_finish_at} isMyMission />
-              </h1>
+              </div>
+            </div>
+
+            <div className={styles.cancelMission} onClick={cancelMission}>
+              <span>CANCELAR MISIÓN</span>
+              <Icon svg={require('./img/cancel.svg')} size={20} />
             </div>
           </div>
-          <div>
-            <IncButton onClick={cancelMission}>
-              <Icon svg={require('./img/cancel.svg')} size={20} />
-            </IncButton>
-          </div>
-        </div>
+        </NotepadPage>
       </div>
     </IncContainer>
   )
 }
 
-AttackDetails.propTypes = {
+AttackTroopsDetails.propTypes = {
   activeMision: PropTypes.object.isRequired,
 }
-function AttackDetails({ activeMision }) {
-  const buildingInfo = buildingsList.find(b => b.id === activeMision.target_building)
-
+function AttackTroopsDetails({ activeMision }) {
   return (
     <div className={styles.attackDetailsContainer}>
-      <div>
-        <h1>Matones</h1>
-        <div>{activeMision.sent_sabots.toLocaleString()}</div>
-      </div>
-      <div>
-        <h1>Objectivo</h1>
-        <div>{activeMision.target_hood ? activeMision.target_hood.name : buildingInfo.name}</div>
-      </div>
-      <div>
-        <h1>Ladrones</h1>
-        <div>{activeMision.sent_thieves.toLocaleString()}</div>
-      </div>
+      {activeMision.mission_type === 'attack' ? (
+        <>
+          <div className={styles.troopsRow}>
+            <div>Matones</div>
+            <div>{activeMision.sent_sabots.toLocaleString()}</div>
+          </div>
+          <div className={styles.troopsRow}>
+            <div>Ladrones</div>
+            <div>{activeMision.sent_thieves.toLocaleString()}</div>
+          </div>
+        </>
+      ) : (
+        <>
+          <div className={styles.troopsRow}>
+            <div>Espías</div>
+            <div>{activeMision.sent_spies.toLocaleString()}</div>
+          </div>
+        </>
+      )}
     </div>
   )
 }

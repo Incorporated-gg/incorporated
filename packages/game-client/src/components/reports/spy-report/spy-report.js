@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import { userData } from 'lib/user'
-import { buildingsList, calcBuildingMaxMoney } from 'shared-lib/buildingsUtils'
+import { buildingsList, calcBuildingMaxMoney, getBuildingDestroyedProfit } from 'shared-lib/buildingsUtils'
 import { PERSONNEL_OBJ } from 'shared-lib/personnelUtils'
 import { researchList } from 'shared-lib/researchUtils'
 import { timestampFromEpoch } from 'shared-lib/commonUtils'
@@ -51,15 +51,14 @@ export default function SpyReport({ mission }) {
             <tr>
               <th>Edificio</th>
               <th>Cantidad</th>
-              <th>Dinero almacenado</th>
-              <th>Dinero robable</th>
+              <th>Destrucción</th>
+              <th>Robo</th>
             </tr>
           </thead>
           <tbody>
             {buildingsList.map(buildingInfo => {
               const reportBuilding = mission.report.buildings[buildingInfo.id]
-              const buildingAmount = reportBuilding ? reportBuilding.quantity.toLocaleString() : '?'
-              const accumulatedMoney = reportBuilding ? numberToAbbreviation(reportBuilding.money) : '?'
+              const buildingAmount = reportBuilding ? reportBuilding.quantity : '?'
               let robbableMoney = '?'
               if (mission.report.researchs[4] !== undefined) {
                 const bankResearchLevel = mission.report.researchs[4]
@@ -69,12 +68,23 @@ export default function SpyReport({ mission }) {
 
                 robbableMoney = robbableMoney <= 0 ? 0 : numberToAbbreviation(robbableMoney)
               }
+
+              const incomeForDestroyedBuildings = !reportBuilding
+                ? '?'
+                : numberToAbbreviation(
+                    getBuildingDestroyedProfit({
+                      buildingID: buildingInfo.id,
+                      buildingAmount,
+                      destroyedBuildings: Math.min(buildingAmount, buildingInfo.maximumDestroyedBuildings),
+                    })
+                  )
+
               return (
                 <tr key={buildingInfo.id}>
                   <td>{buildingInfo.name}</td>
-                  <td>{buildingAmount}</td>
+                  <td>{buildingAmount.toLocaleString()}</td>
                   <td>
-                    {accumulatedMoney} <Icon iconName="money" size={16} />
+                    {incomeForDestroyedBuildings} <Icon iconName="money" size={16} />
                   </td>
                   <td>
                     {robbableMoney} <Icon iconName="money" size={16} />
@@ -121,7 +131,7 @@ export default function SpyReport({ mission }) {
         </div>
       </div>
       {canSimulateAttack && (
-        <div>
+        <>
           <br />
           <IncButton
             onClick={() => {
@@ -136,7 +146,7 @@ export default function SpyReport({ mission }) {
               setIsSimulatorModalOpen(false)
             }}
           />
-        </div>
+        </>
       )}
       {!mission.report.buildings[1] &&
         (mission.report.captured_spies === 0 ? (

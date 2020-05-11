@@ -1,4 +1,4 @@
-import { buildingsList, calcBuildingPrice, calcBuildingResistance } from './buildingsUtils'
+import { buildingsList, calcBuildingResistance, getBuildingDestroyedProfit } from './buildingsUtils'
 import { PERSONNEL_OBJ } from './personnelUtils'
 
 export const NEWBIE_ZONE_DAILY_INCOME = 750000
@@ -23,11 +23,6 @@ export function calculateMissionTime(missionType) {
   if (missionType === 'attack') return process.env.NODE_ENV === 'development' ? 5 : 300
   if (missionType === 'spy') return process.env.NODE_ENV === 'development' ? 5 : 120
   return 0
-}
-
-function getBuildingDestroyedProfit({ buildingID, buildingAmount, destroyedBuildings }) {
-  const currentPrice = calcBuildingPrice(buildingID, buildingAmount)
-  return Math.round((currentPrice * destroyedBuildings) / 2)
 }
 
 export function calcSabotsPower(sabotageResearchLvl) {

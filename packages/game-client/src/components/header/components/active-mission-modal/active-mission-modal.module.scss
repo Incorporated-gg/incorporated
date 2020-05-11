@@ -6,75 +6,65 @@
 }
 
 .container {
-  padding: 10px;
-  position: relative;
-  text-align: center;
+  padding: 20px;
+  font-size: $font-size-large;
 }
 
-.closeButton {
-  position: absolute;
-  top: 30px;
-  left: 10px;
-  width: 2em;
-  height: 2em;
-  cursor: pointer;
-  color: #000;
+.title {
+  color: #343434;
+  font-size: $font-size-xxlarge;
+  font-weight: 900;
+  margin-bottom: 20px;
+  opacity: 0.9;
 }
 
-.vsContainer {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  align-items: center;
-  margin: 20px 0;
+.subtitle {
+  color: #343434;
+  font-weight: 900;
+  margin-top: 20px;
+  margin-bottom: 5px;
+}
 
-  .avatarContainer {
-    position: relative;
-    width: 100%;
-    height: 100%;
+.dottedLineSpacer {
+  border-top: 4px dashed #343434;
+  opacity: 0.1;
+  margin-bottom: 15px;
+}
 
-    >img {
-      border: 10px solid $color-brand;
-      width: 100%;
-      height: 100%;
+.troopsRow {
+  display: flex;
+  flex-direction: row;
+  margin: 5px 0;
+
+  &.rowHighlight {
+    margin: 0 -5px;
+    padding: 0 5px;
+    background-color: #FFEB4B;
+    border-top-left-radius: 0.5em 1.5em;
+    border-bottom-right-radius: 0.5em 1.5em;
+
+    >*:first-child {
+      font-weight: 900;
+      opacity: 0.8;
     }
+  }
 
-    .allianceBadgeContainer {
-      display: block;
-      padding: 0.15em;
-      background-color: #000;
-      font-size: $font-size-large;
-
-      @media (min-width: $breakpoint-desktop) {
-        font-size: $font-size-xlarge;
-      }
-
-      position: absolute;
-      bottom: -0.5em;
-
-      &.first {
-        right: -0.5em;
-      }
-
-      &.second {
-        left: -0.5em;
-      }
-
-      >* {
-        width: 1em;
-        height: 1em;
-      }
-    }
+  >* {
+    flex-grow: 1;
+    flex-basis: 1px;
+    padding: 5px 0;
   }
 }
 
-.attackDetailsContainer {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-}
-
-.optionsContainer {
+.cancelMission {
   margin-top: 20px;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  align-items: center;
+  cursor: pointer;
+
+  span {
+    color: #A7000099;
+    text-decoration: underline;
+    font-style: italic;
+    opacity: 0.8;
+    margin-right: 10px;
+  }
 }
