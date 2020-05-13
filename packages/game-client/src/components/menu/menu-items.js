@@ -36,7 +36,8 @@ export default [
         alt: 'Investigación',
       },
       {
-        path: '/personnel',
+        path: '/personnel/hire',
+        alternativePaths: ['/personnel/fire'],
         alt: 'Personal',
       },
       {

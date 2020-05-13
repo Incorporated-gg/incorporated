@@ -5,8 +5,10 @@ import Card from 'components/card'
 import api from 'lib/api'
 import styles from './personnel-item.module.scss'
 import Icon from 'components/icon'
-import IncContainer from 'components/UI/inc-container'
 import IncInput from 'components/UI/inc-input/inc-input'
+import IncButton from 'components/UI/inc-button'
+import { useLocation } from 'react-router-dom'
+import IncChevron from 'components/UI/inc-chevron'
 
 const personnelImages = {
   sabots: require('./img/gangster.png'),
@@ -26,92 +28,61 @@ PersonnelItem.propTypes = {
   resourceAmount: PropTypes.number.isRequired,
 }
 export default function PersonnelItem({ personnelInfo, resourceAmount }) {
-  const [hireAmount, setHireAmount] = useState('')
-  const [fireAmount, setFireAmount] = useState('')
+  const location = useLocation()
+  const action = location.pathname.split('/')[2]
+  const isHiring = action === 'hire'
 
-  const hireClicked = e => {
+  const [amount, setAmount] = useState('')
+
+  const buttonClicked = e => {
     e.preventDefault()
     api
-      .post(`/v1/personnel/hire`, { resource_id: personnelInfo.resource_id, amount: hireAmount })
-      .then(() => reloadUserData())
-      .catch(err => {
-        alert(err.message)
+      .post(`/v1/personnel/${action}`, {
+        resource_id: personnelInfo.resource_id,
+        amount,
       })
-  }
-  const fireClicked = e => {
-    e.preventDefault()
-    api
-      .post(`/v1/personnel/fire`, { resource_id: personnelInfo.resource_id, amount: fireAmount })
-      .then(() => reloadUserData())
+      .then(reloadUserData)
       .catch(err => {
         alert(err.message)
       })
   }
 
+  const actionPriceNum = (isHiring ? personnelInfo.price : personnelInfo.firingCost) * (amount || 0)
+  const dailyPriceNum = personnelInfo.dailyMaintenanceCost * (isHiring ? amount || 0 : resourceAmount)
   return (
     <Card
       image={personnelImages[personnelInfo.resource_id]}
       title={personnelInfo.name}
       ribbon={resourceAmount.toLocaleString()}>
-      <div>
-        <div>{personnelDesc[personnelInfo.resource_id]}</div>
-        <div className={styles.statTitle}>Coste diario actual</div>
-        <div>
-          {(personnelInfo.dailyMaintenanceCost * resourceAmount).toLocaleString()} <Icon iconName="money" size={16} />
+      <p>{personnelDesc[personnelInfo.resource_id]}</p>
+
+      <IncInput
+        showBorder
+        className={styles.input}
+        min={1}
+        placeholder={0}
+        type="number"
+        value={amount}
+        onChangeText={setAmount}
+      />
+
+      <IncButton outerClassName={styles.button} onClick={buttonClicked}>
+        <div className={styles.dailyPriceContainer}>
+          <IncChevron direction="right" padding={16} />
+          <div className={styles.dailyPriceText}>
+            {dailyPriceNum.toLocaleString()} <Icon iconName="money" size={20} /> / día
+          </div>
+          <IncChevron direction="left" padding={16} />
         </div>
-      </div>
-
-      <br />
-
-      <div>
-        <IncInput
-          showBorder
-          className={styles.input}
-          placeholder="0"
-          type="number"
-          value={hireAmount}
-          onChangeText={setHireAmount}
-        />
-        <div className={styles.statContainer}>
-          <div>
-            <div className={styles.statTitle}>Coste de compra</div>
-            <div>
-              {(personnelInfo.price * hireAmount).toLocaleString()} <Icon iconName="money" size={16} />
+        <div className={styles.actionPriceContainer}>
+          <IncChevron direction="right" padding={6}>
+            <div className={styles.actionPriceText}>
+              {actionPriceNum.toLocaleString()} <Icon iconName="money" size={20} />
             </div>
-          </div>
-          <div>
-            <div className={styles.statTitle}>Mantenimiento diario</div>
-            <div>
-              {(personnelInfo.dailyMaintenanceCost * hireAmount).toLocaleString()} <Icon iconName="money" size={16} />
-            </div>
-          </div>
+          </IncChevron>
+          <span className={styles.actionTitle}>{isHiring ? 'CONTRATAR' : 'DESPEDIR'}</span>
         </div>
-        <IncContainer outerClassName={styles.button} onClick={hireClicked}>
-          <h2 className={styles.buttonTitle}>{'CONTRATAR'}</h2>
-        </IncContainer>
-      </div>
-
-      <br />
-
-      <div>
-        <IncInput
-          showBorder
-          className={styles.input}
-          placeholder="0"
-          type="number"
-          value={fireAmount}
-          onChangeText={setFireAmount}
-        />
-        <div>
-          <div className={styles.statTitle}>Coste de despido</div>
-          <div>
-            {(personnelInfo.firingCost * fireAmount).toLocaleString()} <Icon iconName="money" size={16} />
-          </div>
-        </div>
-        <IncContainer outerClassName={styles.button} onClick={fireClicked}>
-          <h2 className={styles.buttonTitle}>{'DESPEDIR'}</h2>
-        </IncContainer>
-      </div>
+      </IncButton>
     </Card>
   )
 }

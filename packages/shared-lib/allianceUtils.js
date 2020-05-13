@@ -29,7 +29,7 @@ export const ALLIANCE_RESOURCES_LIST = [
 
 export const PERMISSIONS_OBJECT = {
   permission_admin: 'Admin',
-  permission_accept_and_kick_members: 'Aceptar y echar miembros',
+  permission_accept_and_kick_members: 'Editar miembros',
   permission_extract_resources: 'Extraer recursos',
   permission_activate_buffs: 'Activar buffs',
 }

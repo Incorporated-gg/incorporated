@@ -5,14 +5,7 @@ import IncContainer from 'components/UI/inc-container'
 import UserLink from 'components/UI/user-link'
 import PropTypes from 'prop-types'
 import styles from './contest.module.scss'
-
-function contestIDToName(contestName) {
-  if (contestName === 'income') return 'Ingresos'
-  if (contestName === 'research') return 'Investigaciones'
-  if (contestName === 'destruction') return 'Destrucción'
-  if (contestName === 'robbing') return 'Robo'
-  return contestName
-}
+import { contestIDToName } from 'lib/utils'
 
 Contest.propTypes = {
   contestID: PropTypes.string.isRequired,

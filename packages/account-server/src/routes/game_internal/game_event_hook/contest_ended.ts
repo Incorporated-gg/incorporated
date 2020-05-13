@@ -1,8 +1,6 @@
 import { giveGoldToUser, giveXPToUser } from '../../../lib/db/users'
 import { getContestRewards } from 'shared-lib/commonUtils'
 
-console.log(getContestRewards(2))
-
 type EventDataContestEnded = {
   contestName: string
   orderedWinnerIDs: number[]
@@ -12,7 +10,8 @@ export default async function hookContestEnded(data: EventDataContestEnded): Pro
     case 'monopolies': {
       await Promise.all(
         data.orderedWinnerIDs.map(userID => {
-          return Promise.all([giveGoldToUser(userID, 100), giveXPToUser(userID, 20)])
+          const reward = getContestRewards(data.contestName, 0)
+          return Promise.all([giveGoldToUser(userID, reward.gold), giveXPToUser(userID, reward.xp)])
         })
       )
       break
@@ -24,7 +23,7 @@ export default async function hookContestEnded(data: EventDataContestEnded): Pro
       await Promise.all(
         data.orderedWinnerIDs.map(async (userID, rankIndex) => {
           const rank = rankIndex + 1
-          const reward = getContestRewards(rank)
+          const reward = getContestRewards(data.contestName, rank)
           if (!reward) throw new Error(`Invalid rank ${rank} has no reward`)
           await Promise.all([giveGoldToUser(userID, reward.gold), giveXPToUser(userID, reward.xp)])
         })

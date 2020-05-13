@@ -11,6 +11,9 @@ import NewMessageModal from './new-message-modal'
 import IncContainer from 'components/UI/inc-container'
 import UserLink from 'components/UI/user-link'
 import Icon from 'components/icon'
+import IncButton from 'components/UI/inc-button'
+import { getContestRewards } from 'shared-lib/commonUtils'
+import { contestIDToName } from 'lib/utils'
 
 SingleMessage.propTypes = {
   message: PropTypes.object.isRequired,
@@ -75,7 +78,7 @@ export default function SingleMessage({ reloadMessagesData, message }) {
         <br />
         {wasSentToMe && message.sender && (
           <>
-            <button onClick={() => setShowMessageModal(true)}>Responder</button>
+            <IncButton onClick={() => setShowMessageModal(true)}>Responder</IncButton>
             <NewMessageModal
               user={message.sender}
               isOpen={showMessageModal}
@@ -83,7 +86,7 @@ export default function SingleMessage({ reloadMessagesData, message }) {
             />
           </>
         )}
-        {wasSentToMe && <button onClick={deleteMessage}>Borrar</button>}
+        {wasSentToMe && <IncButton onClick={deleteMessage}>Borrar</IncButton>}
       </div>
     </IncContainer>
   )
@@ -92,14 +95,16 @@ export default function SingleMessage({ reloadMessagesData, message }) {
 function getMessage(message) {
   let messageElm = null
   switch (message.type) {
-    case 'private_message':
+    case 'private_message': {
       messageElm = (
         <div>
           <div>{message.data.message}</div>
         </div>
       )
       break
-    case 'monopoly_reward':
+    }
+    case 'monopoly_reward': {
+      const reward = getContestRewards('monopolies', 0)
       messageElm = (
         <div>
           <p>
@@ -108,11 +113,29 @@ function getMessage(message) {
             edificios.
           </p>
           <p>
-            +100 <Icon iconName="gold" size={20} />
+            +{reward.gold} <Icon iconName="gold" size={20} />
           </p>
-          <p>+20 XP</p>
+          <p>+{reward.xp} XP</p>
         </div>
       )
+      break
+    }
+    case 'contest_win':
+      {
+        const reward = getContestRewards(message.data.contest_id, message.data.rank)
+        messageElm = (
+          <div>
+            <p>
+              Enhorabuena por ganar el concurso de {contestIDToName(message.data.contest_id)}! Quedaste en posición{' '}
+              {message.data.rank}.
+            </p>
+            <p>
+              +{reward.gold} <Icon iconName="gold" size={20} />
+            </p>
+            <p>+{reward.xp} XP</p>
+          </div>
+        )
+      }
       break
     case 'war_started': {
       const didWeDeclare =
@@ -150,7 +173,7 @@ function getMessage(message) {
       )
       break
     }
-    case 'loan_started':
+    case 'loan_started': {
       messageElm = (
         <div>
           <UserLink user={message.data.borrower} /> ha pedido un préstamo a <UserLink user={message.data.lender} /> de{' '}
@@ -159,7 +182,8 @@ function getMessage(message) {
         </div>
       )
       break
-    case 'loan_ended':
+    }
+    case 'loan_ended': {
       messageElm = (
         <div>
           Ha finalizado el préstamo que <UserLink user={message.data.borrower} /> pidió a{' '}
@@ -168,6 +192,7 @@ function getMessage(message) {
         </div>
       )
       break
+    }
     case 'attack_cancelled': {
       messageElm = (
         <div>
@@ -185,12 +210,13 @@ function getMessage(message) {
       )
       break
     }
-    default:
+    default: {
       messageElm = (
         <div>
           <b>Tipo &quot;{message.type}&quot; desconocido</b>: {JSON.stringify(message)}
         </div>
       )
+    }
   }
   return messageElm
 }

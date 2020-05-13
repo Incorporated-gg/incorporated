@@ -4,4 +4,4 @@ type ContestReward = {
   xp: number
 }
 
-export function getContestRewards(position: number): ContestReward
+export function getContestRewards(contestID: string, position: number): ContestReward

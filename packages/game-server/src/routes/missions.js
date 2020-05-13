@@ -6,6 +6,7 @@ import {
   getHasActiveMission,
   getUserData,
   getUnreadReportsCount,
+  getAttacksTodayFromUserToAnotherUser,
 } from '../lib/db/users'
 import { parseMissionFromDB } from '../lib/db/missions'
 import { getAllianceMembers, getUserAllianceID } from '../lib/db/alliances'
@@ -165,10 +166,17 @@ module.exports = app => {
           if (targetUserMissionLimits.receivedToday >= targetUserMissionLimits.maxDefenses) {
             res
               .status(400)
-              .json({ error: `Este usuario ya ha sido atacado ${targetUserMissionLimits.maxDefenses} veces hoy` })
+              .json({ error: `Este jugador ya ha sido atacado ${targetUserMissionLimits.maxDefenses} veces hoy` })
             removeLock()
             return
           }
+          const attacksTodayFromMe = await getAttacksTodayFromUserToAnotherUser(req.userData.id, targetUser.id)
+          if (attacksTodayFromMe >= 3) {
+            res.status(400).json({ error: `Ya has atacado 3 veces hoy a este jugador` })
+            removeLock()
+            return
+          }
+
           const targetUserData = await getUserData(targetUser.id)
           const userIncome = (await getUserData(req.userData.id)).income
           const isInAttackRange = calculateIsInAttackRange(userIncome, targetUserData.income)

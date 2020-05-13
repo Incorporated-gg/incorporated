@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useRef, useState } from 'react'
 import styles from './inc-input.module.scss'
 import PropTypes from 'prop-types'
 
@@ -7,10 +7,11 @@ IncInput.propTypes = {
   showBorder: PropTypes.bool,
   placeholder: PropTypes.any,
   maxLength: PropTypes.any,
-  type: PropTypes.oneOf(['text', 'number', 'password', 'range', 'select']),
+  type: PropTypes.oneOf(['text', 'number', 'password', 'range', 'select', 'checkbox']),
   className: PropTypes.string,
   options: PropTypes.object,
-  value: PropTypes.any.isRequired,
+  value: PropTypes.any,
+  checked: PropTypes.bool,
   onChangeText: PropTypes.func.isRequired,
 }
 
@@ -23,18 +24,25 @@ export default function IncInput({
   className,
   ...props
 }) {
+  const [elmID] = useState('incinput-' + Math.random())
+
   className = `${styles.incInput} ${showBorder ? styles.border : ''} ${className || ''}`
-  const onChange = e => {
-    let value = e.target.value
-    if (type === 'number' || type === 'range') value = parseInt(value)
-    onChangeText(value)
+  const onChange = () => {
+    const elm = document.getElementById(elmID)
+
+    let result
+    if (type === 'number' || type === 'range') result = parseInt(elm.value)
+    else if (type === 'checkbox') result = elm.checked
+    else result = elm.value
+
+    onChangeText(result)
   }
 
   if (multiline) return <textarea className={className} onChange={onChange} {...props} />
 
   if (type === 'select') {
     return (
-      <select className={className} onChange={onChange} {...props}>
+      <select id={elmID} className={className} onChange={onChange} {...props}>
         {Object.entries(options).map(([key, val]) => {
           return (
             <option key={key} value={key}>
@@ -46,5 +54,22 @@ export default function IncInput({
     )
   }
 
-  return <input type={type} className={className} onChange={onChange} {...props} />
+  return (
+    <>
+      <input id={elmID} type={type} className={className} onChange={onChange} {...props} />
+      {type === 'checkbox' && (
+        // Label for checkbox customization
+        <label
+          tabIndex="0"
+          htmlFor={elmID}
+          onKeyPress={e => {
+            if (e.key !== 'Enter' && e.key !== ' ') return
+            const elm = document.getElementById(elmID)
+            elm.checked = !elm.checked
+            onChange()
+          }}
+        />
+      )}
+    </>
+  )
 }

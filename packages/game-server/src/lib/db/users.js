@@ -129,6 +129,19 @@ export async function getUserTodaysMissionsLimits(userID) {
   }
 }
 
+export async function getAttacksTodayFromUserToAnotherUser(attackerID, defenderID) {
+  const dailyCountStartedAt = Math.floor(getInitialUnixTimestampOfServerDay() / 1000)
+
+  const [
+    { receivedToday },
+  ] = await mysql.query(
+    "SELECT COUNT(*) AS receivedToday FROM missions WHERE user_id=? AND target_user=? AND mission_type='attack' AND will_finish_at>=? AND completed=1",
+    [attackerID, defenderID, dailyCountStartedAt]
+  )
+
+  return receivedToday
+}
+
 export async function getHasActiveMission(userID) {
   const activeMissions = await mysql.query('SELECT 1 FROM missions WHERE user_id=? AND completed=0', [userID])
 

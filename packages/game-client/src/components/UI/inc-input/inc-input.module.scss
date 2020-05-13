@@ -1,5 +1,6 @@
 @import '../../../variables';
 @import './range-input.scss';
+@import './checkbox-input.scss';
 
 .incInput {
   border-radius: 5px;
@@ -14,5 +15,9 @@
 
   &[type="range"] {
     @include incRangeInput;
+  }
+
+  &[type="checkbox"] {
+    @include incCheckboxInput;
   }
 }

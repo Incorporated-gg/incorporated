@@ -29,13 +29,28 @@ export default async function runJustAfterNewDay(finishedServerDay) {
 }
 
 async function giveOutContestPrizesAndMessages(ongoingContest) {
-  const scoreBoard = await getContestCurrentScoreboard(ongoingContest.id)
-  sendAccountHook('contest_ended', {
+  const contestWinners = (await getContestCurrentScoreboard(ongoingContest.id)).slice(0, 100)
+
+  const messagesCreatedAt = Math.floor(Date.now() / 1000)
+  await Promise.all(
+    contestWinners.map(async (winner, index) => {
+      await mysql.query('INSERT INTO messages (user_id, sender_id, created_at, type, data) VALUES (?, ?, ?, ?, ?)', [
+        winner.user_id,
+        null,
+        messagesCreatedAt,
+        'contest_win',
+        JSON.stringify({
+          contest_id: ongoingContest.name,
+          rank: index + 1,
+        }),
+      ])
+    })
+  )
+
+  await sendAccountHook('contest_ended', {
     contestName: ongoingContest.name,
-    orderedWinnerIDs: scoreBoard.slice(0, 100).map(rank => rank.user_id),
+    orderedWinnerIDs: contestWinners.map(rank => rank.user_id),
   })
-  // TODO
-  console.log('TODO: giveOutContestPrizesAndMessages', ongoingContest)
 }
 
 export async function updateCurrentContestScoreboard() {

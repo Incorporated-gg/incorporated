@@ -1,0 +1,30 @@
+@import '../../../variables';
+
+@mixin incCheckboxInput {
+  & {
+    display: none;
+  }
+  
+  & + label {
+    display: inline-block;
+    border: 2px solid $color-brand-light;
+    padding: 9px;
+    border-radius: 5px;
+    position: relative;
+    cursor: pointer;
+  }
+  
+  & + label:focus, &:checked + label:focus {
+    outline: 1px dotted #212121;
+    outline: 5px auto -webkit-focus-ring-color;
+  }
+  
+  &:checked + label:after {
+    content: '✓';
+    font-size: 24px;
+    position: absolute;
+    top: -7px;
+    right: -3px;
+    color: #fff;
+  }
+}

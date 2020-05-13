@@ -21,7 +21,14 @@ const contestRewardsMap = [
   { rankNeeded: 50, gold: 20, xp: 4 },
   { rankNeeded: 100, gold: 10, xp: 2 },
 ]
-export function getContestRewards(position) {
+export function getContestRewards(contestID, position) {
+  if (contestID === 'monopolies')
+    return {
+      rankNeeded: 0,
+      gold: 100,
+      xp: 20,
+    }
+
   const reward = contestRewardsMap.find(item => item.rankNeeded >= position)
   return reward
 }

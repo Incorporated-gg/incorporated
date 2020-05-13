@@ -114,3 +114,11 @@ export async function cancelActiveMission() {
     reloadUserData()
   })
 }
+
+export function contestIDToName(contestName) {
+  if (contestName === 'income') return 'Ingresos'
+  if (contestName === 'research') return 'Investigaciones'
+  if (contestName === 'destruction') return 'Destrucción'
+  if (contestName === 'robbing') return 'Robo'
+  return contestName
+}
