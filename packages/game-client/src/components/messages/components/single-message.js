@@ -10,6 +10,7 @@ import AllianceLink from 'components/alliance/alliance-link'
 import NewMessageModal from './new-message-modal'
 import IncContainer from 'components/UI/inc-container'
 import UserLink from 'components/UI/user-link'
+import Icon from 'components/icon'
 
 SingleMessage.propTypes = {
   message: PropTypes.object.isRequired,
@@ -101,9 +102,15 @@ function getMessage(message) {
     case 'monopoly_reward':
       messageElm = (
         <div>
-          Enhorabuena por ganar el monopolio semanal! Ganaste el monopolio de{' '}
-          {buildingsList.find(b => b.id === message.data.building_id).name} con {message.data.building_quantity}{' '}
-          edificios
+          <p>
+            Enhorabuena por ganar el monopolio semanal! Ganaste el monopolio de{' '}
+            {buildingsList.find(b => b.id === message.data.building_id).name} con {message.data.building_quantity}{' '}
+            edificios.
+          </p>
+          <p>
+            +100 <Icon iconName="gold" size={20} />
+          </p>
+          <p>+20 XP</p>
         </div>
       )
       break

@@ -1,9 +1,7 @@
 {
   "name": "incorporated-account-server",
   "scripts": {
-    "tsc": "tsc",
-    "tsc_watch": "tsc --watch > /dev/null",
-    "start": "nodemon build/index.js & npm run tsc_watch",
+    "start": "nodemon index.ts",
     "migrate_prod": "npx db-migrate up --config migrations/database_prod.json",
     "migrate_dev_docker": "npx db-migrate up --config migrations/database_dev_docker.json",
     "undo_migration_dev_docker": "npx db-migrate down --config migrations/database_dev_docker.json",
@@ -22,6 +20,8 @@
     "express": "^4.17.1",
     "jest-diff": "^25.1.0",
     "mysql2": "^2.0.1",
+    "shared-lib": "file:../shared-lib",
+    "ts-node": "^8.10.1",
     "typescript": "^3.7.5"
   },
   "devDependencies": {

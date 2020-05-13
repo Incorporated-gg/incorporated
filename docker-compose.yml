@@ -69,6 +69,7 @@ services:
       - account-db
     volumes:
       - ./packages/account-server:/usr/src/server:rw
+      - ./packages/shared-lib:/usr/src/shared-lib:rw
   
   account-db:
     image: mariadb:5.5.64

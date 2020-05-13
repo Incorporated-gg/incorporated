@@ -2,7 +2,7 @@ import express from 'express'
 import fs from 'fs'
 
 export default function(app: express.Application): void {
-  const files = fs.readdirSync(__dirname).filter((f: string) => f !== 'index.js')
+  const files = fs.readdirSync(__dirname).filter((f: string) => f !== 'index.ts')
 
   if (!files.length) {
     return console.error('No se han encontrado archivos en el directorio actual')

@@ -3,8 +3,8 @@ module.exports = {
   apps: [
     {
       name: 'account-server',
-      script: './build/index.js',
-      node_args: '-r esm',
+      script: "./node_modules/.bin/ts-node",
+      args:"--project ./tsconfig.json ./index.ts",
       watch: true,
       env: {
         NODE_ENV: 'production',

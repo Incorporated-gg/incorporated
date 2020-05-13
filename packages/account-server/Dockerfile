@@ -1,4 +1,4 @@
-FROM node:lts-alpine
+FROM node:12-alpine
 WORKDIR /usr/src/server
 COPY . .
 RUN ["chmod", "+x", "/usr/src/server/wait-for"]

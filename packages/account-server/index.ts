@@ -1,2 +1,3 @@
-require('dotenv').config()
-require('./src/index.js')
+import dotenv from 'dotenv'
+dotenv.config()
+require('./src/index')
