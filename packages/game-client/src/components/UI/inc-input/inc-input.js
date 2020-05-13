@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useState } from 'react'
 import styles from './inc-input.module.scss'
 import PropTypes from 'prop-types'
 

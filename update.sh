@@ -4,12 +4,11 @@ INITIAL_PATH=$(pwd)
 cd $INITIAL_PATH/packages/account-server
 npm i
 npm run migrate_prod
-npm run tsc
-pm2 reload all
 # Update game-server
 cd $INITIAL_PATH/packages/game-server
 npm i
 npm run migrate_prod
+# Reload servers
 pm2 reload all
 # Update game-client
 cd $INITIAL_PATH/packages/game-client

@@ -34,6 +34,7 @@ export default function AllianceEditMembers({ alliance, reloadAllianceData }) {
   const savePressed = () => {
     const allEditsPromises = Object.entries(rankEdits).map(async ([userID, rankEdit]) => {
       const rankMember = alliance.members.find(m => m.user.id === parseInt(userID))
+      if (!rankMember) return // probably was kicked
       const initialRank = defaultRankEdits[rankMember.user.id]
       if (JSON.stringify(initialRank) === JSON.stringify(rankEdit)) return
 
@@ -147,8 +148,9 @@ function AllianceKickMembers({ alliance, reloadAllianceData }) {
       .post('/v1/alliance/kick_member', {
         user_id: rankMember.user.id,
       })
-      .then(() => {
-        reloadAllianceData()
+      .then(async () => {
+        await reloadAllianceData()
+        setMember(alliance.members[0].user.username)
       })
       .catch(err => {
         alert(err.message)
