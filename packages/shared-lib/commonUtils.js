@@ -1,10 +1,10 @@
-export const timestampFromEpoch = epoch => {
+const timestampFromEpoch = epoch => {
   epoch *= 1000
   const date = new Date(epoch)
   return `[${date.toLocaleString()}]`
 }
 
-export const msToDisplay = ms => {
+const msToDisplay = ms => {
   ms *= 1000
   // const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
   const minutes = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60))
@@ -21,7 +21,7 @@ const contestRewardsMap = [
   { rankNeeded: 50, gold: 20, xp: 4 },
   { rankNeeded: 100, gold: 10, xp: 2 },
 ]
-export function getContestRewards(contestID, position) {
+function getContestRewards(contestID, position) {
   if (contestID === 'monopolies')
     return {
       rankNeeded: 0,
@@ -31,4 +31,10 @@ export function getContestRewards(contestID, position) {
 
   const reward = contestRewardsMap.find(item => item.rankNeeded >= position)
   return reward
+}
+
+module.exports = {
+  timestampFromEpoch,
+  msToDisplay,
+  getContestRewards,
 }

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import PropTypes from 'prop-types'
 import { useUserData, userData } from 'lib/user'
 import NewMessageModal from 'components/messages/components/new-message-modal'
@@ -8,6 +8,7 @@ import { calcBuildingDailyIncome } from 'shared-lib/buildingsUtils'
 import IncButton from '../inc-button'
 import Icon from 'components/icon'
 import styles from './user-action-buttons.module.scss'
+import ChatContext from '../../../context/chat-context'
 
 UserActionButtons.propTypes = {
   user: PropTypes.object.isRequired,
@@ -18,6 +19,7 @@ export default function UserActionButtons({ user, onActionClicked }) {
   const [showMessageModal, setShowMessageModal] = useState(false)
   const [showAttackModal, setShowAttackModal] = useState(false)
   const [showSpyModal, setShowSpyModal] = useState(false)
+  const chatContext = useContext(ChatContext)
 
   if (!user) return <span>Usuario desconocido</span>
 
@@ -54,6 +56,16 @@ export default function UserActionButtons({ user, onActionClicked }) {
         outerClassName={styles.button}
         borderSize={3}>
         <Icon svg={require('./img/message.svg')} size={20} />
+      </IncButton>
+      <IncButton
+        disabled={isMe}
+        onClick={() => {
+          chatContext.openChatWith(user.username)
+          if (onActionClicked) onActionClicked()
+        }}
+        outerClassName={styles.button}
+        borderSize={3}>
+        <Icon svg={require('./img/chat.svg')} size={20} />
       </IncButton>
       <NewMessageModal user={user} isOpen={showMessageModal} onRequestClose={() => setShowMessageModal(false)} />
       <MissionModal

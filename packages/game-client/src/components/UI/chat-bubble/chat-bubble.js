@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react'
+import React, { useState, useEffect, useRef, useCallback, useContext } from 'react'
 import api from 'lib/api'
 import { sessionID, userData } from 'lib/user'
 import ChatBubbleUser from './components/chat-bubble-user'
@@ -6,7 +6,8 @@ import io from 'socket.io-client'
 import styles from './chat-bubble.module.scss'
 import Icon from 'components/icon'
 import IncButton from 'components/UI/inc-button'
-import { getServerDate } from 'lib/serverTime'
+
+import ChatContext from '../../../context/chat-context'
 
 export default function ChatBubble() {
   const [chatRoomList, setChatRoomList] = useState([])
@@ -18,10 +19,68 @@ export default function ChatBubble() {
   const [currentMessage, setCurrentMessage] = useState('')
   const [lastReadMessageDates, setLastReadMessageDates] = useState([])
   const [newChatUserName, setNewChatUserName] = useState('')
+  const [totalUnreadMessages, setTotalUnreadMessages] = useState(0)
+
+  const chatContext = useContext(ChatContext)
 
   const client = useRef(null)
   const chatMessagesWrapper = useRef(null)
   const chatInput = useRef(null)
+
+  const sendMessage = message => e => {
+    e.preventDefault()
+    if (!message) return
+    setCurrentMessage('')
+    client.current.emit('message', {
+      room: currentRoom.id,
+      text: message,
+    })
+  }
+
+  const scrollDown = () => {
+    if (!chatMessagesWrapper.current) return
+    chatMessagesWrapper.current.scrollTop = chatMessagesWrapper.current.scrollHeight
+  }
+
+  /* const captureChatScroll = e => {
+    if (e.target.scrollTop === 0 && messagesList.length) {
+      client.current.emit('fetchMessages', {
+        room: currentRoom.name,
+        from: messagesList.find(ml => ml.room === currentRoom.name).messagesArray[0].id,
+      })
+    }
+    return false
+  } */
+
+  const createChat = userName => {
+    const existingChat = chatRoomList.find(
+      chatRoom => chatRoom.type === 'individual' && chatRoom.users.find(u => u.username === userName)
+    )
+    if (existingChat) return changeRoom(existingChat)
+    if (userName.toLowerCase() === userData.username.toLowerCase()) return false
+    if (!isOpen) toggleChat(true)
+    client.current.emit('createChat', userName)
+  }
+
+  useEffect(() => {
+    if (chatContext.currentChat) {
+      createChat(chatContext.currentChat)
+      toggleChat(true)
+    }
+    // eslint-disable-next-line
+  }, [chatContext])
+
+  const toggleChat = status => {
+    setIsOpen(status || !isOpen)
+    setTimeout(() => {
+      chatInput.current && chatInput.current.focus()
+      scrollDown()
+    }, 0)
+  }
+
+  const showChatOptions = () => {
+    console.log('showing chat options')
+  }
 
   const unreadMessagesForRoom = room => {
     return messagesList.filter(m =>
@@ -31,10 +90,19 @@ export default function ChatBubble() {
     ).length
   }
 
+  const calcTotalUnreadMessages = () => {
+    const unread = chatRoomList.reduce((accumulated, curRoom) => {
+      const unreadForRoom = unreadMessagesForRoom(curRoom)
+      return accumulated + unreadForRoom
+    }, 0)
+    return unread
+  }
+
   const changeRoom = useCallback(chatRoom => {
+    if (!chatRoom) return
     setCurrentRoom(chatRoom)
     setIsSelectingRoom(false)
-    /* setLastReadMessageDates(records => {
+    setLastReadMessageDates(records => {
       const existingRecord = records.find(r => r.room === chatRoom.name)
       if (!existingRecord) {
         return Array.prototype.concat(records, [{ room: chatRoom.name, date: Date.now() / 1000 }])
@@ -45,9 +113,9 @@ export default function ChatBubble() {
         }
         return r
       })
-    }) */
+    })
     chatInput.current && chatInput.current.focus()
-    setTimeout(() => scrollDown())
+    setTimeout(() => scrollDown(), 0)
   }, [])
 
   useEffect(() => {
@@ -58,6 +126,7 @@ export default function ChatBubble() {
       },
     })
     client.current.on('messages', ({ room, messagesArray }) => {
+      setTotalUnreadMessages(calcTotalUnreadMessages())
       setMessagesList(originalList => {
         const existingList = originalList.find(list => list.room === room)
         if (!existingList) {
@@ -99,7 +168,7 @@ export default function ChatBubble() {
       changeRoom(chatData)
     })
 
-    client.current.on('olderMessages', ({ room, messagesArray }) => {
+    /* client.current.on('olderMessages', ({ room, messagesArray }) => {
       setMessagesList(originalList => {
         const existingList = originalList.find(list => list.room === room)
         if (!existingList) {
@@ -112,54 +181,9 @@ export default function ChatBubble() {
           return list
         })
       })
-    })
-  }, [changeRoom])
-
-  const sendMessage = message => e => {
-    e.preventDefault()
-    if (!message) return
-    setCurrentMessage('')
-    client.current.emit('message', {
-      room: currentRoom.id,
-      text: message,
-    })
-  }
-
-  const scrollDown = () => {
-    if (!chatMessagesWrapper.current) return
-    chatMessagesWrapper.current.scrollTop = chatMessagesWrapper.current.scrollHeight
-  }
-
-  const captureChatScroll = e => {
-    if (e.target.scrollTop === 0 && messagesList.length) {
-      client.current.emit('fetchMessages', {
-        room: currentRoom.name,
-        from: messagesList.find(ml => ml.room === currentRoom.name).messagesArray[0].id,
-      })
-    }
-    return false
-  }
-
-  const createChat = userName => {
-    const existingChat = chatRoomList.find(
-      chatRoom => chatRoom.type === 'individual' && chatRoom.users.find(u => u.username === userName)
-    )
-    if (existingChat) return changeRoom(existingChat)
-    if (userName.toLowerCase() === userData.username.toLowerCase()) return false
-    client.current.emit('createChat', userName)
-  }
-
-  const toggleChat = status => {
-    setIsOpen(status || !isOpen)
-    setTimeout(() => {
-      chatInput.current && chatInput.current.focus()
-      scrollDown()
-    }, 0)
-  }
-
-  const showChatOptions = () => {
-    console.log('showing chat options')
-  }
+    }) */
+    // eslint-disable-next-line
+  }, [])
 
   return (
     <>
@@ -192,59 +216,72 @@ export default function ChatBubble() {
                 <div className={styles.chatWindowSidebarRoomList}>
                   <h3 className={styles.chatRoomCategory}>Canales</h3>
                   <div className={styles.chatRoomCategoryList}>
-                    {chatRoomList
-                      .filter(room => room.type === 'public')
-                      .map((chatRoom, i) => (
-                        <button
-                          key={i}
-                          type="button"
-                          className={styles.chatRoomItemButton}
-                          onClick={() => chatRoom.name !== currentRoom.name && changeRoom(chatRoom)}>
-                          <span className={styles.chatRoomItemButtonName}>{chatRoom.name}</span>
-                          {unreadMessagesForRoom(chatRoom) > 0 && (
-                            <span className={styles.chatRoomItemButtonUnread}>{unreadMessagesForRoom(chatRoom)}</span>
-                          )}
-                        </button>
-                      ))}
+                    {chatRoomList.filter(room => room.type === 'public').length ? (
+                      chatRoomList
+                        .filter(room => room.type === 'public')
+                        .map((chatRoom, i) => (
+                          <button
+                            key={i}
+                            type="button"
+                            className={styles.chatRoomItemButton}
+                            onClick={() => chatRoom.name !== currentRoom.name && changeRoom(chatRoom)}>
+                            <span className={styles.chatRoomItemButtonName}>{chatRoom.name}</span>
+                            {unreadMessagesForRoom(chatRoom) > 0 && (
+                              <span className={styles.chatRoomItemButtonUnread}>{unreadMessagesForRoom(chatRoom)}</span>
+                            )}
+                          </button>
+                        ))
+                    ) : (
+                      <span className={styles.chatRoomItemButtonName}>No tienes canales</span>
+                    )}
                   </div>
                   <h3 className={styles.chatRoomCategory}>Grupos</h3>
                   <div className={styles.chatRoomCategoryList}>
-                    {chatRoomList
-                      .filter(room => room.type === 'group')
-                      .map((chatRoom, i) => (
-                        <button
-                          key={i}
-                          type="button"
-                          className={styles.chatRoomItemButton}
-                          onClick={() => chatRoom.name !== currentRoom.name && changeRoom(chatRoom)}>
-                          <span className={styles.chatRoomItemButtonName}>{chatRoom.name}</span>
-                          {unreadMessagesForRoom(chatRoom) > 0 && (
-                            <span className={styles.chatRoomItemButtonUnread}>{unreadMessagesForRoom(chatRoom)}</span>
-                          )}
-                        </button>
-                      ))}
+                    {chatRoomList.filter(room => room.type === 'group').length ? (
+                      chatRoomList
+                        .filter(room => room.type === 'group')
+                        .map((chatRoom, i) => (
+                          <button
+                            key={i}
+                            type="button"
+                            className={styles.chatRoomItemButton}
+                            onClick={() => chatRoom.name !== currentRoom.name && changeRoom(chatRoom)}>
+                            <span className={styles.chatRoomItemButtonName}>{chatRoom.name}</span>
+                            {unreadMessagesForRoom(chatRoom) > 0 && (
+                              <span className={styles.chatRoomItemButtonUnread}>{unreadMessagesForRoom(chatRoom)}</span>
+                            )}
+                          </button>
+                        ))
+                    ) : (
+                      <span className={styles.chatRoomItemButtonName}>No tienes grupos</span>
+                    )}
                   </div>
                   <h3 className={styles.chatRoomCategory}>Convers.</h3>
                   <div className={styles.chatRoomCategoryList}>
-                    {chatRoomList
-                      .filter(room => room.type === 'individual')
-                      .map((chatRoom, i) => (
-                        <button
-                          key={i}
-                          type="button"
-                          className={styles.chatRoomItemButton}
-                          onClick={() => chatRoom.name !== currentRoom.name && changeRoom(chatRoom)}>
-                          <span className={styles.chatRoomItemButtonName}>
-                            {chatRoom.users.find(u => parseInt(u.id) !== userData.id).username}
-                          </span>
-                          {unreadMessagesForRoom(chatRoom) > 0 && (
-                            <span className={styles.chatRoomItemButtonUnread}>{unreadMessagesForRoom(chatRoom)}</span>
-                          )}
-                        </button>
-                      ))}
+                    {chatRoomList.filter(room => room.type === 'individual').length ? (
+                      chatRoomList
+                        .filter(room => room.type === 'individual')
+                        .map((chatRoom, i) => (
+                          <button
+                            key={i}
+                            type="button"
+                            className={styles.chatRoomItemButton}
+                            onClick={() => chatRoom.name !== currentRoom.name && changeRoom(chatRoom)}>
+                            <span className={styles.chatRoomItemButtonName}>
+                              {chatRoom.users.length &&
+                                chatRoom.users.find(u => parseInt(u.id) !== userData.id).username}
+                            </span>
+                            {unreadMessagesForRoom(chatRoom) > 0 && (
+                              <span className={styles.chatRoomItemButtonUnread}>{unreadMessagesForRoom(chatRoom)}</span>
+                            )}
+                          </button>
+                        ))
+                    ) : (
+                      <span className={styles.chatRoomItemButtonName}>No tienes chats</span>
+                    )}
                   </div>
                   <input type="text" value={newChatUserName} onChange={e => setNewChatUserName(e.target.value)} />
-                  <button type="button" onClick={() => createChat(newChatUserName)}>
+                  <button type="button" onClick={() => chatContext.openChatWith(newChatUserName)}>
                     <span>Create chat with</span>
                   </button>
                   <button
@@ -262,6 +299,8 @@ export default function ChatBubble() {
                   <h3>
                     {currentRoom && currentRoom.type === 'individual'
                       ? currentRoom.users.find(u => parseInt(u.id) !== userData.id).username
+                      : currentRoom && currentRoom.type === 'public'
+                      ? currentRoom.name
                       : 'No hay conversaciones activas'}
                   </h3>
                   <button type="button" className={styles.chatOptionsButton} onClick={() => showChatOptions()}>
@@ -284,22 +323,29 @@ export default function ChatBubble() {
                   messagesList.find(m => m.room === currentRoom.id) &&
                   messagesList
                     .find(m => m.room === currentRoom.id)
-                    .messagesArray.map((message, i) => (
-                      <div key={i} className={styles.chatMessage}>
-                        <ChatBubbleUser user={message.user} className={styles.chatMessageUserAvatar} />
-                        <div>
-                          <span className={styles.chatMessageUsername}>{message.user.username}</span>
-                          <span className={styles.chatMessageTimestamp}>{<ServerTime />}</span>
+                    .messagesArray.map((message, i, thisMessagesArray) =>
+                      thisMessagesArray[i - 1] && thisMessagesArray[i - 1].user.id === message.user.id ? (
+                        <p key={i}>{message.text}</p>
+                      ) : (
+                        <div key={i} className={styles.chatMessage}>
+                          <ChatBubbleUser user={message.user} className={styles.chatMessageUserAvatar} />
+                          <div>
+                            <span className={styles.chatMessageUsername}>{message.user.username}</span>
+                            <span className={styles.chatMessageTimestamp}>
+                              {<ChatTimestamp timestamp={message.date} />}
+                            </span>
+                          </div>
+                          <p>{message.text}</p>
                         </div>
-                        <p>{message.text}</p>
-                      </div>
-                    ))}
+                      )
+                    )}
               </div>
               <div className={styles.chatWindowFooter}>
                 <form onSubmit={sendMessage(currentMessage)}>
                   <input
                     type="text"
                     className={styles.chatTextInput}
+                    disabled={!currentRoom}
                     value={currentMessage}
                     ref={chatInput}
                     placeholder="Redactar mensaje"
@@ -316,6 +362,7 @@ export default function ChatBubble() {
       </aside>
       <div className={styles.chatToggleButton} onClick={() => toggleChat()}>
         <div>
+          {totalUnreadMessages > 0 && <span className={styles.unreadMessagesCount}>{totalUnreadMessages}</span>}
           <Icon size={26} svg={require('./img/chatIcon.svg')} alt={`${isOpen ? 'Ocultar chat' : 'Mostrar chat'}`} />
         </div>
       </div>
@@ -323,18 +370,11 @@ export default function ChatBubble() {
   )
 }
 
-function ServerTime() {
-  const [, _reload] = useState()
-  useEffect(() => {
-    const timeout = setTimeout(_reload, 3000, {})
-    return () => clearTimeout(timeout)
-  }, [])
-
-  const serverDate = getServerDate()
-
+function ChatTimestamp({ timestamp = Date.now() / 1000 }) {
+  const chatTS = new Date(timestamp * 1000)
   function pad(number) {
     return number.toString().padStart(2, '0')
   }
 
-  return `${pad(serverDate.hours)}:${pad(serverDate.minutes)}`
+  return `${pad(chatTS.getHours())}:${pad(chatTS.getMinutes())}:${pad(chatTS.getSeconds())}`
 }

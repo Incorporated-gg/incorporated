@@ -1,18 +1,18 @@
 import { getUserData, getUserIDFromUsername } from '../lib/db/users'
 import { getUserIDFromSessionID } from '../lib/db/sessions'
-import { promisify } from 'util'
-import redis from 'redis'
+/* import { promisify } from 'util' */
+/* import redis from 'redis' */
 import ChatUser from './ChatUser'
 import Conversation from './Conversation'
 
-const client = redis.createClient(
+/* const client = redis.createClient(
   `redis://root:${process.env.REDIS_PASS}@${process.env.NODE_ENV === 'development' ? 'redis' : 'localhost'}:6379`
-)
-const hGetAsync = promisify(client.hget).bind(client)
+) */
+/* const hGetAsync = promisify(client.hget).bind(client) */
 
 const publicChannels = [
   {
-    id: 1,
+    id: 'globalRoom',
     type: 'public',
     name: 'Global',
     messages: [],
@@ -20,7 +20,7 @@ const publicChannels = [
     readonly: false,
   },
   {
-    id: 2,
+    id: 'dudasAyuda',
     type: 'public',
     name: 'Dudas y Ayuda',
     messages: [],
@@ -28,7 +28,7 @@ const publicChannels = [
     readonly: false,
   },
   {
-    id: 3,
+    id: 'estrategia',
     type: 'public',
     name: 'Estrategia',
     messages: [],
@@ -36,24 +36,24 @@ const publicChannels = [
     readonly: false,
   },
   {
-    id: 4,
+    id: 'offTopic',
     type: 'public',
     name: 'Off-Topic',
     messages: [],
     users: [],
     readonly: false,
   },
-  {
-    id: 5,
+  /* NOT IMPLEMENTED YET   {
+    id: 'corp',
     type: 'group',
     name: 'Corporación',
     messages: [],
     users: [],
     readonly: false,
-  },
+  }, */
 ]
 
-const chat = {
+/* const chat = {
   async getGroup(groupName) {
     return await hGetAsync('groups', groupName)
   },
@@ -62,7 +62,7 @@ const chat = {
     await user.init()
     return user
   },
-}
+} */
 
 export const setupChat = io => {
   const apiNamespace = io.of('/api')
@@ -84,6 +84,19 @@ export const setupChat = io => {
     })
     .on('connection', async socket => {
       console.log(socket.user.id + ' connected')
+      const publicRooms = await Promise.all(
+        publicChannels.map(async publicChannel => {
+          const conv = new Conversation(publicChannel)
+          await conv.init()
+          const jsonConv = await conv.toJSON()
+          socket.join(conv.id)
+          socket.emit('messages', {
+            room: conv.id,
+            messagesArray: conv.messages,
+          })
+          return jsonConv
+        })
+      )
       const user = new ChatUser(socket.user.id)
       await user.init()
       user.conversations.length &&
@@ -94,9 +107,10 @@ export const setupChat = io => {
             messagesArray: conversation.messages,
           })
         })
-      socket.emit('chatRoomList', user.conversations)
+      socket.emit('chatRoomList', user.conversations.concat(publicRooms))
 
       socket.on('message', async ({ room: conversationId, text }) => {
+        console.log(conversationId, text)
         const thisRoom = new Conversation({
           id: conversationId,
         })

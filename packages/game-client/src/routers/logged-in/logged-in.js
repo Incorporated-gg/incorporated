@@ -1,5 +1,6 @@
 import React from 'react'
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
+import ChatState from 'context/ChatState'
 
 import Header from 'components/header'
 import Footer from 'components/footer'
@@ -25,62 +26,64 @@ import Monopolies from 'routes/monopolies/monopolies'
 
 export default function LoggedInRouter() {
   return (
-    <Router>
-      <ScrollToTop />
-      <div className={`${styles.pageContainer} ${styles.loggedIn}`}>
-        <Header />
-        <div className={styles.contentContainer}>
-          <Switch>
-            <Route path="/buildings">
-              <Buildings />
-            </Route>
-            <Route path="/research">
-              <Research />
-            </Route>
-            <Route path="/ranking">
-              <Ranking />
-            </Route>
-            <Route path="/monopolies">
-              <Monopolies />
-            </Route>
-            <Route path="/contest">
-              <Contest />
-            </Route>
-            <Route path="/alliance">
-              <Alliance />
-            </Route>
-            <Route path="/personnel">
-              <Personnel />
-            </Route>
-            <Route path="/messages">
-              <Messages />
-            </Route>
-            <Route path="/finances">
-              <Finances />
-            </Route>
-            <Route path="/loans">
-              <Loans />
-            </Route>
-            <Route path="/map">
-              <Map />
-            </Route>
-            <Route path="/newspaper">
-              <Newspaper />
-            </Route>
-            <Route path="/reports">
-              <Reports />
-            </Route>
-            <Route path="/settings">
-              <Settings />
-            </Route>
-            <Route path="/">
-              <Home />
-            </Route>
-          </Switch>
+    <ChatState>
+      <Router>
+        <ScrollToTop />
+        <div className={`${styles.pageContainer} ${styles.loggedIn}`}>
+          <Header />
+          <div className={styles.contentContainer}>
+            <Switch>
+              <Route path="/buildings">
+                <Buildings />
+              </Route>
+              <Route path="/research">
+                <Research />
+              </Route>
+              <Route path="/ranking">
+                <Ranking />
+              </Route>
+              <Route path="/monopolies">
+                <Monopolies />
+              </Route>
+              <Route path="/contest">
+                <Contest />
+              </Route>
+              <Route path="/alliance">
+                <Alliance />
+              </Route>
+              <Route path="/personnel">
+                <Personnel />
+              </Route>
+              <Route path="/messages">
+                <Messages />
+              </Route>
+              <Route path="/finances">
+                <Finances />
+              </Route>
+              <Route path="/loans">
+                <Loans />
+              </Route>
+              <Route path="/map">
+                <Map />
+              </Route>
+              <Route path="/newspaper">
+                <Newspaper />
+              </Route>
+              <Route path="/reports">
+                <Reports />
+              </Route>
+              <Route path="/settings">
+                <Settings />
+              </Route>
+              <Route path="/">
+                <Home />
+              </Route>
+            </Switch>
+          </div>
+          <Footer />
         </div>
-        <Footer />
-      </div>
-      <ChatBubble />
-    </Router>
+        <ChatBubble />
+      </Router>
+    </ChatState>
   )
 }
