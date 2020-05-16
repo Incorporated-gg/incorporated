@@ -112,9 +112,9 @@ function getMessage(message) {
             {buildingsList.find(b => b.id === message.data.building_id).name} con {message.data.building_quantity}{' '}
             edificios.
           </p>
-          <p>
+          <div>
             +{reward.gold} <Icon iconName="gold" size={20} />
-          </p>
+          </div>
           <p>+{reward.xp} XP</p>
         </div>
       )

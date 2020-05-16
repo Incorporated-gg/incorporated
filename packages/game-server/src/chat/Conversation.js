@@ -50,8 +50,16 @@ class Conversation {
       } else {
         const userIds = await sMembersAsync(`${conversationKey}:userIds`)
         const messages = await sMembersAsync(`${conversationKey}:messages`)
-        if (messages)
-          conver.messages = messages.map(message => JSON.parse(message)).sort((m1, m2) => (m1.date > m2.date ? 1 : -1))
+        if (messages) {
+          const mapped = await Promise.all(
+            messages.map(async message => {
+              const parsed = JSON.parse(message)
+              parsed.user = await getUserData(parsed.user)
+              return parsed
+            })
+          )
+          conver.messages = mapped.sort((m1, m2) => (m1.date > m2.date ? 1 : -1))
+        }
         this.name = conver.name
         this.messages = conver.messages || []
         this.userIds = userIds
@@ -61,6 +69,11 @@ class Conversation {
       return true
     }
   }
+  /**
+   * Removes all users from a conversation and adds them again from userIds list
+   * Makes sure no deprecated users are still in the conversation
+   * (user left alliance and stays in alliance chat type of case)
+   */
   async syncUsers() {
     await hDelAsync(`conversations:${this.id}`, 'userIds')
     this.userIds.forEach(async userId => {

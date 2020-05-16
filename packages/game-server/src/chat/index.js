@@ -120,11 +120,13 @@ export const setupChat = io => {
         const timestamp = Date.now() / 1000
         const newMessage = {
           id: thisRoom.messages.length,
-          user: socket.user,
+          user: socket.user.id,
           date: timestamp,
           text,
         }
         await thisRoom.addMessage(newMessage)
+        // We forward the entire user object to avoid querying all the info again
+        newMessage.user = socket.user
         apiNamespace.to(conversationId).emit('messages', {
           room: conversationId,
           messagesArray: [newMessage],
