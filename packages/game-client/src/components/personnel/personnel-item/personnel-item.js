@@ -10,18 +10,13 @@ import IncButton from 'components/UI/inc-button'
 import { useLocation } from 'react-router-dom'
 import IncChevron from 'components/UI/inc-chevron'
 import { numberToAbbreviation } from 'lib/utils'
+import calcGuardsSuggestion from './calcGuardsSuggestion'
 
 const personnelImages = {
   sabots: require('./img/gangster.png'),
   guards: require('./img/guard.png'),
   spies: require('./img/spy.png'),
   thieves: require('./img/thief.png'),
-}
-const personnelDesc = {
-  sabots: 'Matan guardias y destruyen edificios',
-  guards: 'Defienden contra ataques',
-  spies: 'Obtienen información privada sobre otros jugadores',
-  thieves: 'Roban dinero de edificios',
 }
 
 PersonnelItem.propTypes = {
@@ -55,7 +50,19 @@ export default function PersonnelItem({ personnelInfo, resourceAmount }) {
       image={personnelImages[personnelInfo.resource_id]}
       title={personnelInfo.name}
       ribbon={resourceAmount.toLocaleString()}>
-      <p>{personnelDesc[personnelInfo.resource_id]}</p>
+      <p>
+        {personnelInfo.resource_id === 'sabots'
+          ? 'Matan guardias y destruyen edificios'
+          : personnelInfo.resource_id === 'guards'
+          ? `Defienden contra ataques. Como sugerencia, deberías tener alrededor de ${numberToAbbreviation(
+              calcGuardsSuggestion()
+            )}`
+          : personnelInfo.resource_id === 'spies'
+          ? 'Obtienen información privada sobre otros jugadores'
+          : personnelInfo.resource_id === 'thieves'
+          ? 'Roban dinero de edificios'
+          : '??'}
+      </p>
 
       <IncInput
         showBorder
