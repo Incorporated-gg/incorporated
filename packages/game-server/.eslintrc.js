@@ -5,11 +5,11 @@ module.exports = {
     jest: true,
   },
   "parserOptions": {
-    "ecmaVersion": 2018,
-    'sourceType': 'module',
-    "ecmaFeatures": {
-      "jsx": true
-    }
+    "ecmaVersion": 2020,
+    'sourceType': 'module'
+  },
+  'globals':{
+    'BigInt':true
   },
   extends: ["standard", "prettier"],
   plugins: [

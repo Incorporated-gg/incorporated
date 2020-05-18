@@ -4,7 +4,7 @@ export const PERSONNEL_OBJ = {
     resource_id: 'sabots',
     price: 500,
     firingCost: 250,
-    combatPower: 1,
+    combatPower: 2,
     dailyMaintenanceCost: 500,
   },
   spies: {
@@ -19,7 +19,7 @@ export const PERSONNEL_OBJ = {
     resource_id: 'guards',
     price: 100,
     firingCost: 50,
-    combatPower: 1,
+    combatPower: 2,
     dailyMaintenanceCost: 500,
   },
   thieves: {
@@ -27,7 +27,7 @@ export const PERSONNEL_OBJ = {
     resource_id: 'thieves',
     price: 200,
     firingCost: 250,
-    combatPower: 0.2,
+    combatPower: 0.4,
     robbingPower: 50,
     dailyMaintenanceCost: 500,
   },

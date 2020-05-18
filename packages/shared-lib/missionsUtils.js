@@ -26,13 +26,13 @@ export function calculateMissionTime(missionType) {
 }
 
 export function calcSabotsPower(sabotageResearchLvl) {
-  return 2 * PERSONNEL_OBJ.sabots.combatPower * sabotageResearchLvl
+  return PERSONNEL_OBJ.sabots.combatPower * sabotageResearchLvl
 }
 function calcThievesPower(sabotageResearchLvl) {
-  return 2 * PERSONNEL_OBJ.thieves.combatPower * sabotageResearchLvl
+  return PERSONNEL_OBJ.thieves.combatPower * sabotageResearchLvl
 }
 export function calcGuardsPower(securityResearchLvl) {
-  return 2 * PERSONNEL_OBJ.guards.combatPower * securityResearchLvl
+  return PERSONNEL_OBJ.guards.combatPower * securityResearchLvl
 }
 
 function simulateCombat({
@@ -45,12 +45,9 @@ function simulateCombat({
   defensorSecurityLvl,
   attackerSabotageLvl,
 }) {
-  const guardsAttackPower = calcGuardsPower(defensorSecurityLvl) / 2
-  const guardsDefensePower = calcGuardsPower(defensorSecurityLvl)
-  const sabotAttackPower = calcSabotsPower(attackerSabotageLvl)
-  const sabotDefensePower = calcSabotsPower(attackerSabotageLvl) / 2
-  const thievesAttackPower = calcThievesPower(attackerSabotageLvl)
-  const thievesDefensePower = calcThievesPower(attackerSabotageLvl) / 2
+  const guardsPower = calcGuardsPower(defensorSecurityLvl)
+  const sabotPower = calcSabotsPower(attackerSabotageLvl)
+  const thievesPower = calcThievesPower(attackerSabotageLvl)
 
   // Simulamos lucha
   let deadSabots = 0
@@ -62,30 +59,30 @@ function simulateCombat({
 
   if (survivingGuards > 0) {
     // kill sabots
-    const maxDeadSabots = Math.floor((survivingGuards * guardsAttackPower) / sabotDefensePower)
+    const maxDeadSabots = Math.floor((survivingGuards * guardsPower) / sabotPower)
     deadSabots = Math.min(attackerSabots, maxDeadSabots)
     survivingSabots = attackerSabots - deadSabots
 
     // kill guards
-    const maxDeadGuardsFromSabots = Math.floor((attackerSabots * sabotAttackPower) / guardsDefensePower)
+    const maxDeadGuardsFromSabots = Math.floor((attackerSabots * sabotPower) / guardsPower)
     deadGuards = Math.min(survivingGuards, maxDeadGuardsFromSabots)
     survivingGuards = survivingGuards - deadGuards
   }
   if (survivingGuards > 0) {
     // kill thieves
-    const maxDeadThieves = Math.floor((survivingGuards * guardsAttackPower) / thievesDefensePower)
+    const maxDeadThieves = Math.floor((survivingGuards * guardsPower) / thievesPower)
     deadThieves = Math.min(attackerThieves, maxDeadThieves)
     survivingThieves = attackerThieves - deadThieves
 
     // kill guards
-    const maxDeadGuardsFromThieves = Math.floor((attackerThieves * thievesAttackPower) / guardsDefensePower)
+    const maxDeadGuardsFromThieves = Math.floor((attackerThieves * thievesPower) / guardsPower)
     deadGuards = Math.min(survivingGuards, maxDeadGuardsFromThieves)
     survivingGuards = survivingGuards - deadGuards
   }
 
   // Destroyed buildings
   const buildingResistance = calcBuildingResistance(attackedBuildingInfo.id, infraResearchLvl)
-  const attackPowerVsBuildings = Math.max(0, survivingSabots * sabotAttackPower + survivingThieves * thievesAttackPower)
+  const attackPowerVsBuildings = Math.max(0, survivingSabots * sabotPower + survivingThieves * thievesPower)
   const theoreticalDestroyedBuildings = Math.floor(attackPowerVsBuildings / buildingResistance)
   const destroyedBuildings = Math.min(
     attackedBuildingInfo.maximumDestroyedBuildings,

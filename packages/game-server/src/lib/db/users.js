@@ -68,12 +68,17 @@ export async function getUserDailyIncome(userID) {
   return totalBuildingsIncome
 }
 
-export async function getUserResearchs(userID) {
+export async function getUserResearchs(userID, { includeResearchsInProgress = false } = {}) {
   const researchs = {}
   researchList.forEach(research => (researchs[research.id] = 1))
 
   const researchsRaw = await mysql.query('SELECT id, level FROM research WHERE user_id=?', [userID])
-  if (researchsRaw) researchsRaw.forEach(research => (researchs[research.id] = research.level))
+  researchsRaw.forEach(research => (researchs[research.id] = research.level))
+
+  if (includeResearchsInProgress) {
+    const activeResearchsRaw = await mysql.query('SELECT research_id FROM research_active WHERE user_id=?', [userID])
+    activeResearchsRaw.forEach(research => researchs[research.research_id]++)
+  }
 
   return researchs
 }

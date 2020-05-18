@@ -2,6 +2,8 @@ import mysql from '../../lib/mysql'
 import { getAllHoodsData } from '../../lib/db/hoods'
 import { getAllianceMembers } from '../../lib/db/alliances'
 import { calcHoodDailyServerPoints } from 'shared-lib/hoodUtils'
+import { getUserResearchs } from '../../lib/db/users'
+import { calcResearchPrice } from 'shared-lib/allianceUtils'
 
 export default async function runJustAfterNewDay(finishedServerDay) {
   await updateAttacksLeft()
@@ -24,12 +26,12 @@ async function updateAttacksLeft() {
 }
 
 async function updateUsersDailyLog(finishedServerDay) {
-  const users = await getAllUsers()
+  const users = await getAllUsersAndTheirInfo()
   await Promise.all(
     users.map(async user => {
       await mysql.query(
-        'INSERT INTO users_daily_log (server_day, user_id, daily_income, researchs_count) VALUES (?, ?, ?, ?)',
-        [finishedServerDay, user.user_id, user.daily_income, user.researchs_count]
+        'INSERT INTO users_daily_log (server_day, user_id, daily_income, researchs_count, researchs_total_spending) VALUES (?, ?, ?, ?, ?)',
+        [finishedServerDay, user.user_id, user.daily_income, user.researchs_count, user.researchs_total_spending]
       )
     })
   )
@@ -56,13 +58,33 @@ async function giveHoodServerPoints() {
   )
 }
 
-async function getAllUsers() {
-  const users = await mysql.query(
-    'SELECT user_id, points, (SELECT SUM(level) FROM research WHERE user_id=ranking_income.user_id) as researchs_count FROM ranking_income'
+async function getAllUsersAndTheirInfo() {
+  const users = await mysql.query('SELECT user_id, points FROM ranking_income')
+  return await Promise.all(
+    users.map(async rankUser => {
+      const researchs = await getUserResearchs(rankUser.user_id, { includeResearchsInProgress: true })
+      const researchsCount = Object.values(researchs).reduce((prev, curr) => prev + curr, 0)
+      const researchsTotalSpending = calcUserResearchsTotalSpending(researchs)
+
+      return {
+        user_id: rankUser.user_id,
+        daily_income: rankUser.points || 0,
+        researchs_count: researchsCount,
+        researchs_total_spending: researchsTotalSpending,
+      }
+    })
   )
-  return users.map(rankUser => ({
-    user_id: rankUser.user_id,
-    daily_income: rankUser.points || 0,
-    researchs_count: rankUser.researchs_count || 0,
-  }))
+}
+
+export function calcUserResearchsTotalSpending(researchs) {
+  const researchsTotalSpending = Object.entries(researchs)
+    .map(([resID, resLvl]) => {
+      let totalPrice = 0n
+      for (let k = 1; k < resLvl; k++) {
+        totalPrice += BigInt(calcResearchPrice(resID, k))
+      }
+      return totalPrice
+    })
+    .reduce((prev, curr) => prev + curr, 0n)
+  return researchsTotalSpending
 }
