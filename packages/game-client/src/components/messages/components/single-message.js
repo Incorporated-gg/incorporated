@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import api from 'lib/api'
 import PropTypes from 'prop-types'
 import { userData } from 'lib/user'
@@ -7,7 +7,6 @@ import { getServerDay } from 'lib/serverTime'
 import styles from './single-message.module.scss'
 import ErrorBoundary from 'components/UI/ErrorBoundary'
 import AllianceLink from 'components/alliance/alliance-link'
-import NewMessageModal from './new-message-modal'
 import IncContainer from 'components/UI/inc-container'
 import UserLink from 'components/UI/user-link'
 import Icon from 'components/icon'
@@ -20,8 +19,6 @@ SingleMessage.propTypes = {
   reloadMessagesData: PropTypes.func.isRequired,
 }
 export default function SingleMessage({ reloadMessagesData, message }) {
-  const [showMessageModal, setShowMessageModal] = useState(false)
-
   const deleteMessage = e => {
     e.preventDefault()
     if (!window.confirm('Estás seguro/a de que quieres borrar el mensaje?')) return
@@ -76,16 +73,6 @@ export default function SingleMessage({ reloadMessagesData, message }) {
           <div className={styles.messageText}>{messageElm}</div>
         </ErrorBoundary>
         <br />
-        {wasSentToMe && message.sender && (
-          <>
-            <IncButton onClick={() => setShowMessageModal(true)}>Responder</IncButton>
-            <NewMessageModal
-              user={message.sender}
-              isOpen={showMessageModal}
-              onRequestClose={() => setShowMessageModal(false)}
-            />
-          </>
-        )}
         {wasSentToMe && <IncButton onClick={deleteMessage}>Borrar</IncButton>}
       </div>
     </IncContainer>

@@ -1,24 +1,21 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import api from '../../../lib/api'
-import PropTypes from 'prop-types'
 import SingleMessage from './single-message'
 
-MessagesList.propTypes = {
-  type: PropTypes.string.isRequired,
-}
-export default function MessagesList({ type }) {
+MessagesList.propTypes = {}
+export default function MessagesList() {
   const [messages, setMessages] = useState()
   const [error, setError] = useState(false)
 
   const reloadMessagesData = useCallback(() => {
     setMessages()
     api
-      .get('/v1/messages', { type })
+      .get('/v1/messages')
       .then(res => {
         setMessages(res.messages)
       })
       .catch(err => setError(err.message))
-  }, [type])
+  }, [])
 
   useEffect(() => {
     reloadMessagesData()
