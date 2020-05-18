@@ -38,7 +38,7 @@ export default function IncInput({
     onChangeText(result)
   }
 
-  if (multiline) return <textarea className={className} onChange={onChange} {...props} />
+  if (multiline) return <textarea id={elmID} className={className} onChange={onChange} {...props} />
 
   if (type === 'select') {
     return (
