@@ -47,6 +47,11 @@ $menu--color-dark: #CC8C20;
   -webkit-text-fill-color: transparent;
 }
 
+@mixin shadowText {
+  color: $color-brand-light;
+  text-shadow: -2px 2px 0px rgba($color-brand-dark, 0.25);
+}
+
 @mixin pascalText {
   &::first-letter {
     font-size: 1.25em;

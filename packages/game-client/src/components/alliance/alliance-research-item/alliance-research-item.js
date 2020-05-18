@@ -58,24 +58,33 @@ export default function AllianceResearchItem({ researchData, reloadAllianceData 
       </IncContainer>
       {researchInfo.type === 'resource' && (
         <>
-          <p>
-            Genera {calcResourceGenerationByResearchID(researchData.id, researchData.level).toLocaleString()} al día, al
-            mejorarla generará{' '}
-            {calcResourceGenerationByResearchID(researchData.id, researchData.level + 1).toLocaleString()} al día
-          </p>
-          <p>
-            Almacena {calcResourceMaxByResearchID(researchData.id, researchData.level).toLocaleString()}, al mejorarla
-            almacenará {calcResourceMaxByResearchID(researchData.id, researchData.level + 1).toLocaleString()}
-          </p>
+          <div className={styles.statTitle}>{researchInfo.resourceGeneratedName} generados al día</div>
+          <div className={styles.statContainer}>
+            <span>{calcResourceGenerationByResearchID(researchData.id, researchData.level).toLocaleString()}</span>
+            <Icon iconName="arrows" width={30} height={18} />
+            <span>{calcResourceGenerationByResearchID(researchData.id, researchData.level + 1).toLocaleString()}</span>
+          </div>
+
+          <div className={styles.statTitle}>Capacidad de almacenaje</div>
+          <div className={styles.statContainer}>
+            <span>{calcResourceMaxByResearchID(researchData.id, researchData.level).toLocaleString()}</span>
+            <Icon iconName="arrows" width={30} height={18} />
+            <span>{calcResourceMaxByResearchID(researchData.id, researchData.level + 1).toLocaleString()}</span>
+          </div>
         </>
       )}
       {researchInfo.type === 'buff' && (
         <>
-          <p>
-            Da {researchData.level + 1} niveles de investigación a todos los miembros de la alianza mientras está
-            activa.
-          </p>
-          <p>Se puede activar durante 1h y tiene un cooldown de 2 días.</p>
+          <div className={styles.statTitle}>Se puede activar durante 1h y tiene un cooldown de 2 días.</div>
+
+          <div className={styles.statTitle}>
+            Niveles extra de investigación a todos los miembros de la alianza mientras está activa.
+          </div>
+          <div className={styles.statContainer}>
+            <span>{researchData.level + 1}</span>
+            <Icon iconName="arrows" width={30} height={18} />
+            <span>{researchData.level + 2}</span>
+          </div>
         </>
       )}
       <IncButton onClick={doResearch}>

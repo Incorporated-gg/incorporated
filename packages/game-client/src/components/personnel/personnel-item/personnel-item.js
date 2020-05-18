@@ -9,6 +9,7 @@ import IncInput from 'components/UI/inc-input/inc-input'
 import IncButton from 'components/UI/inc-button'
 import { useLocation } from 'react-router-dom'
 import IncChevron from 'components/UI/inc-chevron'
+import { numberToAbbreviation } from 'lib/utils'
 
 const personnelImages = {
   sabots: require('./img/gangster.png'),
@@ -70,14 +71,14 @@ export default function PersonnelItem({ personnelInfo, resourceAmount }) {
         <div className={styles.dailyPriceContainer}>
           <IncChevron direction="right" padding={16} />
           <div className={styles.dailyPriceText}>
-            {dailyPriceNum.toLocaleString()} <Icon iconName="money" size={20} /> / día
+            {numberToAbbreviation(dailyPriceNum)} <Icon iconName="money" size={20} /> / día
           </div>
           <IncChevron direction="left" padding={16} />
         </div>
         <div className={styles.actionPriceContainer}>
           <IncChevron direction="right" padding={6}>
             <div className={styles.actionPriceText}>
-              {actionPriceNum.toLocaleString()} <Icon iconName="money" size={20} />
+              {numberToAbbreviation(actionPriceNum)} <Icon iconName="money" size={20} />
             </div>
           </IncChevron>
           <span className={styles.actionTitle}>{isHiring ? 'CONTRATAR' : 'DESPEDIR'}</span>

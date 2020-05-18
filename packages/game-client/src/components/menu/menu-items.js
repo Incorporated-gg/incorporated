@@ -73,7 +73,7 @@ export default [
   {
     mainPath: '/ranking',
     svgIcon: require('./img/icon-missions.svg'),
-    title: 'Misiones',
+    title: 'Magnates',
     items: [
       {
         path: '/ranking',
@@ -93,11 +93,11 @@ export default [
   {
     mainPath: '/map',
     svgIcon: require('./img/icon-map.svg'),
-    title: 'Mapa',
+    title: 'Ciudad',
     items: [
       {
         path: '/map',
-        alt: 'Mapa',
+        alt: 'Ciudad',
       },
     ],
   },

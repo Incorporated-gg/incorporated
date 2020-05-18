@@ -3,3 +3,14 @@
   display: grid;
   grid-template-columns: auto auto 1fr;
 }
+
+.filtersContainer {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  flex-wrap: wrap;
+  >* {
+    margin: 3px;
+  }
+  margin-bottom: 7px;
+}

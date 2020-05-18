@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 import styles from './icon.module.scss'
 
 Icon.propTypes = {
-  iconName: PropTypes.string,
+  iconName: PropTypes.oneOf(['arrows', 'dynamite', 'gold', 'money']),
   svg: PropTypes.any,
   width: PropTypes.number,
   height: PropTypes.number,
@@ -28,6 +28,7 @@ function Icon({ iconName, svg, size, className = '', width, height, ...props }) 
 
   return (
     <ReactSVG
+      wrapper="span"
       className={`${styles.svg} ${className}`}
       src={svg || require(`./img/${iconName}.svg`)}
       beforeInjection={beforeInjection}

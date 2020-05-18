@@ -16,3 +16,23 @@
 .input {
   width: 100%;
 }
+
+.statTitle {
+  margin-top: 10px;
+  margin-bottom: 3px;
+  color: $color-text-light;
+}
+
+.statContainer {
+  @include shadowText;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  font-size: $font-size-large;
+  margin-bottom: 10px;
+
+  & :nth-child(2) {
+    margin: 0 10px;
+  }
+}

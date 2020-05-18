@@ -82,7 +82,6 @@ export default function ResearchItem({ researchID }) {
   return (
     <Card image={researchImages[researchID]} ribbon={`Lvl. ${level.toLocaleString()}`} title={researchInfo.name}>
       <ResearchEffectsInfo researchID={researchID} currentLevel={level} price={cost} />
-      <br />
       <IncButton onClick={buttonClicked} disabled={!isUpgrading && !canAfford}>
         <div className={styles.rowsContainer}>
           <span className={styles.remainingTimeText}>{remainingTimeText}</span>

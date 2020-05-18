@@ -15,23 +15,17 @@ import SpyReport from '../spy-report/spy-report'
 
 MissionRow.propTypes = {
   mission: PropTypes.object.isRequired,
-  reloadMissionsCallback: PropTypes.func.isRequired,
   showcaseUser: PropTypes.oneOf(['target', 'sender']),
 }
-export default function MissionRow({ mission, reloadMissionsCallback, showcaseUser = 'target' }) {
+export default function MissionRow({ mission, showcaseUser = 'target' }) {
   const [showDetails, setShowDetails] = useState(false)
 
   const isComplete = mission.completed
   const isCompleting = !isComplete && new Date(mission.will_finish_at * 1000) <= new Date()
   const cancelMission = () => {
-    cancelActiveMission()
-      .then(() => {
-        reloadMissionsCallback()
-      })
-      .catch(err => {
-        reloadMissionsCallback()
-        alert(err.message)
-      })
+    cancelActiveMission().catch(err => {
+      alert(err.message)
+    })
   }
 
   const clickedShowDetails = () => {

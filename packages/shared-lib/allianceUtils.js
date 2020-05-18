@@ -5,9 +5,15 @@ export const MAX_ALLIANCE_MEMBERS = 8
 export const WAR_DAYS_DURATION = 5
 
 export const ALLIANCE_RESEARCHS = {
-  2: { id: 2, name: 'Cabinas de guardias', pricePerLvl: 200000, type: 'resource' },
-  3: { id: 3, name: 'Barracones de gángsters', pricePerLvl: 200000, type: 'resource' },
-  4: { id: 4, name: 'Academias de ladrones', pricePerLvl: 200000, type: 'resource' },
+  2: { id: 2, name: 'Cabinas de guardias', resourceGeneratedName: 'Guardias', pricePerLvl: 200000, type: 'resource' },
+  3: {
+    id: 3,
+    name: 'Barracones de gángsters',
+    resourceGeneratedName: 'Gángsters',
+    pricePerLvl: 200000,
+    type: 'resource',
+  },
+  4: { id: 4, name: 'Academias de ladrones', resourceGeneratedName: 'Ladrones', pricePerLvl: 200000, type: 'resource' },
   5: { id: 5, name: 'Buff de ataque', pricePerLvl: 5000000, type: 'buff' },
   6: { id: 6, name: 'Buff de defensa', pricePerLvl: 5000000, type: 'buff' },
 }

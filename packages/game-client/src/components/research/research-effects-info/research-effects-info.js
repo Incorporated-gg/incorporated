@@ -5,7 +5,7 @@ import { userData } from 'lib/user'
 import { getTimeUntil, numberToAbbreviation } from 'lib/utils'
 import Icon from 'components/icon'
 import { calcBuildingMaxMoney, calcBuildingDailyIncome } from 'shared-lib/buildingsUtils'
-import { PERSONNEL_OBJ } from 'shared-lib/personnelUtils'
+import styles from './research-effects-info.module.scss'
 
 ResearchEffectsInfo.propTypes = {
   researchID: PropTypes.number.isRequired,
@@ -13,68 +13,82 @@ ResearchEffectsInfo.propTypes = {
   price: PropTypes.number.isRequired,
 }
 export default function ResearchEffectsInfo({ researchID, currentLevel, price }) {
+  let desc = ''
+  let powerNow = 0
+  let powerThen = 0
   switch (researchID) {
     case 1: {
-      const powerNow = calcSpiesPower(currentLevel)
-      const powerThen = calcSpiesPower(currentLevel + 1)
-      return (
-        <div>
-          Fuerza de {PERSONNEL_OBJ.spies.name} actual: {powerNow.toLocaleString()}, al subir:{' '}
-          {powerThen.toLocaleString()}
-        </div>
-      )
+      powerNow = calcSpiesPower(currentLevel)
+      powerThen = calcSpiesPower(currentLevel + 1)
+      desc = 'Consigue inteligencia sobre tus enemigos, y protege la tuya.'
+      break
     }
     case 2: {
-      const powerNow = calcSabotsPower(currentLevel)
-      const powerThen = calcSabotsPower(currentLevel + 1)
-      return (
-        <div>
-          Fuerza de {PERSONNEL_OBJ.sabots.name} actual: {powerNow.toLocaleString()}, al subir:{' '}
-          {powerThen.toLocaleString()}
-        </div>
-      )
+      powerNow = calcSabotsPower(currentLevel)
+      powerThen = calcSabotsPower(currentLevel + 1)
+      desc = 'Mejora la fuerza de tus Gangsters y Ladrones al atacar'
+      break
     }
     case 3: {
-      const powerNow = calcGuardsPower(currentLevel)
-      const powerThen = calcGuardsPower(currentLevel + 1)
-      return (
-        <div>
-          Fuerza de {PERSONNEL_OBJ.guards.name} actual: {powerNow.toLocaleString()}, al subir:{' '}
-          {powerThen.toLocaleString()}
-        </div>
-      )
+      powerNow = calcGuardsPower(currentLevel)
+      powerThen = calcGuardsPower(currentLevel + 1)
+      desc = 'Mejora la fuerza de tus Guardias al defender'
+      break
     }
     case 4: {
-      const timeNow = getBuildingsTimeUntilFull(currentLevel)
-      const timeThen = getBuildingsTimeUntilFull(currentLevel + 1)
-      return (
-        <div>
-          Tiempo medio desde 0 <Icon iconName="money" size={16} /> hasta almacén lleno actual: {timeNow}, al subir:{' '}
-          {timeThen}
-        </div>
+      powerNow = getBuildingsTimeUntilFull(currentLevel)
+      powerThen = getBuildingsTimeUntilFull(currentLevel + 1)
+      desc = (
+        <>
+          Tiempo medio desde 0 <Icon iconName="money" size={16} /> hasta almacén lleno
+        </>
       )
+      break
     }
     case 5: {
-      const gainedDailyIncome = calculateIncomeDiff(userData.buildings, currentLevel)
-      const pri = Math.round((price / gainedDailyIncome) * 10) / 10
-      return (
-        <div>
-          Ingresos diarios ganados: {numberToAbbreviation(gainedDailyIncome)} <Icon iconName="money" size={16} />. PRI:{' '}
-          {pri} días
-        </div>
+      const incomes = calculateIncomeAfterResearch(userData.buildings, currentLevel)
+      powerNow = numberToAbbreviation(incomes.oldIncome)
+      powerThen = numberToAbbreviation(incomes.newIncome)
+      const diff = incomes.newIncome - incomes.oldIncome
+      const pri = Math.round((price / diff) * 10) / 10
+      desc = (
+        <>
+          <p>
+            Ingresos diarios ganados: {numberToAbbreviation(diff)}
+            <Icon iconName="money" size={16} />
+          </p>
+          <p>PRI: {pri} días</p>
+        </>
       )
+      break
     }
     case 6: {
-      return (
-        <div>
+      desc = (
+        <>
           Si tus guardias son derrotados, tus edificios aguantarán un número mayor de gángsters antes de ser derribados
-        </div>
+        </>
       )
+      break
     }
     default: {
       return null
     }
   }
+
+  return (
+    <>
+      <div>{desc}</div>
+      {!powerThen ? (
+        ''
+      ) : (
+        <div className={styles.statContainer}>
+          <span>{powerNow}</span>
+          <Icon iconName="arrows" width={30} height={18} />
+          <span>{powerThen}</span>
+        </div>
+      )}
+    </>
+  )
 }
 
 function getBuildingsTimeUntilFull(researchLevel) {
@@ -95,25 +109,30 @@ function getBuildingsTimeUntilFull(researchLevel) {
     .map(({ buildingID, buildingAmount }) => calcBuildingDailyIncome(buildingID, buildingAmount, optimizeResearchLevel))
     .reduce((a, b) => a + b, 0)
 
-  const secondsUntilFull = Math.floor((maxMoneyTotal / dailyIncomeTotal) * 60 * 60 * 24 + Date.now() / 1000)
+  const secondsUntilFull = (maxMoneyTotal / dailyIncomeTotal) * 60 * 60 * 24
+  const timeWhenFull = Math.floor(secondsUntilFull + Date.now() / 1000)
+  const timeUntil = getTimeUntil(timeWhenFull)
 
-  return getTimeUntil(secondsUntilFull, true)
+  return `${timeUntil.hours}h\xA0${timeUntil.minutes}m`
 }
 
-function calculateIncomeDiff(buildings, currentOptimizeLvl) {
-  let income = 0
+function calculateIncomeAfterResearch(buildings, currentOptimizeLvl) {
+  let oldIncome = 0
+  let newIncome = 0
   if (buildings) {
-    const oldIncome = Object.entries(buildings).reduce(
+    oldIncome = Object.entries(buildings).reduce(
       (prev, [buildingID, { quantity }]) =>
         prev + calcBuildingDailyIncome(parseInt(buildingID), quantity, currentOptimizeLvl),
       0
     )
-    const newIncome = Object.entries(buildings).reduce(
+    newIncome = Object.entries(buildings).reduce(
       (prev, [buildingID, { quantity }]) =>
         prev + calcBuildingDailyIncome(parseInt(buildingID), quantity, currentOptimizeLvl + 1),
       0
     )
-    income = newIncome - oldIncome
   }
-  return income
+  return {
+    newIncome,
+    oldIncome,
+  }
 }

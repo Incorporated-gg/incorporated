@@ -17,8 +17,7 @@
   }
 
   .statValue {
-    color: $color-brand-light;
-    text-shadow: -2px 2px 0px rgba($color-brand-dark, 0.25);
+    @include shadowText;
   }
 }
 

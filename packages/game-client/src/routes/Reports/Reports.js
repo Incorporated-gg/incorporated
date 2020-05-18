@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback, useRef } from 'react'
 import api from 'lib/api'
 import styles from './Reports.module.scss'
 import IncContainer from 'components/UI/inc-container'
@@ -6,6 +6,7 @@ import MissionRow from 'components/reports/mission-row/mission-row'
 import SimulatorModal from 'components/simulator-modal/simulator-modal'
 import IncButton from 'components/UI/inc-button'
 import IncInput from 'components/UI/inc-input/inc-input'
+import { useUserData } from 'lib/user'
 
 const initialMissionsState = {
   missions: [],
@@ -19,6 +20,7 @@ const initialMissionsState = {
 }
 
 export default function Reports() {
+  const userData = useUserData()
   const [showSimulatorModal, setShowSimulatorModal] = useState(false)
 
   const [missions, setMissions] = useState(initialMissionsState)
@@ -42,19 +44,28 @@ export default function Reports() {
       .catch(err => alert(err.message))
   }, [missionType, ownerType, sendType])
 
+  // Reload on mission end
+  const reloadOnMissionEnd = useRef(false)
+  useEffect(() => {
+    if (sendType !== 'sent') return
+
+    if (userData.active_mission) {
+      reloadOnMissionEnd.current = true
+      return
+    }
+    if (!reloadOnMissionEnd.current) return
+
+    reloadOnMissionEnd.current = false
+    reloadMissionsCallback()
+  }, [reloadMissionsCallback, sendType, userData.active_mission])
+
+  // Reload on start, and on type filters changed
   useEffect(() => reloadMissionsCallback(), [reloadMissionsCallback])
 
   return (
-    <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10, alignItems: 'center' }}>
+    <>
+      <div className={styles.filtersContainer}>
         <IncButton onClick={() => setShowSimulatorModal(true)}>Simulador</IncButton>
-        <SimulatorModal isOpen={showSimulatorModal} onRequestClose={() => setShowSimulatorModal(false)} />
-        <span>Ataques disponibles: {missions.todaysMissionLimits.attacksLeft}</span>
-        <span>
-          Recibidas hoy: {missions.todaysMissionLimits.receivedToday}/{missions.todaysMissionLimits.maxDefenses}
-        </span>
-      </div>
-      <div style={{ marginBottom: 10 }}>
         <IncInput
           showBorder
           type="select"
@@ -64,7 +75,7 @@ export default function Reports() {
           }}
           value={sendType}
           onChangeText={setSendType}
-        />{' '}
+        />
         <IncInput
           showBorder
           type="select"
@@ -75,7 +86,7 @@ export default function Reports() {
           }}
           value={missionType}
           onChangeText={setMissionType}
-        />{' '}
+        />
         <IncInput
           showBorder
           type="select"
@@ -86,18 +97,18 @@ export default function Reports() {
           value={ownerType}
           onChangeText={setOwnerType}
         />
+        <span>Ataques disponibles: {missions.todaysMissionLimits.attacksLeft}</span>
+        <span>
+          Recibidas hoy: {missions.todaysMissionLimits.receivedToday}/{missions.todaysMissionLimits.maxDefenses}
+        </span>
       </div>
+      <SimulatorModal isOpen={showSimulatorModal} onRequestClose={() => setShowSimulatorModal(false)} />
 
       <IncContainer darkBg>
         <div className={styles.missionContainer}>
           {missions.missions.length ? (
             missions.missions.map((mission, index) => (
-              <MissionRow
-                key={index}
-                mission={mission}
-                reloadMissionsCallback={reloadMissionsCallback}
-                showcaseUser={sendType === 'received' ? 'sender' : 'target'}
-              />
+              <MissionRow key={index} mission={mission} showcaseUser={sendType === 'received' ? 'sender' : 'target'} />
             ))
           ) : (
             <div style={{ gridColumn: '1 / 4' }}>
@@ -108,6 +119,6 @@ export default function Reports() {
           )}
         </div>
       </IncContainer>
-    </div>
+    </>
   )
 }

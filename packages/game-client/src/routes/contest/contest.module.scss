@@ -6,3 +6,10 @@
   font-size: $font-size-xlarge;
   margin-bottom: 10px;
 }
+
+.container {
+  padding: 10px;
+  tr:not(:last-child) td {
+    padding-bottom: 10px;
+  }
+}

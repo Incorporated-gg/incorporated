@@ -30,7 +30,7 @@ export default function ActiveMission() {
         <IncContainer withHairline borderSize={4} darkBg style={{ display: 'flex' }}>
           <div className={`${styles.stat} ${styles.target}`}>
             <Icon svg={missionSvg} width={37} height={28} />
-            <Icon className={styles.arrowsSvg} svg={require('./img/arrows.svg')} width={30} height={13} />
+            <Icon className={styles.arrowsSvg} iconName="arrows" width={30} height={13} />
             {userData.active_mission.target_hood ? (
               userData.active_mission.target_hood.name
             ) : (

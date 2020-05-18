@@ -25,7 +25,7 @@ export default function Contest({ contestID }) {
 
   return (
     <IncContainer darkBg>
-      <div style={{ padding: 10 }}>
+      <div className={styles.container}>
         {error && <h4>{error}</h4>}
         <div className={styles.title}>{contestIDToName(contestID)}</div>
         <table>
