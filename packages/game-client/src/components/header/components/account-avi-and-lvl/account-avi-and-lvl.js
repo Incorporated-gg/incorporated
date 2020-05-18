@@ -21,7 +21,7 @@ export default function AccountAviAndLvl() {
       </div>
       <div className={styles.lvlContainer}>
         <IncProgressBar
-          showBorder
+          borderSize={5}
           direction="vertical"
           progressPercentage={(userData.account.xp / userData.account.levelUpXP) * 100}
         />

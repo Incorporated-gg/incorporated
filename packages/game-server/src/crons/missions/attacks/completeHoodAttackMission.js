@@ -5,13 +5,16 @@ import { getUserAllianceID, getAllianceResearchBonusFromBuffs } from '../../../l
 import { simulateAttack } from 'shared-lib/missionsUtils'
 import { getUserResearchs } from '../../../lib/db/users'
 import { getHoodData, changeHoodGuards } from '../../../lib/db/hoods'
+import { PERSONNEL_OBJ } from 'shared-lib/personnelUtils'
+import { calcHoodMaxGuards } from 'shared-lib/hoodUtils'
 
 export async function completeHoodAttackMission(mission) {
   const data = JSON.parse(mission.data)
   // Complete the mission
   const hoodData = await getHoodData(data.hood)
   const attacker = await mysql.selectOne('SELECT id FROM users WHERE id=?', [mission.user_id])
-  if (!attacker || !hoodData || hoodData.owner) {
+
+  if (!attacker || !hoodData || !hoodData.isAttackable) {
     // Either the attacker does not exist anymore, or the hood was already conquered
     await mysql.query('DELETE FROM missions WHERE id=?', [mission.id])
     return
@@ -32,16 +35,7 @@ export async function completeHoodAttackMission(mission) {
   const unprotectedMoney = 0
   const guards = Math.floor(hoodData.guards)
 
-  const {
-    result,
-    survivingSabots,
-    survivingGuards,
-    survivingThieves,
-    gainedFame,
-    incomeForKilledTroops,
-    attackerTotalIncome,
-    realAttackerProfit,
-  } = simulateAttack({
+  const { survivingSabots, survivingGuards, survivingThieves, incomeForKilledTroops } = simulateAttack({
     buildingID: 1,
     defensorGuards: guards,
     attackerSabots: data.sabots,
@@ -56,6 +50,13 @@ export async function completeHoodAttackMission(mission) {
   const killedThieves = data.thieves - survivingThieves
   const killedGuards = guards - survivingGuards
 
+  const result = survivingGuards === 0 ? 'win' : 'lose'
+  const gainedFame = 0
+  const incomeFromConqueringHood = result === 'lose' ? 0 : 100 * calcHoodMaxGuards(hoodData.level)
+  const attackerTotalIncome = incomeForKilledTroops + incomeFromConqueringHood
+  const killedSabotsPrice = killedSabots * PERSONNEL_OBJ.sabots.price
+  const realAttackerProfit = attackerTotalIncome - killedSabotsPrice
+
   // Update mission state
   const attackReport = {
     killed_guards: killedGuards,
@@ -65,6 +66,7 @@ export async function completeHoodAttackMission(mission) {
     income_from_buildings: 0,
     income_from_troops: incomeForKilledTroops,
     income_from_robbed_money: 0,
+    income_from_conquering_hood: incomeFromConqueringHood,
     attacker_total_income: attackerTotalIncome,
   }
   const attackData = JSON.stringify({
@@ -99,8 +101,13 @@ export async function completeHoodAttackMission(mission) {
   }
 
   // Update hood owner
-  if (hoodData.guards < 1) {
-    await mysql.query('UPDATE hoods SET owner=? WHERE id=?', [attackerAllianceID, hoodData.id])
+  if (result === 'win') {
+    const tsNow = Math.floor(Date.now() / 1000)
+    await mysql.query('UPDATE hoods SET owner=?, last_owner_change_at=? WHERE id=?', [
+      attackerAllianceID,
+      tsNow,
+      hoodData.id,
+    ])
   }
 
   // Give money to attacker

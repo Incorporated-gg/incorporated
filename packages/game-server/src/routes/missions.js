@@ -190,8 +190,11 @@ module.exports = app => {
         }
         if (targetHoodData) {
           // Detect possible errors when attacking hoods
-          if (targetHoodData.owner) {
-            res.status(400).json({ error: 'Este barrio ya tiene dueño' })
+          if (!targetHoodData.isAttackable) {
+            res.status(400).json({
+              error:
+                'Este barrio ha sido atacado hace poco. Tendremos que esperar un tiempo a que la situación se calme',
+            })
             removeLock()
             return
           }

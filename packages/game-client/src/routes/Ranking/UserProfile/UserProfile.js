@@ -32,6 +32,7 @@ export default function Ranking() {
           <UserLink user={user} />
         </div>
         <div>Posición en ranking: {user.rank_position.toLocaleString()}</div>
+        <div>Puntos de servidor: {user.server_points.toLocaleString()}</div>
         <div>
           Ingresos diarios: {user.income.toLocaleString()} <Icon iconName="money" size={16} />
         </div>

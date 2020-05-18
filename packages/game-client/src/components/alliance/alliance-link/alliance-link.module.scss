@@ -11,15 +11,15 @@
   }
 
   .badge {
-    width: 18px;
-    height: 18px;
-    margin-right: 5px;
+    width: 1.33em;
+    height: 1.33em;
+    margin-right: 0.5em;
   }
   .name {
     vertical-align: middle;
     color: $color-brand;
     text-transform: uppercase;
-    font-size: $font-size-small;
+    font-size: 0.833em;
   }
 }
 
