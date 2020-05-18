@@ -29,7 +29,7 @@ export default async function runJustAfterNewDay(finishedServerDay) {
 }
 
 async function giveOutContestPrizesAndMessages(ongoingContest) {
-  const contestWinners = (await getContestCurrentScoreboard(ongoingContest.id)).slice(0, 100)
+  const contestWinners = await getContestCurrentScoreboard(ongoingContest.id)
 
   const messagesCreatedAt = Math.floor(Date.now() / 1000)
   await Promise.all(
@@ -92,56 +92,26 @@ async function getContestCurrentScoreboard(contestID) {
   return scoreBoard
 }
 
-const updateOngoingContest = async (ongoingContestID, newScoreboardRaw) => {
-  // Update scoreboards of ongoing contests
-  const newScoreboard = newScoreboardRaw.map((row, rank) => {
-    const score = row.score ? parseInt(row.score) : 0
+async function updateOngoingContest(ongoingContestID, newScoreboardRaw) {
+  // Update scoreboards of ongoing contest
+  const newScoreboard = newScoreboardRaw.map((row, index) => {
     return {
-      score: score,
-      rank: rank + 1,
+      score: parseInt(row.score) || 0,
+      rank: index + 1,
       user_id: row.user_id,
     }
   })
-  const previousScoreboardRaw = await getContestCurrentScoreboard(ongoingContestID)
-  const previousScoreboard = previousScoreboardRaw.map(row => {
-    const score = row.score ? parseInt(row.score) : 0
-    return {
-      score: score,
-      rank: parseInt(row.rank),
-      user_id: row.user_id,
-    }
-  })
-  newScoreboard.forEach(async scoreboardRow => {
-    const previousUserRecord = previousScoreboard.find(row => row.user_id === scoreboardRow.user_id)
-    if (previousUserRecord) {
-      if (previousUserRecord.score === scoreboardRow.score && previousUserRecord.rank === scoreboardRow.rank) {
-        return
-      }
-      // The user stays in the scoreboards
-      await mysql.query('UPDATE contests_scoreboards SET score = ?, rank = ? WHERE user_id = ? AND contest_id = ?', [
-        scoreboardRow.score,
-        scoreboardRow.rank,
-        scoreboardRow.user_id,
-        ongoingContestID,
-      ])
-    } else {
-      // The user has entered the scoreboards
+
+  await mysql.query('DELETE FROM contests_scoreboards WHERE contest_id =?', [ongoingContestID])
+
+  await Promise.all(
+    newScoreboard.map(async scoreboardRow => {
       await mysql.query('INSERT INTO contests_scoreboards (contest_id, user_id, score, rank) VALUES (?, ?, ?, ?)', [
         ongoingContestID,
         scoreboardRow.user_id,
         scoreboardRow.score,
         scoreboardRow.rank,
       ])
-    }
-  })
-  // Cleanup users that left the scoreboards
-  const staleRows = previousScoreboard.filter(
-    oldRow => !newScoreboard.find(newRow => newRow.user_id === oldRow.user_id)
+    })
   )
-  staleRows.forEach(async staleRow => {
-    await mysql.query('DELETE FROM contests_scoreboards WHERE contest_id = ? AND user_id = ?', [
-      ongoingContestID,
-      staleRow.user_id,
-    ])
-  })
 }

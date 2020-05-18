@@ -20,28 +20,34 @@ module.exports = app => {
 async function authMiddleware(req, res, next) {
   req.userData = null
 
-  if (req.headers.authorization && req.headers.authorization.startsWith('Basic ')) {
-    const sessionID = req.headers.authorization.replace('Basic ', '')
-    const userID = await getUserIDFromSessionID(sessionID)
-    if (userID) {
-      ;[req.userData] = await mysql.query('SELECT id, username, money FROM users WHERE id=?', [userID])
+  try {
+    if (req.headers.authorization && req.headers.authorization.startsWith('Basic ')) {
+      const sessionID = req.headers.authorization.replace('Basic ', '')
+      const userID = await getUserIDFromSessionID(sessionID)
+      if (userID) {
+        ;[req.userData] = await mysql.query('SELECT id, username, money FROM users WHERE id=?', [userID])
 
-      await runUserMoneyUpdate(req.userData.id)
+        await runUserMoneyUpdate(req.userData.id)
 
-      const [researchs, personnel, buildings] = await Promise.all([
-        getUserResearchs(req.userData.id),
-        getUserPersonnel(req.userData.id),
-        getUserBuildings(req.userData.id),
-      ])
+        const [researchs, personnel, buildings] = await Promise.all([
+          getUserResearchs(req.userData.id),
+          getUserPersonnel(req.userData.id),
+          getUserBuildings(req.userData.id),
+        ])
 
-      req.userData.researchs = researchs
-      req.userData.personnel = personnel
-      req.userData.buildings = buildings
+        req.userData.researchs = researchs
+        req.userData.personnel = personnel
+        req.userData.buildings = buildings
+      }
+      if (!req.userData) {
+        res.status(400).json({ error: 'Sesión caducada', error_code: 'invalid_session_id' })
+        return
+      }
     }
-    if (!req.userData) {
-      res.status(400).json({ error: 'Sesión caducada', error_code: 'invalid_session_id' })
-      return
-    }
+  } catch (err) {
+    res.status(500).json({ error: 'Error interno: ' + err.message })
+    console.warn(err.message)
+    return
   }
 
   next()

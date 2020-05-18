@@ -20,7 +20,7 @@ export async function getIncomeScoreboard(weekFirstServerDay) {
     .sort((a, b) => {
       return a.income_diff > b.income_diff ? -1 : 1
     })
-    .slice(0, 30)
+    .slice(0, 100)
     .map(row => ({
       user_id: row.user_id,
       score: row.income_diff,

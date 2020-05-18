@@ -35,7 +35,7 @@ export async function getDestructionScoreboard(weekFirstServerDay) {
     .sort((a, b) => {
       return a[1] > b[1] ? -1 : 1
     })
-    .slice(0, 30)
+    .slice(0, 100)
     .map(([userID, gainedMoney]) => ({
       user_id: userID,
       score: gainedMoney,

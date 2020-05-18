@@ -28,7 +28,7 @@ export async function getRobbingScoreboard(weekFirstServerDay) {
     .sort((a, b) => {
       return a[1] > b[1] ? -1 : 1
     })
-    .slice(0, 30)
+    .slice(0, 100)
     .map(([userID, robbedMoney]) => ({
       user_id: userID,
       score: robbedMoney,
