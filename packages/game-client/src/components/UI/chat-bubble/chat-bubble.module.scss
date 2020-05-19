@@ -113,16 +113,19 @@
           cursor: pointer;
           transition: transform .25s ease;
           outline: none;
+          padding: 10px 5px;
+          border-radius: 20px;
+          background: $gradient-brand;
 
           svg * {
-            fill: $color-brand-light !important;
+            fill: #222 !important;
           }
         }
 
         .chatWindowSidebarToggle {
           transform: rotate(180deg);
           cursor: pointer;
-          margin-top: 20px;
+          margin-top: 10px;
         }
       }
 
@@ -139,11 +142,12 @@
           text-transform: uppercase;
           font-family: $font-family-title;
           font-weight: 600;
-          margin-bottom: 20px;
+          margin-bottom: 10px;
           font-size: $font-size-medium;
 
           @media screen and (min-width: $breakpoint-desktop) {
             font-size: $font-size-large;
+            margin-bottom: 20px;
           }
         }
 
@@ -160,15 +164,8 @@
             border: none;
             background: transparent;
             cursor: pointer;
-            font-size: $font-size-small;
-
-            @media screen and (min-width: $breakpoint-desktop) {
-              font-size: $font-size-medium;
-            }
-
-            &:not(:last-child) {
-              margin-bottom: 15px;
-            }
+            font-size: $font-size-medium;
+            padding: 11px 0;
 
             .chatRoomItemButtonUnread {
               padding: 2px 15px;
@@ -223,11 +220,7 @@
             margin-bottom: 5px;
             flex-grow: 1;
             font-weight: 600;
-            font-size: $font-size-medium;
-
-            @media screen and (min-width: $breakpoint-desktop) {
-              font-size: $font-size-large;
-            }
+            font-size: $font-size-large;
           }
 
           .chatOptionsButton {
