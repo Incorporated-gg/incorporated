@@ -1,5 +1,5 @@
-import mysql from '../../../lib/mysql'
-import { getUserResearchs } from '../../../lib/db/users'
+import mysql from '../../../src/lib/mysql'
+import { getUserResearchs } from '../../../src/lib/db/users'
 import { calcUserResearchsTotalSpending } from '../miscUserUpdates'
 
 // Has to return an array of objects containing { score, user_id }

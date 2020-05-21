@@ -3,7 +3,6 @@ import http from 'http'
 import socketIO from 'socket.io'
 import { setupRoutes } from './routes'
 import { setupChat } from './chat'
-import setupCron from './crons'
 import './express-async-errors-patch'
 
 // Parse application/json
@@ -54,9 +53,7 @@ function errorHandler(err, req, res, next) {
   res.status(500).json({ error: 'Error 500: Algo salió mal' })
 }
 
-server.listen(3101, () => {
-  console.log('Server listening on port 3101!')
+const port = 3101
+server.listen(port, () => {
+  console.log(`Game-server http server listening on port ${port}!`)
 })
-
-// Setup crons
-setupCron()

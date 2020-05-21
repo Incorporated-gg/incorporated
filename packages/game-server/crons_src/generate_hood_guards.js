@@ -1,5 +1,5 @@
-import mysql from '../lib/mysql'
-import { getAllHoodsData } from '../lib/db/hoods'
+import mysql from '../src/lib/mysql'
+import { getAllHoodsData } from '../src/lib/db/hoods'
 import { calcHoodMaxGuards, calcHoodGuardsRegenerationPerDay } from 'shared-lib/hoodUtils'
 const frequencyMs = 60 * 1000
 

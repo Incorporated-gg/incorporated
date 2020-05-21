@@ -1,9 +1,9 @@
-import mysql from '../../../lib/mysql'
-import { getAllianceMembers } from '../../../lib/db/alliances'
-import { sendAccountHook } from '../../../lib/accountInternalApi'
-import { sendMessage } from '../../../lib/db/users'
-import { getServerDay, getInitialUnixTimestampOfServerDay } from '../../../lib/serverTime'
-import { changeHoodsOwner } from '../../../lib/db/hoods'
+import mysql from '../../../src/lib/mysql'
+import { getAllianceMembers } from '../../../src/lib/db/alliances'
+import { sendAccountHook } from '../../../src/lib/accountInternalApi'
+import { sendMessage } from '../../../src/lib/db/users'
+import { getServerDay, getInitialUnixTimestampOfServerDay } from '../../../src/lib/serverTime'
+import { changeHoodsOwner } from '../../../src/lib/db/hoods'
 
 const EXTRA_POINTS_PER_OBJECTIVE = 40
 

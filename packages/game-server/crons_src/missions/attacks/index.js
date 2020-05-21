@@ -1,5 +1,5 @@
 import { completeUserAttackMission } from './completeUserAttackMission'
-import mysql from '../../../lib/mysql'
+import mysql from '../../../src/lib/mysql'
 import { completeHoodAttackMission } from './completeHoodAttackMission'
 
 function onlyUnique(value, index, self) {

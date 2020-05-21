@@ -1,7 +1,7 @@
-import mysql from '../../lib/mysql'
+import mysql from '../../src/lib/mysql'
 import { buildingsList } from 'shared-lib/buildingsUtils'
-import { getServerDate, getInitialUnixTimestampOfServerDay } from '../../lib/serverTime'
-import { sendAccountHook } from '../../lib/accountInternalApi'
+import { getServerDate, getInitialUnixTimestampOfServerDay } from '../../src/lib/serverTime'
+import { sendAccountHook } from '../../src/lib/accountInternalApi'
 
 export default async function monopolies(willFinishServerDay) {
   const serverDate = getServerDate(getInitialUnixTimestampOfServerDay(willFinishServerDay))

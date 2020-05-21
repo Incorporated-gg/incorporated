@@ -1,6 +1,6 @@
-import tasksProgressHook from '../../../lib/db/tasks/tasksProgressHook'
-import { sendAccountHook } from '../../../lib/accountInternalApi'
-import mysql from '../../../lib/mysql'
+import tasksProgressHook from '../../../src/lib/db/tasks/tasksProgressHook'
+import { sendAccountHook } from '../../../src/lib/accountInternalApi'
+import mysql from '../../../src/lib/mysql'
 import {
   getUserResearchs,
   getUserPersonnel,
@@ -8,12 +8,12 @@ import {
   sendMessage,
   runUserMoneyUpdate,
   getUserTodaysMissionsLimits,
-} from '../../../lib/db/users'
+} from '../../../src/lib/db/users'
 import {
   getUserAllianceID,
   getAllianceResearchBonusFromBuffs,
   getActiveWarBetweenAlliances,
-} from '../../../lib/db/alliances'
+} from '../../../src/lib/db/alliances'
 import { calcBuildingMaxMoney } from 'shared-lib/buildingsUtils'
 import { simulateAttack } from 'shared-lib/missionsUtils'
 import { onNewWarAttack } from '../../on_day_reset/alliance_wars'

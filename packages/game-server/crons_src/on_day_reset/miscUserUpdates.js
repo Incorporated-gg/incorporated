@@ -1,8 +1,8 @@
-import mysql from '../../lib/mysql'
-import { getAllHoodsData } from '../../lib/db/hoods'
-import { getAllianceMembers } from '../../lib/db/alliances'
+import mysql from '../../src/lib/mysql'
+import { getAllHoodsData } from '../../src/lib/db/hoods'
+import { getAllianceMembers } from '../../src/lib/db/alliances'
 import { calcHoodDailyServerPoints } from 'shared-lib/hoodUtils'
-import { getUserResearchs } from '../../lib/db/users'
+import { getUserResearchs } from '../../src/lib/db/users'
 import { calcResearchPrice } from 'shared-lib/allianceUtils'
 import { MAX_ACCUMULATED_ATTACKS } from 'shared-lib/missionsUtils'
 

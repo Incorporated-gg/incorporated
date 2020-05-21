@@ -47,6 +47,7 @@ function errorHandler(err: Error, req: express.Request, res: express.Response): 
 }
 app.use(errorHandler)
 
-server.listen(3001, () => {
-  console.log('Server listening on port 3001!')
+const port = 3001
+server.listen(port, () => {
+  console.log(`Account-server listening on port ${port}!`)
 })

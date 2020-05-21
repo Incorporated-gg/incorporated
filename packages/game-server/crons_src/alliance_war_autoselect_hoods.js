@@ -1,8 +1,8 @@
-import mysql from '../lib/mysql'
-import { getWarData } from '../lib/db/alliances'
+import mysql from '../src/lib/mysql'
+import { getWarData } from '../src/lib/db/alliances'
 import { getMaxHoodsAttackedPerWar } from 'shared-lib/allianceUtils'
-import { getServerDay } from '../lib/serverTime'
-import { isHoodInWar } from '../routes/alliances/war'
+import { getServerDay } from '../src/lib/serverTime'
+import { isHoodInWar } from '../src/routes/alliances/war'
 const frequencyMs = 5 * 60 * 1000
 
 async function run() {

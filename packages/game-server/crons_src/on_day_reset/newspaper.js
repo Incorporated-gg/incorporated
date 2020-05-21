@@ -1,5 +1,5 @@
-import mysql from '../../lib/mysql'
-import generateNewspaper from '../../lib/newspaper/generate_newspaper'
+import mysql from '../../src/lib/mysql'
+import generateNewspaper from '../../src/lib/newspaper/generate_newspaper'
 
 export default async function runJustAfterNewDay(finishedServerDay) {
   await generateAndUpdateDB(finishedServerDay)

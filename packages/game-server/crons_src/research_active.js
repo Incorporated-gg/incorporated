@@ -1,5 +1,5 @@
-import mysql from '../lib/mysql'
-import { upgradeUserResearch } from '../lib/db/researchs'
+import mysql from '../src/lib/mysql'
+import { upgradeUserResearch } from '../src/lib/db/researchs'
 export const frequencyMs = 10 * 1000
 
 export async function run() {

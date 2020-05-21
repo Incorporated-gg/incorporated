@@ -1,4 +1,4 @@
-import mysql from '../../../lib/mysql'
+import mysql from '../../../src/lib/mysql'
 import { calcSpiesCaptured, calcInformationPercentageObtained } from './calcs'
 import {
   getUserResearchs,
@@ -6,7 +6,7 @@ import {
   getUserPersonnel,
   runUserMoneyUpdate,
   getUserTodaysMissionsLimits,
-} from '../../../lib/db/users'
+} from '../../../src/lib/db/users'
 
 export async function doSpyMissions() {
   const tsNow = Math.floor(Date.now() / 1000)

@@ -1,5 +1,5 @@
-import mysql from '../lib/mysql'
-import { getAllianceResources, getAllianceResearchs } from '../lib/db/alliances'
+import mysql from '../src/lib/mysql'
+import { getAllianceResources, getAllianceResearchs } from '../src/lib/db/alliances'
 import { calcResourceGeneration, calcResourceMax } from 'shared-lib/allianceUtils'
 const frequencyMs = 15 * 1000 // 15 for dev. 60 should be fine for prod, but can be tuned if needed
 

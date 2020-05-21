@@ -1,5 +1,5 @@
-import { getServerDay, getInitialUnixTimestampOfServerDay } from '../../lib/serverTime'
-import mysql from '../../lib/mysql'
+import { getServerDay, getInitialUnixTimestampOfServerDay } from '../../src/lib/serverTime'
+import mysql from '../../src/lib/mysql'
 
 import miscUserUpdates from './miscUserUpdates'
 import newspaper from './newspaper'

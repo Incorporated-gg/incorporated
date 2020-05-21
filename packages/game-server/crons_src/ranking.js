@@ -1,5 +1,5 @@
-import mysql from '../lib/mysql'
-import { getUserDailyIncome } from '../lib/db/users'
+import mysql from '../src/lib/mysql'
+import { getUserDailyIncome } from '../src/lib/db/users'
 const frequencyMs = 5 * 60 * 1000
 
 async function doIncomeRanking() {

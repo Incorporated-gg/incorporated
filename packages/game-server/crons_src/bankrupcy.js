@@ -1,5 +1,5 @@
-import mysql from '../lib/mysql'
-import { getUserPersonnel, getHasActiveMission } from '../lib/db/users'
+import mysql from '../src/lib/mysql'
+import { getUserPersonnel, getHasActiveMission } from '../src/lib/db/users'
 import { PERSONNEL_OBJ } from 'shared-lib/personnelUtils'
 const frequencyMs = 60 * 1000
 

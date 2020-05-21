@@ -1,5 +1,5 @@
-import mysql from '../../../lib/mysql'
-import { getUserDailyIncome } from '../../../lib/db/users'
+import mysql from '../../../src/lib/mysql'
+import { getUserDailyIncome } from '../../../src/lib/db/users'
 
 // Has to return an array of objects containing { score, user_id }
 export async function getIncomeScoreboard(weekFirstServerDay) {

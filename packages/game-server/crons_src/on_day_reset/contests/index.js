@@ -1,10 +1,10 @@
-import mysql from '../../../lib/mysql'
-import { getServerDate, getInitialUnixTimestampOfServerDay, getServerDay } from '../../../lib/serverTime'
+import mysql from '../../../src/lib/mysql'
+import { getServerDate, getInitialUnixTimestampOfServerDay, getServerDay } from '../../../src/lib/serverTime'
 import { getIncomeScoreboard } from './income'
 import { getDestructionScoreboard } from './destruction'
 import { getResearchScoreboard } from './research'
 import { getRobbingScoreboard } from './robbing'
-import { sendAccountHook } from '../../../lib/accountInternalApi'
+import { sendAccountHook } from '../../../src/lib/accountInternalApi'
 
 const contestsList = ['income', 'destruction', 'research', 'robbing']
 

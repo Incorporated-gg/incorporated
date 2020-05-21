@@ -1,7 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 
-export default function setupCron() {
+function setupCron() {
   const files = fs.readdirSync(__dirname).filter(f => f !== 'index.js')
 
   if (!files.length) {
@@ -27,3 +27,6 @@ export default function setupCron() {
 
   require('./on_day_reset').runOnce()
 }
+
+setupCron()
+console.log('Game-server crons running!')

@@ -1,6 +1,6 @@
-import mysql from '../lib/mysql'
+import mysql from '../src/lib/mysql'
 import { LOAN_DAYS_DURATION } from 'shared-lib/loansUtils'
-import { sendMessage } from '../lib/db/users'
+import { sendMessage } from '../src/lib/db/users'
 const frequencyMs = 60 * 1000
 
 const run = async () => {
