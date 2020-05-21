@@ -25,16 +25,15 @@
     color: $color-text-light;
     justify-content: space-between;
     align-items: center;
-    line-height: 1em;
     font-family: $font-family-title;
     font-weight: 600;
     letter-spacing: 1px;
     line-height: 1;
-    padding: 4.5px 3px;
+    padding: 4.5px 4px;
     font-size: $font-size-large;
 
     @media (max-width: $breakpoint-small - 1) {
-      padding: 6.5px 3px;
+      padding: 7.5px 4px;
       font-size: $font-size-medium;
     }
 

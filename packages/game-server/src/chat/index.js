@@ -10,6 +10,8 @@ import Conversation from './Conversation'
 ) */
 /* const hGetAsync = promisify(client.hget).bind(client) */
 
+const _DEV_ = process.env.NODE_ENV === 'development'
+
 const publicChannels = [
   {
     id: 'globalRoom',
@@ -83,7 +85,7 @@ export const setupChat = io => {
       }
     })
     .on('connection', async socket => {
-      console.log(socket.user.id + ' connected')
+      if (_DEV_) console.log(socket.user.id + ' connected')
       const publicRooms = await Promise.all(
         publicChannels.map(async publicChannel => {
           const conv = new Conversation(publicChannel)
@@ -110,7 +112,7 @@ export const setupChat = io => {
       socket.emit('chatRoomList', user.conversations.concat(publicRooms))
 
       socket.on('message', async ({ room: conversationId, text }) => {
-        console.log(conversationId, text)
+        if (_DEV_) console.log(conversationId, text)
         const thisRoom = new Conversation({
           id: conversationId,
         })
@@ -145,7 +147,7 @@ export const setupChat = io => {
       }) */
 
       socket.on('disconnect', () => {
-        console.log(socket.user.id + ' disconnected')
+        if (_DEV_) console.log(socket.user.id + ' disconnected')
       })
 
       socket.on('createChat', async withUserName => {
