@@ -10,6 +10,12 @@ import {
 import PropTypes from 'prop-types'
 import IncButton from 'components/UI/inc-button'
 import IncInput from 'components/UI/inc-input/inc-input'
+import styles from './mission-modal-spy.module.scss'
+import missionModalStyles from '../../mission-modal.module.scss'
+import Icon from 'components/icon'
+import IncProgressBar from 'components/UI/inc-progress-bar'
+import { getTimeUntil } from 'lib/utils'
+import IncContainer from 'components/UI/inc-container'
 
 MissionModalSpy.propTypes = {
   user: PropTypes.object.isRequired,
@@ -17,22 +23,22 @@ MissionModalSpy.propTypes = {
 }
 export default function MissionModalSpy({ user, onRequestClose }) {
   const userData = useUserData()
-  const [numTroops, setNumTroops] = useState(userData.personnel.spies)
-  const isFormReady = numTroops > 0
+  const [numSpies, setNumSpies] = useState(userData.personnel.spies)
+  const isFormReady = numSpies > 0
 
   const espionageProbabilities = calcSpyFailProbabilities({
     resLvlAttacker: userData.researchs[1],
     resLvLDefender: user.spy_research_level,
-    spiesSent: numTroops,
+    spiesSent: numSpies,
   })
   const informationPercentageRange = calcSpyInformationPercentageRange({
     resLvlAttacker: userData.researchs[1],
     resLvLDefender: user.spy_research_level,
-    spiesRemaining: numTroops,
+    spiesRemaining: numSpies,
   })
 
   useEffect(() => {
-    setNumTroops(userData.personnel.spies)
+    setNumSpies(userData.personnel.spies)
   }, [userData.personnel.sabots, userData.personnel.spies])
 
   const startMission = useCallback(
@@ -43,47 +49,56 @@ export default function MissionModalSpy({ user, onRequestClose }) {
         .post('/v1/missions/create', {
           mission_type: 'spy',
           target_user: user.username,
-          sent_spies: numTroops,
+          sent_spies: numSpies,
         })
         .then(() => {
           onRequestClose()
         })
         .catch(error => alert(error))
     },
-    [isFormReady, numTroops, onRequestClose, user.username]
+    [isFormReady, numSpies, onRequestClose, user.username]
   )
-
-  const troopName = PERSONNEL_OBJ.spies.name
 
   const missionSeconds = calculateMissionTime('spy')
 
   return (
     <>
-      <div>Usuario a espiar: {user.username}</div>
-      <div>Tiempo de mision: {missionSeconds}s</div>
-      <br />
+      <div className={missionModalStyles.title}>Espiar a {user.username}</div>
+
       <div>
-        <p>Probabilidades de ser detectados:</p>
+        <p className={styles.subtitle}>Probabilidades de ser detectados:</p>
         <p>Por nivel: {Math.round(espionageProbabilities.level * 10) / 10}%</p>
         <p>Por nº de espías: {Math.round(espionageProbabilities.spies * 10) / 10}%</p>
         <p>Total: {Math.round(espionageProbabilities.total * 10) / 10}%</p>
       </div>
+
       <br />
+
       <div>
-        <p>Información obtenida con {numTroops.toLocaleString()} espías:</p>
+        <p className={styles.subtitle}>Información obtenida con {numSpies.toLocaleString()} espías:</p>
         <p>Mínimo: {Math.floor(informationPercentageRange.min * 10) / 10}%</p>
         <p>Máximo: {Math.floor(informationPercentageRange.max * 10) / 10}%</p>
       </div>
+
       <br />
-      <div>
-        <label>
-          {troopName}:
-          <IncInput showBorder min="1" type="number" value={numTroops} onChangeText={setNumTroops} />
+
+      <IncContainer>
+        <label className={missionModalStyles.inputLabel}>
+          <div>{PERSONNEL_OBJ.spies.name}</div>
+          <IncInput min={0} max={userData.personnel.spies} type="number" value={numSpies} onChangeText={setNumSpies} />
         </label>
-      </div>
+      </IncContainer>
+
       <br />
-      <IncButton onClick={startMission} disabled={!isFormReady}>
-        Enviar
+
+      <IncButton outerStyle={{ width: '100%' }} onClick={startMission} disabled={!isFormReady}>
+        <div className={missionModalStyles.sendButtonTimer}>
+          <div>{getTimeUntil(Date.now() / 1000 + missionSeconds, true)}</div>
+          <IncProgressBar direction="horizontal" color="red" progressPercentage={100} />
+        </div>
+        <div className={missionModalStyles.sendButtonTitle}>
+          ESPIAR <Icon iconName="spy_map" size={30} />
+        </div>
       </IncButton>
     </>
   )

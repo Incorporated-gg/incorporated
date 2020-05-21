@@ -52,7 +52,7 @@
   }
 
   .corpus {
-    @include pascalText();
+    @include pascalText;
     flex-grow: 1;
     flex-basis: 1px;
     filter: url(#newspaperGrainFilter);

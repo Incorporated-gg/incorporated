@@ -8,7 +8,7 @@
 }
 
 .doResearchTitle {
-  @include pascalText();
+  @include pascalText;
   font-family: $font-family-title;
   margin-top: 10px;
 }

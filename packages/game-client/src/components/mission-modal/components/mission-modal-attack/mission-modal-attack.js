@@ -1,12 +1,17 @@
 import React, { useState, useCallback, useEffect } from 'react'
 import api from 'lib/api'
 import { useUserData } from 'lib/user'
+import { getTimeUntil } from 'lib/utils'
 import { buildingsList } from 'shared-lib/buildingsUtils'
 import { PERSONNEL_OBJ } from 'shared-lib/personnelUtils'
 import { calculateMissionTime } from 'shared-lib/missionsUtils'
 import PropTypes from 'prop-types'
 import IncButton from 'components/UI/inc-button'
 import IncInput from 'components/UI/inc-input/inc-input'
+import missionModalStyles from '../../mission-modal.module.scss'
+import IncContainer from 'components/UI/inc-container'
+import Icon from 'components/icon'
+import IncProgressBar from 'components/UI/inc-progress-bar'
 
 MissionModalAttack.propTypes = {
   user: PropTypes.object,
@@ -57,15 +62,14 @@ export default function MissionModalAttack({ user, hood, onRequestClose }) {
 
   return (
     <>
-      <div>{hood ? <span>Barrio a atacar: {hood.name}</span> : <span>Usuario a atacar: {user.username}</span>}</div>
-      <div>Tiempo de mision: {missionSeconds}s</div>
-      <br />
-      <div>
-        <label>
-          {PERSONNEL_OBJ.sabots.name}
-          {': '}
+      <div className={missionModalStyles.title}>
+        Atacar {hood ? <span>{hood.name}</span> : <span>A {user.username}</span>}
+      </div>
+
+      <IncContainer>
+        <label className={missionModalStyles.inputLabel}>
+          <div>{PERSONNEL_OBJ.sabots.name}</div>
           <IncInput
-            showBorder
             min={0}
             max={userData.personnel.sabots}
             type="number"
@@ -73,14 +77,14 @@ export default function MissionModalAttack({ user, hood, onRequestClose }) {
             onChangeText={setNumSabots}
           />
         </label>
-      </div>
+      </IncContainer>
+
       <br />
-      <div>
-        <label>
-          {PERSONNEL_OBJ.thieves.name}
-          {': '}
+
+      <IncContainer>
+        <label className={missionModalStyles.inputLabel}>
+          <div>{PERSONNEL_OBJ.thieves.name}</div>
           <IncInput
-            showBorder
             min={0}
             max={userData.personnel.thieves}
             type="number"
@@ -88,24 +92,35 @@ export default function MissionModalAttack({ user, hood, onRequestClose }) {
             onChangeText={setNumThieves}
           />
         </label>
-      </div>
+      </IncContainer>
+
       <br />
-      <div>
-        {user && (
-          <label>
-            <span>Edificio: </span>
+
+      {user && (
+        <IncContainer>
+          <label className={missionModalStyles.inputLabel}>
+            <div>Edificio</div>
             <IncInput
-              showBorder
               type="select"
               options={buildingsOptionsObj}
               value={targetBuilding}
               onChangeText={bID => setTargetBuilding(parseInt(bID))}
             />
           </label>
-        )}
-      </div>
+        </IncContainer>
+      )}
+
       <br />
-      <IncButton onClick={startMission}>Enviar</IncButton>
+
+      <IncButton outerStyle={{ width: '100%' }} onClick={startMission}>
+        <div className={missionModalStyles.sendButtonTimer}>
+          <div>{getTimeUntil(Date.now() / 1000 + missionSeconds, true)}</div>
+          <IncProgressBar direction="horizontal" color="red" progressPercentage={100} />
+        </div>
+        <div className={missionModalStyles.sendButtonTitle}>
+          ATACAR <Icon iconName="dynamite_stack" size={30} />
+        </div>
+      </IncButton>
     </>
   )
 }

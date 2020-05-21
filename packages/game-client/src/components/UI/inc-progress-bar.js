@@ -6,6 +6,7 @@ import useWindowSize from 'lib/useWindowSize'
 IncProgressBar.propTypes = {
   progressPercentage: PropTypes.number.isRequired,
   direction: PropTypes.oneOf(['vertical', 'horizontal']),
+  color: PropTypes.oneOf(['green', 'red']),
   children: PropTypes.node,
   minSize: PropTypes.number,
   noBackground: PropTypes.bool,
@@ -15,6 +16,7 @@ IncProgressBar.propTypes = {
 export default function IncProgressBar({
   progressPercentage,
   direction = 'horizontal',
+  color = 'green',
   children,
   borderSize = 0,
   minSize,
@@ -22,21 +24,23 @@ export default function IncProgressBar({
   visualSteps,
 }) {
   const windowSize = useWindowSize()
-  const progressStyle = { [direction === 'vertical' ? 'height' : 'width']: progressPercentage + '%' }
+  const progressStyle = {
+    [direction === 'vertical' ? 'height' : 'width']: progressPercentage + '%',
+  }
   const bgStyle = {
-    [direction === 'horizontal' ? 'minHeight' : 'minWidth']: minSize || (windowSize.width < 425 ? 20 : 30),
     background: noBackground ? 'none' : undefined,
   }
   const containerStyle = {
     padding: borderSize,
     [direction === 'horizontal' ? 'paddingLeft' : 'paddingBottom']: 0,
+    [direction === 'horizontal' ? 'minHeight' : 'minWidth']: minSize || (windowSize.width < 425 ? 20 : 30),
   }
 
   return (
     <div
       className={`${styles.progress} ${borderSize ? styles.withBorder : ''} ${
         direction === 'vertical' ? styles.vertical : styles.horizontal
-      }`}
+      } ${color === 'green' ? styles.colorGreen : styles.colorRed}`}
       style={containerStyle}>
       <div className={styles.bg} style={bgStyle}>
         <div className={styles.inner} style={progressStyle} />

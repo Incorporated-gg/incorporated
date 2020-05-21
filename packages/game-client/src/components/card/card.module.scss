@@ -60,8 +60,8 @@
     padding: 7px 5px;
 
     .name {
-      @include gradientText();
-      @include pascalText();
+      @include gradientText;
+      @include pascalText;
       font-family: $font-family-title;
       text-transform: uppercase;
       transition: all ease-in-out .3s;

@@ -1,0 +1,72 @@
+@import '../../../variables';
+
+.container {
+  display: flex;
+  flex-direction: row;
+}
+
+.item {
+  @include pascalText;
+  color: $color-text-light;
+  font-family: $font-family-title;
+  padding: 5px 10px;
+  cursor: pointer;
+  font-size: $font-size-small;
+
+  @media (min-width: $breakpoint-medium) {
+    font-size: $font-size-medium;
+  }
+
+  &.selected {
+    @include gradientText;
+  }
+
+
+  &:first-child {
+    padding-left: 15px;
+  }
+
+  &:last-child {
+    padding-right: 15px;
+  }
+}
+
+
+.markers {
+  position: absolute;
+  left: 0;
+  height: 100%;
+  overflow: hidden;
+  width: 1em;
+  margin-left: -0.5em;
+  transition: all linear .1s;
+  pointer-events: none;
+
+  &::before {
+    display: block;
+    content: "";
+    width: 0.5em;
+    height: 0.5em;
+    background-color: $color-brand-light;
+    transform: rotate(45deg);
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: -0.25em;
+    margin: auto;
+  }
+
+  &::after {
+    display: block;
+    content: "";
+    width: 0.5em;
+    height: 0.5em;
+    background-color: $color-brand-dark;
+    transform: rotate(45deg);
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -0.25em;
+    margin: auto;
+  }
+}

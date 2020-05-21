@@ -48,7 +48,7 @@
       overflow: hidden; // In small devices (or other languages), the title text might overflow. Alternatively, we could make the text smaller
     
       .title {
-        @include pascalText();
+        @include pascalText;
         font-family: $font-family-title;
         text-transform: uppercase;
         display: inline-block;

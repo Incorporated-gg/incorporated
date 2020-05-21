@@ -1,0 +1,12 @@
+.containerOuter {
+  $indent: 15px;
+  clip-path: polygon(calc(100% - #{$indent}) 0, 100% 50%, calc(100% - #{$indent}) 100%, #{$indent} 100%, 0 50%, #{$indent} 0);
+}
+.containerInner { 
+  margin: 0 3px;
+  $indent: 10px;
+  clip-path: polygon(calc(100% - #{$indent}) 0, 100% 50%, calc(100% - #{$indent}) 100%, #{$indent} 100%, 0 50%, #{$indent} 0);
+  &.darkBg {
+    background-color: #343434;
+  }
+}

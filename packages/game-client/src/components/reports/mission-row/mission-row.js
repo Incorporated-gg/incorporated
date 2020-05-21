@@ -54,7 +54,7 @@ export default function MissionRow({ mission, showcaseUser = 'target' }) {
 
   const isMyMission = mission.user.id === userData.id
 
-  const iconSvg = mission.mission_type === 'attack' ? require('./img/attack.svg') : require('./img/spy.svg')
+  const iconProps = mission.mission_type === 'attack' ? { iconName: 'dynamite_stack' } : { iconName: 'spy_map' }
 
   return (
     <>
@@ -72,8 +72,8 @@ export default function MissionRow({ mission, showcaseUser = 'target' }) {
                 <IncContainer outerClassName={styles.missionTypeOuter} className={styles.missionTypeInner}>
                   <span style={{ color: resultColor, fontWeight: 700 }}>{resultText}</span>
                   <Icon
+                    {...iconProps}
                     className={styles.missionTypeIcon}
-                    svg={iconSvg}
                     alt={mission.mission_type === 'attack' ? 'Ataque' : 'Espionaje'}
                   />
                 </IncContainer>
@@ -90,7 +90,7 @@ export default function MissionRow({ mission, showcaseUser = 'target' }) {
                   ? buildingsList.find(b => b.id === mission.target_building).name
                   : ''}
               </div>
-              <Icon svg={iconSvg} alt={mission.mission_type === 'attack' ? 'Ataque' : 'Espionaje'} size={20} />
+              <Icon svg={iconProps} alt={mission.mission_type === 'attack' ? 'Ataque' : 'Espionaje'} size={20} />
               <div>
                 Espías: {mission.sent_spies} Sabots: {mission.sent_sabots} Ladrones: {mission.sent_thieves}
               </div>

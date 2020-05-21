@@ -20,7 +20,7 @@ export default function RankItem({ user, rank, children, pointsType, points }) {
   const isMe = userData?.id === user?.id
 
   const iconProps = {}
-  if (pointsType === 'income' || pointsType === 'alliances') iconProps.iconName = 'money'
+  if (pointsType === 'income' || pointsType === 'alliances') iconProps.iconName = 'money_double_stack'
   else if (pointsType === 'research') iconProps.svg = require('./img/ranking_invest.svg')
 
   return (

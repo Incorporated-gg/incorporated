@@ -33,7 +33,7 @@ export default function UserActionButtons({ user, onActionClicked }) {
         }}
         outerClassName={styles.button}
         borderSize={3}>
-        <Icon svg={require('./img/attack.svg')} size={20} />
+        <Icon iconName="dynamite_monochrome" size={20} />
       </IncButton>
       <IncButton
         disabled={isMe}

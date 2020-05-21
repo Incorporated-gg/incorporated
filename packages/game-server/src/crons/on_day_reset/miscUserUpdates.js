@@ -4,6 +4,7 @@ import { getAllianceMembers } from '../../lib/db/alliances'
 import { calcHoodDailyServerPoints } from 'shared-lib/hoodUtils'
 import { getUserResearchs } from '../../lib/db/users'
 import { calcResearchPrice } from 'shared-lib/allianceUtils'
+import { MAX_ACCUMULATED_ATTACKS } from 'shared-lib/missionsUtils'
 
 export default async function runJustAfterNewDay(finishedServerDay) {
   await updateAttacksLeft()
@@ -11,7 +12,6 @@ export default async function runJustAfterNewDay(finishedServerDay) {
   await giveHoodServerPoints()
 }
 
-const MAX_ACCUMULATED_ATTACKS = process.env.NODE_ENV === 'development' ? 60 : 6
 const ATTACKS_GAINED_PER_DAY = process.env.NODE_ENV === 'development' ? 30 : 3
 
 async function updateAttacksLeft() {

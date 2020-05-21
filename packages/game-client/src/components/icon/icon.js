@@ -4,7 +4,18 @@ import PropTypes from 'prop-types'
 import styles from './icon.module.scss'
 
 Icon.propTypes = {
-  iconName: PropTypes.oneOf(['arrows', 'dynamite', 'gold', 'money']),
+  iconName: PropTypes.oneOf([
+    'arrows',
+    'dynamite',
+    'dynamite_stack',
+    'dynamite_monochrome',
+    'gold',
+    'money',
+    'money_double_stack',
+    'spy_map',
+    'thief',
+    'guard',
+  ]),
   svg: PropTypes.any,
   width: PropTypes.number,
   height: PropTypes.number,

@@ -1,8 +1,8 @@
 @import '../../../variables';
 
 .title {
-  @include gradientText();
-  @include pascalText();
+  @include gradientText;
+  @include pascalText;
   font-family: $font-family-title;
   font-size: $font-size-large;
   margin-top: 10px;

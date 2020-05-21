@@ -1,3 +1,61 @@
+@import '../../variables';
+
 .startNewMission {
   padding: 10px;
+}
+
+.title {
+  @include gradientText;
+  @include pascalText;
+  font-family: $font-family-title;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: $font-size-xlarge;
+  margin-bottom: 20px;
+}
+
+.inputLabel {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  >*:first-child {
+    flex-shrink: 0;
+    font-family: $font-family-title;
+    padding: 0 10px;
+    font-weight: 500;
+    color: #00000099;
+  }
+
+  >*:nth-child(2) {
+    width: 100%;
+    min-width: 30vw;
+    text-align: center;
+    clip-path: polygon(10px 0, 100% 0, 100% 100%, 10px 100%, 0 50%);
+  }
+}
+
+.sendButtonTimer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 10px;
+
+  >*:first-child {
+    flex-shrink: 0;
+    padding: 0 10px;
+  }
+
+  >*:nth-child(2) {
+    flex-grow: 1;
+  }
+}
+.sendButtonTitle {
+  @include pascalText;
+  text-align: center;
+  color: #000000B3;
+  font-family: $font-family-title;
+  font-size: $font-size-large;
+  font-weight: 500;
 }

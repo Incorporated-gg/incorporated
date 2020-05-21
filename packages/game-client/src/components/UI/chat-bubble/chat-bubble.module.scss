@@ -137,8 +137,8 @@
         max-width: 220px;
 
         .chatRoomCategory {
-          @include gradientText();
-          @include pascalText();
+          @include gradientText;
+          @include pascalText;
           text-transform: uppercase;
           font-family: $font-family-title;
           font-weight: 600;
@@ -213,8 +213,8 @@
           display: flex;
 
           h3 {
-            @include gradientText();
-            @include pascalText();
+            @include gradientText;
+            @include pascalText;
             text-transform: uppercase;
             font-family: $font-family-title;
             margin-bottom: 5px;

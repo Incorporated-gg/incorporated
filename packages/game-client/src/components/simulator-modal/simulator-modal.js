@@ -165,7 +165,7 @@ function SimulatorFromScratch() {
         </div>
         <div>
           <label>
-            Lvl Ataque
+            Nivel Ataque
             {': '}
             <IncInput showBorder type="number" value={attackerSabotageLvl} onChangeText={setAttackerSabotageLvl} />
           </label>
@@ -189,35 +189,35 @@ function SimulatorFromScratch() {
         </div>
         <div>
           <label>
-            Lvl Defensa
+            Nivel Defensa
             {': '}
             <IncInput showBorder type="number" value={defensorSecurityLvl} onChangeText={setDefensorSecurityLvl} />
           </label>
         </div>
         <div>
           <label>
-            Lvl infra
+            Nivel Seguridad
             {': '}
             <IncInput showBorder type="number" value={infraResearchLvl} onChangeText={setInfraResearchLvl} />
           </label>
         </div>
         <div>
           <label>
-            Lvl banco
+            Nivel Banco
             {': '}
             <IncInput showBorder type="number" value={bankResearchLvl} onChangeText={setBankResearchLvl} />
           </label>
         </div>
         <div>
           <label>
-            Num edificios
+            Cantidad de edificios
             {': '}
             <IncInput showBorder type="number" value={buildingAmount} onChangeText={setBuildingAmount} />
           </label>
         </div>
         <div>
           <label>
-            Dinero almacenado en edificio
+            Dinero almacenado
             {': '}
             <IncInput showBorder type="number" value={storedMoney} onChangeText={setStoredMoney} />
           </label>

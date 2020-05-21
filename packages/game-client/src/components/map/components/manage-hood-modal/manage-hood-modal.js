@@ -11,6 +11,7 @@ import IncInput from 'components/UI/inc-input/inc-input'
 import IncProgressBar from 'components/UI/inc-progress-bar'
 import { calcHoodUpgradePrice, calcHoodMaxGuards, calcHoodDailyServerPoints } from 'shared-lib/hoodUtils'
 import api from 'lib/api'
+import styles from './manage-hood-modal.module.scss'
 
 ManageHoodModal.propTypes = {
   hood: PropTypes.object,
@@ -72,42 +73,43 @@ function ManageHood({ hood, onRequestClose }) {
     <IncContainer withHairline darkBg>
       <div style={{ padding: 10 }}>
         <div>
-          <IncContainer>
-            <div>{maxGuards.toLocaleString()}</div>
-            <IncProgressBar direction="horizontal" progressPercentage={(hood.guards / maxGuards) * 100}>
-              <div>
-                {Math.floor(hood.guards).toLocaleString()} <Icon iconName="dynamite" size={20} />
-              </div>
-            </IncProgressBar>
-          </IncContainer>
-          <IncButton disabled={upgradePrice > userData.money} onClick={addGuards}>
-            <IncInput
-              onClick={e => e.stopPropagation()}
-              placeholder={`Tienes ${numberToAbbreviation(userData.personnel.guards)}`}
-              type="number"
-              value={guards}
-              onChangeText={setGuards}
-              min={1}
-              max={userData.personnel.guards}
-            />
-            <div>Ingresar guardias</div>
-          </IncButton>
+          <span className={styles.title}>ADMINISTRAR BARRIO</span>
+          <span className={styles.subtitle}>(+{calcHoodDailyServerPoints(hood.tier)} Puntos de Servidor Diarios)</span>
         </div>
 
-        <br />
+        <IncContainer className={styles.guardsResource}>
+          <div>{maxGuards.toLocaleString()}</div>
+          <IncProgressBar direction="horizontal" progressPercentage={(hood.guards / maxGuards) * 100}>
+            <div>
+              {Math.floor(hood.guards).toLocaleString()} <Icon iconName="guard" size={20} />
+            </div>
+          </IncProgressBar>
+        </IncContainer>
 
-        <div>Puntos de servidor diarios: +{calcHoodDailyServerPoints(hood.tier)}</div>
+        <IncButton outerClassName={styles.button} disabled={upgradePrice > userData.money} onClick={addGuards}>
+          <IncInput
+            style={{ width: '100%' }}
+            onClick={e => e.stopPropagation()}
+            placeholder={`Tienes ${numberToAbbreviation(userData.personnel.guards)}`}
+            type="number"
+            value={guards}
+            onChangeText={setGuards}
+            min={1}
+            max={userData.personnel.guards}
+          />
+          <div className={styles.buttonTitle}>INGRESAR</div>
+        </IncButton>
 
-        <br />
-
-        <div>
-          <IncButton disabled={upgradePrice > userData.money} onClick={upgradeHood}>
-            <IncChevron direction="right" padding={3}>
+        <IncButton outerClassName={styles.button} disabled={upgradePrice > userData.money} onClick={upgradeHood}>
+          <div className={styles.levelCost}>
+            <IncChevron direction="right" padding={14} />
+            <span>
               {numberToAbbreviation(upgradePrice)} <Icon iconName="money" size={20} />
-            </IncChevron>
-            <div>Subir a nivel {hood.level + 1}</div>
-          </IncButton>
-        </div>
+            </span>
+            <IncChevron direction="left" padding={14} />
+          </div>
+          <div className={styles.buttonTitle}>SUBIR A NIVEL {hood.level + 1}</div>
+        </IncButton>
       </div>
     </IncContainer>
   )

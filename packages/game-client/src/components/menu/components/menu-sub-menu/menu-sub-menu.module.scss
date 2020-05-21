@@ -27,7 +27,7 @@
     justify-content: center;
 
     .subMenuItem {
-      @include pascalText();
+      @include pascalText;
       font-family: $font-family-title;
       text-transform: uppercase;
       font-weight: 400;
@@ -36,7 +36,7 @@
     }
 
     &.active .subMenuItem {
-      @include gradientText();
+      @include gradientText;
     }
   }
 

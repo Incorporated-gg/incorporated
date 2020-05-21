@@ -37,7 +37,12 @@ export default function AllianceResourceItem({ resourceData, reloadAllianceData,
       })
   }
 
-  const iconName = resourceData.resource_id === 'money' ? 'money' : 'dynamite'
+  const iconMap = {
+    sabots: 'dynamite',
+    thieves: 'thief',
+    guards: 'guard',
+  }
+  const iconName = iconMap[resourceData.resource_id]
   const youHaveAmountText = resourceData.resource_id === 'money' ? '0' : `Tienes ${userResourceAmount.toLocaleString()}`
 
   return (

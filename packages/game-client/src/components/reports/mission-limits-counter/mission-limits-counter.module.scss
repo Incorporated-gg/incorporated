@@ -1,0 +1,28 @@
+@import '../../../variables';
+
+.icon {
+  margin: 0 8px;
+
+  svg {
+    height: 16px;
+    width: 16px;
+  }
+}
+
+.greenArrow,
+.greyArrow {
+  display: inline-block;
+  height: 16px;
+  width: 24px;
+  vertical-align: sub;
+  $indent: 7px;
+  clip-path: polygon(calc(100% - #{$indent}) 0%, 100% 50%, calc(100% - #{$indent}) 100%, 0% 100%, #{$indent} 50%, 0% 0%);
+
+  &.greenArrow {
+    background: $gradient-green-horizontal;
+  }
+
+  &.greyArrow {
+    background: #343434;
+  }
+}

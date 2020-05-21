@@ -22,7 +22,7 @@
 }
 
 .actionButton {
-  @include pascalText();
+  @include pascalText;
   margin-top: 5px;
   color: #000000B3;
   font-family: $font-family-title;

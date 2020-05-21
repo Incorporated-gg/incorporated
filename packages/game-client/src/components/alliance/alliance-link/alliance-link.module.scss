@@ -4,32 +4,34 @@
   display: inline-flex;
   align-items: center;
 
+  .badge {
+    width: 1.33em;
+    height: 1.33em;
+    margin-right: 0.5em;
+  }
+
+  .name {
+    vertical-align: middle;
+    color: $color-brand;
+    font-size: 0.833em;
+  }
+
   &.darkColors {
     .name {
       color: #946a00;
     }
   }
 
-  .badge {
-    width: 1.33em;
-    height: 1.33em;
-    margin-right: 0.5em;
-  }
-  .name {
-    vertical-align: middle;
-    color: $color-brand;
-    text-transform: uppercase;
-    font-size: 0.833em;
-  }
-}
+  &.bigBadge {
+    flex-direction: column;
+    align-items: center;
 
-.bigBadgeContainer {
-  flex-direction: column;
-  align-items: center;
-  
-  .bigBadgeBadge {
-    display: block;
-    width: 80px;
-    height: 80px;
+    .badge {
+      display: block;
+      width: 2em;
+      height: 2em;
+      margin-right: 0;
+      margin-bottom: 0.1em;
+    }
   }
 }

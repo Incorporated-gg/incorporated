@@ -1,8 +1,8 @@
 @import '../../../variables';
 
 .title {
-  @include gradientText();
-  @include pascalText();
+  @include gradientText;
+  @include pascalText;
   text-transform: uppercase;
   font-family: $font-family-title;
   font-size: $font-size-large;
@@ -35,7 +35,7 @@
   margin-bottom: 10px;
 
   .doExchangeTitle {
-    @include pascalText();
+    @include pascalText;
     text-align: center;
     font-family: $font-family-title;
     margin-top: 10px;

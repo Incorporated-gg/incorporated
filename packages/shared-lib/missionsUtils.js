@@ -2,6 +2,7 @@ import { buildingsList, calcBuildingResistance, getBuildingDestroyedProfit } fro
 import { PERSONNEL_OBJ } from './personnelUtils'
 
 export const NEWBIE_ZONE_DAILY_INCOME = 750000
+export const MAX_ACCUMULATED_ATTACKS = 6
 
 export function calculateIsInAttackRange(attackerDailyIncome, defenderDailyIncome) {
   if (process.env.NODE_ENV === 'development') return true

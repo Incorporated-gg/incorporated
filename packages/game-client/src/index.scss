@@ -60,6 +60,8 @@ a {
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: auto;
+  overscroll-behavior: contain;
 
   &.backdropBlur {
     background-color: rgba(0, 0, 0, 0.8);
@@ -80,8 +82,6 @@ a {
   position: absolute;
   max-width: 80vw;
   max-height: 90vh;
-  overflow: auto;
-  -webkit-overflow-scrolling: touch;
   outline: none;
   @media (min-width: $breakpoint-medium / 0.8) {
     max-width: $breakpoint-medium;

@@ -5,15 +5,18 @@ import IncContainer from 'components/UI/inc-container'
 import MissionRow from 'components/reports/mission-row/mission-row'
 import SimulatorModal from 'components/simulator-modal/simulator-modal'
 import IncButton from 'components/UI/inc-button'
-import IncInput from 'components/UI/inc-input/inc-input'
 import { useUserData } from 'lib/user'
+import MissionLimitsCounter from 'components/reports/mission-limits-counter/mission-limits-counter'
+import { MAX_ACCUMULATED_ATTACKS } from 'shared-lib/missionsUtils'
+import DiamondSwitch from 'components/reports/diamond-switch/diamond-switch'
+import Icon from 'components/icon'
 
 const initialMissionsState = {
   missions: [],
   todaysMissionLimits: {
     receivedToday: 0,
-    attacksLeft: 0,
-    maxDefenses: 0,
+    attacksLeft: 6,
+    maxDefenses: 6,
   },
   notSeenReceivedCount: 0,
   notSeenSentCount: 0,
@@ -30,7 +33,7 @@ export default function Reports() {
   const [ownerType, setOwnerType] = useState('own')
 
   const reloadMissionsCallback = useCallback(() => {
-    setMissions(initialMissionsState)
+    setMissions({ ...missions, missions: [] })
     api
       .get('/v1/missions', {
         sendType,
@@ -42,6 +45,9 @@ export default function Reports() {
         setMissions(res)
       })
       .catch(err => alert(err.message))
+
+    // Disable missions in useCallback dependencies to prevent infinite loop of reloading missions
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [missionType, ownerType, sendType])
 
   // Reload on mission end
@@ -65,41 +71,43 @@ export default function Reports() {
   return (
     <>
       <div className={styles.filtersContainer}>
-        <IncInput
-          showBorder
-          type="select"
-          options={{
-            sent: 'Enviadas',
-            received: 'Recibidas',
-          }}
-          value={sendType}
-          onChangeText={setSendType}
+        <MissionLimitsCounter
+          title={'Ataques disponibles'}
+          iconName="dynamite_stack"
+          maxMissions={MAX_ACCUMULATED_ATTACKS}
+          currentMissions={missions.todaysMissionLimits.attacksLeft}
         />
-        <IncInput
-          showBorder
-          type="select"
+        <DiamondSwitch
           options={{
-            any: 'Cualquier tipo',
-            spy: 'Espionajes',
-            attack: 'Ataques',
+            spy: <Icon iconName="dynamite_stack" size={16} />,
+            any: 'Todo',
+            attack: <Icon iconName="spy_map" size={16} />,
           }}
-          value={missionType}
-          onChangeText={setMissionType}
+          selected={missionType}
+          onOptionSelected={setMissionType}
         />
-        <IncInput
-          showBorder
-          type="select"
+        <MissionLimitsCounter
+          title={'Ataques recibidos hoy'}
+          iconName="guard"
+          maxMissions={missions.todaysMissionLimits.maxDefenses}
+          currentMissions={missions.todaysMissionLimits.maxDefenses - missions.todaysMissionLimits.receivedToday}
+        />
+        <DiamondSwitch
           options={{
-            own: 'Propias',
-            alliance: 'Alianza',
+            sent: 'ENVIADOS',
+            received: 'RECIBIDOS',
           }}
-          value={ownerType}
-          onChangeText={setOwnerType}
+          selected={sendType}
+          onOptionSelected={setSendType}
         />
-        <span>Ataques disponibles: {missions.todaysMissionLimits.attacksLeft}</span>
-        <span>
-          Recibidos hoy: {missions.todaysMissionLimits.receivedToday}/{missions.todaysMissionLimits.maxDefenses}
-        </span>
+        <DiamondSwitch
+          options={{
+            own: 'PROPIOS',
+            alliance: 'CORPORACIÓN',
+          }}
+          selected={ownerType}
+          onOptionSelected={setOwnerType}
+        />
         <IncButton onClick={() => setShowSimulatorModal(true)}>Simulador</IncButton>
       </div>
       <SimulatorModal isOpen={showSimulatorModal} onRequestClose={() => setShowSimulatorModal(false)} />

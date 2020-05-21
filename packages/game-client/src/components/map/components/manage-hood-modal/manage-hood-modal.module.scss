@@ -1,0 +1,57 @@
+@import '../../../../variables';
+
+.title {
+  @include gradientText;
+  @include pascalText;
+  font-family: $font-family-title;
+  font-size: $font-size-large;
+  font-weight: 600;
+  vertical-align: sub;
+  display: inline-block;
+  margin-right: 6px;
+}
+.subtitle {
+  display: inline-block;
+  margin-bottom: 20px;
+  font-family: $font-family-title;
+  color: $color-text-light;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.guardsResource {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  font-weight: 600;
+  font-family: $font-family-title;
+    >*:first-child {
+    color: #00000099;
+    padding: 0 15px;
+  }
+}
+
+.button {
+  margin-top: 20px;
+  width: 100%;
+  text-align: center;
+  input {
+  text-align: center;
+  }
+  .buttonTitle {
+    @include pascalText;
+    margin-top: 10px;
+    font-family: $font-family-title;
+    font-size: $font-size-large;
+    font-weight: 500;
+    color: #000000B3;
+  }
+  .levelCost {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    >* {
+      flex-grow: 1;
+    }
+  }
+}

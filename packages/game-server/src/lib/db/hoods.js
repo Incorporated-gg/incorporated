@@ -1,28 +1,33 @@
 import mysql from '../mysql'
 import { getAllianceBasicData } from './alliances'
+import { calcHoodMaxGuards } from 'shared-lib/hoodUtils'
 
 let id = 0
 const hoodsList = [
-  { id: ++id, tier: 1, name: `Barrio ${id}` },
-  { id: ++id, tier: 1, name: `Barrio ${id}` },
-  { id: ++id, tier: 1, name: `Barrio ${id}` },
-  { id: ++id, tier: 1, name: `Barrio ${id}` },
-  { id: ++id, tier: 2, name: `Barrio ${id}` },
-  { id: ++id, tier: 2, name: `Barrio ${id}` },
-  { id: ++id, tier: 2, name: `Barrio ${id}` },
-  { id: ++id, tier: 2, name: `Barrio ${id}` },
-  { id: ++id, tier: 3, name: `Barrio ${id}` },
-  { id: ++id, tier: 3, name: `Barrio ${id}` },
-  { id: ++id, tier: 3, name: `Barrio ${id}` },
-  { id: ++id, tier: 3, name: `Barrio ${id}` },
-  { id: ++id, tier: 4, name: `Barrio ${id}` },
-  { id: ++id, tier: 4, name: `Barrio ${id}` },
-  { id: ++id, tier: 4, name: `Barrio ${id}` },
+  { id: ++id, tier: 5, name: `Barrio ${id}` },
+  { id: ++id, tier: 5, name: `Barrio ${id}` },
   { id: ++id, tier: 4, name: `Barrio ${id}` },
   { id: ++id, tier: 4, name: `Barrio ${id}` },
   { id: ++id, tier: 5, name: `Barrio ${id}` },
   { id: ++id, tier: 5, name: `Barrio ${id}` },
+  { id: ++id, tier: 3, name: `Barrio ${id}` },
+  { id: ++id, tier: 4, name: `Barrio ${id}` },
   { id: ++id, tier: 5, name: `Barrio ${id}` },
+  { id: ++id, tier: 2, name: `Barrio ${id}` },
+  { id: ++id, tier: 1, name: `Barrio ${id}` },
+  { id: ++id, tier: 3, name: `Barrio ${id}` },
+  { id: ++id, tier: 2, name: `Barrio ${id}` },
+  { id: ++id, tier: 1, name: `Barrio ${id}` },
+  { id: ++id, tier: 1, name: `Barrio ${id}` },
+  { id: ++id, tier: 2, name: `Barrio ${id}` },
+  { id: ++id, tier: 5, name: `Barrio ${id}` },
+  { id: ++id, tier: 3, name: `Barrio ${id}` },
+  { id: ++id, tier: 2, name: `Barrio ${id}` },
+  { id: ++id, tier: 3, name: `Barrio ${id}` },
+  { id: ++id, tier: 5, name: `Barrio ${id}` },
+  { id: ++id, tier: 4, name: `Barrio ${id}` },
+  { id: ++id, tier: 3, name: `Barrio ${id}` },
+  { id: ++id, tier: 4, name: `Barrio ${id}` },
 ]
 
 // Populate hoods table if empty
@@ -45,9 +50,12 @@ hoodsList.map(async hoodInfo => {
   // Create hood entry
   if (!doesExist) {
     const level = tierToInitialLevel[hoodInfo.tier]
-    await mysql.query('INSERT INTO hoods (id, guards, level) VALUES (?, ?, ?)', [hoodInfo.id, 3000, level])
+    const initialGuards = calcHoodMaxGuards(hoodInfo.tier)
+    await mysql.query('INSERT INTO hoods (id, guards, level) VALUES (?, ?, ?)', [hoodInfo.id, initialGuards, level])
   }
 })
+
+const HOOD_ATTACK_PROTECTION_TIME = 60 * 60 * 24
 
 export async function getHoodData(hoodID) {
   hoodID = parseInt(hoodID)
@@ -61,7 +69,7 @@ export async function getHoodData(hoodID) {
 
   const tsNow = Math.floor(Date.now() / 1000)
   const ownerChangeTsDiff = tsNow - hoodData.last_owner_change_at
-  let isAttackable = ownerChangeTsDiff >= 60 * 60 * 24
+  let isAttackable = ownerChangeTsDiff >= HOOD_ATTACK_PROTECTION_TIME
   if (!hoodData.last_owner_change_at) isAttackable = true
 
   return {

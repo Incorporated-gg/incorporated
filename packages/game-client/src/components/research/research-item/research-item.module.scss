@@ -8,7 +8,7 @@
   font-weight: 500;
 }
 .title {
-  @include pascalText();
+  @include pascalText;
   flex-grow: 1;
   font-size: $font-size-large;
   padding: 0 10px;

@@ -5,7 +5,7 @@ import ErrorBoundary from 'components/UI/ErrorBoundary'
 import { backgroundComponents, iconComponents } from './svgComponents'
 
 AllianceBadge.propTypes = {
-  badge: PropTypes.object.isRequired,
+  badge: PropTypes.object,
   style: PropTypes.object,
   className: PropTypes.string,
 }
@@ -19,6 +19,14 @@ export default function AllianceBadge(props) {
 
 AllianceBadgeComponent.propTypes = AllianceBadge.propTypes
 function AllianceBadgeComponent({ badge, className, style = {}, ...props }) {
+  if (!badge) {
+    badge = {
+      _v: 1,
+      background: { id: 5, color1: '#C0C0C0', color2: '#C0C0C0' },
+      icon: { id: 5, color: '#C0C0C0' },
+    }
+  }
+
   // Background
   const BackgroundComponent = backgroundComponents[badge.background.id]
   const bgStyle = {

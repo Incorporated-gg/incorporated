@@ -5,7 +5,7 @@
 }
 
 .actionTitle {
-  @include pascalText();
+  @include pascalText;
   flex-grow: 1;
   flex-shrink: 1;
   color: #000000B3;

@@ -27,12 +27,15 @@ $gradient-brand: linear-gradient($color-brand-light, $color-brand-dark);
 
 $color-green-light: #1FD070;
 $color-green-dark: #00793C;
+$color-red-light: #A70000;
+$color-red-dark: #7E0404;
 $gradient-green-horizontal: linear-gradient(-90deg, $color-green-light, $color-green-dark);
 $gradient-green-vertical: linear-gradient($color-green-light, $color-green-dark);
+$gradient-red-horizontal: linear-gradient(-90deg, $color-red-light, $color-red-dark);
+$gradient-red-vertical: linear-gradient($color-red-light, $color-red-dark);
 
 $color-text-light: #FFF8E6;
 $color-bg: #343434;
-$color-red: #A70000;
 
 // Header/Fotoer specific
 $header--color-text: #fafafa;
