@@ -10,10 +10,10 @@
   margin: -10px;
 
   grid-template-columns: 1fr 1fr 1fr 1fr;
-  @media (max-width: 645px) {
+  @media (max-width: 550px) {
     grid-template-columns: 1fr 1fr 1fr;
   }
-  @media (max-width: 422px) {
+  @media (max-width: 375px) {
     grid-template-columns: 1fr 1fr;
   }
 

@@ -20,16 +20,17 @@ export default function AllianceBadge(props) {
 AllianceBadgeComponent.propTypes = AllianceBadge.propTypes
 function AllianceBadgeComponent({ badge, className, style = {}, ...props }) {
   if (!badge) {
-    const bgStyle = {
-      fill: '#343434',
-    }
     const BackgroundComponent = backgroundComponents[1]
-    const IconComponent = iconComponents.mascot
     return (
       <ErrorBoundary>
         <span className={styles.container + (className ? ` ${className}` : '')} style={style} {...props}>
-          <BackgroundComponent className={styles.background} style={bgStyle} />
-          <IconComponent className={styles.icon} />
+          <BackgroundComponent
+            className={styles.background}
+            style={{
+              fill: '#343434',
+            }}
+          />
+          <img src={require('./icons/mascot.png')} alt="" className={styles.icon} />
         </span>
       </ErrorBoundary>
     )

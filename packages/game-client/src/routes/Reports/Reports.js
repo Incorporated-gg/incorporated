@@ -108,7 +108,7 @@ export default function Reports() {
           selected={ownerType}
           onOptionSelected={setOwnerType}
         />
-        <IncButton onClick={() => setShowSimulatorModal(true)}>Simulador</IncButton>
+        <IncButton onClick={() => setShowSimulatorModal(true)}>Sim.</IncButton>
       </div>
       <SimulatorModal isOpen={showSimulatorModal} onRequestClose={() => setShowSimulatorModal(false)} />
 

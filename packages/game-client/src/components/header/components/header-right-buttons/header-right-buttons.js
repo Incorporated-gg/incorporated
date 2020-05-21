@@ -19,7 +19,7 @@ export default function HeaderRightButtons({ setIsActiveTasksModalOpen }) {
           withHairline
           outerClassName={styles.rightButtonOuter}
           className={styles.rightButtonInner}>
-          <IncChevron padding={3} chevronSize={10} direction="right">
+          <IncChevron padding={4} chevronSize={10} direction="right">
             <Icon width={26} height={16} svg={require('./img/shop.svg')} alt="Finances" />
           </IncChevron>
           <div className={styles.title}>TIENDA</div>
@@ -31,7 +31,7 @@ export default function HeaderRightButtons({ setIsActiveTasksModalOpen }) {
         onClick={() => setIsActiveTasksModalOpen(true)}
         outerClassName={styles.rightButtonOuter}
         className={styles.rightButtonInner}>
-        <IncChevron padding={3} chevronSize={10} direction="right">
+        <IncChevron padding={4} chevronSize={10} direction="right">
           <Icon width={26} height={16} svg={require('./img/tasks.svg')} alt="Tareas" />
         </IncChevron>
         <div className={styles.title}>TAREAS</div>

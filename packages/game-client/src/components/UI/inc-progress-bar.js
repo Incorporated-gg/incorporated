@@ -1,7 +1,6 @@
 import React from 'react'
 import styles from './inc-progress-bar.module.scss'
 import PropTypes from 'prop-types'
-import useWindowSize from 'lib/useWindowSize'
 
 IncProgressBar.propTypes = {
   progressPercentage: PropTypes.number.isRequired,
@@ -23,14 +22,13 @@ export default function IncProgressBar({
   visualSteps,
   roundRightSide,
 }) {
-  const windowSize = useWindowSize()
   const progressStyle = {
     [direction === 'vertical' ? 'height' : 'width']: progressPercentage + '%',
   }
   const containerStyle = {
     padding: borderSize,
     [direction === 'horizontal' ? 'paddingLeft' : 'paddingBottom']: 0,
-    [direction === 'horizontal' ? 'minHeight' : 'minWidth']: minSize || (windowSize.width < 425 ? 20 : 30),
+    [direction === 'horizontal' ? 'minHeight' : 'minWidth']: minSize || 30,
   }
 
   return (
