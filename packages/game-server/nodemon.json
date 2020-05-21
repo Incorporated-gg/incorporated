@@ -2,7 +2,9 @@
   "legacyWatch": true,
   "ignoreRoot": [".git"],
   "watch"   : [
-    "./src"
+    "./src",
+    "./crons_src",
+    "./node_modules"
   ],
   "execMap" : {
     "js": "node -r esm"

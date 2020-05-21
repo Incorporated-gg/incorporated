@@ -1,12 +1,16 @@
 import express from 'express'
 import http from 'http'
 import socketIO from 'socket.io'
+import './express-async-errors-patch'
+import bodyParser from 'body-parser'
+import { getServerDay } from './lib/serverTime'
 import { setupRoutes } from './routes'
 import { setupChat } from './chat'
-import './express-async-errors-patch'
 
-// Parse application/json
-import bodyParser from 'body-parser'
+const serverDay = getServerDay()
+if (serverDay <= 0) {
+  console.warn(`[game-server] To avoid bugs, the first playable day should be 1. The current day is ${serverDay}`)
+}
 
 const app = express()
 const server = http.Server(app)

@@ -1,6 +1,9 @@
-name: CI
+name: DeployMasterBranch
 
-on: [push]
+on:
+  push:
+    branches:
+      - master
 
 jobs:
   # TODO: Add new step to run tests, instead of doing it in the build task
