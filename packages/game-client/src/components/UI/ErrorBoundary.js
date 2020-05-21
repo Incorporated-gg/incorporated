@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import * as Sentry from '@sentry/browser'
 
 class ErrorBoundary extends React.Component {
   constructor(props) {
@@ -8,22 +9,25 @@ class ErrorBoundary extends React.Component {
   }
 
   static getDerivedStateFromError(error) {
-    // Actualiza el estado para que el siguiente renderizado muestre la interfaz de repuesto
     return { error }
   }
 
   componentDidCatch(error, errorInfo) {
-    // También puedes registrar el error en un servicio de reporte de errores
     console.error(error, errorInfo)
+    Sentry.withScope(scope => {
+      scope.setExtras(errorInfo)
+      const eventId = Sentry.captureException(error)
+      this.setState({ eventId })
+    })
   }
 
   render() {
     if (this.state.error) {
-      // Puedes renderizar cualquier interfaz de repuesto
       return (
         <div>
           <h1>Algo salió mal.</h1>
           <pre>{this.state.error.message}</pre>
+          <button onClick={() => Sentry.showReportDialog({ eventId: this.state.eventId })}>Report feedback</button>
         </div>
       )
     }
@@ -31,6 +35,7 @@ class ErrorBoundary extends React.Component {
     return this.props.children
   }
 }
+
 ErrorBoundary.propTypes = {
   children: PropTypes.node.isRequired,
 }

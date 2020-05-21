@@ -2,11 +2,14 @@ import 'react-app-polyfill/ie11'
 import 'react-app-polyfill/stable'
 import React from 'react'
 import ReactDOM from 'react-dom'
+import * as Sentry from '@sentry/browser'
 import Modal from 'react-modal'
 import './index.scss'
 import 'normalize.css'
 import App from './App'
 import * as serviceWorker from './serviceWorker'
+
+Sentry.init({ dsn: 'https://a0ebf63b5e1849dc85a4ee4fb698f308@o396353.ingest.sentry.io/5249593' })
 
 Modal.defaultStyles = {}
 Modal.defaultProps.closeTimeoutMS = 150
