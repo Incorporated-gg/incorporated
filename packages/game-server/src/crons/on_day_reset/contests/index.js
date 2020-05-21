@@ -11,7 +11,7 @@ const contestsList = ['income', 'destruction', 'research', 'robbing']
 export default async function runJustAfterNewDay(finishedServerDay) {
   const dayInitialTimestamp = getInitialUnixTimestampOfServerDay(finishedServerDay) / 1000
   const serverDate = getServerDate(dayInitialTimestamp * 1000)
-  const hasMondayJustStarted = serverDate.day_of_the_week === 1
+  const hasMondayJustStarted = serverDate.day_of_the_week === 0
   if (!hasMondayJustStarted) return
 
   // Finish current contest
