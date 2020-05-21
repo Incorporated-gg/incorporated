@@ -9,9 +9,9 @@ IncProgressBar.propTypes = {
   color: PropTypes.oneOf(['green', 'red']),
   children: PropTypes.node,
   minSize: PropTypes.number,
-  noBackground: PropTypes.bool,
   visualSteps: PropTypes.number,
   borderSize: PropTypes.number,
+  roundRightSide: PropTypes.bool,
 }
 export default function IncProgressBar({
   progressPercentage,
@@ -20,15 +20,12 @@ export default function IncProgressBar({
   children,
   borderSize = 0,
   minSize,
-  noBackground,
   visualSteps,
+  roundRightSide,
 }) {
   const windowSize = useWindowSize()
   const progressStyle = {
     [direction === 'vertical' ? 'height' : 'width']: progressPercentage + '%',
-  }
-  const bgStyle = {
-    background: noBackground ? 'none' : undefined,
   }
   const containerStyle = {
     padding: borderSize,
@@ -40,18 +37,24 @@ export default function IncProgressBar({
     <div
       className={`${styles.progress} ${borderSize ? styles.withBorder : ''} ${
         direction === 'vertical' ? styles.vertical : styles.horizontal
-      } ${color === 'green' ? styles.colorGreen : styles.colorRed}`}
+      } ${color === 'green' ? styles.colorGreen : styles.colorRed} ${roundRightSide ? styles.roundRightSide : ''}`}
       style={containerStyle}>
-      <div className={styles.bg} style={bgStyle}>
-        <div className={styles.inner} style={progressStyle} />
+      <div>
+        <div className={styles.bg}>
+          <div className={styles.inner} style={progressStyle} />
+        </div>
+        {visualSteps &&
+          new Array(visualSteps - 1)
+            .fill(null)
+            .map((_, index) => (
+              <div
+                key={index}
+                className={styles.stepDivider}
+                style={{ left: ((index + 1) / visualSteps) * 100 + '%' }}
+              />
+            ))}
+        {children ? <div className={styles.children}>{children}</div> : null}
       </div>
-      {visualSteps &&
-        new Array(visualSteps)
-          .fill(null)
-          .map((_, index) => (
-            <div key={index} className={styles.stepDivider} style={{ right: (index / visualSteps) * 100 + '%' }} />
-          ))}
-      {children ? <div className={styles.children}>{children}</div> : null}
     </div>
   )
 }

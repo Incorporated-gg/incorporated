@@ -20,11 +20,19 @@ export default function AllianceBadge(props) {
 AllianceBadgeComponent.propTypes = AllianceBadge.propTypes
 function AllianceBadgeComponent({ badge, className, style = {}, ...props }) {
   if (!badge) {
-    badge = {
-      _v: 1,
-      background: { id: 5, color1: '#C0C0C0', color2: '#C0C0C0' },
-      icon: { id: 5, color: '#C0C0C0' },
+    const bgStyle = {
+      fill: '#343434',
     }
+    const BackgroundComponent = backgroundComponents[1]
+    const IconComponent = iconComponents.mascot
+    return (
+      <ErrorBoundary>
+        <span className={styles.container + (className ? ` ${className}` : '')} style={style} {...props}>
+          <BackgroundComponent className={styles.background} style={bgStyle} />
+          <IconComponent className={styles.icon} />
+        </span>
+      </ErrorBoundary>
+    )
   }
 
   // Background
@@ -44,7 +52,7 @@ function AllianceBadgeComponent({ badge, className, style = {}, ...props }) {
     <ErrorBoundary>
       <span className={styles.container + (className ? ` ${className}` : '')} style={style} {...props}>
         <BackgroundComponent className={styles.background} style={bgStyle} />
-        <IconComponent className={styles.icon} style={iconStyle} />
+        <IconComponent className={`${styles.icon} ${styles.realIcon}`} style={iconStyle} />
       </span>
     </ErrorBoundary>
   )

@@ -6,7 +6,8 @@
   background-image: url('./img/city_bg.jpg');
   background-size: cover;
   background-position: center center;
-  padding: 5px;
+  padding: 5px 0;
+  margin: -10px;
 
   grid-template-columns: 1fr 1fr 1fr 1fr;
   @media (max-width: 645px) {

@@ -6,6 +6,7 @@ import { ReactComponent as Icon7 } from './icons/7.svg'
 import { ReactComponent as Icon8 } from './icons/8.svg'
 import { ReactComponent as Icon9 } from './icons/9.svg'
 import { ReactComponent as Icon10 } from './icons/10.svg'
+import { ReactComponent as IconMascot } from '../../icon/img/mascot.svg'
 import { ReactComponent as Background1 } from './backgrounds/1.svg'
 import { ReactComponent as Background2 } from './backgrounds/2.svg'
 import { ReactComponent as Background3 } from './backgrounds/3.svg'
@@ -13,6 +14,7 @@ import { ReactComponent as Background4 } from './backgrounds/4.svg'
 import { ReactComponent as Background5 } from './backgrounds/5.svg'
 
 const iconComponents = {
+  mascot: IconMascot,
   1: Icon1,
   4: Icon4,
   5: Icon5,

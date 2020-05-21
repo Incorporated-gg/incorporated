@@ -1,8 +1,9 @@
   @import '../../variables';
 
   .progress {
-    position: relative;
     flex-grow: 1;
+    $indent: 12px;
+    display: flex;
 
     &.withBorder {
       border: 1px solid $color-hairline;
@@ -11,7 +12,7 @@
 
     &.vertical {
       border-bottom: 0;
-      clip-path: polygon(100% 0, 100% calc(100% - 15px), 50% 100%, 0 calc(100% - 15px), 0 0);
+      clip-path: polygon(100% 0, 100% calc(100% - #{$indent}), 50% 100%, 0 calc(100% - #{$indent}), 0 0);
 
       .inner {
         width: 100%;
@@ -26,13 +27,13 @@
 
       .children {
         bottom: 20px;
-        height: calc(100% - 15px);
+        height: calc(100% - #{$indent});
       }
     }
 
     &.horizontal {
       border-left: 0;
-      clip-path: polygon(100% 0, 100% 100%, 15px 100%, 0 50%, 15px 0);
+      clip-path: polygon(100% 0, 100% 100%, #{$indent} 100%, 0 50%, #{$indent} 0);
 
       .inner {
         height: 100%;
@@ -47,14 +48,24 @@
 
       .children {
         left: 20px;
-        width: calc(100% - 15px);
+        width: calc(100% - #{$indent});
       }
+    }
+
+    &.roundRightSide {
+      border-top-right-radius: 4px;
+      border-bottom-right-radius: 4px;
+    }
+
+    >div {
+      position: relative;
+      flex-grow: 1;
     }
   }
 
   .bg {
     position: absolute;
-    background-color: #333;
+    background-color: #343434;
     top: 0;
     left: 0;
     width: 100%;
@@ -84,7 +95,7 @@
   .stepDivider {
     position: absolute;
     height: 100%;
-    width: 3px;
+    width: 4px;
     top: 0;
     background: $color-brand-light;
   }

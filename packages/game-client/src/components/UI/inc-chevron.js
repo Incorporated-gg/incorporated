@@ -22,7 +22,7 @@ export default function IncChevron({ direction, padding, chevronSize = 15, class
         padding,
         [direction === 'left' ? 'paddingLeft' : 'paddingRight']: padding + chevronSize,
         clipPath: clipPaths[direction],
-        webkitClipPath: clipPaths[direction],
+        WebkitClipPath: clipPaths[direction],
       }}
       {...props}
     />
