@@ -2,6 +2,7 @@
   "name": "incorporated-game-client",
   "private": true,
   "dependencies": {
+    "@sentry/browser": "^5.15.5",
     "node-sass": "^4.13.0",
     "normalize.css": "^8.0.1",
     "react": "^16.12.0",
