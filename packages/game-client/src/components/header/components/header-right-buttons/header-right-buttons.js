@@ -13,7 +13,7 @@ HeaderRightButtons.propTypes = {
 export default function HeaderRightButtons({ setIsActiveTasksModalOpen }) {
   return (
     <div className={styles.rightButtonsContainer}>
-      <Link className={styles.linkButtonContainer} to="/finances">
+      <Link className={styles.linkButtonContainer} to="/shop">
         <IncButton
           borderSize={4}
           withHairline

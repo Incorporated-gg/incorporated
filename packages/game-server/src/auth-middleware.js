@@ -45,7 +45,7 @@ async function authMiddleware(req, res, next) {
       }
     }
   } catch (err) {
-    res.status(500).json({ error: 'Error interno: ' + err.message })
+    res.status(500).json({ error: 'Error interno al validar sesión' })
     console.warn(err.message)
     return
   }

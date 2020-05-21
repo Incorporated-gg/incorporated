@@ -28,7 +28,7 @@ export default function AttackReport({ mission }) {
 
   const attackedBuildingName = buildingInfo?.name || '???'
 
-  const summaryElm =
+  const summaryElm = mission.target_user ? (
     mission.result === 'win' ? (
       <>
         El ataque a {targetElm} ha sido todo un éxito. Has acabado con {mission.report.killed_guards.toLocaleString()}{' '}
@@ -47,6 +47,23 @@ export default function AttackReport({ mission }) {
     ) : (
       <>???</>
     )
+  ) : mission.target_hood ? (
+    mission.result === 'win' ? (
+      <>
+        El ataque a {targetElm} ha sido todo un éxito. Has acabado con {mission.report.killed_guards.toLocaleString()}{' '}
+        guardias, y conquistado el barrio
+      </>
+    ) : mission.result === 'lose' ? (
+      <>
+        El ataque a {targetElm} ha sido un fracaso total. Has acabado con{' '}
+        {mission.report.killed_guards.toLocaleString()} guardias, pero no has podido conquistar el barrio
+      </>
+    ) : (
+      <>???</>
+    )
+  ) : (
+    <>???</>
+  )
 
   return (
     <NotepadPage>
@@ -104,6 +121,21 @@ export default function AttackReport({ mission }) {
           <tr>
             <td>Por robo</td>
             <td>{mission.report.income_from_robbed_money.toLocaleString()}</td>
+          </tr>
+          {mission.report.income_from_conquering_hood && (
+            <tr>
+              <td>Por conquista de barrio</td>
+              <td>{mission.report.income_from_conquering_hood.toLocaleString()}</td>
+            </tr>
+          )}
+          <tr>
+            <td>Por bajas aliadas</td>
+            <td>
+              {(-(
+                mission.report.killed_sabots * PERSONNEL_OBJ.sabots.price +
+                mission.report.killed_thieves * PERSONNEL_OBJ.thieves.price
+              )).toLocaleString()}
+            </td>
           </tr>
           <tr>
             <td>

@@ -6,15 +6,12 @@
   background-image: url('./img/city_bg.jpg');
   background-size: cover;
   background-position: center center;
-
   grid-template-columns: 1fr 1fr 1fr 1fr;
-
-  @media (max-width: $breakpoint-medium) {
-    grid-template-columns: 1fr 1fr 1fr;
+  @media (max-width: 600px) {
+    font-size: $font-size-small;
   }
-
-  @media (max-width: $breakpoint-small) {
-    grid-template-columns: 1fr 1fr;
+  @media (max-width: 720px) {
+    grid-template-columns: 1fr 1fr 1fr;
   }
 
   >div {
@@ -27,12 +24,16 @@
 .allianceContainer {
   align-self: flex-start;
   margin-top: 5px;
-  font-size: $font-size-xlarge;
   line-height: 0;
   background: #EECF82;
   padding: 3px;
   padding-right: 22px;
   clip-path: polygon(100% 0, calc(100% - 15px) 50%, 100% 100%, 0 100%, 0 0);
+  line-height: 1.1;
+  font-size: $font-size-xlarge;
+  @media (max-width: 600px) {
+    font-size: $font-size-large;
+  }
 }
 
 .lvlContainer {
@@ -70,8 +71,8 @@
   >span {
     color: #0000009A;
     font-family: $font-family-title;
-    font-size: $font-size-large;
     padding: 0 15px;
     font-weight: 600;
+    font-size: $font-size-large;
   }
 }

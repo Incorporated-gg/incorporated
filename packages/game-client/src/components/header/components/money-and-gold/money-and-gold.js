@@ -9,7 +9,7 @@ import { Link } from 'react-router-dom'
 export default function MoneyAndGold() {
   return (
     <div className={styles.moneyAndGoldContainer}>
-      <Link className={styles.linkButtonContainer} to="/finances">
+      <Link className={styles.linkButtonContainer} to="/shop">
         <IncButton borderSize={3} withHairline darkBg outerClassName={styles.statContainer}>
           <div className={styles.stat}>
             <MyGold /> <Icon iconName="gold" className={styles.headerStatIcon} />

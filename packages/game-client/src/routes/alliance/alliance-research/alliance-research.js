@@ -17,7 +17,19 @@ export default function AllianceResearch({ alliance, reloadAllianceData }) {
     type: 'pie',
     data: {
       labels: alliance.research_shares.map(sh => sh.user.username),
-      datasets: [{ data: alliance.research_shares.map(sh => sh.total) }],
+      datasets: [
+        {
+          data: alliance.research_shares.map(sh => sh.total),
+          backgroundColor: 'rgb(238, 207, 130)',
+        },
+      ],
+    },
+    options: {
+      legend: {
+        labels: {
+          fontColor: 'rgb(255, 255, 255)',
+        },
+      },
     },
   }
   const chartImgUrl = `https://quickchart.io/chart?width=500&height=500&c=${JSON.stringify(chartData)}`
@@ -50,7 +62,7 @@ export default function AllianceResearch({ alliance, reloadAllianceData }) {
             const researchInfo = ALLIANCE_RESEARCHS[logEntry.research_id]
             const researchName = researchInfo?.name || '???'
             return (
-              <div key={Math.random()}>
+              <div key={Math.random()} className={styles.researchLogItem}>
                 <UserLink user={logEntry.user} /> aportó {Math.abs(logEntry.money).toLocaleString()}{' '}
                 <Icon iconName="money" size={18} /> a {researchName}
               </div>

@@ -33,8 +33,8 @@ export default function WarInfo({ war }) {
     warLineGraphData = {
       labels: [],
       datasets: [
-        { label: war.alliance1.short_name, data: [] },
-        { label: war.alliance2.short_name, data: [] },
+        { label: war.alliance1.short_name, data: [], backgroundColor: 'rgb(238, 207, 130)' },
+        { label: war.alliance2.short_name, data: [], backgroundColor: 'rgb(238, 207, 130)' },
       ],
     }
     warDaysArray.forEach(day => {

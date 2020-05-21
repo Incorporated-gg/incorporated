@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
 import Modal from 'react-modal'
 import IncContainer from 'components/UI/inc-container'
@@ -23,14 +23,11 @@ DeclareWar.propTypes = {
   onRequestClose: PropTypes.func.isRequired,
 }
 function DeclareWar({ alliance, onRequestClose }) {
-  const [selectedHoods, setSelectedHoods] = useState([])
-
   const declareWar = () => {
     if (!window.confirm('Estás seguro de que quieres declarar guerra a esta alianza?')) return
     api
       .post('/v1/alliance/declare_war', {
         alliance_id: alliance.id,
-        hoods: selectedHoods,
       })
       .then(() => {
         onRequestClose()
@@ -45,28 +42,6 @@ function DeclareWar({ alliance, onRequestClose }) {
     <IncContainer withHairline darkBg borderSize={20}>
       <div style={{ padding: 10 }}>
         <h1>Declarar guerra a {alliance.short_name}</h1>
-        {alliance.hoods.map(hood => {
-          const isSelected = selectedHoods.some(hID => hID === hood.id)
-          return (
-            <div key={hood.id}>
-              <label>
-                {hood.name} (Lvl. {hood.level})
-                <input
-                  type="checkbox"
-                  checked={isSelected}
-                  onChange={() => {
-                    if (isSelected) {
-                      selectedHoods.splice(selectedHoods.indexOf(hood.id), 1)
-                    } else {
-                      selectedHoods.push(hood.id)
-                    }
-                    setSelectedHoods([...selectedHoods])
-                  }}
-                />
-              </label>
-            </div>
-          )
-        })}
         <button onClick={declareWar}>Declarar guerra</button>
       </div>
     </IncContainer>

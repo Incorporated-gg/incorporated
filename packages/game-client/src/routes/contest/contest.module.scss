@@ -6,10 +6,19 @@
   font-size: $font-size-xlarge;
   margin-bottom: 10px;
 }
+.subtitle {
+  font-weight: 600;
+  margin-bottom: 20px;
+}
 
 .container {
   padding: 10px;
   tr:not(:last-child) td {
     padding-bottom: 10px;
   }
+}
+
+.rankTd {
+  padding: 3px;
+  min-width: 2em;
 }

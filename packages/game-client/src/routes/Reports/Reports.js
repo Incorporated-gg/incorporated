@@ -65,7 +65,6 @@ export default function Reports() {
   return (
     <>
       <div className={styles.filtersContainer}>
-        <IncButton onClick={() => setShowSimulatorModal(true)}>Simulador</IncButton>
         <IncInput
           showBorder
           type="select"
@@ -99,8 +98,9 @@ export default function Reports() {
         />
         <span>Ataques disponibles: {missions.todaysMissionLimits.attacksLeft}</span>
         <span>
-          Recibidas hoy: {missions.todaysMissionLimits.receivedToday}/{missions.todaysMissionLimits.maxDefenses}
+          Recibidos hoy: {missions.todaysMissionLimits.receivedToday}/{missions.todaysMissionLimits.maxDefenses}
         </span>
+        <IncButton onClick={() => setShowSimulatorModal(true)}>Simulador</IncButton>
       </div>
       <SimulatorModal isOpen={showSimulatorModal} onRequestClose={() => setShowSimulatorModal(false)} />
 

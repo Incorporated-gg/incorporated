@@ -1,5 +1,9 @@
 @import '../../variables';
 
+.container {
+  padding: 10px;
+}
+
 .title {
   @include gradientText;
   font-family: $font-family-title;
@@ -8,13 +12,4 @@
 }
 .subtitle {
   font-weight: 600;
-  margin-bottom: 20px;
-}
-
-
-.monopolies {
-    padding: 10px;
-    tr:not(:last-child) td {
-      padding-bottom: 10px;
-    }
 }

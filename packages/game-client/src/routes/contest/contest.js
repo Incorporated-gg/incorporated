@@ -28,20 +28,15 @@ export default function Contest({ contestID }) {
       <div className={styles.container}>
         {error && <h4>{error}</h4>}
         <div className={styles.title}>{contestIDToName(contestID)}</div>
+        <div className={styles.subtitle}>
+          Los premios son repartidos cada lunes a las 00:00 hora servidor, y cada semana cambia la categoría.
+        </div>
         <table>
-          <thead>
-            <tr>
-              <th>Rank</th>
-              <th>Usuario</th>
-              <th>Puntos</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
           <tbody>
             {contestScores ? (
               contestScores.map(contestScore => (
                 <tr key={contestScore.user.id}>
-                  <td>{contestScore.rank && contestScore.rank.toLocaleString()}</td>
+                  <td className={styles.rankTd}>{contestScore.rank && contestScore.rank.toLocaleString()}</td>
                   <td>
                     <UserLink user={contestScore.user} />
                   </td>

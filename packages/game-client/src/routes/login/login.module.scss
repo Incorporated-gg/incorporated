@@ -4,7 +4,7 @@
   display: block;
   margin: 0 auto;
   width: auto;
-  height: 30vh;
+  height: 25vh;
   margin-top: 15vh;
   margin-bottom: 40px;
 }
@@ -12,14 +12,18 @@
 .formContainer {
   padding: 10px;
   background: $gradient-brand;
+  color: #333333;
+  max-width: 500px;
+  margin: 0 auto;
+
   input {
     width: 100%;
-    margin-bottom: 15px;
     border: none;
     padding: 10px;
     color: #fff;
     text-align: center;
   }
+
   .buttonText {
     @include pascalText();
     color: #fff;
@@ -39,5 +43,12 @@
 .toggleActiveLink {
   cursor: pointer;
   text-align: center;
+  font-size: $font-size-large;
   margin-top: 20px;
+}
+
+.subtitle {
+  text-align: center;
+  margin-top: 5px;
+  font-size: $font-size-small;
 }

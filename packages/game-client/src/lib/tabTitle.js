@@ -2,8 +2,9 @@ import { reloadUserData } from './user'
 
 export function updateTabTitle({ missionTimeLeft, unreadMessages } = {}) {
   let newTitle = 'Incorporated'
-  if (missionTimeLeft) newTitle += ` (${missionTimeLeft})`
-  if (unreadMessages) newTitle += ` [${unreadMessages.toLocaleString()}]`
+  if (missionTimeLeft) newTitle += ` (${missionTimeLeft}) `
+  if (unreadMessages) newTitle += ` [${unreadMessages.toLocaleString()}] `
+  newTitle += ': Juego de estrategia multijugador online'
   window.document.title = newTitle
 }
 updateTabTitle()

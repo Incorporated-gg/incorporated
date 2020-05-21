@@ -14,6 +14,12 @@ import { getHoodData } from '../../lib/db/hoods'
 
 module.exports = app => {
   app.post('/v1/alliance/declare_war', async function(req, res) {
+    const disabled = true
+    if (disabled) {
+      res.status(401).json({ error: 'Guerras desactivadas (por ahora)' })
+      return
+    }
+
     if (!req.userData) {
       res.status(401).json({ error: 'Necesitas estar conectado', error_code: 'not_logged_in' })
       return
@@ -50,22 +56,13 @@ module.exports = app => {
       return
     }
 
-    const attackedHoods = req.body.hoods.map(n => parseInt(n))
-    try {
-      await checkHoodsAreValidForWar(attackedHoods, attackedAllianceID)
-    } catch (err) {
-      res.status(401).json({ error: err.message })
-      return
-    }
-
-    const alliance2Hoods = attackedHoods.join(',')
     const data = { days: {} }
     const tsNow = Math.floor(Date.now() / 1000)
     const {
       insertId: warID,
     } = await mysql.query(
-      'INSERT INTO alliances_wars (created_at, alliance1_id, alliance2_id, data, alliance2_hoods) VALUES (?, ?, ?, ?, ?)',
-      [tsNow, userRank.alliance_id, attackedAllianceID, JSON.stringify(data), alliance2Hoods]
+      'INSERT INTO alliances_wars (created_at, alliance1_id, alliance2_id, data) VALUES (?, ?, ?, ?)',
+      [tsNow, userRank.alliance_id, attackedAllianceID, JSON.stringify(data)]
     )
 
     const attackedAllianceMembers = await getAllianceMembers(attackedAllianceID)

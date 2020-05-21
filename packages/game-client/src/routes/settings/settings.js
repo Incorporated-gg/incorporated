@@ -7,6 +7,8 @@ export default function Settings() {
   return (
     <>
       <IncButton onClick={logout}>{'Logout'}</IncButton>
+      <br />
+      <br />
       <AvatarChange />
     </>
   )

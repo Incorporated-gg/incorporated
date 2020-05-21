@@ -23,6 +23,7 @@ import Newspaper from 'routes/Newspaper/Newspaper'
 import Reports from 'routes/Reports/Reports'
 import Settings from 'routes/settings/settings'
 import Monopolies from 'routes/monopolies/monopolies'
+import Shop from 'routes/shop/shop'
 
 export default function LoggedInRouter() {
   return (
@@ -74,6 +75,9 @@ export default function LoggedInRouter() {
               </Route>
               <Route path="/settings">
                 <Settings />
+              </Route>
+              <Route path="/shop">
+                <Shop />
               </Route>
               <Route path="/">
                 <Home />

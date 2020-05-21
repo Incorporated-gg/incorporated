@@ -19,13 +19,18 @@ export default function LoginRoute() {
       {active === 'login' && <Login />}
       {active === 'register' && <Register />}
       <div
+        tabIndex={0}
         className={styles.toggleActiveLink}
         onClick={() => {
+          setActive(active === 'login' ? 'register' : 'login')
+        }}
+        onKeyPress={e => {
+          if (e.key !== 'Enter' && e.key !== ' ') return
           setActive(active === 'login' ? 'register' : 'login')
         }}>
         {active === 'login' && (
           <>
-            ¿No tienes cuenta? <b>Registrate</b>
+            ¿No tienes cuenta? <b>Regístrate</b>
           </>
         )}
         {active === 'register' && (
@@ -67,7 +72,11 @@ function Login() {
         value={username}
         onChangeText={setUsername}
       />
+      <br />
+      <br />
       <IncInput type="password" placeholder={'Contraseña'} value={password} onChangeText={setPassword} />
+      <br />
+      <br />
       <div className={styles.buttonText} onClick={loginClicked}>
         INICIAR SESIÓN
       </div>
@@ -106,10 +115,21 @@ function Register() {
         value={username}
         onChangeText={setUsername}
       />
+      <br />
+      <br />
       <IncInput type="password" placeholder="Contraseña" value={password} onChangeText={setPassword} />
+      <br />
+      <br />
       <IncInput type="email" placeholder="Email" value={email} onChangeText={setEmail} />
+      <div className={styles.subtitle}>
+        Sólo usaremos tu correo para recuperar verificar tu identidad, y recuperar tu contraseña
+      </div>
+      <br />
       <div className={styles.buttonText} onClick={registerClicked}>
         CREAR CUENTA
+      </div>
+      <div className={styles.subtitle}>
+        Al crear una cuenta en Incorporated, aceptas nuestros Términos y Condiciones que aún no existen
       </div>
       <button type="submit" style={{ display: 'none' }}></button>
     </form>

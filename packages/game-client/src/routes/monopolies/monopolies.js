@@ -23,6 +23,7 @@ export default function Monopolies() {
       <div className={styles.monopolies}>
         {error && <h4>{error}</h4>}
         <div className={styles.title}>Monopolios</div>
+        <div className={styles.subtitle}>Los premios son repartidos cada sábado a las 23:30 hora servidor.</div>
         <table>
           <tbody>
             {monopolies.map((monopoly, i) => (

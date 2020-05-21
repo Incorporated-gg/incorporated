@@ -5,14 +5,17 @@
 }
 
 .actionTitle {
+  @include pascalText();
   flex-grow: 1;
   flex-shrink: 1;
-  @include pascalText();
   color: #000000B3;
   text-transform: uppercase;
   font-family: $font-family-title;
   font-weight: 600;
   font-size: $font-size-large;
+  @media (max-width: 440px) {
+    font-size: $font-size-medium;
+  }
 }
 
 .input {

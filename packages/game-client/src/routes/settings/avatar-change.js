@@ -30,7 +30,7 @@ export default function AvatarChange() {
 
   return (
     <IncContainer darkBg>
-      <div>
+      <div className={styles.container}>
         <h1>Cambiar avatar</h1>
         <div className={styles.changeAvatarContainer}>
           {avatarList.map(avatar => {

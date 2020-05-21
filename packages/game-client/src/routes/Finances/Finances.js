@@ -28,7 +28,7 @@ function DailyLogGraphs() {
 
   const graphData = {
     labels: [],
-    datasets: [{ label: 'Ingresos', data: [] }],
+    datasets: [{ label: 'Ingresos', data: [], backgroundColor: 'rgb(238, 207, 130)' }],
   }
   dailyLog.forEach(dayLog => {
     graphData.labels.push(dayLog.server_day)

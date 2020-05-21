@@ -6,6 +6,7 @@ import IncContainer from 'components/UI/inc-container'
 import UserLink from 'components/UI/user-link'
 import AllianceResourceItem from 'components/alliance/alliance-resource-item/alliance-resource-item'
 import AllianceBuffs from 'components/alliance/alliance-buffs'
+import styles from './alliance-resources.module.scss'
 
 AllianceResources.propTypes = {
   alliance: PropTypes.object.isRequired,
@@ -43,7 +44,7 @@ export default function AllianceResources({ alliance, reloadAllianceData }) {
             const resourceInfo = PERSONNEL_OBJ[logEntry.resource_id]
             const resourceName = resourceInfo?.name || '???'
             return (
-              <div key={Math.random()}>
+              <div key={Math.random()} className={styles.resourceLogItem}>
                 <UserLink user={logEntry.user} /> {logEntry.quantity > 0 ? 'metió' : 'sacó'}{' '}
                 {Math.abs(logEntry.quantity).toLocaleString()} {resourceName}
               </div>
