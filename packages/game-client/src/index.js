@@ -9,7 +9,9 @@ import 'normalize.css'
 import App from './App'
 import * as serviceWorker from './serviceWorker'
 
-Sentry.init({ dsn: 'https://a0ebf63b5e1849dc85a4ee4fb698f308@o396353.ingest.sentry.io/5249593' })
+if (process.env.NODE_ENV !== 'development') {
+  Sentry.init({ dsn: 'https://a0ebf63b5e1849dc85a4ee4fb698f308@o396353.ingest.sentry.io/5249593' })
+}
 
 Modal.defaultStyles = {}
 Modal.defaultProps.closeTimeoutMS = 150

@@ -6,7 +6,7 @@ import express from 'express'
 const ACCOUNT_NAMING_REQUIREMENTS = {
   minLength: 4,
   maxLength: 16,
-  regExp: /^[a-z0-9_-]+$/i,
+  regExp: /^[a-z0-9 _-]+$/i,
 }
 const emailRegexp = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/
 

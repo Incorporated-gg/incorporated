@@ -48,7 +48,7 @@ export const NAMING_REQUIREMENTS = {
     maxChars: 5,
   },
   long_name: {
-    regExp: /^[a-z0-9 ]+$/i,
+    regExp: /^[a-z0-9 _-]+$/i,
     minChars: 2,
     maxChars: 20,
   },

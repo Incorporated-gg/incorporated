@@ -7,7 +7,7 @@ import IncInput from 'components/UI/inc-input/inc-input'
 const ACCOUNT_NAMING_REQUIREMENTS = {
   minLength: 4,
   maxLength: 16,
-  regExp: /^[a-z0-9_-]+$/i,
+  regExp: /^[a-z0-9 _-]+$/i,
 }
 
 export default function LoginRoute() {

@@ -21,7 +21,7 @@ function calcAttacksToAllBuildings() {
       defensorGuards: 0,
       attackerSabots: 9999999,
       attackerThieves: 0,
-      attackerSabotageLvl: userData.researchs[3],
+      attackerSabotageLvl: userData.researchs[2],
       defensorSecurityLvl: userData.researchs[3],
       infraResearchLvl: userData.researchs[6],
       unprotectedMoney: 0,

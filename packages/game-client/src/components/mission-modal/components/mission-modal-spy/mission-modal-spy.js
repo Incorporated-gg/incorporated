@@ -85,7 +85,7 @@ export default function MissionModalSpy({ user, onRequestClose }) {
       <IncContainer>
         <label className={missionModalStyles.inputLabel}>
           <div>{PERSONNEL_OBJ.spies.name}</div>
-          <IncInput min={0} max={userData.personnel.spies} type="number" value={numSpies} onChangeText={setNumSpies} />
+          <IncInput min={0} type="number" value={numSpies} onChangeText={setNumSpies} />
         </label>
       </IncContainer>
 

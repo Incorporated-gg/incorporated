@@ -134,17 +134,27 @@ function SimulatorFromScratch() {
   })
   const unprotectedMoney = Math.max(0, storedMoney - maxMoney.maxSafe)
 
-  const simulation = simulateAttack({
-    defensorGuards: guards,
-    attackerSabots,
-    attackerThieves,
-    defensorSecurityLvl,
-    attackerSabotageLvl,
-    buildingID: targetBuilding,
-    infraResearchLvl,
-    buildingAmount,
-    unprotectedMoney,
-  })
+  let simulation
+  try {
+    simulation = simulateAttack({
+      defensorGuards: guards,
+      attackerSabots,
+      attackerThieves,
+      defensorSecurityLvl,
+      attackerSabotageLvl,
+      buildingID: targetBuilding,
+      infraResearchLvl,
+      buildingAmount,
+      unprotectedMoney,
+    })
+  } catch (e) {
+    console.error(e)
+    return (
+      <IncContainer darkBg>
+        <div style={{ padding: 10 }}>{JSON.stringify(e.message)}</div>
+      </IncContainer>
+    )
+  }
 
   return (
     <IncContainer darkBg>
