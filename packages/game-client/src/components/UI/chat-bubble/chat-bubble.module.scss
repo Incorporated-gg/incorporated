@@ -205,8 +205,6 @@
         flex-direction: column;
         padding: 10px 20px;
         border-bottom: 3px solid $color-bg;
-        position: sticky;
-        top: 0;
         background: #101010;
 
         .chatWindowBodyHeaderTop {
@@ -258,26 +256,60 @@
 
         .chatMessage {
           font-size: $font-size-medium;
-          padding: 10px 0;
+          margin-bottom: 7px;
+          display: flex;
+          
+          &:not(.chatMessageThread) {
+            border-top: 1px solid $color-bg;
+            padding-top: 10px;
+          }
 
-          &:not(:last-child) {
-            border-bottom: 1px solid $color-bg;
+          &.chatMessageThread:not(:last-of-type) {
+            margin-bottom: 3px;
           }
 
           .chatMessageUserAvatar {
-            float: left;
             margin-right: 10px;
           }
 
-          .chatMessageUsername {
-            color: $color-brand-light;
-            font-weight: bold;
+          .chatMessageContent {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+
+            .chatMessageUsername {
+              color: $color-brand-light;
+              font-weight: bold;
+            }
+  
+            .chatMessageTimestamp {
+              margin-left: 10px;
+              font-size: $font-size-small;
+            }
+            
+            .chatMessageText{
+              padding: 5px;
+              border-radius: 3px;
+              background: #090300;
+              display: flex;
+              align-items: center;
+
+              .chatMessageHiddenTimestamp {
+                display: none;
+                background: none;
+                color: gray;
+                font-size: 11px;
+                font-style: italic;
+                margin-left: 5px;
+              }
+              &:hover {
+                .chatMessageHiddenTimestamp {
+                  display: block;
+                }
+              }
+            }
           }
 
-          .chatMessageTimestamp {
-            margin-left: 10px;
-            font-size: $font-size-small;
-          }
         }
       }
     }
