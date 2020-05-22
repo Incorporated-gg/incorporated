@@ -79,9 +79,9 @@ export default function Reports() {
         />
         <DiamondSwitch
           options={{
-            spy: <Icon iconName="dynamite_stack" size={16} />,
+            spy: <Icon iconName="spy_map" size={16} />,
             any: 'Todo',
-            attack: <Icon iconName="spy_map" size={16} />,
+            attack: <Icon iconName="dynamite_stack" size={16} />,
           }}
           selected={missionType}
           onOptionSelected={setMissionType}

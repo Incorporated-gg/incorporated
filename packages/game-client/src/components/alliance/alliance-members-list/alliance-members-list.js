@@ -6,6 +6,7 @@ import styles from './alliance-members-list.module.scss'
 import IncContainer from 'components/UI/inc-container'
 import IncButton from 'components/UI/inc-button'
 import { useHistory } from 'react-router-dom'
+import { userData } from 'lib/user'
 
 AllianceMembersList.propTypes = {
   alliance: PropTypes.object.isRequired,
@@ -23,9 +24,12 @@ export default function AllianceMembersList({ alliance }) {
         <div className={styles.container}>
           <div className={styles.header}>
             <div className={styles.title}>Lista de miembros</div>
-            <IncButton outerStyle={{ marginRight: 5 }} style={{ padding: '5px 20px' }} onClick={editMembersPressed}>
-              Editar
-            </IncButton>
+            {(userData.alliance_user_rank.permission_accept_and_kick_members ||
+              userData.alliance_user_rank.permission_admin) && (
+              <IncButton outerStyle={{ marginRight: 5 }} style={{ padding: '5px 20px' }} onClick={editMembersPressed}>
+                Editar
+              </IncButton>
+            )}
           </div>
 
           {alliance.members.map(member => {

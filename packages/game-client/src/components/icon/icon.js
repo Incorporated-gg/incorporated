@@ -37,6 +37,11 @@ function Icon({ iconName, svg, size, className = '', width, height, ...props }) 
     [height, width]
   )
 
+  if (!svg && !iconName) {
+    console.error('<Icon> got neither svg nor iconName props')
+    return null
+  }
+
   return (
     <ReactSVG
       wrapper="span"

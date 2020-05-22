@@ -42,7 +42,9 @@
       background-color: rgba($color-bg, 0.7);
       color: #ffffff;
       padding: 4px 15px;
-      font-size: $font-size-medium;
+      font-size: $font-size-large;
+      font-family: $font-family-title;
+      letter-spacing: 1px;
       font-weight: 700;
       text-align: right;
     }
