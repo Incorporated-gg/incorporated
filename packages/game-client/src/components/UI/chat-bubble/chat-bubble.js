@@ -323,22 +323,37 @@ export default function ChatBubble() {
                   messagesList.find(m => m.room === currentRoom.id) &&
                   messagesList
                     .find(m => m.room === currentRoom.id)
-                    .messagesArray.map((message, i, thisMessagesArray) =>
-                      thisMessagesArray[i - 1] && thisMessagesArray[i - 1].user.id === message.user.id ? (
-                        <p key={i}>{message.text}</p>
-                      ) : (
-                        <div key={i} className={styles.chatMessage}>
-                          <ChatBubbleUser user={message.user} className={styles.chatMessageUserAvatar} />
-                          <div>
-                            <span className={styles.chatMessageUsername}>{message.user.username}</span>
-                            <span className={styles.chatMessageTimestamp}>
-                              {<ChatTimestamp timestamp={message.date} />}
-                            </span>
+                    .messagesArray.map((message, i, thisMessagesArray) => {
+                      const isThreadMessage =
+                        thisMessagesArray[i - 1] &&
+                        thisMessagesArray[i - 1].user.id === message.user.id &&
+                        parseInt(message.date - parseInt(thisMessagesArray[i - 1].date)) < 5 * 60
+                      return (
+                        <div
+                          key={i}
+                          className={`${styles.chatMessage} ${isThreadMessage ? styles.chatMessageThread : ''}`}>
+                          {!isThreadMessage && (
+                            <ChatBubbleUser user={message.user} className={styles.chatMessageUserAvatar} />
+                          )}
+                          <div className={styles.chatMessageContent}>
+                            {!isThreadMessage && (
+                              <div>
+                                <span className={styles.chatMessageUsername}>{message.user.username}</span>
+                                <span className={styles.chatMessageTimestamp}>
+                                  <ChatTimestamp timestamp={message.date} />
+                                </span>
+                              </div>
+                            )}
+                            <p className={styles.chatMessageText}>
+                              <span>{message.text}</span>
+                              <span className={styles.chatMessageHiddenTimestamp}>
+                                <ChatTimestamp timestamp={message.date} />
+                              </span>
+                            </p>
                           </div>
-                          <p>{message.text}</p>
                         </div>
                       )
-                    )}
+                    })}
               </div>
               <div className={styles.chatWindowFooter}>
                 <form onSubmit={sendMessage(currentMessage)}>
