@@ -260,7 +260,9 @@
           display: flex;
           
           &:not(.chatMessageThread) {
-            border-top: 1px solid $color-bg;
+            &:not(:first-child) {
+              border-top: 1px solid $color-bg;
+            }
             padding-top: 10px;
           }
 

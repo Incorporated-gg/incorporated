@@ -325,7 +325,9 @@ export default function ChatBubble() {
                     .find(m => m.room === currentRoom.id)
                     .messagesArray.map((message, i, thisMessagesArray) => {
                       const isThreadMessage =
-                        thisMessagesArray[i - 1] && thisMessagesArray[i - 1].user.id === message.user.id
+                        thisMessagesArray[i - 1] &&
+                        thisMessagesArray[i - 1].user.id === message.user.id &&
+                        parseInt(message.date - parseInt(thisMessagesArray[i - 1].date)) < 5 * 60
                       return (
                         <div
                           key={i}
