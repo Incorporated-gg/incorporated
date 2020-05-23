@@ -20,6 +20,10 @@ export default function ChatBubble() {
 
   const chatContext = useContext(ChatContext)
 
+  const client = useRef(null)
+  const chatMessagesWrapper = useRef(null)
+  const chatInput = useRef(null)
+
   const [chatRoomList, dispatchChatRoomList] = useReducer((state, action) => {
     switch (action.type) {
       case 'newMessages':
@@ -41,6 +45,7 @@ export default function ChatBubble() {
         })
       case 'markCurrentRoomAsRead':
         if (!isChatOpen) return state
+        if (client.current) client.current.emit('lastRead', currentRoom.id)
         return state.map(r => {
           if (r.id === currentRoom.id) {
             r.lastReadMessagesDate = parseInt(Date.now() / 1000)
@@ -51,10 +56,6 @@ export default function ChatBubble() {
         console.error('Acción no soportada')
     }
   }, [])
-
-  const client = useRef(null)
-  const chatMessagesWrapper = useRef(null)
-  const chatInput = useRef(null)
 
   const sendMessage = message => e => {
     e.preventDefault()
