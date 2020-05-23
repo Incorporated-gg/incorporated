@@ -40,7 +40,7 @@ export default function ChatBubble() {
           return r
         })
       case 'markCurrentRoomAsRead':
-        if (!isChatOpen) return
+        if (!isChatOpen) return state
         return state.map(r => {
           if (r.id === currentRoom.id) {
             r.lastReadMessagesDate = parseInt(Date.now() / 1000)
