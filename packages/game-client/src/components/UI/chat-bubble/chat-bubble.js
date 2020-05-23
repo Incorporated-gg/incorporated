@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback, useContext } from 'react'
+import React, { useState, useEffect, useRef, useCallback, useContext, useReducer } from 'react'
 import api from 'lib/api'
 import { sessionID, userData } from 'lib/user'
 import ChatBubbleUser from './components/chat-bubble-user'
@@ -10,7 +10,6 @@ import IncButton from 'components/UI/inc-button'
 import ChatContext from '../../../context/chat-context'
 
 export default function ChatBubble() {
-  const [chatRoomList, setChatRoomList] = useState([])
   const [isChatOpen, setIsChatOpen] = useState(false)
   const [isFullscreen, setIsFullscreen] = useState(false)
   const [isSelectingRoom, setIsSelectingRoom] = useState(false)
@@ -20,6 +19,38 @@ export default function ChatBubble() {
   const [newChatUserName, setNewChatUserName] = useState('')
 
   const chatContext = useContext(ChatContext)
+
+  const [chatRoomList, dispatchChatRoomList] = useReducer((state, action) => {
+    switch (action.type) {
+      case 'newMessages':
+        return state.map(rl => {
+          if (rl.id === action.room) {
+            const filteredMessages = action.newMessages.filter(message => !rl.messages.find(m => m.id === message.id))
+            rl.messages = Array.prototype.concat(rl.messages, filteredMessages)
+          }
+          return rl
+        })
+      case 'addChatRooms':
+        return [...state, ...action.chatRooms]
+      case 'markRoomAsRead':
+        return state.map(r => {
+          if (r.id === action.room.id) {
+            r.lastReadMessagesDate = parseInt(Date.now() / 1000)
+          }
+          return r
+        })
+      case 'markCurrentRoomAsRead':
+        if (!isChatOpen) return
+        return state.map(r => {
+          if (r.id === currentRoom.id) {
+            r.lastReadMessagesDate = parseInt(Date.now() / 1000)
+          }
+          return r
+        })
+      default:
+        console.error('Acción no soportada')
+    }
+  }, [])
 
   const client = useRef(null)
   const chatMessagesWrapper = useRef(null)
@@ -93,14 +124,7 @@ export default function ChatBubble() {
 
   const markMessagesAsReadForRoom = room => {
     if (!room) return
-    setChatRoomList(prevList => {
-      return prevList.map(r => {
-        if (r.id === room.id) {
-          r.lastReadMessagesDate = parseInt(Date.now() / 1000)
-        }
-        return r
-      })
-    })
+    dispatchChatRoomList({ type: 'markRoomAsRead', room })
   }
 
   useEffect(() => calcTotalUnreadMessages(), [calcTotalUnreadMessages])
@@ -123,31 +147,20 @@ export default function ChatBubble() {
       },
     })
     client.current.on('messages', ({ room, messagesArray: newMessages }) => {
-      setChatRoomList(roomList => {
-        return roomList.map(rl => {
-          if (rl.id === room) {
-            const filteredMessages = newMessages.filter(message => !rl.messages.find(m => m.id === message.id))
-            rl.messages = Array.prototype.concat(rl.messages, filteredMessages)
-          }
-          return rl
-        })
-      })
-      if (isChatOpen && room === currentRoom.id) markMessagesAsReadForRoom(currentRoom)
+      dispatchChatRoomList({ type: 'newMessages', room, newMessages })
+      dispatchChatRoomList({ type: 'markCurrentRoomAsRead' })
       calcTotalUnreadMessages()
       scrollDown()
     })
 
     client.current.on('chatRoomList', chatRooms => {
-      setChatRoomList(chatRooms)
+      dispatchChatRoomList({ type: 'addChatRooms', chatRooms })
       setCurrentRoom(chatRooms[0])
       calcTotalUnreadMessages()
     })
 
     client.current.on('chatCreated', chatData => {
-      setChatRoomList(prevList => {
-        if (!prevList.find(l => l.id === chatData.id)) return prevList.concat(chatData)
-        else return prevList
-      })
+      dispatchChatRoomList({ type: 'addChatRooms', chatRooms: [chatData] })
       setCurrentRoom(chatData)
       calcTotalUnreadMessages()
     })
