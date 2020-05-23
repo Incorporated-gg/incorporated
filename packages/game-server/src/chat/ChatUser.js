@@ -6,7 +6,8 @@ const client = redis.createClient(
   `redis://root:${process.env.REDIS_PASS}@${process.env.NODE_ENV === 'development' ? 'redis' : 'localhost'}:6379`
 )
 const sAddAsync = promisify(client.sadd).bind(client)
-/* const hGetAsync = promisify(client.hget).bind(client) */
+const hGetAsync = promisify(client.hget).bind(client)
+const hSetAsync = promisify(client.hset).bind(client)
 const sMembersAsync = promisify(client.smembers).bind(client)
 /* const hGetAllAsync = promisify(client.hgetall).bind(client) */
 const sisMemberAsync = promisify(client.sismember).bind(client)
@@ -26,8 +27,10 @@ class ChatUser {
       ? await Promise.all(
           rawPrivateConversations.map(async conversation => {
             const instance = new Conversation({ id: conversation })
+            const lastReadMessagesDate = await this.getLastMessageReadDateForConversation(conversation)
             await instance.init()
-            return await instance.toJSON()
+            const convJSON = await instance.toJSON()
+            return { ...convJSON, lastReadMessagesDate: lastReadMessagesDate || 0 }
           })
         )
       : []
@@ -36,6 +39,12 @@ class ChatUser {
   }
   async joinConversation(conversationId) {
     await sAddAsync(`users:${this.id}:conversations`, conversationId)
+  }
+  async getLastMessageReadDateForConversation(conversationId) {
+    return await hGetAsync(`users:${this.id}:lastReadMessagesDates`, conversationId)
+  }
+  async readConversation(conversationId) {
+    await hSetAsync(`users:${this.id}:lastReadMessagesDates`, conversationId, parseInt(Date.now() / 1000))
   }
   async toJSON() {
     return {
