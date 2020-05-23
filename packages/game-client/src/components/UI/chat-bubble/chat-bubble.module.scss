@@ -130,11 +130,15 @@
       }
 
       .chatWindowSidebarRoomList {
-        display: flex;
+        display: none;
         flex-direction: column;
         padding: 10px;
         min-width: 220px;
         max-width: 220px;
+
+        &.sidebarVisible {
+          display: flex;
+        }
 
         .chatRoomCategory {
           @include gradientText;
@@ -303,6 +307,7 @@
                 font-size: 11px;
                 font-style: italic;
                 margin-left: 5px;
+                white-space: nowrap;
               }
               &:hover {
                 .chatMessageHiddenTimestamp {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback, useContext } from 'react'
+import React, { useState, useEffect, useRef, useCallback, useContext, useReducer } from 'react'
 import api from 'lib/api'
 import { sessionID, userData } from 'lib/user'
 import ChatBubbleUser from './components/chat-bubble-user'
@@ -10,18 +10,47 @@ import IncButton from 'components/UI/inc-button'
 import ChatContext from '../../../context/chat-context'
 
 export default function ChatBubble() {
-  const [chatRoomList, setChatRoomList] = useState([])
-  const [isOpen, setIsOpen] = useState(false)
+  const [isChatOpen, setIsChatOpen] = useState(false)
   const [isFullscreen, setIsFullscreen] = useState(false)
   const [isSelectingRoom, setIsSelectingRoom] = useState(false)
   const [currentRoom, setCurrentRoom] = useState(null)
-  const [messagesList, setMessagesList] = useState([])
   const [currentMessage, setCurrentMessage] = useState('')
-  const [lastReadMessageDates, setLastReadMessageDates] = useState([])
-  const [newChatUserName, setNewChatUserName] = useState('')
   const [totalUnreadMessages, setTotalUnreadMessages] = useState(0)
+  const [newChatUserName, setNewChatUserName] = useState('')
 
   const chatContext = useContext(ChatContext)
+
+  const [chatRoomList, dispatchChatRoomList] = useReducer((state, action) => {
+    switch (action.type) {
+      case 'newMessages':
+        return state.map(rl => {
+          if (rl.id === action.room) {
+            const filteredMessages = action.newMessages.filter(message => !rl.messages.find(m => m.id === message.id))
+            rl.messages = Array.prototype.concat(rl.messages, filteredMessages)
+          }
+          return rl
+        })
+      case 'addChatRooms':
+        return [...state, ...action.chatRooms]
+      case 'markRoomAsRead':
+        return state.map(r => {
+          if (r.id === action.room.id) {
+            r.lastReadMessagesDate = parseInt(Date.now() / 1000)
+          }
+          return r
+        })
+      case 'markCurrentRoomAsRead':
+        if (!isChatOpen) return
+        return state.map(r => {
+          if (r.id === currentRoom.id) {
+            r.lastReadMessagesDate = parseInt(Date.now() / 1000)
+          }
+          return r
+        })
+      default:
+        console.error('Acción no soportada')
+    }
+  }, [])
 
   const client = useRef(null)
   const chatMessagesWrapper = useRef(null)
@@ -56,9 +85,9 @@ export default function ChatBubble() {
     const existingChat = chatRoomList.find(
       chatRoom => chatRoom.type === 'individual' && chatRoom.users.find(u => u.username === userName)
     )
-    if (existingChat) return changeRoom(existingChat)
+    if (existingChat) return setCurrentRoom(existingChat)
     if (userName.toLowerCase() === userData.username.toLowerCase()) return false
-    if (!isOpen) toggleChat(true)
+    if (!isChatOpen) toggleChat(true)
     client.current.emit('createChat', userName)
   }
 
@@ -71,7 +100,7 @@ export default function ChatBubble() {
   }, [chatContext])
 
   const toggleChat = status => {
-    setIsOpen(status || !isOpen)
+    setIsChatOpen(status || !isChatOpen)
     setTimeout(() => {
       chatInput.current && chatInput.current.focus()
       scrollDown()
@@ -83,40 +112,32 @@ export default function ChatBubble() {
   }
 
   const unreadMessagesForRoom = room => {
-    return messagesList.filter(m =>
-      m.room === room.name && m.date > lastReadMessageDates.find(lm => lm.room === room.name)
-        ? lastReadMessageDates.find(lm => lm.room === room.name).date
-        : 0
-    ).length
+    return room.messages.filter(m => {
+      return parseInt(m.date) > parseInt(room.lastReadMessagesDate)
+    }).length
   }
 
-  const calcTotalUnreadMessages = () => {
-    const unread = chatRoomList.reduce((accumulated, curRoom) => {
-      const unreadForRoom = unreadMessagesForRoom(curRoom)
-      return accumulated + unreadForRoom
-    }, 0)
-    return unread
+  const calcTotalUnreadMessages = useCallback(() => {
+    const total = chatRoomList.reduce((accumulated, curRoom) => accumulated + unreadMessagesForRoom(curRoom), 0)
+    setTotalUnreadMessages(total)
+  }, [chatRoomList])
+
+  const markMessagesAsReadForRoom = room => {
+    if (!room) return
+    dispatchChatRoomList({ type: 'markRoomAsRead', room })
   }
 
-  const changeRoom = useCallback(chatRoom => {
-    if (!chatRoom) return
-    setCurrentRoom(chatRoom)
+  useEffect(() => calcTotalUnreadMessages(), [calcTotalUnreadMessages])
+
+  useEffect(() => {
     setIsSelectingRoom(false)
-    setLastReadMessageDates(records => {
-      const existingRecord = records.find(r => r.room === chatRoom.name)
-      if (!existingRecord) {
-        return Array.prototype.concat(records, [{ room: chatRoom.name, date: Date.now() / 1000 }])
-      }
-      return records.map(r => {
-        if (r.room === chatRoom.name) {
-          r.date = Date.now()
-        }
-        return r
-      })
-    })
+    // Update last read messages date
+    markMessagesAsReadForRoom(currentRoom)
+    // emit read messages for this new room
+    if (client.current) client.current.emit('lastRead', currentRoom.id)
     chatInput.current && chatInput.current.focus()
-    setTimeout(() => scrollDown(), 0)
-  }, [])
+    scrollDown()
+  }, [currentRoom])
 
   useEffect(() => {
     client.current = io(api.API_URL, {
@@ -125,47 +146,23 @@ export default function ChatBubble() {
         sessionID,
       },
     })
-    client.current.on('messages', ({ room, messagesArray }) => {
-      setTotalUnreadMessages(calcTotalUnreadMessages())
-      setMessagesList(originalList => {
-        const existingList = originalList.find(list => list.room === room)
-        if (!existingList) {
-          return Array.prototype.concat(originalList, [{ room, messagesArray }])
-        }
-        return originalList.map(list => {
-          if (list.room === room) {
-            const filteredMessages = messagesArray.filter(message => !list.messagesArray.find(m => m.id === message.id))
-            list.messagesArray = Array.prototype.concat(list.messagesArray, filteredMessages)
-          }
-          return list
-        })
-      })
+    client.current.on('messages', ({ room, messagesArray: newMessages }) => {
+      dispatchChatRoomList({ type: 'newMessages', room, newMessages })
+      dispatchChatRoomList({ type: 'markCurrentRoomAsRead' })
+      calcTotalUnreadMessages()
       scrollDown()
     })
 
     client.current.on('chatRoomList', chatRooms => {
-      setChatRoomList(chatRooms)
-      changeRoom(chatRooms[0])
+      dispatchChatRoomList({ type: 'addChatRooms', chatRooms })
+      setCurrentRoom(chatRooms[0])
+      calcTotalUnreadMessages()
     })
 
     client.current.on('chatCreated', chatData => {
-      setChatRoomList(prevList => {
-        if (!prevList.find(l => l.id === chatData.id)) return prevList.concat(chatData)
-        else return prevList
-      })
-      setMessagesList(originalList => {
-        const existingList = originalList.find(list => list.room === chatData.id)
-        if (!existingList) {
-          return Array.prototype.concat([{ room: chatData.id, messagesArray: chatData.messages }], originalList)
-        }
-        return originalList.map(list => {
-          if (list.room === chatData.id) {
-            list.messagesArray = Array.prototype.concat(list.messagesArray, chatData.messages)
-          }
-          return list
-        })
-      })
-      changeRoom(chatData)
+      dispatchChatRoomList({ type: 'addChatRooms', chatRooms: [chatData] })
+      setCurrentRoom(chatData)
+      calcTotalUnreadMessages()
     })
 
     /* client.current.on('olderMessages', ({ room, messagesArray }) => {
@@ -188,7 +185,7 @@ export default function ChatBubble() {
   return (
     <>
       <aside className={`${styles.chatBubble}${isSelectingRoom ? ` ${styles.selectingRoom}` : ''}`}>
-        {isOpen && (
+        {isChatOpen && (
           <div className={`${styles.chatWindow}${isFullscreen ? ` ${styles.fullScreen}` : ''}`}>
             <aside className={styles.chatWindowSidebar}>
               <div className={styles.chatWindowSidebarHeader}>
@@ -212,86 +209,83 @@ export default function ChatBubble() {
                   />
                 </button>
               </div>
-              {isSelectingRoom && (
-                <div className={styles.chatWindowSidebarRoomList}>
-                  <h3 className={styles.chatRoomCategory}>Canales</h3>
-                  <div className={styles.chatRoomCategoryList}>
-                    {chatRoomList.filter(room => room.type === 'public').length ? (
-                      chatRoomList
-                        .filter(room => room.type === 'public')
-                        .map((chatRoom, i) => (
-                          <button
-                            key={i}
-                            type="button"
-                            className={styles.chatRoomItemButton}
-                            onClick={() => chatRoom.name !== currentRoom.name && changeRoom(chatRoom)}>
-                            <span className={styles.chatRoomItemButtonName}>{chatRoom.name}</span>
-                            {unreadMessagesForRoom(chatRoom) > 0 && (
-                              <span className={styles.chatRoomItemButtonUnread}>{unreadMessagesForRoom(chatRoom)}</span>
-                            )}
-                          </button>
-                        ))
-                    ) : (
-                      <span className={styles.chatRoomItemButtonName}>No tienes canales</span>
-                    )}
-                  </div>
-                  <h3 className={styles.chatRoomCategory}>Grupos</h3>
-                  <div className={styles.chatRoomCategoryList}>
-                    {chatRoomList.filter(room => room.type === 'group').length ? (
-                      chatRoomList
-                        .filter(room => room.type === 'group')
-                        .map((chatRoom, i) => (
-                          <button
-                            key={i}
-                            type="button"
-                            className={styles.chatRoomItemButton}
-                            onClick={() => chatRoom.name !== currentRoom.name && changeRoom(chatRoom)}>
-                            <span className={styles.chatRoomItemButtonName}>{chatRoom.name}</span>
-                            {unreadMessagesForRoom(chatRoom) > 0 && (
-                              <span className={styles.chatRoomItemButtonUnread}>{unreadMessagesForRoom(chatRoom)}</span>
-                            )}
-                          </button>
-                        ))
-                    ) : (
-                      <span className={styles.chatRoomItemButtonName}>No tienes grupos</span>
-                    )}
-                  </div>
-                  <h3 className={styles.chatRoomCategory}>Convers.</h3>
-                  <div className={styles.chatRoomCategoryList}>
-                    {chatRoomList.filter(room => room.type === 'individual').length ? (
-                      chatRoomList
-                        .filter(room => room.type === 'individual')
-                        .map((chatRoom, i) => (
-                          <button
-                            key={i}
-                            type="button"
-                            className={styles.chatRoomItemButton}
-                            onClick={() => chatRoom.name !== currentRoom.name && changeRoom(chatRoom)}>
-                            <span className={styles.chatRoomItemButtonName}>
-                              {chatRoom.users.length &&
-                                chatRoom.users.find(u => parseInt(u.id) !== userData.id).username}
-                            </span>
-                            {unreadMessagesForRoom(chatRoom) > 0 && (
-                              <span className={styles.chatRoomItemButtonUnread}>{unreadMessagesForRoom(chatRoom)}</span>
-                            )}
-                          </button>
-                        ))
-                    ) : (
-                      <span className={styles.chatRoomItemButtonName}>No tienes chats</span>
-                    )}
-                  </div>
-                  <input type="text" value={newChatUserName} onChange={e => setNewChatUserName(e.target.value)} />
-                  <button type="button" onClick={() => chatContext.openChatWith(newChatUserName)}>
-                    <span>Create chat with</span>
-                  </button>
-                  <button
-                    type="button"
-                    className={styles.fullScreenButton}
-                    onClick={() => setIsFullscreen(!isFullscreen)}>
-                    <span>{isFullscreen ? '-' : '+'}</span>
-                  </button>
+              <div className={`${styles.chatWindowSidebarRoomList} ${isSelectingRoom ? styles.sidebarVisible : ''}`}>
+                <h3 className={styles.chatRoomCategory}>Canales</h3>
+                <div className={styles.chatRoomCategoryList}>
+                  {chatRoomList.filter(room => room.type === 'public').length ? (
+                    chatRoomList
+                      .filter(room => room.type === 'public')
+                      .map((chatRoom, i) => (
+                        <button
+                          key={i}
+                          type="button"
+                          className={styles.chatRoomItemButton}
+                          onClick={() => chatRoom.name !== currentRoom.name && setCurrentRoom(chatRoom)}>
+                          <span className={styles.chatRoomItemButtonName}>{chatRoom.name}</span>
+                          {unreadMessagesForRoom(chatRoom) > 0 && (
+                            <span className={styles.chatRoomItemButtonUnread}>{unreadMessagesForRoom(chatRoom)}</span>
+                          )}
+                        </button>
+                      ))
+                  ) : (
+                    <span className={styles.chatRoomItemButtonName}>No tienes canales</span>
+                  )}
                 </div>
-              )}
+                <h3 className={styles.chatRoomCategory}>Grupos</h3>
+                <div className={styles.chatRoomCategoryList}>
+                  {chatRoomList.filter(room => room.type === 'group').length ? (
+                    chatRoomList
+                      .filter(room => room.type === 'group')
+                      .map((chatRoom, i) => (
+                        <button
+                          key={i}
+                          type="button"
+                          className={styles.chatRoomItemButton}
+                          onClick={() => chatRoom.name !== currentRoom.name && setCurrentRoom(chatRoom)}>
+                          <span className={styles.chatRoomItemButtonName}>{chatRoom.name}</span>
+                          {unreadMessagesForRoom(chatRoom) > 0 && (
+                            <span className={styles.chatRoomItemButtonUnread}>{unreadMessagesForRoom(chatRoom)}</span>
+                          )}
+                        </button>
+                      ))
+                  ) : (
+                    <span className={styles.chatRoomItemButtonName}>No tienes grupos</span>
+                  )}
+                </div>
+                <h3 className={styles.chatRoomCategory}>Convers.</h3>
+                <div className={styles.chatRoomCategoryList}>
+                  {chatRoomList.filter(room => room.type === 'individual').length ? (
+                    chatRoomList
+                      .filter(room => room.type === 'individual')
+                      .map((chatRoom, i) => (
+                        <button
+                          key={i}
+                          type="button"
+                          className={styles.chatRoomItemButton}
+                          onClick={() => chatRoom.name !== currentRoom.name && setCurrentRoom(chatRoom)}>
+                          <span className={styles.chatRoomItemButtonName}>
+                            {chatRoom.users.length && chatRoom.users.find(u => parseInt(u.id) !== userData.id).username}
+                          </span>
+                          {unreadMessagesForRoom(chatRoom) > 0 && (
+                            <span className={styles.chatRoomItemButtonUnread}>{unreadMessagesForRoom(chatRoom)}</span>
+                          )}
+                        </button>
+                      ))
+                  ) : (
+                    <span className={styles.chatRoomItemButtonName}>No tienes chats</span>
+                  )}
+                </div>
+                <input type="text" value={newChatUserName} onChange={e => setNewChatUserName(e.target.value)} />
+                <button type="button" onClick={() => chatContext.openChatWith(newChatUserName)}>
+                  <span>Create chat with</span>
+                </button>
+                <button
+                  type="button"
+                  className={styles.fullScreenButton}
+                  onClick={() => setIsFullscreen(!isFullscreen)}>
+                  <span>{isFullscreen ? '-' : '+'}</span>
+                </button>
+              </div>
             </aside>
             <div className={`${styles.chatWindowBody}${isSelectingRoom ? ` ${styles.showRoomList}` : ''}`}>
               <header className={styles.chatWindowBodyHeader}>
@@ -318,42 +312,38 @@ export default function ChatBubble() {
                 </span>
               </header>
               <div className={styles.chatMessagesWrapper} ref={chatMessagesWrapper} /* onScroll={captureChatScroll} */>
-                {messagesList &&
-                  currentRoom &&
-                  messagesList.find(m => m.room === currentRoom.id) &&
-                  messagesList
-                    .find(m => m.room === currentRoom.id)
-                    .messagesArray.map((message, i, thisMessagesArray) => {
-                      const isThreadMessage =
-                        thisMessagesArray[i - 1] &&
-                        thisMessagesArray[i - 1].user.id === message.user.id &&
-                        parseInt(message.date - parseInt(thisMessagesArray[i - 1].date)) < 5 * 60
-                      return (
-                        <div
-                          key={i}
-                          className={`${styles.chatMessage} ${isThreadMessage ? styles.chatMessageThread : ''}`}>
+                {currentRoom &&
+                  currentRoom.messages.map((message, i, thisMessagesArray) => {
+                    const isThreadMessage =
+                      thisMessagesArray[i - 1] &&
+                      thisMessagesArray[i - 1].user.id === message.user.id &&
+                      parseInt(message.date - parseInt(thisMessagesArray[i - 1].date)) < 5 * 60
+                    return (
+                      <div
+                        key={i}
+                        className={`${styles.chatMessage} ${isThreadMessage ? styles.chatMessageThread : ''}`}>
+                        {!isThreadMessage && (
+                          <ChatBubbleUser user={message.user} className={styles.chatMessageUserAvatar} />
+                        )}
+                        <div className={styles.chatMessageContent}>
                           {!isThreadMessage && (
-                            <ChatBubbleUser user={message.user} className={styles.chatMessageUserAvatar} />
-                          )}
-                          <div className={styles.chatMessageContent}>
-                            {!isThreadMessage && (
-                              <div>
-                                <span className={styles.chatMessageUsername}>{message.user.username}</span>
-                                <span className={styles.chatMessageTimestamp}>
-                                  <ChatTimestamp timestamp={message.date} />
-                                </span>
-                              </div>
-                            )}
-                            <p className={styles.chatMessageText}>
-                              <span>{message.text}</span>
-                              <span className={styles.chatMessageHiddenTimestamp}>
+                            <div>
+                              <span className={styles.chatMessageUsername}>{message.user.username}</span>
+                              <span className={styles.chatMessageTimestamp}>
                                 <ChatTimestamp timestamp={message.date} />
                               </span>
-                            </p>
-                          </div>
+                            </div>
+                          )}
+                          <p className={styles.chatMessageText}>
+                            <span>{message.text}</span>
+                            <span className={styles.chatMessageHiddenTimestamp}>
+                              <ChatTimestamp timestamp={message.date} />
+                            </span>
+                          </p>
                         </div>
-                      )
-                    })}
+                      </div>
+                    )
+                  })}
               </div>
               <div className={styles.chatWindowFooter}>
                 <form onSubmit={sendMessage(currentMessage)}>
@@ -378,14 +368,14 @@ export default function ChatBubble() {
       <div className={styles.chatToggleButton} onClick={() => toggleChat()}>
         <div>
           {totalUnreadMessages > 0 && <span className={styles.unreadMessagesCount}>{totalUnreadMessages}</span>}
-          <Icon size={26} svg={require('./img/chatIcon.svg')} alt={`${isOpen ? 'Ocultar chat' : 'Mostrar chat'}`} />
+          <Icon size={26} svg={require('./img/chatIcon.svg')} alt={`${isChatOpen ? 'Ocultar chat' : 'Mostrar chat'}`} />
         </div>
       </div>
     </>
   )
 }
 
-function ChatTimestamp({ timestamp = Date.now() / 1000 }) {
+function ChatTimestamp({ timestamp = parseInt(Date.now() / 1000) }) {
   const chatTS = new Date(timestamp * 1000)
   function pad(number) {
     return number.toString().padStart(2, '0')

@@ -86,11 +86,14 @@ export const setupChat = io => {
     })
     .on('connection', async socket => {
       if (_DEV_) console.log(socket.user.id + ' connected')
+      const user = new ChatUser(socket.user.id)
+      await user.init()
       const publicRooms = await Promise.all(
         publicChannels.map(async publicChannel => {
           const conv = new Conversation(publicChannel)
           await conv.init()
           const jsonConv = await conv.toJSON()
+          jsonConv.lastReadMessagesDate = (await user.getLastMessageReadDateForConversation(conv.id)) || 0
           socket.join(conv.id)
           socket.emit('messages', {
             room: conv.id,
@@ -99,8 +102,6 @@ export const setupChat = io => {
           return jsonConv
         })
       )
-      const user = new ChatUser(socket.user.id)
-      await user.init()
       user.conversations.length &&
         user.conversations.forEach(conversation => {
           socket.join(conversation.id)
@@ -119,7 +120,7 @@ export const setupChat = io => {
         await thisRoom.init()
         if (!thisRoom) return
 
-        const timestamp = Date.now() / 1000
+        const timestamp = parseInt(Date.now() / 1000)
         const newMessage = {
           id: thisRoom.messages.length,
           user: socket.user.id,
@@ -133,6 +134,10 @@ export const setupChat = io => {
           room: conversationId,
           messagesArray: [newMessage],
         })
+      })
+
+      socket.on('lastRead', async conversationId => {
+        user.readConversation(conversationId)
       })
 
       /* socket.on('fetchMessages', ({ from, room }) => {
