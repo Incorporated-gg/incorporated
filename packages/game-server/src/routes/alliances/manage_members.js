@@ -1,7 +1,14 @@
 import { getUserData, sendMessage } from '../../lib/db/users'
 import mysql from '../../lib/mysql'
-import { getUserAllianceRank, getUserAllianceID, getAllianceMembers } from '../../lib/db/alliances'
+import {
+  getUserAllianceRank,
+  getUserAllianceID,
+  getAllianceMembers,
+  getAllianceBasicData,
+} from '../../lib/db/alliances'
 import { MAX_ALLIANCE_MEMBERS, PERMISSIONS_LIST } from 'shared-lib/allianceUtils'
+import Conversation from '../../chat/Conversation'
+import { chatEvents } from '../../chat'
 
 module.exports = app => {
   app.get('/v1/alliance/member_request/list', async function(req, res) {
@@ -106,6 +113,19 @@ module.exports = app => {
     }
 
     await mysql.query('DELETE FROM alliances_members WHERE user_id=?', [userBeingKickedID])
+
+    // Sync alliance chat users
+    const allianceMembers = await getAllianceMembers(memberBeingKicked.alliance_id)
+    const allianceUserIDs = allianceMembers.map(u => u.user.id)
+    const roomName = `alliance${memberBeingKicked.alliance_id}`
+    const allianceConversation = new Conversation({
+      id: roomName,
+      type: 'alliance',
+      userIds: allianceUserIDs,
+    })
+    await allianceConversation.init()
+    await allianceConversation.syncUsers()
+    chatEvents.emit('kickUser', { room: roomName, userId: userBeingKickedID })
 
     res.json({ success: true })
   })
@@ -213,6 +233,20 @@ function memberRequestAction(action) {
         'INSERT INTO alliances_members (alliance_id, user_id, created_at, rank_name, permission_admin) VALUES (?, ?, ?, ?, ?)',
         [userRank.alliance_id, userID, Math.floor(Date.now() / 1000), 'Recluta', false]
       )
+
+      // Sync alliance chat users
+      const allianceUserIDs = allianceMembers.map(u => u.user.id)
+      const allianceData = await getAllianceBasicData(userRank.alliance_id)
+      const roomName = `alliance${allianceData.id}`
+      const allianceConversation = new Conversation({
+        id: roomName,
+        type: 'alliance',
+        userIds: allianceUserIDs,
+        name: `${allianceData.long_name} [${allianceData.short_name}]`,
+      })
+      await allianceConversation.init()
+      await allianceConversation.syncUsers()
+      chatEvents.emit('addUser', { room: roomName, userId: userID })
     }
 
     res.json({ success: true })

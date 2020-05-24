@@ -35,7 +35,18 @@ export default function ChatBubble() {
           return rl
         })
       case 'addChatRooms':
-        return [...state, ...action.chatRooms]
+        if (!action.chatRooms.length) return state
+        if (!state.length) return action.chatRooms
+        let newState = [...state]
+        action.chatRooms.forEach(newRoom => {
+          const existingRoomIndex = state.findIndex(r => r.id === newRoom.id)
+          if (existingRoomIndex > -1) {
+            newState[existingRoomIndex] = newRoom
+          } else newState.push(newRoom)
+        })
+        return newState
+      case 'removeRoom':
+        return state.filter(r => r.id !== action.roomName)
       case 'markRoomAsRead':
         return state.map(r => {
           if (r.id === action.room.id) {
@@ -116,7 +127,8 @@ export default function ChatBubble() {
   }
 
   const calcTotalUnreadMessages = useCallback(() => {
-    const total = chatRoomList.reduce((accumulated, curRoom) => accumulated + unreadMessagesForRoom(curRoom), 0)
+    const total =
+      chatRoomList && chatRoomList.reduce((accumulated, curRoom) => accumulated + unreadMessagesForRoom(curRoom), 0)
     setTotalUnreadMessages(total)
   }, [chatRoomList])
 
@@ -160,6 +172,11 @@ export default function ChatBubble() {
       dispatchChatRoomList({ type: 'addChatRooms', chatRooms: [chatData] })
       setCurrentRoom(chatData)
       chatInput.current && chatInput.current.focus()
+      calcTotalUnreadMessages()
+    })
+
+    client.current.on('leaveRoom', roomName => {
+      dispatchChatRoomList({ type: 'removeRoom', roomName })
       calcTotalUnreadMessages()
     })
 
@@ -210,7 +227,7 @@ export default function ChatBubble() {
               <div className={`${styles.chatWindowSidebarRoomList} ${isSelectingRoom ? styles.sidebarVisible : ''}`}>
                 <h3 className={styles.chatRoomCategory}>Canales</h3>
                 <div className={styles.chatRoomCategoryList}>
-                  {chatRoomList.filter(room => room.type === 'public').length ? (
+                  {chatRoomList && chatRoomList.filter(room => room.type === 'public').length ? (
                     chatRoomList
                       .filter(room => room.type === 'public')
                       .map((chatRoom, i) => (
@@ -231,9 +248,10 @@ export default function ChatBubble() {
                 </div>
                 <h3 className={styles.chatRoomCategory}>Grupos</h3>
                 <div className={styles.chatRoomCategoryList}>
-                  {chatRoomList.filter(room => room.type === 'group').length ? (
+                  {chatRoomList &&
+                  chatRoomList.filter(room => room.type === 'group' || room.type === 'alliance').length ? (
                     chatRoomList
-                      .filter(room => room.type === 'group')
+                      .filter(room => room.type === 'group' || room.type === 'alliance')
                       .map((chatRoom, i) => (
                         <button
                           key={i}
@@ -252,7 +270,7 @@ export default function ChatBubble() {
                 </div>
                 <h3 className={styles.chatRoomCategory}>Convers.</h3>
                 <div className={styles.chatRoomCategoryList}>
-                  {chatRoomList.filter(room => room.type === 'individual').length ? (
+                  {chatRoomList && chatRoomList.filter(room => room.type === 'individual').length ? (
                     chatRoomList
                       .filter(room => room.type === 'individual')
                       .map((chatRoom, i) => (
@@ -291,7 +309,7 @@ export default function ChatBubble() {
                   <h3>
                     {currentRoom && currentRoom.type === 'individual'
                       ? currentRoom.users.find(u => parseInt(u.id) !== userData.id).username
-                      : currentRoom && currentRoom.type === 'public'
+                      : currentRoom && currentRoom.name
                       ? currentRoom.name
                       : 'No hay conversaciones activas'}
                   </h3>

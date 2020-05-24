@@ -1,7 +1,15 @@
 import { parseBadgeFromUserRequest } from '../../lib/db/alliances/badge'
 import mysql from '../../lib/mysql'
 import { NAMING_REQUIREMENTS, CREATE_ALLIANCE_PRICE } from 'shared-lib/allianceUtils'
-import { getUserAllianceID, deleteAlliance, getUserAllianceRank, getAllianceBuffsData } from '../../lib/db/alliances'
+import {
+  getUserAllianceID,
+  deleteAlliance,
+  getUserAllianceRank,
+  getAllianceBuffsData,
+  getAllianceMembers,
+} from '../../lib/db/alliances'
+import Conversation from '../../chat/Conversation'
+import { chatEvents } from '../../chat'
 
 module.exports = app => {
   app.post('/v1/alliance/create', async function(req, res) {
@@ -71,6 +79,19 @@ module.exports = app => {
       [allianceCreatedAt, newAllianceID, req.userData.id, 'Admin', true, true, true, true]
     )
 
+    // Sync alliance chat users
+    const allianceMembers = await getAllianceMembers(newAllianceID)
+    const allianceUserIDs = allianceMembers.map(u => u.user.id)
+    const roomName = `alliance${newAllianceID}`
+    const allianceConversation = new Conversation({
+      id: roomName,
+      type: 'alliance',
+      userIds: allianceUserIDs,
+    })
+    await allianceConversation.init()
+    await allianceConversation.syncUsers()
+    chatEvents.emit('addUser', { room: roomName, userId: req.userData.id })
+
     res.json({ success: true, new_alliance_id: newAllianceID })
   })
 
@@ -87,6 +108,19 @@ module.exports = app => {
     }
 
     await deleteAlliance(userRank.alliance_id)
+
+    // Sync alliance chat users
+    const allianceMembers = await getAllianceMembers(userRank.alliance_id)
+    const allianceUserIDs = allianceMembers.map(u => u.user.id)
+    const roomName = `alliance${userRank.alliance_id}`
+    const allianceConversation = new Conversation({
+      id: roomName,
+      type: 'alliance',
+      userIds: allianceUserIDs,
+    })
+    await allianceConversation.init()
+    await allianceConversation.syncUsers()
+    chatEvents.emit('kickUser', { room: roomName, userId: req.userData.id })
 
     res.json({ success: true })
   })
@@ -111,6 +145,19 @@ module.exports = app => {
       userRank.alliance_id,
       req.userData.id,
     ])
+
+    // Sync alliance chat users
+    const allianceMembers = await getAllianceMembers(userRank.alliance_id)
+    const allianceUserIDs = allianceMembers.map(u => u.user.id)
+    const roomName = `alliance${userRank.alliance_id}`
+    const allianceConversation = new Conversation({
+      id: roomName,
+      type: 'alliance',
+      userIds: allianceUserIDs,
+    })
+    await allianceConversation.init()
+    await allianceConversation.syncUsers()
+    chatEvents.emit('kickUser', { room: roomName, userId: req.userData.id })
 
     res.json({ success: true })
   })
