@@ -40,7 +40,8 @@ function ActiveTask({ task }) {
   switch (task.type) {
     case 'cyclic_build': {
       const buildingInfo = buildingsList.find(b => b.id === task.requirements.buildingID)
-      taskElm = `Construye ${task.requirements.amount.toLocaleString()} ${buildingInfo.name}`
+      const newStr = buildingInfo.nameGender === 'masc' ? 'nuevos' : 'nuevas'
+      taskElm = `Construye ${task.requirements.amount.toLocaleString()} ${buildingInfo.name} ${newStr}`
       break
     }
     case 'cyclic_attack': {

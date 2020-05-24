@@ -12,7 +12,7 @@ const handlePersonnelRequest = async (req, res, operationType) => {
     res.status(400).json({ error: 'Faltan datos' })
     return
   }
-  if (await getHasActiveMission(req.userData.id)) {
+  if (operationType === 'fire' && (await getHasActiveMission(req.userData.id))) {
     res.status(400).json({ error: 'Tienes una misión en curso' })
     return
   }

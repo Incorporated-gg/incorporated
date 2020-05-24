@@ -2,6 +2,7 @@ export const buildingsList = [
   {
     id: 1,
     name: 'Sastrerías',
+    nameGender: 'fem',
     basePrice: 1000,
     baseIncome: 1000,
     maximumDestroyedBuildings: 32,
@@ -12,6 +13,7 @@ export const buildingsList = [
   {
     id: 2,
     name: 'Bares',
+    nameGender: 'masc',
     basePrice: 3500,
     baseIncome: 2000,
     maximumDestroyedBuildings: 16,
@@ -22,6 +24,7 @@ export const buildingsList = [
   {
     id: 3,
     name: 'Droguerías',
+    nameGender: 'fem',
     basePrice: 12000,
     baseIncome: 4000,
     maximumDestroyedBuildings: 8,
@@ -32,6 +35,7 @@ export const buildingsList = [
   {
     id: 4,
     name: 'Joyerías',
+    nameGender: 'fem',
     basePrice: 42000,
     baseIncome: 8000,
     maximumDestroyedBuildings: 4,
@@ -42,6 +46,7 @@ export const buildingsList = [
   {
     id: 5,
     name: 'Cines',
+    nameGender: 'masc',
     basePrice: 150000,
     baseIncome: 16000,
     maximumDestroyedBuildings: 2,
@@ -52,6 +57,7 @@ export const buildingsList = [
   {
     id: 6,
     name: 'Hoteles',
+    nameGender: 'masc',
     basePrice: 525000,
     baseIncome: 32000,
     maximumDestroyedBuildings: 1,

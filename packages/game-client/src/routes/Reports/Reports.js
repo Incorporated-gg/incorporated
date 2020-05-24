@@ -41,14 +41,11 @@ export default function Reports() {
         ownerType,
       })
       .then(res => {
-        if (res.notSeenReceivedCount > 0) setSendType('received')
-        setMissions(res)
+        if (res.notSeenSentCount === 0 && res.notSeenReceivedCount > 0) setSendType('received')
+        else setMissions(res)
       })
       .catch(err => alert(err.message))
-
-    // Disable missions in useCallback dependencies to prevent infinite loop of reloading missions
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [missionType, ownerType, sendType])
+  }, [missionType, missions, ownerType, sendType])
 
   // Reload on mission end
   const reloadOnMissionEnd = useRef(false)
@@ -66,7 +63,10 @@ export default function Reports() {
   }, [reloadMissionsCallback, sendType, userData.active_mission])
 
   // Reload on start, and on type filters changed
-  useEffect(() => reloadMissionsCallback(), [reloadMissionsCallback])
+  useEffect(() => {
+    reloadMissionsCallback()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [missionType, ownerType, sendType])
 
   return (
     <>

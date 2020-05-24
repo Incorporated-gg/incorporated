@@ -17,16 +17,28 @@ SpyReport.propTypes = {
   mission: PropTypes.object.isRequired,
 }
 export default function SpyReport({ mission }) {
-  const isTargetMe = mission.target_user && userData.id === mission.target_user.id
+  const isTargetMeOrAllied =
+    mission.target_user &&
+    (userData.id === mission.target_user.id || userData.alliance?.id === mission.target_user.alliance?.id)
   const canSimulateAttack = mission.report.researchs?.[5] !== undefined
   const [isSimulatorModalOpen, setIsSimulatorModalOpen] = useState(false)
-  if (!mission.report.researchs) return null // Old spy reports format. Can be deleted by Dec 2020
 
-  if (isTargetMe) {
+  if (isTargetMeOrAllied) {
+    const isTargetMe = userData.id === mission.target_user.id
     return (
       <NotepadPage>
-        Hemos cazado a {mission.report.captured_spies.toLocaleString()} espías de{' '}
-        <UserLink colorScheme="dark" user={mission.user} /> que nos intentaban robar información confidencial!
+        <div>{timestampFromEpoch(mission.will_finish_at)}</div>
+        <div>
+          {isTargetMe ? (
+            'Hemos'
+          ) : (
+            <>
+              <UserLink colorScheme="dark" user={mission.target_user} /> ha
+            </>
+          )}{' '}
+          cazado a {mission.report.captured_spies.toLocaleString()} espías de{' '}
+          <UserLink colorScheme="dark" user={mission.user} /> que nos intentaban robar información confidencial!
+        </div>
       </NotepadPage>
     )
   }

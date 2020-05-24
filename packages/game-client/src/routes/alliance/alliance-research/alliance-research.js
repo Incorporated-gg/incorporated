@@ -7,33 +7,14 @@ import CardList from 'components/card/card-list'
 import UserLink from 'components/UI/user-link'
 import { ALLIANCE_RESEARCHS } from 'shared-lib/allianceUtils'
 import Icon from 'components/icon'
+import { Pie } from 'react-chartjs-2'
+import { numberToAbbreviation } from 'lib/utils'
 
 AllianceResearch.propTypes = {
   alliance: PropTypes.object.isRequired,
   reloadAllianceData: PropTypes.func.isRequired,
 }
 export default function AllianceResearch({ alliance, reloadAllianceData }) {
-  const chartData = {
-    type: 'pie',
-    data: {
-      labels: alliance.research_shares.map(sh => sh.user.username),
-      datasets: [
-        {
-          data: alliance.research_shares.map(sh => sh.total),
-          backgroundColor: 'rgb(238, 207, 130)',
-        },
-      ],
-    },
-    options: {
-      legend: {
-        labels: {
-          fontColor: 'rgb(255, 255, 255)',
-        },
-      },
-    },
-  }
-  const chartImgUrl = `https://quickchart.io/chart?width=500&height=500&c=${JSON.stringify(chartData)}`
-
   return (
     <>
       <CardList>
@@ -51,7 +32,7 @@ export default function AllianceResearch({ alliance, reloadAllianceData }) {
       <IncContainer darkBg>
         <div style={{ padding: 10 }}>
           <h2>Aportes</h2>
-          <img className={styles.aportesImg} src={chartImgUrl} alt="" />
+          <AllianceResearchLogChart researchShares={alliance.research_shares} />
         </div>
       </IncContainer>
       <br />
@@ -71,5 +52,50 @@ export default function AllianceResearch({ alliance, reloadAllianceData }) {
         </div>
       </IncContainer>
     </>
+  )
+}
+
+AllianceResearchLogChart.propTypes = {
+  researchShares: PropTypes.array.isRequired,
+}
+function AllianceResearchLogChart({ researchShares }) {
+  const shares = researchShares.sort((a, b) => a.total - b.total)
+  const chartColors = ['#f0d48f', '#eac362', '#e4b135', '#ca981b', '#9d7615', '#70540f', '#433309']
+  const extraColors = new Array(Math.max(0, shares.length - chartColors.length)).fill('#ca981b')
+  chartColors.push(...extraColors)
+  const chartData = {
+    labels: shares.map(sh => sh.user.username),
+    datasets: [
+      {
+        data: shares.map(sh => sh.total),
+        backgroundColor: chartColors,
+      },
+    ],
+  }
+
+  return (
+    <Pie
+      data={chartData}
+      options={{
+        tooltips: {
+          callbacks: {
+            label: function(tooltipItem, data, b, c) {
+              const item = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index]
+              return item.toLocaleString()
+            },
+          },
+        },
+        legend: false,
+        plugins: {
+          datalabels: {
+            textAlign: 'center',
+            formatter: function(value, context) {
+              const username = context.chart.data.labels[context.dataIndex]
+              return `${username}\n${numberToAbbreviation(value)}`
+            },
+          },
+        },
+      }}
+    />
   )
 }

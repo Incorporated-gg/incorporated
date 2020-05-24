@@ -68,7 +68,14 @@ export default function MissionRow({ mission, showcaseUser = 'target' }) {
           <>
             <div className={styles.secondRow}>Día {getServerDay(mission.will_finish_at * 1000)}</div>
             <div className={styles.thirdRow}>
-              <div className={styles.missionTypeContainer} onClick={clickedShowDetails}>
+              <div
+                className={styles.missionTypeContainer}
+                onClick={clickedShowDetails}
+                tabIndex={0}
+                onKeyPress={e => {
+                  if (e.key !== 'Enter' && e.key !== ' ') return
+                  clickedShowDetails()
+                }}>
                 <IncContainer outerClassName={styles.missionTypeOuter} className={styles.missionTypeInner}>
                   <span style={{ color: resultColor, fontWeight: 700 }}>{resultText}</span>
                   <Icon

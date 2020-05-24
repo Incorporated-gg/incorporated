@@ -3,6 +3,7 @@ import FinancialData from './FinancialData'
 import api from '../../lib/api'
 import styles from './Finances.module.scss'
 import NotepadPage from 'components/UI/notepad-page'
+import { Bar } from 'react-chartjs-2'
 
 export default function Finances() {
   return (
@@ -31,15 +32,18 @@ function DailyLogGraphs() {
     datasets: [{ label: 'Ingresos', data: [], backgroundColor: 'rgb(238, 207, 130)' }],
   }
   dailyLog.forEach(dayLog => {
-    graphData.labels.push(dayLog.server_day)
+    graphData.labels.push(`Día ${dayLog.server_day}`)
     graphData.datasets[0].data.push(dayLog.daily_income)
   })
 
   return (
-    <img
-      style={{ width: '100%' }}
-      src={`https://quickchart.io/chart?c={type:'bar',data:${JSON.stringify(graphData)}}`}
-      alt="Gráfica de ingresos por día"
-    />
+    <div style={{ marginTop: 20 }}>
+      <Bar
+        data={graphData}
+        options={{
+          legend: false,
+        }}
+      />
+    </div>
   )
 }
