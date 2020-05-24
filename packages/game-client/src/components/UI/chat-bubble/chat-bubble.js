@@ -102,10 +102,7 @@ export default function ChatBubble() {
 
   const toggleChat = status => {
     setIsChatOpen(status || !isChatOpen)
-    setTimeout(() => {
-      chatInput.current && chatInput.current.focus()
-      scrollDown()
-    }, 0)
+    setTimeout(() => scrollDown(), 0)
   }
 
   const showChatOptions = () => {
@@ -136,7 +133,6 @@ export default function ChatBubble() {
     markMessagesAsReadForRoom(currentRoom)
     // emit read messages for this new room
     if (client.current) client.current.emit('lastRead', currentRoom.id)
-    chatInput.current && chatInput.current.focus()
     scrollDown()
   }, [currentRoom])
 
@@ -163,6 +159,7 @@ export default function ChatBubble() {
     client.current.on('chatCreated', chatData => {
       dispatchChatRoomList({ type: 'addChatRooms', chatRooms: [chatData] })
       setCurrentRoom(chatData)
+      chatInput.current && chatInput.current.focus()
       calcTotalUnreadMessages()
     })
 
