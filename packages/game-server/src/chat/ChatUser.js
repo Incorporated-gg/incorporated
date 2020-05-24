@@ -37,8 +37,22 @@ class ChatUser {
     this.online = isOnline === 1
     this.conversations = parsedConversations
   }
-  async joinConversation(conversationId) {
+  async joinConversation(conversationId, type) {
     await sAddAsync(`users:${this.id}:conversations`, conversationId)
+    const instance = new Conversation({ id: conversationId, type })
+    const lastReadMessagesDate = await this.getLastMessageReadDateForConversation(conversationId)
+    await instance.init()
+    const convJSON = await instance.toJSON()
+    this.conversations.push({ ...convJSON, lastReadMessagesDate: lastReadMessagesDate || 0 })
+  }
+  async joinIndividualConversation(conversationId) {
+    await this.joinConversation(conversationId, 'individual')
+  }
+  async joinAllianceConversation(conversationId) {
+    await this.joinConversation(conversationId, 'alliance')
+  }
+  async joinGroupConversation(conversationId) {
+    await this.joinConversation(conversationId, 'group')
   }
   async getLastMessageReadDateForConversation(conversationId) {
     return await hGetAsync(`users:${this.id}:lastReadMessagesDates`, conversationId)

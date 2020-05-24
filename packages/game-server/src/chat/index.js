@@ -1,14 +1,10 @@
 import { getUserData, getUserIDFromUsername } from '../lib/db/users'
 import { getUserIDFromSessionID } from '../lib/db/sessions'
-/* import { promisify } from 'util' */
-/* import redis from 'redis' */
 import ChatUser from './ChatUser'
 import Conversation from './Conversation'
 
-/* const client = redis.createClient(
-  `redis://root:${process.env.REDIS_PASS}@${process.env.NODE_ENV === 'development' ? 'redis' : 'localhost'}:6379`
-) */
-/* const hGetAsync = promisify(client.hget).bind(client) */
+const events = require('events')
+export const chatEvents = new events.EventEmitter()
 
 const _DEV_ = process.env.NODE_ENV === 'development'
 
@@ -68,6 +64,41 @@ const publicChannels = [
 
 export const setupChat = io => {
   const apiNamespace = io.of('/api')
+  const Chat = {
+    getSocketForUserId(userId) {
+      return Object.keys(apiNamespace.sockets).reduce((acc, curSocket, i, thisArray) => {
+        if (apiNamespace.sockets[curSocket].user.id === userId) return apiNamespace.sockets[curSocket]
+        return acc
+      }, null)
+    },
+    async kickUserFromRoom(userId, fromRoom) {
+      const conversation = new Conversation({ id: fromRoom, type: 'alliance' })
+      await conversation.init()
+      await conversation.syncUsers()
+      const socket = this.getSocketForUserId(userId)
+      if (!socket) return
+      socket.leave(fromRoom)
+      socket.emit('leaveRoom', fromRoom)
+    },
+    async addUserToRoom(userId, fromRoom) {
+      const conversation = new Conversation({ id: fromRoom, type: 'alliance' })
+      await conversation.init()
+      await conversation.syncUsers()
+      const newRoom = await conversation.toJSON()
+      const socket = this.getSocketForUserId(userId)
+      if (!socket) return
+      socket.join(fromRoom)
+      socket.emit('chatRoomList', [newRoom])
+    },
+  }
+  chatEvents.on('kickUser', ({ room, userId }) => {
+    if (_DEV_) console.log('kicking user from room', userId, room)
+    Chat.kickUserFromRoom(userId, room)
+  })
+  chatEvents.on('addUser', ({ room, userId }) => {
+    if (_DEV_) console.log('adding user to room', userId, room)
+    Chat.addUserToRoom(userId, room)
+  })
   apiNamespace
     .use(async (socket, next) => {
       if (socket.handshake.query && socket.handshake.query.sessionID) {
@@ -102,7 +133,10 @@ export const setupChat = io => {
           return jsonConv
         })
       )
-      user.conversations.length &&
+      if (socket.user.alliance && !user.conversations.find(c => c.id === `alliance${socket.user.alliance.id}`)) {
+        await user.joinAllianceConversation(`alliance${socket.user.alliance.id}`)
+      }
+      if (user.conversations.length) {
         user.conversations.forEach(conversation => {
           socket.join(conversation.id)
           socket.emit('messages', {
@@ -110,9 +144,12 @@ export const setupChat = io => {
             messagesArray: conversation.messages,
           })
         })
+      }
+
       socket.emit('chatRoomList', user.conversations.concat(publicRooms))
 
       socket.on('message', async ({ room: conversationId, text }) => {
+        if (!socket.rooms[conversationId]) return
         if (_DEV_) console.log(conversationId, text)
         const thisRoom = new Conversation({
           id: conversationId,

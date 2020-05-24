@@ -2,6 +2,7 @@ import redis from 'redis'
 import { promisify } from 'util'
 import ChatUser from './ChatUser'
 import { getUserData } from '../lib/db/users'
+import { getAllianceBasicData } from '../lib/db/alliances'
 
 const client = redis.createClient(
   `redis://root:${process.env.REDIS_PASS}@${process.env.NODE_ENV === 'development' ? 'redis' : 'localhost'}:6379`
@@ -16,7 +17,7 @@ const incrAsync = promisify(client.incr).bind(client)
 class Conversation {
   constructor({ id, name, userIds, readonly, type }) {
     this.id = id
-    this.name = name || 'Sala sin nombre'
+    this.name = name
     this.messages = []
     this.userIds = userIds ? userIds.sort((a, b) => (a > b ? 1 : -1)) : []
     this.readonly = readonly || false
@@ -32,12 +33,9 @@ class Conversation {
     if (!this.id) {
       // We create the conversation
       const nextId = await this.getNextConversationId()
-      const conversationKey = `conversations:${nextId}`
-      await hmSetAsync(conversationKey, 'name', this.name, 'readonly', this.readonly, 'type', this.type)
       this.id = nextId
-      this.userIds.forEach(async userId => {
-        await this.addUser(userId)
-      })
+      await this.saveConversation()
+      await this.syncUsers()
       return true
     } else {
       const conversationKey = `conversations:${this.id}`
@@ -45,7 +43,13 @@ class Conversation {
       const conver = await hGetAllAsync(conversationKey)
       // If it doesn't, we create it
       if (!conver) {
-        await hmSetAsync(conversationKey, 'name', this.name, 'readonly', this.readonly, 'type', this.type)
+        if (this.type === 'alliance') {
+          const allianceId = parseInt(this.id.replace('alliance', ''))
+          if (!allianceId) return
+          const allianceData = await getAllianceBasicData(allianceId)
+          this.name = `${allianceData.long_name} [${allianceData.short_name}]`
+        }
+        await this.saveConversation()
         await this.syncUsers()
       } else {
         const userIds = await sMembersAsync(`${conversationKey}:userIds`)
@@ -77,15 +81,15 @@ class Conversation {
   async syncUsers() {
     await hDelAsync(`conversations:${this.id}`, 'userIds')
     this.userIds.forEach(async userId => {
+      const chatUser = new ChatUser(userId)
+      if (this.type === 'individual') chatUser.joinIndividualConversation(this.id)
+      if (this.type === 'alliance') chatUser.joinAllianceConversation(this.id)
+      if (this.type === 'group') chatUser.joinGroupConversation(this.id)
       await sAddAsync(`conversations:${this.id}:userIds`, userId)
-      await this.addUser(userId)
     })
   }
-  async addUser(userId) {
-    const chatUser = new ChatUser(userId)
-    chatUser.joinConversation(this.id)
-    this.userIds.push(userId)
-    return await sAddAsync(`conversations:${this.id}:userIds`, userId)
+  async saveConversation() {
+    await hmSetAsync(`conversations:${this.id}`, 'name', this.name, 'readonly', this.readonly, 'type', this.type)
   }
   async addMessage(messageData) {
     await sAddAsync(`conversations:${this.id}:messages`, JSON.stringify(messageData))
