@@ -20,6 +20,10 @@ export default function ChatBubble() {
 
   const chatContext = useContext(ChatContext)
 
+  const client = useRef(null)
+  const chatMessagesWrapper = useRef(null)
+  const chatInput = useRef(null)
+
   const [chatRoomList, dispatchChatRoomList] = useReducer((state, action) => {
     switch (action.type) {
       case 'newMessages':
@@ -40,7 +44,8 @@ export default function ChatBubble() {
           return r
         })
       case 'markCurrentRoomAsRead':
-        if (!isChatOpen) return
+        if (!isChatOpen) return state
+        if (client.current) client.current.emit('lastRead', currentRoom.id)
         return state.map(r => {
           if (r.id === currentRoom.id) {
             r.lastReadMessagesDate = parseInt(Date.now() / 1000)
@@ -51,10 +56,6 @@ export default function ChatBubble() {
         console.error('Acción no soportada')
     }
   }, [])
-
-  const client = useRef(null)
-  const chatMessagesWrapper = useRef(null)
-  const chatInput = useRef(null)
 
   const sendMessage = message => e => {
     e.preventDefault()
@@ -101,10 +102,7 @@ export default function ChatBubble() {
 
   const toggleChat = status => {
     setIsChatOpen(status || !isChatOpen)
-    setTimeout(() => {
-      chatInput.current && chatInput.current.focus()
-      scrollDown()
-    }, 0)
+    setTimeout(() => scrollDown(), 0)
   }
 
   const showChatOptions = () => {
@@ -135,7 +133,6 @@ export default function ChatBubble() {
     markMessagesAsReadForRoom(currentRoom)
     // emit read messages for this new room
     if (client.current) client.current.emit('lastRead', currentRoom.id)
-    chatInput.current && chatInput.current.focus()
     scrollDown()
   }, [currentRoom])
 
@@ -162,6 +159,7 @@ export default function ChatBubble() {
     client.current.on('chatCreated', chatData => {
       dispatchChatRoomList({ type: 'addChatRooms', chatRooms: [chatData] })
       setCurrentRoom(chatData)
+      chatInput.current && chatInput.current.focus()
       calcTotalUnreadMessages()
     })
 
