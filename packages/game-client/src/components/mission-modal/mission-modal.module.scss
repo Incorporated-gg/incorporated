@@ -14,32 +14,6 @@
   margin-bottom: 20px;
 }
 
-.inputLabel {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-
-  >* {
-    flex-shrink: 0;
-  }
-
-  >*:first-child {
-    font-family: $font-family-title;
-    padding: 0 10px;
-    font-weight: 500;
-    color: #00000099;
-  }
-
-  >*:nth-child(3) {
-    flex-shrink: 1;
-    flex-grow: 1;
-    margin: 0 10px;
-    min-width: 30vw;
-    text-align: center;
-    clip-path: polygon(10px 0, 100% 0, 100% 100%, 10px 100%, 0 50%);
-  }
-}
-
 .sendButtonTimer {
   display: flex;
   flex-direction: row;
@@ -56,6 +30,7 @@
     flex-grow: 1;
   }
 }
+
 .sendButtonTitle {
   @include pascalText;
   text-align: center;

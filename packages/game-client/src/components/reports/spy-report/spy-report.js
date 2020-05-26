@@ -147,10 +147,11 @@ export default function SpyReport({ mission }) {
             onClick={() => {
               setIsSimulatorModalOpen(true)
             }}>
-            Simular ataque
+            Atacar con simulador
           </IncButton>
           <SimulatorModal
             spyReport={mission.report}
+            targetUser={mission.target_user}
             isOpen={isSimulatorModalOpen}
             onRequestClose={() => {
               setIsSimulatorModalOpen(false)

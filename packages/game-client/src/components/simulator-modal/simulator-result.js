@@ -29,8 +29,6 @@ export default function SimulatorResult({ simulation, targetBuilding, guards, sa
 
   return (
     <>
-      <br />
-      <br />
       <h3>{displayResult}</h3>
       <div>
         Acabarías con {killedGuards.toLocaleString()} guardias, y {simulation.destroyedBuildings} {attackedBuildingName}{' '}

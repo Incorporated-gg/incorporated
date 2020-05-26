@@ -1,0 +1,57 @@
+@import '../../../../variables';
+
+.troopInputContainer {
+  color: $color-bg;
+  font-weight: 600;
+}
+
+
+.inputLabel {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  >* {
+    flex-shrink: 0;
+  }
+
+  >*:nth-child(1) {
+    font-family: $font-family-title;
+    padding: 0 10px;
+    font-weight: 500;
+    color: #00000099;
+    text-align: center;
+
+    >p:nth-child(2) {
+      margin-top: 5px;
+      font-weight: 600;
+      font-size: $font-size-large;
+    }
+  }
+
+  >*:nth-child(2),
+  >*:nth-child(4) {
+    min-width: 4em;
+    text-align: center;
+  }
+
+  >*:nth-child(3) {
+    flex-shrink: 1;
+    flex-grow: 1;
+    margin: 0 10px;
+    min-width: 30vw;
+    text-align: center;
+    clip-path: polygon(10px 0, 100% 0, 100% 100%, 10px 100%, 0 50%);
+  }
+
+  &.buildingInputLabel {
+    >*:nth-child(2) {
+      flex-shrink: 1;
+      flex-grow: 1;
+      margin: 0 10px;
+      min-width: 30vw;
+      text-align: center;
+      clip-path: polygon(10px 0, 100% 0, 100% 100%, 10px 100%, 0 50%);
+    }
+  }
+}

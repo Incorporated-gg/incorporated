@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react'
 import api from 'lib/api'
 import { useUserData } from 'lib/user'
-import { getTimeUntil, numberToAbbreviation } from 'lib/utils'
+import { getTimeUntil } from 'lib/utils'
 import { buildingsList } from 'shared-lib/buildingsUtils'
 import { PERSONNEL_OBJ } from 'shared-lib/personnelUtils'
 import { calculateMissionTime } from 'shared-lib/missionsUtils'
@@ -9,16 +9,19 @@ import PropTypes from 'prop-types'
 import IncButton from 'components/UI/inc-button'
 import IncInput from 'components/UI/inc-input/inc-input'
 import missionModalStyles from '../../mission-modal.module.scss'
+import styles from './mission-modal-attack.module.scss'
 import IncContainer from 'components/UI/inc-container'
 import Icon from 'components/icon'
 import IncProgressBar from 'components/UI/inc-progress-bar'
+import TroopRangeInput from '../troop-range-input/troop-range-input'
 
 MissionModalAttack.propTypes = {
   user: PropTypes.object,
   hood: PropTypes.object,
+  simulationFn: PropTypes.func,
   onRequestClose: PropTypes.func.isRequired,
 }
-export default function MissionModalAttack({ user, hood, onRequestClose }) {
+export default function MissionModalAttack({ user, hood, simulationFn, onRequestClose }) {
   const userData = useUserData()
   const [numSabots, setNumSabots] = useState(userData.personnel.sabots)
   const [numThieves, setNumThieves] = useState(userData.personnel.thieves)
@@ -62,18 +65,8 @@ export default function MissionModalAttack({ user, hood, onRequestClose }) {
     buildingsOptionsObj[building.id] = building.name
   })
 
-  const corpSabots = Math.max(0, numSabots - userData.personnel.sabots)
-  const ownSabots = numSabots - corpSabots
-  const corpThieves = Math.max(0, numThieves - userData.personnel.thieves)
-  const ownThieves = numThieves - corpThieves
-
   const maxSabots = userData.personnel.sabots + (userData.allianceResources?.sabots || 0)
   const maxThieves = userData.personnel.thieves + (userData.allianceResources?.thieves || 0)
-  const sabotsButtonNum = Math.max(1, Math.round(numSabots / 100))
-  const thievesButtonNum = Math.max(1, Math.round(numThieves / 100))
-  const adjustmentButton = (curr, set, diff, max) => {
-    set(Math.min(max, Math.max(0, curr + diff)))
-  }
 
   return (
     <>
@@ -81,48 +74,16 @@ export default function MissionModalAttack({ user, hood, onRequestClose }) {
         Atacar {hood ? <span>{hood.name}</span> : <span>A {user.username}</span>}
       </div>
 
-      <IncContainer>
-        <div className={missionModalStyles.inputLabel}>
-          <div>{PERSONNEL_OBJ.sabots.name}</div>
-          <IncButton onClick={() => adjustmentButton(numSabots, setNumSabots, -sabotsButtonNum, maxSabots)}>
-            -{numberToAbbreviation(sabotsButtonNum)}
-          </IncButton>
-          <IncInput min={0} max={maxSabots} type="range" value={numSabots} onChangeText={setNumSabots} />
-          <IncButton onClick={() => adjustmentButton(numSabots, setNumSabots, sabotsButtonNum, maxSabots)}>
-            +{numberToAbbreviation(sabotsButtonNum)}
-          </IncButton>
-        </div>
-      </IncContainer>
-      <br />
-      {ownSabots === 0 ? null : <div>Propios: {ownSabots.toLocaleString()}</div>}
-      {corpSabots === 0 ? null : <div>De corporación: {corpSabots.toLocaleString()}</div>}
-      <div>Total: {(ownSabots + corpSabots).toLocaleString()}</div>
-
+      <TroopRangeInput name={PERSONNEL_OBJ.sabots.name} value={numSabots} max={maxSabots} setValue={setNumSabots} />
       <br />
 
-      <IncContainer>
-        <div className={missionModalStyles.inputLabel}>
-          <div>{PERSONNEL_OBJ.thieves.name}</div>
-          <IncButton onClick={() => adjustmentButton(numThieves, setNumThieves, -thievesButtonNum, maxThieves)}>
-            -{numberToAbbreviation(thievesButtonNum)}
-          </IncButton>
-          <IncInput min={0} max={maxThieves} type="range" value={numThieves} onChangeText={setNumThieves} />
-          <IncButton onClick={() => adjustmentButton(numThieves, setNumThieves, thievesButtonNum, maxThieves)}>
-            +{numberToAbbreviation(thievesButtonNum)}
-          </IncButton>
-        </div>
-      </IncContainer>
-      <br />
-      {ownThieves === 0 ? null : <div>Propios: {ownThieves.toLocaleString()}</div>}
-      {corpThieves === 0 ? null : <div>De corporación: {corpThieves.toLocaleString()}</div>}
-      <div>Total: {(ownThieves + corpThieves).toLocaleString()}</div>
-
+      <TroopRangeInput name={PERSONNEL_OBJ.thieves.name} value={numThieves} max={maxThieves} setValue={setNumThieves} />
       <br />
 
       {user && (
         <>
           <IncContainer>
-            <label className={missionModalStyles.inputLabel}>
+            <label className={styles.buildingInputLabel}>
               <div>Edificio</div>
               <IncInput
                 type="select"
@@ -132,16 +93,19 @@ export default function MissionModalAttack({ user, hood, onRequestClose }) {
               />
             </label>
           </IncContainer>
-          <div>
+          <div style={{ marginTop: 10 }}>
             <label>
               Reponer personal perdido:{' '}
-              <IncInput type="checkbox" value={rebuyLostTroops} onChangeText={setRebuyLostTroops} />
+              <span style={{ verticalAlign: 'middle' }}>
+                <IncInput type="checkbox" value={rebuyLostTroops} onChangeText={setRebuyLostTroops} />
+              </span>
             </label>
           </div>
         </>
       )}
 
       <br />
+      {simulationFn && simulationFn({ numSabots, numThieves, targetBuilding })}
 
       <IncButton outerStyle={{ width: '100%' }} onClick={startMission}>
         <div className={missionModalStyles.sendButtonTimer}>

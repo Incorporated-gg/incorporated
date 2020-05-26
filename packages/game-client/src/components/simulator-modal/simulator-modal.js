@@ -8,6 +8,7 @@ import IncContainer from 'components/UI/inc-container'
 import { PERSONNEL_OBJ } from 'shared-lib/personnelUtils'
 import SimulatorResult from './simulator-result'
 import IncInput from 'components/UI/inc-input/inc-input'
+import MissionModalAttack from 'components/mission-modal/components/mission-modal-attack'
 
 const buildingsOptionsObj = {}
 buildingsList.forEach(building => {
@@ -16,92 +17,77 @@ buildingsList.forEach(building => {
 
 SimulatorModal.propTypes = {
   spyReport: PropTypes.object,
+  targetUser: PropTypes.object,
   isOpen: PropTypes.bool.isRequired,
   onRequestClose: PropTypes.func.isRequired,
 }
-export default function SimulatorModal({ spyReport, isOpen, onRequestClose }) {
+export default function SimulatorModal({ spyReport, targetUser, isOpen, onRequestClose }) {
   return (
     <Modal isOpen={isOpen} onRequestClose={onRequestClose}>
-      {isOpen && (spyReport ? <SimulatorWithSpyReport spyReport={spyReport} /> : <SimulatorFromScratch />)}
+      {isOpen &&
+        (spyReport ? (
+          <SimulatorWithSpyReport targetUser={targetUser} spyReport={spyReport} onRequestClose={onRequestClose} />
+        ) : (
+          <SimulatorFromScratch />
+        ))}
     </Modal>
   )
 }
 
 SimulatorWithSpyReport.propTypes = {
+  targetUser: PropTypes.object,
   spyReport: PropTypes.object,
+  onRequestClose: PropTypes.func.isRequired,
 }
-function SimulatorWithSpyReport({ spyReport }) {
+function SimulatorWithSpyReport({ spyReport, targetUser, onRequestClose }) {
   const userData = useUserData()
-  const [attackerSabots, setAttackerSabots] = useState(userData.personnel.sabots)
-  const [attackerThieves, setAttackerThieves] = useState(userData.personnel.thieves)
-  const [targetBuilding, setTargetBuilding] = useState(1)
-  const buildingAmount = spyReport.buildings[targetBuilding]?.quantity
-  const storedMoney = spyReport.buildings[targetBuilding]?.money
   const defensorSecurityLvl = spyReport.researchs[3]
   const bankResearchLvl = spyReport.researchs[4]
   const infraResearchLvl = spyReport.researchs[6]
   const attackerSabotageLvl = userData.researchs[2]
   const guards = spyReport.personnel.guards
 
-  useEffect(() => {
-    setAttackerSabots(userData.personnel.sabots)
-  }, [userData.personnel.sabots, userData.personnel.spies])
-
-  const missionSeconds = calculateMissionTime('attack')
-
-  const maxMoney = calcBuildingMaxMoney({
-    buildingID: targetBuilding,
-    buildingAmount,
-    bankResearchLevel: bankResearchLvl,
-  })
-  const unprotectedMoney = Math.max(0, storedMoney - maxMoney.maxSafe)
-
-  const simulation = simulateAttack({
-    defensorGuards: guards,
-    attackerSabots,
-    attackerThieves,
-    defensorSecurityLvl,
-    attackerSabotageLvl,
-    buildingID: targetBuilding,
-    infraResearchLvl,
-    buildingAmount,
-    unprotectedMoney,
-  })
-
   return (
     <IncContainer darkBg>
       <div style={{ padding: 10 }}>
-        <div>
-          <label>
-            {PERSONNEL_OBJ.sabots.name}
-            {': '}
-            <IncInput showBorder type="number" value={attackerSabots} onChangeText={setAttackerSabots} />
-          </label>
-        </div>
-        <div>
-          <label>
-            {PERSONNEL_OBJ.thieves.name}
-            {': '}
-            <IncInput showBorder type="number" value={attackerThieves} onChangeText={setAttackerThieves} />
-          </label>
-        </div>
-        <label>
-          <span>Edificio: </span>
-          <IncInput
-            showBorder
-            type="select"
-            options={buildingsOptionsObj}
-            value={targetBuilding}
-            onChangeText={bID => setTargetBuilding(parseInt(bID))}
-          />
-        </label>
-        <div>Tiempo de mision: {missionSeconds}s</div>
-        <SimulatorResult
-          simulation={simulation}
-          targetBuilding={targetBuilding}
-          guards={guards}
-          sabots={attackerSabots}
-          thieves={attackerThieves}
+        <MissionModalAttack
+          user={targetUser}
+          onRequestClose={onRequestClose}
+          simulationFn={({ numSabots, numThieves, targetBuilding }) => {
+            const buildingAmount = spyReport.buildings[targetBuilding]?.quantity
+            const storedMoney = spyReport.buildings[targetBuilding]?.money
+
+            const maxMoney = calcBuildingMaxMoney({
+              buildingID: targetBuilding,
+              buildingAmount,
+              bankResearchLevel: bankResearchLvl,
+            })
+            const unprotectedMoney = Math.max(0, storedMoney - maxMoney.maxSafe)
+
+            const simulation = simulateAttack({
+              defensorGuards: guards,
+              attackerSabots: numSabots,
+              attackerThieves: numThieves,
+              defensorSecurityLvl,
+              attackerSabotageLvl,
+              buildingID: targetBuilding,
+              infraResearchLvl,
+              buildingAmount,
+              unprotectedMoney,
+            })
+            return (
+              <>
+                <SimulatorResult
+                  simulation={simulation}
+                  targetBuilding={targetBuilding}
+                  guards={guards}
+                  sabots={numSabots}
+                  thieves={numThieves}
+                />
+                <br />
+              </>
+            )
+          }}
         />
       </div>
     </IncContainer>
@@ -233,6 +219,8 @@ function SimulatorFromScratch() {
           </label>
         </div>
         <div>Tiempo de mision: {missionSeconds}s</div>
+        <br />
+        <br />
         <SimulatorResult
           simulation={simulation}
           targetBuilding={targetBuilding}

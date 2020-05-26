@@ -9,13 +9,12 @@ import {
 } from 'shared-lib/missionsUtils'
 import PropTypes from 'prop-types'
 import IncButton from 'components/UI/inc-button'
-import IncInput from 'components/UI/inc-input/inc-input'
 import styles from './mission-modal-spy.module.scss'
 import missionModalStyles from '../../mission-modal.module.scss'
 import Icon from 'components/icon'
 import IncProgressBar from 'components/UI/inc-progress-bar'
 import { getTimeUntil } from 'lib/utils'
-import IncContainer from 'components/UI/inc-container'
+import TroopRangeInput from '../troop-range-input/troop-range-input'
 
 MissionModalSpy.propTypes = {
   user: PropTypes.object.isRequired,
@@ -82,13 +81,12 @@ export default function MissionModalSpy({ user, onRequestClose }) {
 
       <br />
 
-      <IncContainer>
-        <label className={missionModalStyles.inputLabel}>
-          <div>{PERSONNEL_OBJ.spies.name}</div>
-          <IncInput min={0} type="number" value={numSpies} onChangeText={setNumSpies} />
-        </label>
-      </IncContainer>
-
+      <TroopRangeInput
+        name={PERSONNEL_OBJ.spies.name}
+        value={numSpies}
+        max={userData.personnel.spies}
+        setValue={setNumSpies}
+      />
       <br />
 
       <IncButton outerStyle={{ width: '100%' }} onClick={startMission} disabled={!isFormReady}>
