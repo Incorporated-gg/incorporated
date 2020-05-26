@@ -1,0 +1,18 @@
+@import '../../../variables';
+
+.title {
+  @include gradientText;
+  @include pascalText;
+  font-size: $font-family-title;
+  font-family: $font-family-title;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.itemsContainer {
+  display: grid;
+  grid-template-columns: auto auto 1fr;
+  align-items: center;
+  column-gap: 5px;
+  row-gap: 15px;
+}
