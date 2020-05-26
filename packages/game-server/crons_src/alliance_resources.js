@@ -5,8 +5,8 @@ const frequencyMs = 15 * 1000 // 15 for dev. 60 should be fine for prod, but can
 
 async function generateResource(allianceID, resourceID, resources, researchs) {
   const max = calcResourceMax(resourceID, researchs)
-  if (resources[resourceID].quantity >= max) return
-  if (resources[resourceID].quantity === 0) {
+  if (resources[resourceID] >= max) return
+  if (resources[resourceID] === 0) {
     const [rowExists] = await mysql.query('SELECT 1 FROM alliances_resources WHERE alliance_id=? AND resource_id=?', [
       allianceID,
       resourceID,
@@ -22,7 +22,7 @@ async function generateResource(allianceID, resourceID, resources, researchs) {
 
   const genPerDay = calcResourceGeneration(resourceID, researchs)
   let generated = (genPerDay / 24 / 60 / 60 / 1000) * frequencyMs
-  const maxDiff = max - (resources[resourceID].quantity + generated)
+  const maxDiff = max - (resources[resourceID] + generated)
   if (maxDiff < 0) generated += maxDiff
   await mysql.query('UPDATE alliances_resources SET quantity=quantity+? WHERE alliance_id=? AND resource_id=?', [
     generated,

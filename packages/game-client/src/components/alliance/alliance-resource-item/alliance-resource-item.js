@@ -9,23 +9,31 @@ import Icon from 'components/icon'
 import IncProgressBar from 'components/UI/inc-progress-bar'
 import IncButton from 'components/UI/inc-button'
 import IncInput from 'components/UI/inc-input/inc-input'
+import { PERSONNEL_OBJ } from 'shared-lib/personnelUtils'
 
 AllianceResourceItem.propTypes = {
-  resourceData: PropTypes.object.isRequired,
+  resourceID: PropTypes.string.isRequired,
+  resourceAmount: PropTypes.number.isRequired,
   researchs: PropTypes.object.isRequired,
   reloadAllianceData: PropTypes.func.isRequired,
   userResourceAmount: PropTypes.number.isRequired,
 }
-export default function AllianceResourceItem({ resourceData, reloadAllianceData, researchs, userResourceAmount }) {
+export default function AllianceResourceItem({
+  resourceID,
+  resourceAmount,
+  reloadAllianceData,
+  researchs,
+  userResourceAmount,
+}) {
   const [insertAmount, setInsertAmount] = useState('')
   const [extractAmount, setExtractAmount] = useState('')
-  const max = calcResourceMax(resourceData.resource_id, researchs)
+  const max = calcResourceMax(resourceID, researchs)
 
   const doResources = isExtracting => e => {
     e.preventDefault()
     api
       .post('/v1/alliance/resources', {
-        resource_id: resourceData.resource_id,
+        resource_id: resourceID,
         amount: isExtracting ? -extractAmount : insertAmount,
       })
       .then(() => {
@@ -42,17 +50,19 @@ export default function AllianceResourceItem({ resourceData, reloadAllianceData,
     thieves: 'thief',
     guards: 'guard',
   }
-  const iconName = iconMap[resourceData.resource_id]
-  const youHaveAmountText = resourceData.resource_id === 'money' ? '0' : `Tienes ${userResourceAmount.toLocaleString()}`
+  const iconName = iconMap[resourceID]
+  const youHaveAmountText = resourceID === 'money' ? '0' : `Tienes ${userResourceAmount.toLocaleString()}`
+
+  const resourceName = PERSONNEL_OBJ[resourceID].name
 
   return (
     <>
-      <div className={styles.title}>{resourceData.name}</div>
+      <div className={styles.title}>{resourceName}</div>
       <IncContainer className={styles.amountContainer}>
         <div className={styles.maxAmount}>{max.toLocaleString()}</div>
-        <IncProgressBar direction="horizontal" progressPercentage={(resourceData.quantity / max) * 100}>
+        <IncProgressBar direction="horizontal" progressPercentage={(resourceAmount / max) * 100}>
           <div className={styles.currentAmount}>
-            {Math.floor(resourceData.quantity).toLocaleString()} <Icon iconName={iconName} size={20} />
+            {Math.floor(resourceAmount).toLocaleString()} <Icon iconName={iconName} size={20} />
           </div>
         </IncProgressBar>
       </IncContainer>

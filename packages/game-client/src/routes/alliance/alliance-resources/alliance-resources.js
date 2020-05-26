@@ -17,13 +17,14 @@ export default function AllianceResources({ alliance, reloadAllianceData }) {
     <>
       <IncContainer darkBg>
         <div style={{ padding: 10 }}>
-          {Object.values(alliance.resources).map(resourceData => {
+          {Object.entries(alliance.resources).map(([resourceID, resourceAmount]) => {
             return (
               <AllianceResourceItem
-                key={resourceData.resource_id}
+                key={resourceID}
+                resourceID={resourceID}
+                resourceAmount={resourceAmount}
                 researchs={alliance.researchs}
-                resourceData={resourceData}
-                userResourceAmount={userData.personnel[resourceData.resource_id] || 0}
+                userResourceAmount={userData.personnel[resourceID] || 0}
                 reloadAllianceData={reloadAllianceData}
               />
             )

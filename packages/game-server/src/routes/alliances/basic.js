@@ -16,6 +16,7 @@ import {
 import { getActiveMission } from '../../lib/db/users'
 import { updatePersonnelAmount } from '../../lib/db/personnel'
 import { calcResourceMax, calcResearchPrice } from 'shared-lib/allianceUtils'
+import { allianceUpdateResource } from '../../lib/db/alliances/resources'
 
 module.exports = app => {
   app.get('/v1/alliance', async function(req, res) {
@@ -221,33 +222,13 @@ module.exports = app => {
         return
     }
 
-    await mysql.query(
-      'INSERT INTO alliances_resources_log (alliance_id, user_id, created_at, resource_id, type, quantity) VALUES (?, ?, ?, ?, ?, ?)',
-      [
-        allianceID,
-        req.userData.id,
-        Math.floor(Date.now() / 1000),
-        resourceID,
-        resourceAmount < 0 ? 'extract' : 'deposit',
-        Math.abs(resourceAmount),
-      ]
-    )
-
-    if (allianceResources[resourceID].quantity === 0) {
-      // INSERT alliances_resources row just in case there is no row. If duplicate, we just catch the error and ignore it
-      try {
-        await mysql.query('INSERT INTO alliances_resources (alliance_id, resource_id, quantity) VALUES (?, ?, 0)', [
-          allianceID,
-          resourceID,
-        ])
-      } catch (e) {}
-    }
-
-    await mysql.query('UPDATE alliances_resources SET quantity=quantity+? WHERE alliance_id=? AND resource_id=?', [
-      resourceAmount,
-      allianceID,
+    await allianceUpdateResource({
+      type: resourceAmount < 0 ? 'extract' : 'deposit',
       resourceID,
-    ])
+      resourceDiff: resourceAmount,
+      userID: req.userData.id,
+    })
+
     res.json({
       success: true,
     })

@@ -67,13 +67,11 @@ export function calcResearchPrice(researchID, researchLevel) {
 }
 
 const mapResourceIDToResearchID = {
-  money: 1,
   guards: 2,
   sabots: 3,
   thieves: 4,
 }
 const mapResearchIDToResourceID = {
-  1: 'money',
   2: 'guards',
   3: 'sabots',
   4: 'thieves',
@@ -81,7 +79,6 @@ const mapResearchIDToResourceID = {
 
 // Resource max
 const maxResourcesPerLevel = {
-  money: 500000,
   guards: 2000,
   sabots: 2000,
   thieves: 2500,

@@ -103,17 +103,11 @@ export async function getAllianceResources(allianceID) {
   const rawResources = await mysql.query('SELECT resource_id, quantity FROM alliances_resources WHERE alliance_id=?', [
     allianceID,
   ])
-  const resources = ALLIANCE_RESOURCES_LIST.map(res => {
+  const resources = {}
+  ALLIANCE_RESOURCES_LIST.forEach(res => {
     const resData = rawResources.find(raw => raw.resource_id === res.resource_id)
-    return {
-      resource_id: res.resource_id,
-      name: res.name,
-      quantity: resData ? parseInt(resData.quantity) : 0,
-    }
-  }).reduce((prev, curr) => {
-    prev[curr.resource_id] = curr
-    return prev
-  }, {})
+    resources[res.resource_id] = resData ? parseInt(resData.quantity) : 0
+  })
   return resources
 }
 
