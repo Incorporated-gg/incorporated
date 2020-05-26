@@ -1,12 +1,10 @@
 import React from 'react'
-import { PERSONNEL_OBJ } from 'shared-lib/personnelUtils'
 import PropTypes from 'prop-types'
 import { useUserData } from 'lib/user'
 import IncContainer from 'components/UI/inc-container'
-import UserLink from 'components/UI/user-link'
 import AllianceResourceItem from 'components/alliance/alliance-resource-item/alliance-resource-item'
 import AllianceBuffs from 'components/alliance/alliance-buffs'
-import styles from './alliance-resources.module.scss'
+import AllianceResourcesLog from 'components/alliance/alliance-resources-log/alliance-resources-log'
 
 AllianceResources.propTypes = {
   alliance: PropTypes.object.isRequired,
@@ -37,21 +35,7 @@ export default function AllianceResources({ alliance, reloadAllianceData }) {
         <AllianceBuffs alliance={alliance} reloadAllianceData={reloadAllianceData} />
       )}
       <br />
-      <IncContainer darkBg>
-        <div style={{ padding: 10 }}>
-          <h2>Historial de recursos</h2>
-          {alliance.resources_log.map(logEntry => {
-            const resourceInfo = PERSONNEL_OBJ[logEntry.resource_id]
-            const resourceName = resourceInfo?.name || '???'
-            return (
-              <div key={Math.random()} className={styles.resourceLogItem}>
-                <UserLink user={logEntry.user} /> {logEntry.quantity > 0 ? 'metió' : 'sacó'}{' '}
-                {Math.abs(logEntry.quantity).toLocaleString()} {resourceName}
-              </div>
-            )
-          })}
-        </div>
-      </IncContainer>
+      <AllianceResourcesLog resourcesLog={alliance.resources_log} />
     </>
   )
 }

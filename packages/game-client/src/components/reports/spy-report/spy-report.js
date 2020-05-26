@@ -4,7 +4,6 @@ import { userData } from 'lib/user'
 import { buildingsList, calcBuildingMaxMoney, getBuildingDestroyedProfit } from 'shared-lib/buildingsUtils'
 import { PERSONNEL_OBJ } from 'shared-lib/personnelUtils'
 import { researchList } from 'shared-lib/researchUtils'
-import { timestampFromEpoch } from 'shared-lib/commonUtils'
 import UserLink from 'components/UI/user-link'
 import NotepadPage from 'components/UI/notepad-page'
 import Icon from 'components/icon'
@@ -20,14 +19,13 @@ export default function SpyReport({ mission }) {
   const isTargetMeOrAllied =
     mission.target_user &&
     (userData.id === mission.target_user.id || userData.alliance?.id === mission.target_user.alliance?.id)
-  const canSimulateAttack = mission.report.researchs?.[5] !== undefined
+  const canSimulateAttack = mission.report.researchs?.[6] !== undefined
   const [isSimulatorModalOpen, setIsSimulatorModalOpen] = useState(false)
 
   if (isTargetMeOrAllied) {
     const isTargetMe = userData.id === mission.target_user.id
     return (
       <NotepadPage>
-        <div>{timestampFromEpoch(mission.will_finish_at)}</div>
         <div>
           {isTargetMe ? (
             'Hemos'
@@ -45,7 +43,6 @@ export default function SpyReport({ mission }) {
 
   return (
     <NotepadPage>
-      <div>{timestampFromEpoch(mission.will_finish_at)}</div>
       <div>
         <b>Espías enviados:</b> {mission.sent_spies}
       </div>

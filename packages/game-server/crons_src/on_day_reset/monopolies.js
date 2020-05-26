@@ -12,9 +12,13 @@ export default async function monopolies(willFinishServerDay) {
     buildingsList.map(async ({ id: buildingID }) => {
       const [
         monopolyHolder,
-      ] = await mysql.query('SELECT user_id, quantity FROM buildings WHERE id=? ORDER BY quantity DESC LIMIT 1', [
-        buildingID,
-      ])
+      ] = await mysql.query(
+        'SELECT user_id, quantity FROM buildings\
+      WHERE id=? AND quantity=(SELECT MAX(quantity) FROM buildings)\
+      ORDER BY (SELECT points FROM ranking_income WHERE ranking_income.user_id=buildings.user_id) DESC\
+      LIMIT 1',
+        [buildingID]
+      )
       if (!monopolyHolder) return
 
       const [doesMonopolyRowExist] = await mysql.query('SELECT 1 FROM monopolies WHERE building_id=?', [buildingID])
