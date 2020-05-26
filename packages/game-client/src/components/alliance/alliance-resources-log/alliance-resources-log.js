@@ -27,11 +27,11 @@ export default function AllianceResourcesLog({ resourcesLog }) {
                 </div>
                 <span>
                   {logEntry.type === 'deposit'
-                    ? 'metió'
+                    ? 'Deposita'
                     : logEntry.type === 'extract'
-                    ? 'sacó'
+                    ? 'Extrae'
                     : logEntry.type === 'replenish'
-                    ? 'fue protegido con'
+                    ? 'Es protegido con'
                     : '???'}{' '}
                   {logEntry.quantity.toLocaleString()} {resourceName}
                 </span>

@@ -59,10 +59,17 @@ AllianceResearchLogChart.propTypes = {
   researchShares: PropTypes.array.isRequired,
 }
 function AllianceResearchLogChart({ researchShares }) {
+  researchShares.push({ total: 9123, user: { username: 'hola' } })
+  researchShares.push({ total: 91223, user: { username: 'erfgrg' } })
+  researchShares.push({ total: 914423, user: { username: 'ghgh' } })
+  researchShares.push({ total: 923, user: { username: 'ertgg' } })
+  researchShares.push({ total: 93, user: { username: 'bfdgfgbd' } })
+  researchShares.push({ total: 3, user: { username: 'ergrge' } })
+  researchShares.push({ total: 36532, user: { username: 'egrger' } })
   const shares = researchShares.sort((a, b) => a.total - b.total)
-  const chartColors = ['#f0d48f', '#eac362', '#e4b135', '#ca981b', '#9d7615', '#70540f', '#433309']
+  const chartColors = ['#ca981b', '#e4b135', '#eac362', '#f0d48f']
   const extraColors = new Array(Math.max(0, shares.length - chartColors.length)).fill('#ca981b')
-  chartColors.push(...extraColors)
+  chartColors.unshift(...extraColors)
   const chartData = {
     labels: shares.map(sh => sh.user.username),
     datasets: [
@@ -79,9 +86,10 @@ function AllianceResearchLogChart({ researchShares }) {
       options={{
         tooltips: {
           callbacks: {
-            label: function(tooltipItem, data, b, c) {
-              const item = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index]
-              return item.toLocaleString()
+            label: function(tooltipItem, data) {
+              const username = data.labels[tooltipItem.index]
+              const value = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index]
+              return `${username}: ${value.toLocaleString()}`
             },
           },
         },
