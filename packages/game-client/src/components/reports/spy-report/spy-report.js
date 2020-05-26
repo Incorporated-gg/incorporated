@@ -16,14 +16,15 @@ SpyReport.propTypes = {
   mission: PropTypes.object.isRequired,
 }
 export default function SpyReport({ mission }) {
-  const isTargetMeOrAllied =
-    mission.target_user &&
-    (userData.id === mission.target_user.id || userData.alliance?.id === mission.target_user.alliance?.id)
+  const isTargetMe = userData.id === mission.target_user?.id
+  const isSpionageBetweenAllies = mission.user?.alliance?.id === mission.target_user?.alliance?.id
+  const isTargetAllied = userData.alliance?.id === mission.target_user?.alliance?.id
+
   const canSimulateAttack = mission.report.researchs?.[6] !== undefined
   const [isSimulatorModalOpen, setIsSimulatorModalOpen] = useState(false)
 
-  if (isTargetMeOrAllied) {
-    const isTargetMe = userData.id === mission.target_user.id
+  const showSpyCaughtReport = isTargetMe || (!isSpionageBetweenAllies && isTargetAllied)
+  if (showSpyCaughtReport) {
     return (
       <NotepadPage>
         <div>

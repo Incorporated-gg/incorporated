@@ -209,26 +209,27 @@ function memberRequestAction(action) {
 
     const userID = req.body.user_id
     const allianceMembers = await getAllianceMembers(userRank.alliance_id)
-    const [
-      requestExists,
-    ] = await mysql.query('SELECT 1 FROM alliances_member_requests WHERE user_id=? AND alliance_id=?', [
-      userID,
-      userRank.alliance_id,
-    ])
+    const requestExists = await mysql.selectOne(
+      'SELECT 1 FROM alliances_member_requests WHERE user_id=? AND alliance_id=?',
+      [userID, userRank.alliance_id]
+    )
     if (!requestExists) {
       res.status(401).json({ error: 'Petición de miembro no encontrada' })
       return
     }
 
-    if (action === 'accept') {
+    if (action === 'reject') {
+      await mysql.query('DELETE FROM alliances_member_requests WHERE user_id=? AND alliance_id=?', [
+        userID,
+        userRank.alliance_id,
+      ])
+    } else if (action === 'accept') {
       if (allianceMembers.length >= MAX_ALLIANCE_MEMBERS) {
         res.status(401).json({ error: 'Esta alianza no puede tener más miembros' })
         return
       }
-    }
 
-    await mysql.query('DELETE FROM alliances_member_requests WHERE user_id=?', [userID])
-    if (action === 'accept') {
+      await mysql.query('DELETE FROM alliances_member_requests WHERE user_id=?', [userID])
       await mysql.query(
         'INSERT INTO alliances_members (alliance_id, user_id, created_at, rank_name, permission_admin) VALUES (?, ?, ?, ?, ?)',
         [userRank.alliance_id, userID, Math.floor(Date.now() / 1000), 'Recluta', false]
