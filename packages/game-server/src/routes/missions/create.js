@@ -7,10 +7,12 @@ import {
   getUserData,
   getAttacksTodayFromUserToAnotherUser,
 } from '../../lib/db/users'
-import { getUserAllianceID } from '../../lib/db/alliances'
+import { getUserAllianceID, getAllianceResources } from '../../lib/db/alliances'
 import { buildingsList } from 'shared-lib/buildingsUtils'
 import { calculateMissionTime, calculateIsInAttackRange } from 'shared-lib/missionsUtils'
 import { getHoodData } from '../../lib/db/hoods'
+import { allianceUpdateResource } from '../../lib/db/alliances/resources'
+import { updatePersonnelAmount } from '../../lib/db/personnel'
 
 module.exports = app => {
   app.post('/v1/missions/create', async function(req, res) {
@@ -75,17 +77,34 @@ async function createAttackMission({ req, res }) {
     return
   }
 
+  // Ensure daily attacks limit
+  const userMissionLimits = await getUserTodaysMissionsLimits(req.userData.id)
+  if (userMissionLimits.attacksLeft <= 0) {
+    res.status(400).json({ error: 'No te quedan ataques disponibles' })
+    return
+  }
+
+  const rebuyLostTroops = Boolean(req.body.rebuy_lost_troops)
   const sentSabots = parseInt(req.body.sent_sabots) || 0
   const sentThieves = parseInt(req.body.sent_thieves) || 0
   const attackUserTargetBuilding = req.body.target_building ? parseInt(req.body.target_building) : undefined
 
-  const userPersonnel = await getUserPersonnel(req.userData.id)
+  const userAllianceID = await getUserAllianceID(req.userData.id)
   if (targetUser) {
     // Detect possible errors when attacking users
     if (!buildingsList.find(b => b.id === attackUserTargetBuilding)) {
       res.status(400).json({ error: 'El edificio enviado no existe' })
       return
     }
+
+    const attackedAllianceID = await getUserAllianceID(targetUser.id)
+    if (userAllianceID && attackedAllianceID === userAllianceID) {
+      res.status(400).json({
+        error: 'No puedes atacar a alguien de tu alianza',
+      })
+      return
+    }
+
     // Ensure daily defenses limit
     const targetUserMissionLimits = await getUserTodaysMissionsLimits(targetUser.id)
     if (targetUserMissionLimits.receivedToday >= targetUserMissionLimits.maxDefenses) {
@@ -110,6 +129,7 @@ async function createAttackMission({ req, res }) {
       return
     }
   }
+
   if (targetHoodData) {
     // Detect possible errors when attacking hoods
     if (!targetHoodData.isAttackable) {
@@ -119,39 +139,53 @@ async function createAttackMission({ req, res }) {
       return
     }
   }
-  // Detect common errors for attacking users or hoods
+
   if (sentSabots + sentThieves < 1) {
     res.status(400).json({
       error: 'Debes enviar algunos gángsters o ladrones',
     })
     return
   }
-  if (userPersonnel.sabots < sentSabots) {
+
+  const userPersonnel = await getUserPersonnel(req.userData.id)
+
+  let allianceResources = { sabots: 0, thieves: 0 }
+  if (userAllianceID) {
+    allianceResources = await getAllianceResources(userAllianceID)
+  }
+
+  if (userPersonnel.sabots + allianceResources.sabots < sentSabots) {
     res.status(400).json({
-      error: 'No tienes suficientes gángsters',
+      error: 'No hay suficientes gángsters',
     })
     return
   }
-  if (userPersonnel.thieves < sentThieves) {
+  if (userPersonnel.thieves + allianceResources.thieves < sentThieves) {
     res.status(400).json({
-      error: 'No tienes suficientes ladrones',
-    })
-    return
-  }
-  const attackedAllianceID = await getUserAllianceID(targetUser.id)
-  const myAllianceID = await getUserAllianceID(req.userData.id)
-  if (myAllianceID && attackedAllianceID === myAllianceID) {
-    res.status(400).json({
-      error: 'No puedes atacar a alguien de tu alianza',
+      error: 'No hay suficientes ladrones',
     })
     return
   }
 
-  // Ensure daily attacks limit
-  const userMissionLimits = await getUserTodaysMissionsLimits(req.userData.id)
-  if (userMissionLimits.attacksLeft <= 0) {
-    res.status(400).json({ error: 'No te quedan ataques disponibles' })
-    return
+  const sabotsExtractedFromCorp = Math.max(0, sentSabots - userPersonnel.sabots)
+  if (sabotsExtractedFromCorp > 0) {
+    await allianceUpdateResource({
+      type: 'extract',
+      resourceID: 'sabots',
+      resourceDiff: -sabotsExtractedFromCorp,
+      userID: req.userData.id,
+    })
+    await updatePersonnelAmount(req, 'sabots', sabotsExtractedFromCorp)
+  }
+  const thievesExtractedFromCorp = Math.max(0, sentThieves - userPersonnel.thieves)
+  if (thievesExtractedFromCorp > 0) {
+    await allianceUpdateResource({
+      type: 'extract',
+      resourceID: 'thieves',
+      resourceDiff: -thievesExtractedFromCorp,
+      userID: req.userData.id,
+    })
+    await updatePersonnelAmount(req, 'thieves', thievesExtractedFromCorp)
   }
 
   const missionDuration = calculateMissionTime('attack')
@@ -159,6 +193,9 @@ async function createAttackMission({ req, res }) {
   const data = {
     sabots: sentSabots,
     thieves: sentThieves,
+    thievesExtractedFromCorp,
+    sabotsExtractedFromCorp,
+    rebuyLostTroops,
   }
   if (targetUser) {
     data.building = attackUserTargetBuilding
@@ -190,14 +227,13 @@ async function createSpyMission({ req, res }) {
 
   const sentSpies = parseInt(req.body.sent_spies) || 0
 
-  const userPersonnel = await getUserPersonnel(req.userData.id)
-
   if (sentSpies < 1) {
     res.status(400).json({
       error: 'Debes enviar algunos espías',
     })
     return
   }
+  const userPersonnel = await getUserPersonnel(req.userData.id)
   if (userPersonnel.spies < sentSpies) {
     res.status(400).json({
       error: 'No tienes suficientes espías',

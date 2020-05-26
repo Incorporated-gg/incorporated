@@ -11,6 +11,7 @@ import {
   getActiveMission,
 } from './lib/db/users'
 import { getUserIDFromSessionID } from './lib/db/sessions'
+import { getAllianceResources, getUserAllianceID } from './lib/db/alliances'
 
 module.exports = app => {
   app.use(authMiddleware)
@@ -59,12 +60,21 @@ function modifyResponseBody(req, res, next) {
   res.json = async function() {
     if (req.userData) {
       // Modify response to include extra data for logged in users
-      const [unreadMessagesCount, unreadReportsCount, activeMission, activeTasks, accountData] = await Promise.all([
+      const allianceID = await getUserAllianceID(req.userData.id)
+      const [
+        unreadMessagesCount,
+        unreadReportsCount,
+        activeMission,
+        activeTasks,
+        accountData,
+        allianceResources,
+      ] = await Promise.all([
         getUnreadMessagesCount(req.userData.id),
         getUnreadReportsCount(req.userData.id),
         getActiveMission(req.userData.id),
         getUserActiveTasks(req.userData.id),
         getAccountData(req.userData.id),
+        getAllianceResources(allianceID),
       ])
       const extraData = {
         money: req.userData.money,
@@ -74,6 +84,7 @@ function modifyResponseBody(req, res, next) {
         unread_messages_count: unreadMessagesCount,
         unread_reports_count: unreadReportsCount.total,
         active_mission: activeMission,
+        allianceResources: allianceID ? allianceResources : null,
         activeTasks,
         account: {
           avatar: accountData.avatar,

@@ -17,6 +17,8 @@ import {
 import { calcBuildingMaxMoney } from 'shared-lib/buildingsUtils'
 import { simulateAttack } from 'shared-lib/missionsUtils'
 import { onNewWarAttack } from '../../on_day_reset/alliance_wars'
+import { allianceUpdateResource } from '../../../src/lib/db/alliances/resources'
+import { PERSONNEL_OBJ } from 'shared-lib/personnelUtils'
 
 export async function completeUserAttackMission(mission) {
   const data = JSON.parse(mission.data)
@@ -136,31 +138,19 @@ export async function completeUserAttackMission(mission) {
   ])
   await mysql.query('UPDATE users SET attacks_left=attacks_left-1 WHERE id=?', [attacker.id])
 
-  // Update troops
-  const allianceRestockGuards = await calcAllianceGuardsRestock(killedGuards, defender.id, defenderAllianceID)
-  const killedGuardsAfterRestock = killedGuards - allianceRestockGuards
-  if (killedGuardsAfterRestock > 0) {
-    await mysql.query('UPDATE users_resources SET quantity=quantity-? WHERE user_id=? AND resource_id=?', [
-      killedGuardsAfterRestock,
-      defender.id,
-      'guards',
-    ])
-  }
+  // Give money to attacker
+  await mysql.query('UPDATE users SET money=money+? WHERE id=?', [attackerTotalIncome, attacker.id])
 
-  if (killedSabots > 0) {
-    await mysql.query('UPDATE users_resources SET quantity=quantity-? WHERE user_id=? AND resource_id=?', [
-      killedSabots,
-      attacker.id,
-      'sabots',
-    ])
-  }
-  if (killedThieves > 0) {
-    await mysql.query('UPDATE users_resources SET quantity=quantity-? WHERE user_id=? AND resource_id=?', [
-      killedThieves,
-      attacker.id,
-      'thieves',
-    ])
-  }
+  // Update troops
+  await updateTroops({
+    data,
+    attacker,
+    defender,
+    defenderAllianceID,
+    killedGuards,
+    killedSabots,
+    killedThieves,
+  })
 
   // Update buildings
   await mysql.query('UPDATE buildings SET quantity=quantity-?, money=money-? WHERE user_id=? AND id=?', [
@@ -169,9 +159,6 @@ export async function completeUserAttackMission(mission) {
     defender.id,
     data.building,
   ])
-
-  // Give money to attacker
-  await mysql.query('UPDATE users SET money=money+? WHERE id=?', [attackerTotalIncome, attacker.id])
 
   // Update war data if there's one
   await checkAndUpdateActiveWar(attackerAllianceID, defenderAllianceID)
@@ -195,7 +182,97 @@ async function checkAndUpdateActiveWar(attackerAllianceID, defenderAllianceID) {
   if (activeWar) onNewWarAttack(activeWar.id)
 }
 
-async function calcAllianceGuardsRestock(killedGuards, defenderID, defenderAllianceID) {
+async function updateTroops({
+  data,
+  attacker,
+  defender,
+  defenderAllianceID,
+  killedGuards,
+  killedSabots,
+  killedThieves,
+}) {
+  // Replenish defender guards
+  const replenishedGuards = await getAllianceGuardsReplenish(killedGuards, defender.id, defenderAllianceID)
+  const killedGuardsAfterReplenishment = killedGuards - replenishedGuards
+  if (killedGuardsAfterReplenishment > 0) {
+    await mysql.query('UPDATE users_resources SET quantity=quantity-? WHERE user_id=? AND resource_id=?', [
+      killedGuardsAfterReplenishment,
+      defender.id,
+      'guards',
+    ])
+  }
+
+  // Buy attacker troops back, with all of the available money
+  let userMoney = await mysql.selectOne('SELECT money FROM users WHERE id=?', [attacker.id])
+  userMoney = parseInt(userMoney.money)
+
+  const attackerTroopsDiff = {
+    sabots: -killedSabots,
+    thieves: -killedThieves,
+  }
+
+  if (data.rebuyLostTroops) {
+    const reboughtSabots = Math.min(killedSabots, userMoney / PERSONNEL_OBJ.sabots.price)
+    if (reboughtSabots > 0) {
+      attackerTroopsDiff.sabots += reboughtSabots
+      const price = reboughtSabots * PERSONNEL_OBJ.sabots.price
+      userMoney -= price
+      await mysql.query('UPDATE users SET money=money-? WHERE id=?', [price, attacker.id])
+    }
+    const reboughtThieves = Math.min(killedThieves, userMoney / PERSONNEL_OBJ.thieves.price)
+    if (reboughtThieves > 0) {
+      attackerTroopsDiff.thieves += reboughtThieves
+      const price = reboughtThieves * PERSONNEL_OBJ.thieves.price
+      userMoney -= price
+      await mysql.query('UPDATE users SET money=money-? WHERE id=?', [price, attacker.id])
+    }
+  }
+
+  // Return attacker troops to alliance
+  const attackerPersonnel = await getUserPersonnel(attacker.id)
+
+  const returnedSabots = Math.min(data.sabotsExtractedFromCorp, attackerPersonnel.sabots + attackerTroopsDiff.sabots)
+  if (returnedSabots > 0) {
+    await allianceUpdateResource({
+      type: 'deposit',
+      resourceID: 'sabots',
+      resourceDiff: returnedSabots,
+      userID: attacker.id,
+    })
+    attackerTroopsDiff.sabots -= returnedSabots
+  }
+  const returnedThieves = Math.min(
+    data.thievesExtractedFromCorp,
+    attackerPersonnel.thieves + attackerTroopsDiff.thieves
+  )
+  if (returnedThieves > 0) {
+    await allianceUpdateResource({
+      type: 'deposit',
+      resourceID: 'thieves',
+      resourceDiff: returnedThieves,
+      userID: attacker.id,
+    })
+    attackerTroopsDiff.thieves -= returnedThieves
+  }
+
+  // Update attacker troops in DB
+  if (attackerTroopsDiff.sabots !== 0) {
+    await mysql.query('UPDATE users_resources SET quantity=quantity+? WHERE user_id=? AND resource_id=?', [
+      attackerTroopsDiff.sabots,
+      attacker.id,
+      'sabots',
+    ])
+  }
+  if (attackerTroopsDiff.thieves !== 0) {
+    await mysql.query('UPDATE users_resources SET quantity=quantity+? WHERE user_id=? AND resource_id=?', [
+      attackerTroopsDiff.thieves,
+      attacker.id,
+      'thieves',
+    ])
+  }
+}
+
+async function getAllianceGuardsReplenish(killedGuards, defenderID, defenderAllianceID) {
   if (killedGuards === 0) return 0
   if (!defenderAllianceID) return 0
 
@@ -209,14 +286,13 @@ async function calcAllianceGuardsRestock(killedGuards, defenderID, defenderAllia
   if (allianceGuardsCount === 0) return 0
 
   const restockedGuards = Math.min(allianceGuardsCount, killedGuards)
-  await mysql.query('UPDATE alliances_resources SET quantity=quantity-? WHERE alliance_id=? AND resource_id=?', [
-    restockedGuards,
-    defenderAllianceID,
-    'guards',
-  ])
-  await mysql.query(
-    'INSERT INTO alliances_resources_log (alliance_id, user_id, created_at, resource_id, type, quantity) VALUES (?, ?, ?, ?, ?, ?)',
-    [defenderAllianceID, defenderID, Math.floor(Date.now() / 1000), 'guards', 'replenish', restockedGuards]
-  )
+
+  await allianceUpdateResource({
+    type: 'replenish',
+    resourceID: 'guards',
+    resourceDiff: -restockedGuards,
+    userID: defenderID,
+  })
+
   return restockedGuards
 }
