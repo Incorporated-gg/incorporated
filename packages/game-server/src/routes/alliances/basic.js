@@ -222,8 +222,15 @@ module.exports = app => {
     }
 
     await mysql.query(
-      'INSERT INTO alliances_resources_log (alliance_id, user_id, created_at, resource_id, quantity) VALUES (?, ?, ?, ?, ?)',
-      [allianceID, req.userData.id, Math.floor(Date.now() / 1000), resourceID, resourceAmount]
+      'INSERT INTO alliances_resources_log (alliance_id, user_id, created_at, resource_id, type, quantity) VALUES (?, ?, ?, ?, ?, ?)',
+      [
+        allianceID,
+        req.userData.id,
+        Math.floor(Date.now() / 1000),
+        resourceID,
+        resourceAmount < 0 ? 'extract' : 'deposit',
+        Math.abs(resourceAmount),
+      ]
     )
 
     if (allianceResources[resourceID].quantity === 0) {

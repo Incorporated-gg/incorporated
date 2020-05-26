@@ -1,7 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { buildingsList } from 'shared-lib/buildingsUtils'
-import { timestampFromEpoch } from 'shared-lib/commonUtils'
 import { PERSONNEL_OBJ } from 'shared-lib/personnelUtils'
 import UserLink from 'components/UI/user-link'
 import NotepadPage from 'components/UI/notepad-page'
@@ -67,7 +66,6 @@ export default function AttackReport({ mission }) {
 
   return (
     <NotepadPage>
-      <div>{timestampFromEpoch(mission.will_finish_at)}</div>
       <div>
         <UserLink colorScheme="dark" user={mission.user} /> VS {targetElm}
       </div>

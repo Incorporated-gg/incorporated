@@ -137,7 +137,7 @@ export async function completeUserAttackMission(mission) {
   await mysql.query('UPDATE users SET attacks_left=attacks_left-1 WHERE id=?', [attacker.id])
 
   // Update troops
-  const allianceRestockGuards = await calcAllianceGuardsRestock(killedGuards, defenderAllianceID)
+  const allianceRestockGuards = await calcAllianceGuardsRestock(killedGuards, defender.id, defenderAllianceID)
   const killedGuardsAfterRestock = killedGuards - allianceRestockGuards
   if (killedGuardsAfterRestock > 0) {
     await mysql.query('UPDATE users_resources SET quantity=quantity-? WHERE user_id=? AND resource_id=?', [
@@ -195,7 +195,7 @@ async function checkAndUpdateActiveWar(attackerAllianceID, defenderAllianceID) {
   if (activeWar) onNewWarAttack(activeWar.id)
 }
 
-async function calcAllianceGuardsRestock(killedGuards, defenderAllianceID) {
+async function calcAllianceGuardsRestock(killedGuards, defenderID, defenderAllianceID) {
   if (killedGuards === 0) return 0
   if (!defenderAllianceID) return 0
 
@@ -214,5 +214,9 @@ async function calcAllianceGuardsRestock(killedGuards, defenderAllianceID) {
     defenderAllianceID,
     'guards',
   ])
+  await mysql.query(
+    'INSERT INTO alliances_resources_log (alliance_id, user_id, created_at, resource_id, type, quantity) VALUES (?, ?, ?, ?, ?, ?)',
+    [defenderAllianceID, defenderID, Math.floor(Date.now() / 1000), 'guards', 'replenish', restockedGuards]
+  )
   return restockedGuards
 }

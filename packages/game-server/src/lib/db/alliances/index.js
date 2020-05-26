@@ -119,7 +119,7 @@ export async function getAllianceResources(allianceID) {
 
 export async function getAllianceResourcesLog(allianceID) {
   const rawLog = await mysql.query(
-    'SELECT user_id, created_at, resource_id, quantity FROM alliances_resources_log WHERE alliance_id=? ORDER BY created_at DESC LIMIT 30',
+    'SELECT user_id, created_at, resource_id, type, quantity FROM alliances_resources_log WHERE alliance_id=? ORDER BY created_at DESC LIMIT 30',
     [allianceID]
   )
   const resourcesLog = await Promise.all(
@@ -127,6 +127,7 @@ export async function getAllianceResourcesLog(allianceID) {
       return {
         user: await getUserData(raw.user_id),
         created_at: raw.created_at,
+        type: raw.type,
         resource_id: raw.resource_id,
         quantity: raw.quantity,
       }

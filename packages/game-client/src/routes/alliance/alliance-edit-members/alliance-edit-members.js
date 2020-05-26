@@ -111,7 +111,7 @@ export default function AllianceEditMembers({ alliance, reloadAllianceData }) {
                         <td key={permissionName}>
                           <IncInput
                             type="checkbox"
-                            checked={rankEdit ? rankEdit[permissionName] : rankMember[permissionName]}
+                            value={rankEdit ? rankEdit[permissionName] : rankMember[permissionName]}
                             onChangeText={changePermission(rankMember, permissionName)}
                           />
                         </td>

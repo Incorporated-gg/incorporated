@@ -11,7 +11,6 @@ IncInput.propTypes = {
   className: PropTypes.string,
   options: PropTypes.object,
   value: PropTypes.any,
-  checked: PropTypes.bool,
   onChangeText: PropTypes.func.isRequired,
 }
 
@@ -52,6 +51,9 @@ export default function IncInput({
         })}
       </select>
     )
+  }
+  if (type === 'checkbox') {
+    props.checked = props.value
   }
 
   return (

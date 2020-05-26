@@ -29,7 +29,7 @@ module.exports = app => {
       return
     }
 
-    const [building] = await mysql.query('SELECT quantity FROM buildings WHERE user_id=? and id=?', [
+    const building = await mysql.selectOne('SELECT quantity FROM buildings WHERE user_id=? and id=?', [
       req.userData.id,
       buildingID,
     ])
@@ -40,19 +40,18 @@ module.exports = app => {
     }
 
     req.userData.money -= price
-    await mysql.query('UPDATE users SET money=money-? WHERE id=?', [price, req.userData.id])
+    mysql.query('UPDATE users SET money=money-? WHERE id=?', [price, req.userData.id])
 
-    if (!building) {
+    const updateResult = await mysql.query('UPDATE buildings SET quantity=quantity+? WHERE user_id=? and id=?', [
+      1,
+      req.userData.id,
+      buildingID,
+    ])
+    if (updateResult.changedRows === 0) {
       await mysql.query('INSERT INTO buildings (user_id, id, quantity) VALUES (?, ?, ?)', [
         req.userData.id,
         buildingID,
         1,
-      ])
-    } else {
-      await mysql.query('UPDATE buildings SET quantity=quantity+? WHERE user_id=? and id=?', [
-        1,
-        req.userData.id,
-        buildingID,
       ])
     }
     req.userData.buildings[buildingID].quantity += 1

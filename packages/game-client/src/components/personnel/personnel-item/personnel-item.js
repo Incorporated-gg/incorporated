@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
-import { reloadUserData } from 'lib/user'
+import { reloadUserData, useUserData } from 'lib/user'
 import Card from 'components/card'
 import api from 'lib/api'
 import styles from './personnel-item.module.scss'
@@ -25,6 +25,7 @@ PersonnelItem.propTypes = {
 }
 export default function PersonnelItem({ personnelInfo, resourceAmount }) {
   const location = useLocation()
+  const userData = useUserData()
   const action = location.pathname.split('/')[2]
   const isHiring = action === 'hire'
 
@@ -43,8 +44,10 @@ export default function PersonnelItem({ personnelInfo, resourceAmount }) {
       })
   }
 
-  const actionPriceNum = (isHiring ? personnelInfo.price : personnelInfo.firingCost) * (amount || 0)
+  const actionPriceForSingleItem = isHiring ? personnelInfo.price : personnelInfo.firingCost
+  const actionPriceNum = actionPriceForSingleItem * (amount || 0)
   const dailyPriceNum = personnelInfo.dailyMaintenanceCost * (isHiring ? amount || 0 : resourceAmount)
+
   return (
     <Card
       image={personnelImages[personnelInfo.resource_id]}
@@ -68,6 +71,7 @@ export default function PersonnelItem({ personnelInfo, resourceAmount }) {
         showBorder
         className={styles.input}
         min={1}
+        max={userData.money / actionPriceForSingleItem}
         placeholder={0}
         type="number"
         value={amount}

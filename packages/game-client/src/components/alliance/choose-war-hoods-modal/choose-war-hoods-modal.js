@@ -4,6 +4,7 @@ import Modal from 'react-modal'
 import IncContainer from 'components/UI/inc-container'
 import IncButton from 'components/UI/inc-button'
 import api from 'lib/api'
+import IncInput from 'components/UI/inc-input/inc-input'
 
 ChooseWarHoodsModal.propTypes = {
   war: PropTypes.object.isRequired,
@@ -60,10 +61,10 @@ function ChooseWarHoods({ war, onRequestClose }) {
                 <div key={hood.id}>
                   <label>
                     {hood.name} (Lvl. {hood.level})
-                    <input
+                    <IncInput
                       type="checkbox"
-                      checked={isSelected}
-                      onChange={() => {
+                      value={isSelected}
+                      onChangeText={() => {
                         if (isSelected) {
                           selectedHoods.splice(selectedHoods.indexOf(hood.id), 1)
                         } else {

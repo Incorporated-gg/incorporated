@@ -60,6 +60,11 @@ export default function MissionModalAttack({ user, hood, onRequestClose }) {
     buildingsOptionsObj[building.id] = building.name
   })
 
+  /* const corpSabots = Math.max(0, numSabots - userData.personnel.sabots)
+  const ownSabots = numSabots - corpSabots
+  const corpThieves = Math.max(0, numThieves - userData.personnel.thieves)
+  const ownThieves = numThieves - corpThieves */
+
   return (
     <>
       <div className={missionModalStyles.title}>
@@ -97,17 +102,19 @@ export default function MissionModalAttack({ user, hood, onRequestClose }) {
       <br />
 
       {user && (
-        <IncContainer>
-          <label className={missionModalStyles.inputLabel}>
-            <div>Edificio</div>
-            <IncInput
-              type="select"
-              options={buildingsOptionsObj}
-              value={targetBuilding}
-              onChangeText={bID => setTargetBuilding(parseInt(bID))}
-            />
-          </label>
-        </IncContainer>
+        <>
+          <IncContainer>
+            <label className={missionModalStyles.inputLabel}>
+              <div>Edificio</div>
+              <IncInput
+                type="select"
+                options={buildingsOptionsObj}
+                value={targetBuilding}
+                onChangeText={bID => setTargetBuilding(parseInt(bID))}
+              />
+            </label>
+          </IncContainer>
+        </>
       )}
 
       <br />

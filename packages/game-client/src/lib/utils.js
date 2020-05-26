@@ -1,6 +1,7 @@
 import api from './api'
 import { userData, reloadUserData } from './user'
 import variables from '../_variables.scss'
+import { getServerDate, getServerDay } from './serverTime'
 
 export const DESKTOP_WIDTH_BREAKPOINT = parseInt(variables.breakpointDesktop)
 
@@ -38,9 +39,9 @@ export function numberToAbbreviation(number) {
   return symbolStr + Math.floor(number).toLocaleString()
 }
 
-export const getTimeUntil = (epochTimestamp, asString = false) => {
+export const getTimeUntil = (unixTimestamp, asString = false) => {
   // Set the date we're counting down to
-  const countDownDate = epochTimestamp * 1000
+  const countDownDate = unixTimestamp * 1000
 
   const diff = countDownDate - Date.now()
   let hours = Math.floor(diff / (1000 * 60 * 60))
@@ -58,6 +59,16 @@ export const getTimeUntil = (epochTimestamp, asString = false) => {
   }
 
   return { hours, minutes, seconds }
+}
+
+export function getServerTimeString(unixTimestamp) {
+  const serverTime = getServerDate(unixTimestamp * 1000)
+  const serverDay = getServerDay(unixTimestamp * 1000)
+
+  const hours = String(serverTime.hours).padStart(2, '0')
+  const minutes = String(serverTime.minutes).padStart(2, '0')
+
+  return `Día\xA0${serverDay}\xA0 [${hours}:${minutes}]`
 }
 
 export function debounce(func, wait, immediate) {

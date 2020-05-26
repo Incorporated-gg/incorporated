@@ -18,12 +18,17 @@ const io = socketIO.listen(server).path('/api/socket.io')
 app.disable('x-powered-by')
 app.use(bodyParser.json())
 
-// CORS middleware
+// HTTP headers
 app.use((req, res, next) => {
+  // CORS
   res.header('Access-Control-Allow-Origin', '*')
   res.header('Access-Control-Allow-Headers', 'Authorization, Content-Type, Accept')
   res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
   res.header('Allow', 'GET, POST, OPTIONS')
+
+  // Misc
+  res.header('Cache-Control', 'no-cache')
+
   next()
 })
 

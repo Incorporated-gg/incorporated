@@ -86,7 +86,7 @@ export async function updateCurrentContestScoreboard() {
 
 async function getContestCurrentScoreboard(contestID) {
   const scoreBoard = await mysql.query(
-    'SELECT user_id, score, rank FROM contests_scoreboards WHERE contest_id = ? ORDER BY rank ASC',
+    'SELECT user_id, score, rank FROM contests_scoreboards WHERE contest_id=? ORDER BY rank ASC',
     [contestID]
   )
   return scoreBoard

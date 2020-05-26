@@ -1,9 +1,8 @@
 import React, { useState } from 'react'
-import { cancelActiveMission } from 'lib/utils'
+import { cancelActiveMission, getServerTimeString } from 'lib/utils'
 import PropTypes from 'prop-types'
 import { buildingsList } from 'shared-lib/buildingsUtils'
 import { userData } from 'lib/user'
-import { getServerDay } from 'lib/serverTime'
 import ErrorBoundary from 'components/UI/ErrorBoundary'
 import MissionTimer from '../mission-timer/mission-timer'
 import Icon from 'components/icon'
@@ -66,7 +65,7 @@ export default function MissionRow({ mission, showcaseUser = 'target' }) {
         </div>
         {isComplete ? (
           <>
-            <div className={styles.secondRow}>Día {getServerDay(mission.will_finish_at * 1000)}</div>
+            <div className={styles.secondRow}>{getServerTimeString(mission.will_finish_at)}</div>
             <div className={styles.thirdRow}>
               <div
                 className={styles.missionTypeContainer}
