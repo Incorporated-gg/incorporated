@@ -55,9 +55,7 @@ async function authMiddleware(req, res, next) {
 }
 
 function modifyResponseBody(req, res, next) {
-  var oldJson = res.json
-
-  res.json = async function() {
+  res.json = async function(jsonResponse) {
     if (req.userData) {
       // Modify response to include extra data for logged in users
       const allianceID = await getUserAllianceID(req.userData.id)
@@ -95,9 +93,14 @@ function modifyResponseBody(req, res, next) {
           level: accountData.level,
         },
       }
-      arguments[0]._extra = extraData
+      jsonResponse._extra = extraData
     }
-    oldJson.apply(res, arguments)
+
+    // Large json strings were being cut, so we explicitly set the Content-Length to hopefuly fix it
+    const resString = JSON.stringify(jsonResponse)
+    res.header('Content-Type', 'application/json; charset=utf-8')
+    res.header('Content-Length', Buffer.byteLength(resString, 'utf8'))
+    res.send(resString)
   }
   next()
 }
