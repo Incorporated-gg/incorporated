@@ -1,5 +1,6 @@
 import express from 'express'
 import http from 'http'
+import compression from 'compression'
 import socketIO from 'socket.io'
 import './express-async-errors-patch'
 import bodyParser from 'body-parser'
@@ -14,9 +15,10 @@ if (serverDay <= 0) {
 
 const app = express()
 const server = http.Server(app)
-const io = socketIO.listen(server).path('/api/socket.io')
+
 app.disable('x-powered-by')
 app.use(bodyParser.json())
+app.use(compression())
 
 // HTTP headers
 app.use((req, res, next) => {
@@ -27,7 +29,7 @@ app.use((req, res, next) => {
   res.header('Allow', 'GET, POST, OPTIONS')
 
   // Misc
-  res.header('Cache-Control', 'no-cache')
+  res.header('Cache-Control', 'no-cache no-transform')
 
   next()
 })
@@ -48,6 +50,7 @@ require('./auth-middleware')(app)
 setupRoutes(app)
 
 // Setup chat
+const io = socketIO.listen(server).path('/api/socket.io')
 setupChat(io)
 
 // 404
