@@ -167,6 +167,8 @@ async function createAttackMission({ req, res }) {
     return
   }
 
+  const allianceID = await getUserAllianceID(req.userData.id)
+
   const sabotsExtractedFromCorp = Math.max(0, sentSabots - userPersonnel.sabots)
   if (sabotsExtractedFromCorp > 0) {
     await allianceUpdateResource({
@@ -174,6 +176,7 @@ async function createAttackMission({ req, res }) {
       resourceID: 'sabots',
       resourceDiff: -sabotsExtractedFromCorp,
       userID: req.userData.id,
+      allianceID,
     })
     await updatePersonnelAmount(req, 'sabots', sabotsExtractedFromCorp)
   }
@@ -184,6 +187,7 @@ async function createAttackMission({ req, res }) {
       resourceID: 'thieves',
       resourceDiff: -thievesExtractedFromCorp,
       userID: req.userData.id,
+      allianceID,
     })
     await updatePersonnelAmount(req, 'thieves', thievesExtractedFromCorp)
   }

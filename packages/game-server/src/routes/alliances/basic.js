@@ -13,7 +13,7 @@ import {
   getUserAllianceRank,
   getAllianceResearchLog,
 } from '../../lib/db/alliances'
-import { getActiveMission } from '../../lib/db/users'
+import { getActiveMission, getUserPersonnel } from '../../lib/db/users'
 import { updatePersonnelAmount } from '../../lib/db/personnel'
 import { calcResourceMax, calcResearchPrice } from 'shared-lib/allianceUtils'
 import { allianceUpdateResource } from '../../lib/db/alliances/resources'
@@ -162,6 +162,15 @@ module.exports = app => {
       res.status(401).json({ error: 'Necesitas estar conectado', error_code: 'not_logged_in' })
       return
     }
+
+    const resourceID = req.body.resource_id
+    const resourceAmount = parseInt(req.body.amount)
+
+    if (resourceID !== 'sabots' && resourceID !== 'guards' && resourceID !== 'thieves') {
+      res.status(400).json({ error: 'Recurso no implementado' })
+      return
+    }
+
     const userRank = await getUserAllianceRank(req.userData.id)
     const allianceID = userRank.alliance_id
     if (!userRank) {
@@ -171,23 +180,6 @@ module.exports = app => {
 
     if (!req.body.amount || !req.body.resource_id) {
       res.status(400).json({ error: 'Faltan datos' })
-      return
-    }
-
-    const allianceResources = await getAllianceResources(allianceID)
-    const allianceResearchs = await getAllianceResearchs(allianceID)
-
-    const resourceID = req.body.resource_id
-    const resourceAmount = parseInt(req.body.amount)
-    const allianceResourceAmount = allianceResources[resourceID].quantity
-    if (resourceAmount < 0 && allianceResourceAmount < -resourceAmount) {
-      res.status(401).json({ error: 'No hay suficientes recursos' })
-      return
-    }
-
-    const maxResourceStorage = calcResourceMax(resourceID, allianceResearchs)
-    if (allianceResources[resourceID].quantity + resourceAmount > maxResourceStorage) {
-      res.status(401).json({ error: 'No caben tantos recursos' })
       return
     }
 
@@ -201,33 +193,45 @@ module.exports = app => {
       }
     }
 
-    // Make sure the user has enough resources/space for them
-    switch (resourceID) {
-      case 'sabots':
-      case 'guards':
-      case 'thieves':
-        if (resourceAmount < 0 && !userRank.permission_extract_resources) {
-          res.status(401).json({ error: 'No tienes permiso para hacer esto' })
-          return
-        }
-        if (resourceAmount > 0 && req.userData.personnel[resourceID] < resourceAmount) {
-          res.status(401).json({ error: 'No tienes suficientes recursos' })
-          return
-        }
-        await updatePersonnelAmount(req, resourceID, -resourceAmount)
+    // Get personnel now instead of req.userData.personnel, to avoid exploits. Might be unnecessary once locks are in place
+    const [allianceResearchs, allianceResources, userPersonnel] = await Promise.all([
+      getAllianceResearchs(allianceID),
+      getAllianceResources(allianceID),
+      getUserPersonnel(req.userData.id),
+    ])
 
-        break
-      default:
-        res.status(500).json({ error: 'No implementado' })
-        return
+    const allianceResourceAmount = allianceResources[resourceID]
+    if (resourceAmount < 0 && allianceResourceAmount < -resourceAmount) {
+      res.status(401).json({ error: 'No hay suficientes recursos' })
+      return
     }
 
-    await allianceUpdateResource({
-      type: resourceAmount < 0 ? 'extract' : 'deposit',
-      resourceID,
-      resourceDiff: resourceAmount,
-      userID: req.userData.id,
-    })
+    const maxResourceStorage = calcResourceMax(resourceID, allianceResearchs)
+    if (allianceResources[resourceID] + resourceAmount > maxResourceStorage) {
+      res.status(401).json({ error: 'No caben tantos recursos' })
+      return
+    }
+
+    // Make sure the user has enough resources/space for them
+    if (resourceAmount < 0 && !userRank.permission_extract_resources) {
+      res.status(401).json({ error: 'No tienes permiso para hacer esto' })
+      return
+    }
+    if (resourceAmount > 0 && userPersonnel[resourceID] < resourceAmount) {
+      res.status(401).json({ error: 'No tienes suficientes recursos' })
+      return
+    }
+
+    await Promise.all([
+      allianceUpdateResource({
+        type: resourceAmount < 0 ? 'extract' : 'deposit',
+        resourceID,
+        resourceDiff: resourceAmount,
+        userID: req.userData.id,
+        allianceID,
+      }),
+      updatePersonnelAmount(req, resourceID, -resourceAmount),
+    ])
 
     res.json({
       success: true,

@@ -6,8 +6,7 @@ import { getUserBuildings, getUserResearchs } from '../users'
 const CENTRAL_OFFICE_RESEARCH_ID = 5
 
 export default async function tasksProgressHook(userID, hookType, hookData) {
-  const userActiveTasks = await getUserActiveTasks(userID)
-  const userTaskData = await getUserTaskData(userID)
+  const [userActiveTasks, userTaskData] = await Promise.all([getUserActiveTasks(userID), getUserTaskData(userID)])
 
   let newUserTaskData = {}
   switch (hookType) {
@@ -17,7 +16,7 @@ export default async function tasksProgressHook(userID, hookType, hookData) {
       const buildTasks = userActiveTasks
         .filter(task => task.type === 'cyclic_build')
         .filter(task => task.requirements.buildingID === hookData.buildingID)
-      await buildTasks.map(async activeTask => {
+      buildTasks.forEach(activeTask => {
         const taskData = userTaskData[`task${activeTask.id}`] || {}
         taskData.count = (taskData.count || 0) + 1
         newUserTaskData[`task${activeTask.id}`] = taskData
@@ -25,15 +24,14 @@ export default async function tasksProgressHook(userID, hookType, hookData) {
 
       const incomeTasks = userActiveTasks.filter(task => task.type === 'cyclic_income')
       if (incomeTasks.length) {
-        const userBuildings = await getUserBuildings(userID)
-        const userResearchs = await getUserResearchs(userID)
+        const [userBuildings, userResearchs] = await Promise.all([getUserBuildings(userID), getUserResearchs(userID)])
 
         const newIncome = calculateIncome(userBuildings, userResearchs[CENTRAL_OFFICE_RESEARCH_ID])
         userBuildings[hookData.buildingID].quantity--
         const oldIncome = calculateIncome(userBuildings, userResearchs[CENTRAL_OFFICE_RESEARCH_ID])
         const incomeDiff = newIncome - oldIncome
 
-        await incomeTasks.map(async activeTask => {
+        incomeTasks.forEach(activeTask => {
           const taskData = userTaskData[`task${activeTask.id}`] || {}
           taskData.count = (taskData.count || 0) + incomeDiff
           newUserTaskData[`task${activeTask.id}`] = taskData
@@ -46,7 +44,7 @@ export default async function tasksProgressHook(userID, hookType, hookData) {
 
       if (hookData.result === 'win') {
         const attackTasks = userActiveTasks.filter(task => task.type === 'cyclic_attack')
-        await attackTasks.map(async activeTask => {
+        attackTasks.forEach(activeTask => {
           const taskData = userTaskData[`task${activeTask.id}`] || {}
           taskData.count = (taskData.count || 0) + 1
           newUserTaskData[`task${activeTask.id}`] = taskData
@@ -55,7 +53,7 @@ export default async function tasksProgressHook(userID, hookType, hookData) {
 
       if (hookData.robbedMoney > 0) {
         const robTasks = userActiveTasks.filter(task => task.type === 'cyclic_rob')
-        await robTasks.map(async activeTask => {
+        robTasks.forEach(activeTask => {
           const taskData = userTaskData[`task${activeTask.id}`] || {}
           taskData.count = (taskData.count || 0) + hookData.robbedMoney
           newUserTaskData[`task${activeTask.id}`] = taskData
@@ -77,7 +75,7 @@ export default async function tasksProgressHook(userID, hookType, hookData) {
           const newIncome = calculateIncome(userBuildings, userResearchs[CENTRAL_OFFICE_RESEARCH_ID])
           const incomeDiff = newIncome - oldIncome
 
-          await incomeTasks.map(async activeTask => {
+          incomeTasks.forEach(activeTask => {
             const taskData = userTaskData[`task${activeTask.id}`] || {}
             taskData.count = (taskData.count || 0) + incomeDiff
             newUserTaskData[`task${activeTask.id}`] = taskData
@@ -87,7 +85,7 @@ export default async function tasksProgressHook(userID, hookType, hookData) {
       }
 
       const researchTasks = userActiveTasks.filter(task => task.type === 'cyclic_research')
-      await researchTasks.map(async activeTask => {
+      researchTasks.forEach(activeTask => {
         const taskData = userTaskData[`task${activeTask.id}`] || {}
         taskData.count = (taskData.count || 0) + 1
         newUserTaskData[`task${activeTask.id}`] = taskData
@@ -98,7 +96,7 @@ export default async function tasksProgressHook(userID, hookType, hookData) {
       if (hookData.extractedMoney === undefined) throw new Error('Invalid hookData')
 
       const extractMoneyTasks = userActiveTasks.filter(task => task.type === 'cyclic_extract_money')
-      await extractMoneyTasks.map(async activeTask => {
+      extractMoneyTasks.forEach(activeTask => {
         const taskData = userTaskData[`task${activeTask.id}`] || {}
         taskData.count = (taskData.count || 0) + hookData.extractedMoney
         newUserTaskData[`task${activeTask.id}`] = taskData

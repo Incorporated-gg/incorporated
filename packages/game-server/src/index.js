@@ -29,7 +29,7 @@ app.use((req, res, next) => {
   res.header('Allow', 'GET, POST, OPTIONS')
 
   // Misc
-  res.header('Cache-Control', 'no-cache no-transform')
+  res.header('Cache-Control', 'no-cache')
 
   next()
 })

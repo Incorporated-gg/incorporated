@@ -1,6 +1,7 @@
 import mysql from '../../lib/mysql'
 import { updatePersonnelAmount } from '../../lib/db/personnel'
 import { allianceUpdateResource } from '../../lib/db/alliances/resources'
+import { getUserAllianceID } from '../../lib/db/alliances'
 
 module.exports = app => {
   app.post('/v1/missions/cancel', async function(req, res) {
@@ -20,6 +21,8 @@ module.exports = app => {
       return
     }
 
+    const allianceID = await getUserAllianceID(req.userData.id)
+
     // Update
     await mysql.query('DELETE FROM missions WHERE id=?', [mission.id])
 
@@ -31,6 +34,7 @@ module.exports = app => {
           resourceID: 'thieves',
           resourceDiff: data.thievesExtractedFromCorp,
           userID: req.userData.id,
+          allianceID,
         })
         await updatePersonnelAmount(req, 'thieves', -data.thievesExtractedFromCorp)
       }
@@ -40,6 +44,7 @@ module.exports = app => {
           resourceID: 'sabots',
           resourceDiff: data.sabotsExtractedFromCorp,
           userID: req.userData.id,
+          allianceID,
         })
         await updatePersonnelAmount(req, 'sabots', -data.sabotsExtractedFromCorp)
       }

@@ -146,6 +146,7 @@ export async function completeUserAttackMission(mission) {
     data,
     attacker,
     defender,
+    attackerAllianceID,
     defenderAllianceID,
     killedGuards,
     killedSabots,
@@ -186,6 +187,7 @@ async function updateTroops({
   data,
   attacker,
   defender,
+  attackerAllianceID,
   defenderAllianceID,
   killedGuards,
   killedSabots,
@@ -238,6 +240,7 @@ async function updateTroops({
       resourceID: 'sabots',
       resourceDiff: returnedSabots,
       userID: attacker.id,
+      allianceID: attackerAllianceID,
     })
     attackerTroopsDiff.sabots -= returnedSabots
   }
@@ -251,6 +254,7 @@ async function updateTroops({
       resourceID: 'thieves',
       resourceDiff: returnedThieves,
       userID: attacker.id,
+      allianceID: attackerAllianceID,
     })
     attackerTroopsDiff.thieves -= returnedThieves
   }
@@ -292,6 +296,7 @@ async function getAllianceGuardsReplenish(killedGuards, defenderID, defenderAlli
     resourceID: 'guards',
     resourceDiff: -restockedGuards,
     userID: defenderID,
+    allianceID: defenderAllianceID,
   })
 
   return restockedGuards
