@@ -29,29 +29,9 @@
     }
   }
 
-  >*:nth-child(2),
-  >*:nth-child(4) {
-    min-width: 4em;
-    text-align: center;
-  }
-
   >*:nth-child(3) {
     flex-shrink: 1;
     flex-grow: 1;
     margin: 0 10px;
-    min-width: 30vw;
-    text-align: center;
-    clip-path: polygon(10px 0, 100% 0, 100% 100%, 10px 100%, 0 50%);
-  }
-
-  &.buildingInputLabel {
-    >*:nth-child(2) {
-      flex-shrink: 1;
-      flex-grow: 1;
-      margin: 0 10px;
-      min-width: 30vw;
-      text-align: center;
-      clip-path: polygon(10px 0, 100% 0, 100% 100%, 10px 100%, 0 50%);
-    }
   }
 }

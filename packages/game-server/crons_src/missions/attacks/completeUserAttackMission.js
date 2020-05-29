@@ -15,7 +15,7 @@ import {
   getActiveWarBetweenAlliances,
 } from '../../../src/lib/db/alliances'
 import { calcBuildingMaxMoney } from 'shared-lib/buildingsUtils'
-import { simulateAttack } from 'shared-lib/missionsUtils'
+import { simulateAttack } from 'shared-lib/simulateAttack'
 import { onNewWarAttack } from '../../on_day_reset/alliance_wars'
 import { allianceUpdateResource } from '../../../src/lib/db/alliances/resources'
 import { PERSONNEL_OBJ } from 'shared-lib/personnelUtils'
@@ -74,9 +74,9 @@ export async function completeUserAttackMission(mission) {
     getAllianceResearchBonusFromBuffs(defenderAllianceID),
   ])
   const attackerSabotageLevel = attackerResearchs[2] + attackerResearchBonusFromBuffs[2]
-  const defenderSecurityLevel = defenderResearchs[3] + defenderResearchBonusFromBuffs[3]
+  const defensorDefenseLvl = defenderResearchs[3] + defenderResearchBonusFromBuffs[3]
+  const defensorSecurityLvl = defenderResearchs[6]
   const defenderBankLevel = defenderResearchs[4]
-  const defenderInfraLevel = defenderResearchs[6]
 
   const buildingAmount = defenderBuildings[data.building].quantity
   const maxMoney = calcBuildingMaxMoney({
@@ -89,9 +89,9 @@ export async function completeUserAttackMission(mission) {
 
   const {
     result,
-    survivingSabots,
-    survivingGuards,
-    survivingThieves,
+    killedSabots,
+    killedThieves,
+    killedGuards,
     gainedFame,
     destroyedBuildings,
     incomeForDestroyedBuildings,
@@ -103,16 +103,13 @@ export async function completeUserAttackMission(mission) {
     defensorGuards: defenderPersonnel.guards,
     attackerSabots: data.sabots,
     attackerThieves: data.thieves,
-    defensorSecurityLvl: defenderSecurityLevel,
-    attackerSabotageLvl: attackerSabotageLevel,
+    defensorSecurityLvl,
+    attackerSabotageLevel,
     buildingID: data.building,
-    infraResearchLvl: defenderInfraLevel,
+    defensorDefenseLvl,
     buildingAmount,
     unprotectedMoney,
   })
-  const killedSabots = data.sabots - survivingSabots
-  const killedThieves = data.thieves - survivingThieves
-  const killedGuards = defenderPersonnel.guards - survivingGuards
 
   // Update mission state
   const attackReport = {

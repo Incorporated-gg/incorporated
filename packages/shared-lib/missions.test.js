@@ -1,63 +1,62 @@
-import { calculateMissionTime, simulateAttack } from './missionsUtils'
+import { calculateMissionTime } from './missionsUtils'
+import { simulateAttack } from './simulateAttack'
 
 test('Mission times', () => {
   expect(calculateMissionTime('attack')).toBe(300)
-  expect(calculateMissionTime('attack')).toBe(300)
-  expect(calculateMissionTime('spy')).toBe(120)
-  expect(calculateMissionTime('spy')).toBe(120)
+  expect(calculateMissionTime('spy')).toBe(60)
 })
 
 test('Combat normal win', () => {
   const attackResult = simulateAttack({
     buildingAmount: 100,
     buildingID: 6,
-    infraResearchLvl: 20,
+    attackerSabotageLvl: 40,
+    defensorDefenseLvl: 30,
+    defensorSecurityLvl: 20,
     attackerSabots: 3150,
     attackerThieves: 0,
     defensorGuards: 200,
-    defensorSecurityLvl: 30,
-    attackerSabotageLvl: 40,
     unprotectedMoney: 0,
   })
   expect(attackResult).toEqual({
-    attackerTotalIncome: 66553250,
+    attackerTotalIncome: 66545750,
     destroyedBuildings: 1,
     gainedFame: 32000,
     incomeForDestroyedBuildings: 66543750,
-    incomeForKilledTroops: 9500,
-    realAttackerProfit: 66478250,
+    incomeForKilledTroops: 2000,
+    realAttackerProfit: 66470750,
     result: 'win',
     robbedMoney: 0,
-    survivingGuards: 0,
-    survivingSabots: 3000,
-    survivingThieves: 0,
+    killedGuards: 200,
+    killedSabots: 150,
+    killedThieves: 0,
   })
 })
 
-test('Combat win, but not max buildings destroyed', () => {
+test('Combat draw: kill all guards, but no buildings destroyed', () => {
   const attackResult = simulateAttack({
-    buildingAmount: 100,
+    buildingAmount: 40,
     buildingID: 6,
-    infraResearchLvl: 20,
+    attackerSabotageLvl: 40,
+    defensorDefenseLvl: 20,
+    defensorSecurityLvl: 30,
     attackerSabots: 950,
     attackerThieves: 0,
     defensorGuards: 200,
-    defensorSecurityLvl: 30,
-    attackerSabotageLvl: 40,
     unprotectedMoney: 0,
   })
   expect(attackResult).toEqual({
-    attackerTotalIncome: 9500,
+    attackerTotalIncome: 2000,
     destroyedBuildings: 0,
     gainedFame: 0,
     incomeForDestroyedBuildings: 0,
-    incomeForKilledTroops: 9500,
-    realAttackerProfit: -65500,
+    incomeForKilledTroops: 2000,
+    realAttackerProfit: -48000,
     result: 'draw',
     robbedMoney: 0,
-    survivingGuards: 0,
-    survivingSabots: 800,
-    survivingThieves: 0,
+    killedGuards: 200,
+    killedSabots: 100,
+    killedThieves: 0,
   })
 })
 
@@ -65,26 +64,26 @@ test('Combat little sabots', () => {
   const attackResult = simulateAttack({
     buildingAmount: 100,
     buildingID: 1,
-    infraResearchLvl: 20,
-    attackerSabots: 1,
+    attackerSabotageLvl: 29,
+    defensorDefenseLvl: 30,
+    defensorSecurityLvl: 10,
+    attackerSabots: 2,
     attackerThieves: 0,
     defensorGuards: 200,
-    defensorSecurityLvl: 30,
-    attackerSabotageLvl: 27,
     unprotectedMoney: 0,
   })
   expect(attackResult).toEqual({
-    attackerTotalIncome: 50,
+    attackerTotalIncome: 10,
     destroyedBuildings: 0,
     gainedFame: 0,
     incomeForDestroyedBuildings: 0,
-    incomeForKilledTroops: 50,
-    realAttackerProfit: -450,
+    incomeForKilledTroops: 10,
+    realAttackerProfit: -990,
     result: 'lose',
     robbedMoney: 0,
-    survivingGuards: 200,
-    survivingSabots: 0,
-    survivingThieves: 0,
+    killedGuards: 1,
+    killedSabots: 2,
+    killedThieves: 0,
   })
 })
 
@@ -92,12 +91,12 @@ test('Combat no guards and little sabots', () => {
   const attackResult = simulateAttack({
     buildingAmount: 100,
     buildingID: 4,
-    infraResearchLvl: 30,
+    attackerSabotageLvl: 40,
+    defensorDefenseLvl: 30,
+    defensorSecurityLvl: 30,
     attackerSabots: 50,
     attackerThieves: 0,
     defensorGuards: 0,
-    defensorSecurityLvl: 30,
-    attackerSabotageLvl: 40,
     unprotectedMoney: 0,
   })
   expect(attackResult).toEqual({
@@ -109,22 +108,22 @@ test('Combat no guards and little sabots', () => {
     realAttackerProfit: 0,
     result: 'draw',
     robbedMoney: 0,
-    survivingGuards: 0,
-    survivingSabots: 50,
-    survivingThieves: 0,
+    killedGuards: 0,
+    killedSabots: 0,
+    killedThieves: 0,
   })
 })
 
-test('Combat high infra', () => {
+test('Combat high security', () => {
   const attackResult = simulateAttack({
     buildingAmount: 100,
     buildingID: 2,
-    infraResearchLvl: 50,
+    attackerSabotageLvl: 40,
+    defensorDefenseLvl: 30,
+    defensorSecurityLvl: 50,
     attackerSabots: 3000,
     attackerThieves: 0,
     defensorGuards: 0,
-    defensorSecurityLvl: 30,
-    attackerSabotageLvl: 40,
     unprotectedMoney: 0,
   })
   expect(attackResult).toEqual({
@@ -136,9 +135,9 @@ test('Combat high infra', () => {
     realAttackerProfit: 29367,
     result: 'win',
     robbedMoney: 0,
-    survivingGuards: 0,
-    survivingSabots: 3000,
-    survivingThieves: 0,
+    killedGuards: 0,
+    killedSabots: 0,
+    killedThieves: 0,
   })
 })
 
@@ -146,26 +145,26 @@ test('Combat defeat with thieves', () => {
   const attackResult = simulateAttack({
     buildingAmount: 100,
     buildingID: 2,
-    infraResearchLvl: 27,
+    attackerSabotageLvl: 40,
+    defensorDefenseLvl: 30,
+    defensorSecurityLvl: 27,
     attackerSabots: 300,
     attackerThieves: 1000,
     defensorGuards: 700,
-    defensorSecurityLvl: 30,
-    attackerSabotageLvl: 40,
     unprotectedMoney: 50000,
   })
   expect(attackResult).toEqual({
-    attackerTotalIncome: 17660,
+    attackerTotalIncome: 6660,
     destroyedBuildings: 0,
     gainedFame: 0,
     incomeForDestroyedBuildings: 0,
-    incomeForKilledTroops: 17660,
-    realAttackerProfit: -132340,
+    incomeForKilledTroops: 6660,
+    realAttackerProfit: -343340,
     result: 'lose',
     robbedMoney: 0,
-    survivingGuards: 34,
-    survivingSabots: 0,
-    survivingThieves: 0,
+    killedGuards: 666,
+    killedSabots: 300,
+    killedThieves: 1000,
   })
 })
 
@@ -173,54 +172,54 @@ test('Combat win with thieves', () => {
   const attackResult = simulateAttack({
     buildingAmount: 100,
     buildingID: 1,
-    infraResearchLvl: 27,
+    attackerSabotageLvl: 40,
+    defensorDefenseLvl: 30,
+    defensorSecurityLvl: 27,
     attackerSabots: 300,
     attackerThieves: 5000,
     defensorGuards: 500,
-    defensorSecurityLvl: 30,
-    attackerSabotageLvl: 40,
     unprotectedMoney: 50000,
   })
   expect(attackResult).toEqual({
-    attackerTotalIncome: 123792,
+    attackerTotalIncome: 112792,
     destroyedBuildings: 13,
     gainedFame: 13000,
     incomeForDestroyedBuildings: 57792,
-    incomeForKilledTroops: 16000,
-    realAttackerProfit: -26208,
+    incomeForKilledTroops: 5000,
+    realAttackerProfit: -112208,
     result: 'win',
     robbedMoney: 50000,
-    survivingGuards: 0,
-    survivingSabots: 0,
-    survivingThieves: 4625,
+    killedGuards: 500,
+    killedSabots: 300,
+    killedThieves: 375,
   })
 })
 
-test('Robbed less money than max', () => {
+test('Robbed less money than max, with little thieves', () => {
   const attackResult = simulateAttack({
     buildingAmount: 0,
     buildingID: 1,
-    infraResearchLvl: 1,
+    attackerSabotageLvl: 1,
+    defensorDefenseLvl: 1,
+    defensorSecurityLvl: 1,
     attackerSabots: 7,
     attackerThieves: 13,
     defensorGuards: 0,
-    defensorSecurityLvl: 1,
-    attackerSabotageLvl: 1,
     unprotectedMoney: 100000,
   })
-  expect(attackResult.realAttackerProfit).toBe(685)
+  expect(attackResult.realAttackerProfit).toBe(650)
 })
 
 test('Robbed max money with only thieves', () => {
   const attackResult = simulateAttack({
     buildingAmount: 0,
     buildingID: 1,
-    infraResearchLvl: 1,
+    attackerSabotageLvl: 1,
+    defensorDefenseLvl: 1,
+    defensorSecurityLvl: 1,
     attackerSabots: 0,
     attackerThieves: 2000,
     defensorGuards: 0,
-    defensorSecurityLvl: 1,
-    attackerSabotageLvl: 1,
     unprotectedMoney: 100000,
   })
   expect(attackResult.realAttackerProfit).toBe(100000)

@@ -23,16 +23,12 @@ export default function SimulatorResult({ simulation, targetBuilding, guards, sa
 
   const attackedBuildingName = buildingInfo?.name || '???'
 
-  const killedGuards = guards - simulation.survivingGuards
-  const killedSabots = sabots - simulation.survivingSabots
-  const killedThieves = thieves - simulation.survivingThieves
-
   return (
     <>
       <h3>{displayResult}</h3>
       <div>
-        Acabarías con {killedGuards.toLocaleString()} guardias, y {simulation.destroyedBuildings} {attackedBuildingName}{' '}
-        (máximo {buildingInfo.maximumDestroyedBuildings}).
+        Acabarías con {simulation.killedGuards.toLocaleString()} guardias, y {simulation.destroyedBuildings}{' '}
+        {attackedBuildingName} (máximo {buildingInfo.maximumDestroyedBuildings}).
       </div>
       <br />
       <table>
@@ -50,12 +46,12 @@ export default function SimulatorResult({ simulation, targetBuilding, guards, sa
           <tr>
             <td>{PERSONNEL_OBJ.sabots.name}</td>
             <td>{sabots.toLocaleString()}</td>
-            <td>{killedSabots.toLocaleString()}</td>
+            <td>{simulation.killedSabots.toLocaleString()}</td>
           </tr>
           <tr>
             <td>Ladrones</td>
             <td>{thieves.toLocaleString()}</td>
-            <td>{killedThieves.toLocaleString()}</td>
+            <td>{simulation.killedThieves.toLocaleString()}</td>
           </tr>
         </tbody>
       </table>
@@ -82,6 +78,15 @@ export default function SimulatorResult({ simulation, targetBuilding, guards, sa
           <tr>
             <td>Por robo</td>
             <td>{simulation.robbedMoney.toLocaleString()}</td>
+          </tr>
+          <tr>
+            <td>Por bajas aliadas</td>
+            <td>
+              {(-(
+                simulation.killedSabots * PERSONNEL_OBJ.sabots.price +
+                simulation.killedThieves * PERSONNEL_OBJ.thieves.price
+              )).toLocaleString()}
+            </td>
           </tr>
           <tr>
             <td>

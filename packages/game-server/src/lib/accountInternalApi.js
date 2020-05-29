@@ -57,5 +57,10 @@ function accountInternalApiFetch(method, url, payload = {}) {
         .join('&')
   }
 
-  return fetch(`${ACCOUNT_API_BASE}${url}`, { method, headers, body }).then(r => r.json())
+  return fetch(`${ACCOUNT_API_BASE}${url}`, { method, headers, body })
+    .then(r => r.json())
+    .catch(err => {
+      err.message = '[accountInternalApi] ' + err.message
+      throw err
+    })
 }

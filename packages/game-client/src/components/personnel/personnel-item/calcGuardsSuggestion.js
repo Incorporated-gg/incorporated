@@ -1,5 +1,5 @@
 import { userData } from 'lib/user'
-import { simulateAttack } from 'shared-lib/missionsUtils'
+import { simulateAttack } from 'shared-lib/simulateAttack'
 import { buildingsList } from 'shared-lib/buildingsUtils'
 import { PERSONNEL_OBJ } from 'shared-lib/personnelUtils'
 
@@ -12,7 +12,7 @@ export default function calcGuardsSuggestion() {
     bestAttackFromAllBuildings.attackerTotalIncome / PERSONNEL_OBJ.sabots.price
   )
 
-  return Math.round((maxSabotsToBeProfitable * 1.1) / 100) * 100
+  return Math.round((maxSabotsToBeProfitable * 1.2) / 50) * 50
 }
 
 function calcAttacksToAllBuildings() {
@@ -22,8 +22,8 @@ function calcAttacksToAllBuildings() {
       attackerSabots: 9999999,
       attackerThieves: 0,
       attackerSabotageLvl: userData.researchs[2],
-      defensorSecurityLvl: userData.researchs[3],
-      infraResearchLvl: userData.researchs[6],
+      defensorDefenseLvl: userData.researchs[3],
+      defensorSecurityLvl: userData.researchs[6],
       unprotectedMoney: 0,
       buildingID: buildingInfo.id,
       buildingAmount: userData.buildings[buildingInfo.id].quantity,

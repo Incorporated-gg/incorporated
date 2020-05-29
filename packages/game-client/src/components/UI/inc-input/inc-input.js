@@ -11,6 +11,8 @@ IncInput.propTypes = {
   className: PropTypes.string,
   options: PropTypes.object,
   value: PropTypes.any,
+  min: PropTypes.number,
+  max: PropTypes.number,
   onChangeText: PropTypes.func.isRequired,
 }
 
@@ -21,6 +23,8 @@ export default function IncInput({
   onChangeText,
   options,
   className,
+  min,
+  max,
   ...props
 }) {
   const [elmID] = useState('incinput-' + Math.random())
@@ -30,8 +34,14 @@ export default function IncInput({
     const elm = document.getElementById(elmID)
 
     let result
-    if (type === 'number' || type === 'range') result = parseInt(elm.value)
-    else if (type === 'checkbox') result = elm.checked
+    if (type === 'range') result = parseInt(elm.value)
+    else if (type === 'number') {
+      result = parseInt(elm.value)
+      max = parseInt(max)
+      min = parseInt(min)
+      if (!Number.isNaN(max)) result = Math.min(max, result)
+      if (!Number.isNaN(min)) result = Math.max(min, result)
+    } else if (type === 'checkbox') result = elm.checked
     else result = elm.value
 
     onChangeText(result)
@@ -58,7 +68,7 @@ export default function IncInput({
 
   return (
     <>
-      <input id={elmID} type={type} className={className} onChange={onChange} {...props} />
+      <input id={elmID} type={type} className={className} onChange={onChange} min={min} max={max} {...props} />
       {type === 'checkbox' && (
         // Label for checkbox customization
         <label

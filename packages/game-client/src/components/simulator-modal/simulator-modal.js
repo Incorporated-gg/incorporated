@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { useUserData } from 'lib/user'
 import { buildingsList, calcBuildingMaxMoney } from 'shared-lib/buildingsUtils'
-import { calculateMissionTime, simulateAttack } from 'shared-lib/missionsUtils'
+import { calculateMissionTime } from 'shared-lib/missionsUtils'
+import { simulateAttack } from 'shared-lib/simulateAttack'
 import PropTypes from 'prop-types'
 import Modal from 'react-modal'
 import IncContainer from 'components/UI/inc-container'
@@ -41,9 +42,9 @@ SimulatorWithSpyReport.propTypes = {
 }
 function SimulatorWithSpyReport({ spyReport, targetUser, onRequestClose }) {
   const userData = useUserData()
-  const defensorSecurityLvl = spyReport.researchs[3]
+  const defensorDefenseLvl = spyReport.researchs[3]
   const bankResearchLvl = spyReport.researchs[4]
-  const infraResearchLvl = spyReport.researchs[6]
+  const defensorSecurityLvl = spyReport.researchs[6]
   const attackerSabotageLvl = userData.researchs[2]
   const guards = spyReport.personnel.guards
 
@@ -68,10 +69,10 @@ function SimulatorWithSpyReport({ spyReport, targetUser, onRequestClose }) {
               defensorGuards: guards,
               attackerSabots: numSabots,
               attackerThieves: numThieves,
-              defensorSecurityLvl,
+              defensorDefenseLvl,
               attackerSabotageLvl,
               buildingID: targetBuilding,
-              infraResearchLvl,
+              defensorSecurityLvl,
               buildingAmount,
               unprotectedMoney,
             })
@@ -97,9 +98,9 @@ function SimulatorWithSpyReport({ spyReport, targetUser, onRequestClose }) {
 function SimulatorFromScratch() {
   const userData = useUserData()
   const [guards, setGuards] = useState(0)
-  const [defensorSecurityLvl, setDefensorSecurityLvl] = useState(1)
+  const [defensorDefenseLvl, setDefensorDefenseLvl] = useState(1)
   const [attackerSabotageLvl, setAttackerSabotageLvl] = useState(userData.researchs[2])
-  const [infraResearchLvl, setInfraResearchLvl] = useState(1)
+  const [defensorSecurityLvl, setDefensorSecurityLvl] = useState(1)
   const [bankResearchLvl, setBankResearchLvl] = useState(1)
   const [buildingAmount, setBuildingAmount] = useState(0)
   const [storedMoney, setStoredMoney] = useState(0)
@@ -126,10 +127,10 @@ function SimulatorFromScratch() {
       defensorGuards: guards,
       attackerSabots,
       attackerThieves,
-      defensorSecurityLvl,
+      defensorDefenseLvl,
       attackerSabotageLvl,
+      defensorSecurityLvl,
       buildingID: targetBuilding,
-      infraResearchLvl,
       buildingAmount,
       unprotectedMoney,
     })
@@ -187,14 +188,14 @@ function SimulatorFromScratch() {
           <label>
             Nivel Defensa
             {': '}
-            <IncInput showBorder type="number" value={defensorSecurityLvl} onChangeText={setDefensorSecurityLvl} />
+            <IncInput showBorder type="number" value={defensorDefenseLvl} onChangeText={setDefensorDefenseLvl} />
           </label>
         </div>
         <div>
           <label>
             Nivel Seguridad
             {': '}
-            <IncInput showBorder type="number" value={infraResearchLvl} onChangeText={setInfraResearchLvl} />
+            <IncInput showBorder type="number" value={defensorSecurityLvl} onChangeText={setDefensorSecurityLvl} />
           </label>
         </div>
         <div>

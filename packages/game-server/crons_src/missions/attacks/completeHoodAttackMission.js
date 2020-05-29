@@ -2,7 +2,7 @@ import tasksProgressHook from '../../../src/lib/db/tasks/tasksProgressHook'
 import { sendAccountHook } from '../../../src/lib/accountInternalApi'
 import mysql from '../../../src/lib/mysql'
 import { getUserAllianceID, getAllianceResearchBonusFromBuffs } from '../../../src/lib/db/alliances'
-import { simulateAttack } from 'shared-lib/missionsUtils'
+import { simulateAttack } from 'shared-lib/simulateAttack'
 import { getUserResearchs } from '../../../src/lib/db/users'
 import { getHoodData, changeHoodGuards } from '../../../src/lib/db/hoods'
 import { PERSONNEL_OBJ } from 'shared-lib/personnelUtils'
@@ -27,28 +27,26 @@ export async function completeHoodAttackMission(mission) {
   ])
 
   const attackerResearchBonusFromBuffs = await getAllianceResearchBonusFromBuffs(attackerAllianceID)
-  const attackerSabotageLevel = attackerResearchs[2] + attackerResearchBonusFromBuffs[2]
-  const defenderSecurityLevel = attackerSabotageLevel
-  const defenderInfraLevel = 1
+  const attackerSabotageLvl = attackerResearchs[2] + attackerResearchBonusFromBuffs[2]
+  const defensorDefenseLvl = attackerSabotageLvl
+  const defenderSecurityLevel = 1
 
   const buildingAmount = 0
   const unprotectedMoney = 0
   const guards = Math.floor(hoodData.guards)
 
-  const { survivingSabots, survivingGuards, survivingThieves, incomeForKilledTroops } = simulateAttack({
+  const { killedSabots, killedThieves, killedGuards, incomeForKilledTroops } = simulateAttack({
     buildingID: 1,
     defensorGuards: guards,
     attackerSabots: data.sabots,
     attackerThieves: data.thieves,
-    defensorSecurityLvl: defenderSecurityLevel,
-    attackerSabotageLvl: attackerSabotageLevel,
-    infraResearchLvl: defenderInfraLevel,
+    attackerSabotageLvl,
+    defensorDefenseLvl,
+    defenderSecurityLevel,
     buildingAmount,
     unprotectedMoney,
   })
-  const killedSabots = data.sabots - survivingSabots
-  const killedThieves = data.thieves - survivingThieves
-  const killedGuards = guards - survivingGuards
+  const survivingGuards = guards - killedGuards
 
   const result = survivingGuards === 0 ? 'win' : 'lose'
   const gainedFame = 0
