@@ -35,23 +35,22 @@ export async function getUserAllianceRank(userID) {
 export async function getAllianceBasicData(allianceID) {
   if (!allianceID) return false
   // Get basic alliance data
-  const [
-    allianceQuery,
-  ] = await mysql.query(
-    'SELECT created_at, picture_url, long_name, short_name, description, badge_json FROM alliances WHERE id=?',
+  const allianceData = await mysql.selectOne(
+    'SELECT created_at, picture_url, long_name, short_name, description, badge_json, server_points FROM alliances WHERE id=?',
     [allianceID]
   )
 
-  if (!allianceQuery) return false
+  if (!allianceData) return false
 
   return {
     id: allianceID,
-    created_at: allianceQuery.created_at,
-    picture_url: allianceQuery.picture_url,
-    long_name: allianceQuery.long_name,
-    short_name: allianceQuery.short_name,
-    description: allianceQuery.description,
-    badge: parseBadgeJSONFromDB(allianceQuery.badge_json),
+    created_at: allianceData.created_at,
+    picture_url: allianceData.picture_url,
+    long_name: allianceData.long_name,
+    short_name: allianceData.short_name,
+    description: allianceData.description,
+    server_points: allianceData.server_points,
+    badge: parseBadgeJSONFromDB(allianceData.badge_json),
   }
 }
 

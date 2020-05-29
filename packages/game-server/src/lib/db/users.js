@@ -9,7 +9,7 @@ import { getInitialUnixTimestampOfServerDay } from '../../lib/serverTime'
 import { calcBuildingDailyIncome, buildingsList, calcBuildingMaxMoney } from 'shared-lib/buildingsUtils'
 
 export async function getUserData(userID) {
-  const userDataPromise = mysql.selectOne('SELECT username, server_points FROM users WHERE id=?', [userID])
+  const userDataPromise = mysql.selectOne('SELECT username FROM users WHERE id=?', [userID])
   const rankingDataPromise = mysql.selectOne('SELECT rank, points FROM ranking_income WHERE user_id=?', [userID])
   const alliancePromise = getUserAllianceID(userID).then(getAllianceBasicData)
   const accountDataPromise = getAccountData(userID)
@@ -27,7 +27,6 @@ export async function getUserData(userID) {
   return {
     id: userID,
     username: userData.username,
-    server_points: userData.server_points,
     avatar: accountData.avatar,
     rank_position: rankingData ? rankingData.rank : 0,
     income: rankingData ? rankingData.points : 0,

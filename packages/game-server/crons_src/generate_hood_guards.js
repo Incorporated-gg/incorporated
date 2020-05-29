@@ -4,6 +4,8 @@ import { calcHoodMaxGuards, calcHoodGuardsRegenerationPerDay } from 'shared-lib/
 const frequencyMs = 60 * 1000
 
 async function generateHoodGuards(hoodData) {
+  if (!hoodData) return // hood not in db
+
   const maxGuards = calcHoodMaxGuards(hoodData.level)
   const guardsRegenerationPerDay = calcHoodGuardsRegenerationPerDay(hoodData.level)
   if (hoodData.guards >= maxGuards) return

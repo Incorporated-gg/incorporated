@@ -1,7 +1,4 @@
 import mysql from '../../src/lib/mysql'
-import { getAllHoodsData } from '../../src/lib/db/hoods'
-import { getAllianceMembers } from '../../src/lib/db/alliances'
-import { calcHoodDailyServerPoints } from 'shared-lib/hoodUtils'
 import { getUserResearchs } from '../../src/lib/db/users'
 import { calcResearchPrice } from 'shared-lib/allianceUtils'
 import { MAX_ACCUMULATED_ATTACKS } from 'shared-lib/missionsUtils'
@@ -9,7 +6,6 @@ import { MAX_ACCUMULATED_ATTACKS } from 'shared-lib/missionsUtils'
 export default async function runJustAfterNewDay(finishedServerDay) {
   await updateAttacksLeft()
   await updateUsersDailyLog(finishedServerDay)
-  await giveHoodServerPoints()
 }
 
 const ATTACKS_GAINED_PER_DAY = process.env.NODE_ENV === 'development' ? 30 : 3
@@ -33,27 +29,6 @@ async function updateUsersDailyLog(finishedServerDay) {
         'INSERT INTO users_daily_log (server_day, user_id, daily_income, researchs_count, researchs_total_spending) VALUES (?, ?, ?, ?, ?)',
         [finishedServerDay, user.user_id, user.daily_income, user.researchs_count, user.researchs_total_spending]
       )
-    })
-  )
-}
-
-async function giveHoodServerPoints() {
-  const allHoods = await getAllHoodsData()
-  const usersAddedServerPoints = {}
-  await Promise.all(
-    allHoods.map(async hood => {
-      if (!hood.owner) return
-      const allianceMembers = await getAllianceMembers(hood.owner.id)
-      allianceMembers.forEach(member => {
-        if (!usersAddedServerPoints[member.user.id]) usersAddedServerPoints[member.user.id] = 0
-        usersAddedServerPoints[member.user.id] += calcHoodDailyServerPoints(hood.tier)
-      })
-    })
-  )
-
-  await Promise.all(
-    Object.entries(usersAddedServerPoints).map(([userID, pointsToAdd]) => {
-      return mysql.query('UPDATE users SET server_points=server_points+? WHERE id=?', [pointsToAdd, userID])
     })
   )
 }

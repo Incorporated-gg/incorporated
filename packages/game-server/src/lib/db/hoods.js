@@ -4,56 +4,52 @@ import { calcHoodMaxGuards } from 'shared-lib/hoodUtils'
 
 let id = 0
 const hoodsList = [
-  { id: ++id, tier: 5, name: `Barrio ${id}` },
-  { id: ++id, tier: 5, name: `Barrio ${id}` },
-  { id: ++id, tier: 4, name: `Barrio ${id}` },
-  { id: ++id, tier: 4, name: `Barrio ${id}` },
-  { id: ++id, tier: 5, name: `Barrio ${id}` },
-  { id: ++id, tier: 5, name: `Barrio ${id}` },
-  { id: ++id, tier: 3, name: `Barrio ${id}` },
-  { id: ++id, tier: 4, name: `Barrio ${id}` },
-  { id: ++id, tier: 5, name: `Barrio ${id}` },
-  { id: ++id, tier: 2, name: `Barrio ${id}` },
-  { id: ++id, tier: 1, name: `Barrio ${id}` },
-  { id: ++id, tier: 3, name: `Barrio ${id}` },
-  { id: ++id, tier: 2, name: `Barrio ${id}` },
-  { id: ++id, tier: 1, name: `Barrio ${id}` },
-  { id: ++id, tier: 1, name: `Barrio ${id}` },
-  { id: ++id, tier: 2, name: `Barrio ${id}` },
-  { id: ++id, tier: 5, name: `Barrio ${id}` },
-  { id: ++id, tier: 3, name: `Barrio ${id}` },
-  { id: ++id, tier: 2, name: `Barrio ${id}` },
-  { id: ++id, tier: 3, name: `Barrio ${id}` },
-  { id: ++id, tier: 5, name: `Barrio ${id}` },
-  { id: ++id, tier: 4, name: `Barrio ${id}` },
-  { id: ++id, tier: 3, name: `Barrio ${id}` },
-  { id: ++id, tier: 4, name: `Barrio ${id}` },
+  { id: ++id, tier: 4, name: `Barrio ${id}`, benefit: 'alliance_research_sabots' },
+  { id: ++id, tier: 5, name: `Barrio ${id}`, benefit: 'extra_income' },
+  { id: ++id, tier: 3, name: `Barrio ${id}`, benefit: 'alliance_research_sabots' },
+  { id: ++id, tier: 4, name: `Barrio ${id}`, benefit: 'player_research_security' },
+  { id: ++id, tier: 5, name: `Barrio ${id}`, benefit: 'player_research_espionage' },
+  { id: ++id, tier: 3, name: `Barrio ${id}`, benefit: 'alliance_research_thieves' },
+  { id: ++id, tier: 2, name: `Barrio ${id}`, benefit: 'alliance_research_guards' },
+  { id: ++id, tier: 3, name: `Barrio ${id}`, benefit: 'alliance_research_guards' },
+  { id: ++id, tier: 2, name: `Barrio ${id}`, benefit: 'alliance_research_thieves' },
+  { id: ++id, tier: 2, name: `Barrio ${id}`, benefit: 'extra_income' },
+  { id: ++id, tier: 1, name: `Barrio ${id}`, benefit: 'alliance_research_thieves' },
+  { id: ++id, tier: 1, name: `Barrio ${id}`, benefit: 'extra_income' },
+  { id: ++id, tier: 2, name: `Barrio ${id}`, benefit: 'alliance_research_sabots' },
+  { id: ++id, tier: 1, name: `Barrio ${id}`, benefit: 'extra_income' },
+  { id: ++id, tier: 1, name: `Barrio ${id}`, benefit: 'alliance_research_guards' },
+  { id: ++id, tier: 2, name: `Barrio ${id}`, benefit: 'alliance_research_guards' },
+  { id: ++id, tier: 4, name: `Barrio ${id}`, benefit: 'alliance_research_guards' },
+  { id: ++id, tier: 3, name: `Barrio ${id}`, benefit: 'extra_income' },
+  { id: ++id, tier: 2, name: `Barrio ${id}`, benefit: 'alliance_research_sabots' },
+  { id: ++id, tier: 1, name: `Barrio ${id}`, benefit: 'alliance_research_sabots' },
+  { id: ++id, tier: 5, name: `Barrio ${id}`, benefit: 'player_research_espionage' },
+  { id: ++id, tier: 4, name: `Barrio ${id}`, benefit: 'player_research_defense' },
+  { id: ++id, tier: 1, name: `Barrio ${id}`, benefit: 'alliance_research_guards' },
+  { id: ++id, tier: 1, name: `Barrio ${id}`, benefit: 'alliance_research_sabots' },
 ]
 
-// Populate hoods table if empty
-const tierToInitialLevel = {
-  1: 0,
-  2: 5,
-  3: 10,
-  4: 15,
-  5: 20,
+async function populateHoodsDBTable() {
+  const tierToInitialLevel = {
+    1: 0,
+    2: 5,
+    3: 10,
+    4: 15,
+    5: 20,
+  }
+  hoodsList.map(async hoodInfo => {
+    let doesExist = await mysql.selectOne('SELECT level FROM hoods WHERE id=?', [hoodInfo.id])
+
+    // Create hood entry
+    if (!doesExist) {
+      const level = tierToInitialLevel[hoodInfo.tier]
+      const initialGuards = calcHoodMaxGuards(level)
+      await mysql.query('INSERT INTO hoods (id, guards, level) VALUES (?, ?, ?)', [hoodInfo.id, initialGuards, level])
+    }
+  })
 }
-hoodsList.map(async hoodInfo => {
-  let doesExist = await mysql.selectOne('SELECT level FROM hoods WHERE id=?', [hoodInfo.id])
-
-  // Janky migration for 20200518211830-revamp-hoods. Can be removed by Jun 2020
-  if (doesExist && doesExist.level === null) {
-    await mysql.selectOne('DELETE FROM hoods WHERE id=?', [hoodInfo.id])
-    doesExist = null
-  }
-
-  // Create hood entry
-  if (!doesExist) {
-    const level = tierToInitialLevel[hoodInfo.tier]
-    const initialGuards = calcHoodMaxGuards(hoodInfo.tier)
-    await mysql.query('INSERT INTO hoods (id, guards, level) VALUES (?, ?, ?)', [hoodInfo.id, initialGuards, level])
-  }
-})
+populateHoodsDBTable()
 
 const HOOD_ATTACK_PROTECTION_TIME = 60 * 60 * 24
 

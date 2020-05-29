@@ -35,6 +35,7 @@ export default function AllianceDetails({ alliance }) {
             )}
           </div>
           <div className={styles.shortName}>[{alliance.short_name}]</div>
+          <div className={styles.serverPoints}>Puntos de servidor: {alliance.server_points.toLocaleString()}</div>
           <div className={styles.description}> {alliance.description}</div>
         </div>
       </div>
