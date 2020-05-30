@@ -62,8 +62,8 @@ module.exports = app => {
     // Construct query
     const missionTypeWhere =
       missionType === 'attack' ? "AND mission_type='attack'" : missionType === 'spy' ? "AND mission_type='spy'" : ''
-    const uncaughtSpionagesWhere = sendType === 'received' ? "AND result!='not_caught'" : '' // Uncaught received spionages shouldn't be reported to the target
-    const selectQuery = `SELECT user_id, target_user, data, mission_type, started_at, will_finish_at, completed, result, profit FROM missions ${userWhere} ${missionTypeWhere} ${uncaughtSpionagesWhere} AND completed=1 ORDER BY will_finish_at DESC LIMIT 100`
+    const uncaughtEspionagesWhere = sendType === 'received' ? "AND result!='not_caught'" : '' // Uncaught received espionages shouldn't be reported to the target
+    const selectQuery = `SELECT user_id, target_user, data, mission_type, started_at, will_finish_at, completed, result, profit FROM missions ${userWhere} ${missionTypeWhere} ${uncaughtEspionagesWhere} AND completed=1 ORDER BY will_finish_at DESC LIMIT 100`
 
     const missionsRaw = await mysql.query(selectQuery, queryParams)
     const missions = await Promise.all(missionsRaw.map(parseMissionFromDB))

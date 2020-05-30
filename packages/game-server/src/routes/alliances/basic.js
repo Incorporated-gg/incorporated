@@ -15,7 +15,7 @@ import {
 } from '../../lib/db/alliances'
 import { getActiveMission, getUserPersonnel } from '../../lib/db/users'
 import { updatePersonnelAmount } from '../../lib/db/personnel'
-import { calcResourceMax, calcResearchPrice } from 'shared-lib/allianceUtils'
+import { calcResearchPrice, calcAllianceResourceMax } from 'shared-lib/allianceUtils'
 import { allianceUpdateResource } from '../../lib/db/alliances/resources'
 
 module.exports = app => {
@@ -99,7 +99,7 @@ module.exports = app => {
 
     const allianceResearchs = await getAllianceResearchs(allianceID)
     const researchID = req.body.research_id
-    const research = allianceResearchs[researchID]
+    const researchData = allianceResearchs[researchID]
     if (!allianceID) {
       res.status(401).json({ error: 'Investigación no encontrada' })
       return
@@ -124,28 +124,25 @@ module.exports = app => {
     )
 
     // Update alliances_research table
-    let newProgressMoney = research.progress_money + moneyAmount
-    let newLevel = research.level
-    let newPrice = research.price
+    let newProgressMoney = researchData.progress_money + moneyAmount
+    let newLevel = researchData.level - researchData.bonusLvlsFromHoods
+    let newPrice = researchData.price
     while (newProgressMoney >= newPrice) {
       newLevel++
       newProgressMoney -= newPrice
       newPrice = calcResearchPrice(researchID, newLevel)
     }
-    const doesDBRowExist = research.level === 0 && research.progress_money === 0
-    if (doesDBRowExist) {
+
+    const updateResult = await mysql.query(
+      'UPDATE alliances_research SET level=?, progress_money=? WHERE alliance_id=? AND id=?',
+      [newLevel, newProgressMoney, allianceID, researchID]
+    )
+    if (updateResult.changedRows === 0) {
       await mysql.query('INSERT INTO alliances_research (id, alliance_id, level, progress_money) VALUES (?, ?, ?, ?)', [
         researchID,
         allianceID,
         newLevel,
         newProgressMoney,
-      ])
-    } else {
-      await mysql.query('UPDATE alliances_research SET level=?, progress_money=? WHERE alliance_id=? AND id=?', [
-        newLevel,
-        newProgressMoney,
-        allianceID,
-        researchID,
       ])
     }
 
@@ -206,7 +203,14 @@ module.exports = app => {
       return
     }
 
-    const maxResourceStorage = calcResourceMax(resourceID, allianceResearchs)
+    const mapResourceIDToResearchID = {
+      guards: 2,
+      sabots: 3,
+      thieves: 4,
+    }
+    const researchID = mapResourceIDToResearchID[resourceID]
+    const researchLevel = allianceResearchs[researchID].level
+    const maxResourceStorage = calcAllianceResourceMax(researchID, researchLevel)
     if (allianceResources[resourceID] + resourceAmount > maxResourceStorage) {
       res.status(401).json({ error: 'No caben tantos recursos' })
       return

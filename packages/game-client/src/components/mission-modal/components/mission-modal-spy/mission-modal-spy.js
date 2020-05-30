@@ -26,12 +26,12 @@ export default function MissionModalSpy({ user, onRequestClose }) {
   const isFormReady = numSpies > 0
 
   const espionageProbabilities = calcSpyFailProbabilities({
-    resLvlAttacker: userData.researchs[1],
+    resLvlAttacker: userData.researchs[1] + userData.hoodResearchBonuses.espionage,
     resLvLDefender: user.spy_research_level,
     spiesSent: numSpies,
   })
   const informationPercentageRange = calcSpyInformationPercentageRange({
-    resLvlAttacker: userData.researchs[1],
+    resLvlAttacker: userData.researchs[1] + userData.hoodResearchBonuses.espionage,
     resLvLDefender: user.spy_research_level,
     spiesRemaining: numSpies,
   })

@@ -79,7 +79,8 @@ function setupPersonnelSalaryMoneyUpdater() {
     // Update buildings accumulated money
     Object.entries(userData.buildings).forEach(([buildingID, building]) => {
       buildingID = parseInt(buildingID)
-      const dailyIncome = calcBuildingDailyIncome(buildingID, building.quantity, userData.researchs[5])
+      const dailyIncome =
+        calcBuildingDailyIncome(buildingID, building.quantity, userData.researchs[5]) * userData.incomeMultiplier
       const intervalRevenue = (deltaMs / 1000) * (dailyIncome / 24 / 60 / 60)
       const maxMoney = calcBuildingMaxMoney({
         buildingID,

@@ -19,6 +19,7 @@ import { simulateAttack } from 'shared-lib/simulateAttack'
 import { onNewWarAttack } from '../../on_day_reset/alliance_wars'
 import { allianceUpdateResource } from '../../../src/lib/db/alliances/resources'
 import { PERSONNEL_OBJ } from 'shared-lib/personnelUtils'
+import { getUserResearchBonusFromHoods } from '../../../src/lib/db/hoods'
 
 export async function completeUserAttackMission(mission) {
   const data = JSON.parse(mission.data)
@@ -69,13 +70,15 @@ export async function completeUserAttackMission(mission) {
     return false
   }
 
-  const [attackerResearchBonusFromBuffs, defenderResearchBonusFromBuffs] = await Promise.all([
+  const [attackerResearchBonusFromBuffs, defenderResearchBonusFromBuffs, defenderBonusFromHoods] = await Promise.all([
     getAllianceResearchBonusFromBuffs(attackerAllianceID),
     getAllianceResearchBonusFromBuffs(defenderAllianceID),
+    getUserResearchBonusFromHoods(defenderAllianceID),
   ])
-  const attackerSabotageLevel = attackerResearchs[2] + attackerResearchBonusFromBuffs[2]
-  const defensorDefenseLvl = defenderResearchs[3] + defenderResearchBonusFromBuffs[3]
-  const defensorSecurityLvl = defenderResearchs[6]
+  const attackerSabotageLevel = attackerResearchs[2] + attackerResearchBonusFromBuffs.attack
+  const defensorDefenseLvl =
+    defenderResearchs[3] + defenderResearchBonusFromBuffs.defense + defenderBonusFromHoods.defense
+  const defensorSecurityLvl = defenderResearchs[6] + defenderBonusFromHoods.security
   const defenderBankLevel = defenderResearchs[4]
 
   const buildingAmount = defenderBuildings[data.building].quantity

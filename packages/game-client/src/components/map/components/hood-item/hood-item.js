@@ -7,8 +7,7 @@ import IncProgressBar from 'components/UI/inc-progress-bar'
 import { userData } from 'lib/user'
 import Icon from 'components/icon'
 import PropTypes from 'prop-types'
-
-const HOOD_ATTACK_PROTECTION_TIME = 60 * 60 * 24
+import { getHoodBenefitValue, HOOD_ATTACK_PROTECTION_TIME, calcHoodDailyServerPoints } from 'shared-lib/hoodUtils'
 
 HoodItem.propTypes = {
   hood: PropTypes.object,
@@ -19,6 +18,45 @@ export default function HoodItem({ hood, setAttackModalHood, setIsManageHoodModa
   const isMine = hood.owner && userData.alliance && hood.owner.id === userData.alliance.id
   const attackProtectionTimeRemaining = HOOD_ATTACK_PROTECTION_TIME - (Date.now() / 1000 - hood.last_owner_change_at)
   const attackProtectionTimeHours = Math.ceil(attackProtectionTimeRemaining / 60 / 60) + 'H'
+
+  let benefitElm = ''
+  const benefitValue = getHoodBenefitValue(hood.benefit, hood.tier)
+
+  switch (hood.benefit) {
+    case 'alliance_research_sabots': {
+      benefitElm = `Barracones de Gángsters: +${benefitValue}`
+      break
+    }
+    case 'alliance_research_guards': {
+      benefitElm = `Cabinas de Guardias: +${benefitValue}`
+      break
+    }
+    case 'alliance_research_thieves': {
+      benefitElm = `Academias de Ladrones: +${benefitValue}`
+      break
+    }
+    case 'extra_income': {
+      benefitElm = `Ingresos: +${benefitValue}%`
+      break
+    }
+    case 'player_research_espionage': {
+      benefitElm = `Espionaje: +${benefitValue}`
+      break
+    }
+    case 'player_research_security': {
+      benefitElm = `Seguridad: +${benefitValue}`
+      break
+    }
+    case 'player_research_defense': {
+      benefitElm = `Defensa: +${benefitValue}`
+      break
+    }
+    default: {
+      benefitElm = '???'
+      break
+    }
+  }
+  benefitElm += `\n\nReputación diaria: +${calcHoodDailyServerPoints(hood.tier)}`
 
   return (
     <div key={hood.id} className={styles.container}>
@@ -34,7 +72,7 @@ export default function HoodItem({ hood, setAttackModalHood, setIsManageHoodModa
           </div>
           <div className={styles.statBadge}>
             <div>Beneficio</div>
-            <div>{hood.benefit}</div>
+            <div className={styles.benefitsStatValue}>{benefitElm}</div>
           </div>
         </div>
 

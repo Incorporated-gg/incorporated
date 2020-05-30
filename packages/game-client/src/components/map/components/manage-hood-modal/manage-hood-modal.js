@@ -74,7 +74,7 @@ function ManageHood({ hood, onRequestClose }) {
       <div style={{ padding: 10 }}>
         <div>
           <span className={styles.title}>ADMINISTRAR BARRIO</span>
-          <span className={styles.subtitle}>(+{calcHoodDailyServerPoints(hood.tier)} Puntos de Servidor Diarios)</span>
+          <span className={styles.subtitle}>(+{calcHoodDailyServerPoints(hood.tier)} Reputación Diaria)</span>
         </div>
 
         <IncContainer className={styles.guardsResource}>

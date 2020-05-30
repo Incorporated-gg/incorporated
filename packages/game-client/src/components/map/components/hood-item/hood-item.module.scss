@@ -23,6 +23,7 @@
       flex-direction: column;
       font-weight: 600;
       text-align: center;
+
       &:not(:first-child) {
         margin-top: 10px;
       }
@@ -41,6 +42,11 @@
         padding: 5px;
         padding-bottom: 12px;
         clip-path: polygon(100% 0, 100% calc(100% - 10px), 50% 100%, 0 calc(100% - 10px), 0 0);
+
+        &.benefitsStatValue {
+          font-size: $font-size-small;
+          white-space: pre-line;
+        }
       }
     }
   }
@@ -103,6 +109,7 @@
 
   // Reflection decorations
   .shieldOverlayReflections {
+
     &::before,
     &::after {
       content: "";
@@ -133,7 +140,7 @@
   }
 
   .riotShieldIcon {
-    margin: 8px 0;
+    margin: 12px 0;
     align-self: center;
   }
 

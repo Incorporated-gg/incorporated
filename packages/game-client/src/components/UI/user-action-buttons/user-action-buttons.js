@@ -3,7 +3,6 @@ import PropTypes from 'prop-types'
 import { useUserData, userData } from 'lib/user'
 import { calculateIsInAttackRange } from 'shared-lib/missionsUtils'
 import MissionModal from '../../mission-modal'
-import { calcBuildingDailyIncome } from 'shared-lib/buildingsUtils'
 import IncButton from '../inc-button'
 import Icon from 'components/icon'
 import styles from './user-action-buttons.module.scss'
@@ -76,12 +75,5 @@ function getCanAttackUser(user) {
   if (shareAlliance) return false
 
   // Is inside of attack range
-  const currentOptimizeLvl = userData.researchs[5]
-  const userIncome = Object.entries(userData.buildings).reduce(
-    (prev, [buildingID, { quantity }]) =>
-      prev + (calcBuildingDailyIncome(parseInt(buildingID), quantity, currentOptimizeLvl) || 0),
-    0
-  )
-
-  return calculateIsInAttackRange(userIncome, user.income)
+  return calculateIsInAttackRange(userData.dailyIncome, user.income)
 }

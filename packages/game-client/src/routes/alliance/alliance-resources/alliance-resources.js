@@ -6,6 +6,12 @@ import AllianceResourceItem from 'components/alliance/alliance-resource-item/all
 import AllianceBuffs from 'components/alliance/alliance-buffs'
 import AllianceResourcesLog from 'components/alliance/alliance-resources-log/alliance-resources-log'
 
+const mapResourceIDToResearchID = {
+  guards: 2,
+  sabots: 3,
+  thieves: 4,
+}
+
 AllianceResources.propTypes = {
   alliance: PropTypes.object.isRequired,
   reloadAllianceData: PropTypes.func.isRequired,
@@ -23,7 +29,8 @@ export default function AllianceResources({ alliance, reloadAllianceData }) {
                 key={resourceID}
                 resourceID={resourceID}
                 resourceAmount={resourceAmount}
-                researchs={alliance.researchs}
+                researchID={mapResourceIDToResearchID[resourceID]}
+                researchLevel={alliance.researchs[mapResourceIDToResearchID[resourceID]].level}
                 userResourceAmount={userData.personnel[resourceID] || 0}
                 reloadAllianceData={reloadAllianceData}
               />

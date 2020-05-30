@@ -75,25 +75,11 @@ async function doResearchRanking() {
 }
 
 async function doAlliancesRanking() {
-  const users = await mysql.query('SELECT alliance_id, user_id FROM alliances_members')
-  const parsedAlliances = new Map()
+  const alliances = await mysql.query('SELECT id, server_points FROM alliances')
 
   await Promise.all(
-    users.map(async user => {
-      // Fetch the user's income
-      const userTotalIncome = await getUserDailyIncome(user.user_id)
-
-      let currPoints = 0
-      if (parsedAlliances.has(user.alliance_id)) {
-        currPoints = parsedAlliances.get(user.alliance_id)
-      }
-      parsedAlliances.set(user.alliance_id, currPoints + userTotalIncome / 1000)
-    })
-  )
-
-  await Promise.all(
-    Array.from(parsedAlliances)
-      .map(a => ({ alliance_id: a[0], points: a[1] }))
+    alliances
+      .map(a => ({ alliance_id: a.id, points: a.server_points }))
       .sort((a, b) => (a.points < b.points ? 1 : -1))
       .map(async (alliance, index) => {
         const rank = index + 1

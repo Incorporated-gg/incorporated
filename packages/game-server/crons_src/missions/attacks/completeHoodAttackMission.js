@@ -27,9 +27,9 @@ export async function completeHoodAttackMission(mission) {
   ])
 
   const attackerResearchBonusFromBuffs = await getAllianceResearchBonusFromBuffs(attackerAllianceID)
-  const attackerSabotageLvl = attackerResearchs[2] + attackerResearchBonusFromBuffs[2]
+  const attackerSabotageLvl = attackerResearchs[2] + attackerResearchBonusFromBuffs.attack
   const defensorDefenseLvl = attackerSabotageLvl
-  const defenderSecurityLevel = 1
+  const defensorSecurityLvl = 1
 
   const buildingAmount = 0
   const unprotectedMoney = 0
@@ -42,7 +42,7 @@ export async function completeHoodAttackMission(mission) {
     attackerThieves: data.thieves,
     attackerSabotageLvl,
     defensorDefenseLvl,
-    defenderSecurityLevel,
+    defensorSecurityLvl,
     buildingAmount,
     unprotectedMoney,
   })

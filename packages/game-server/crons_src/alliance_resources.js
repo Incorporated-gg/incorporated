@@ -1,13 +1,22 @@
 import mysql from '../src/lib/mysql'
 import { getAllianceResources, getAllianceResearchs } from '../src/lib/db/alliances'
-import { calcResourceGeneration, calcResourceMax } from 'shared-lib/allianceUtils'
+import { calcAllianceResourceGeneration, calcAllianceResourceMax } from 'shared-lib/allianceUtils'
 const frequencyMs = 15 * 1000 // 15 for dev. 60 should be fine for prod, but can be tuned if needed
 
+const mapResourceIDToResearchID = {
+  guards: 2,
+  sabots: 3,
+  thieves: 4,
+}
+
 async function generateResource(allianceID, resourceID, resources, researchs) {
-  const max = calcResourceMax(resourceID, researchs)
+  const researchID = mapResourceIDToResearchID[resourceID]
+  const researchLevel = researchs[researchID].level
+  const max = calcAllianceResourceMax(researchID, researchLevel)
+
   if (resources[resourceID] >= max) return
   if (resources[resourceID] === 0) {
-    const [rowExists] = await mysql.query('SELECT 1 FROM alliances_resources WHERE alliance_id=? AND resource_id=?', [
+    const rowExists = await mysql.selectOne('SELECT 1 FROM alliances_resources WHERE alliance_id=? AND resource_id=?', [
       allianceID,
       resourceID,
     ])
@@ -20,7 +29,8 @@ async function generateResource(allianceID, resourceID, resources, researchs) {
     }
   }
 
-  const genPerDay = calcResourceGeneration(resourceID, researchs)
+  const genPerDay = calcAllianceResourceGeneration(researchID, researchLevel)
+
   let generated = (genPerDay / 24 / 60 / 60 / 1000) * frequencyMs
   const maxDiff = max - (resources[resourceID] + generated)
   if (maxDiff < 0) generated += maxDiff

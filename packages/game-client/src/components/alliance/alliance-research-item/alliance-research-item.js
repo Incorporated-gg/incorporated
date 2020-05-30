@@ -3,11 +3,7 @@ import PropTypes from 'prop-types'
 import { useUserData } from 'lib/user'
 import Card from 'components/card'
 import styles from './alliance-research-item.module.scss'
-import {
-  ALLIANCE_RESEARCHS,
-  calcResourceGenerationByResearchID,
-  calcResourceMaxByResearchID,
-} from 'shared-lib/allianceUtils'
+import { ALLIANCE_RESEARCHS, calcAllianceResourceGeneration, calcAllianceResourceMax } from 'shared-lib/allianceUtils'
 import api from 'lib/api'
 import IncProgressBar from 'components/UI/inc-progress-bar'
 import Icon from 'components/icon'
@@ -46,8 +42,11 @@ export default function AllianceResearchItem({ researchData, reloadAllianceData 
       })
   }
 
+  let lvlTxt = `Lvl. ${researchData.level - researchData.bonusLvlsFromHoods}`
+  if (researchData.bonusLvlsFromHoods) lvlTxt += ` +${researchData.bonusLvlsFromHoods}`
+
   return (
-    <Card image={researchImages[researchData.id]} title={researchInfo.name} ribbon={`Lvl. ${researchData.level}`}>
+    <Card image={researchImages[researchData.id]} title={researchInfo.name} ribbon={lvlTxt}>
       <IncContainer style={{ display: 'flex', alignItems: 'center' }}>
         <div className={styles.price}>{numberToAbbreviation(researchData.price)}</div>
         <IncProgressBar progressPercentage={(researchData.progress_money / researchData.price) * 100}>
@@ -60,16 +59,16 @@ export default function AllianceResearchItem({ researchData, reloadAllianceData 
         <>
           <div className={styles.statTitle}>{researchInfo.resourceGeneratedName} generados al día</div>
           <div className={styles.statContainer}>
-            <span>{calcResourceGenerationByResearchID(researchData.id, researchData.level).toLocaleString()}</span>
+            <span>{calcAllianceResourceGeneration(researchData.id, researchData.level).toLocaleString()}</span>
             <Icon iconName="arrows" width={30} height={18} />
-            <span>{calcResourceGenerationByResearchID(researchData.id, researchData.level + 1).toLocaleString()}</span>
+            <span>{calcAllianceResourceGeneration(researchData.id, researchData.level + 1).toLocaleString()}</span>
           </div>
 
           <div className={styles.statTitle}>Capacidad de almacenaje</div>
           <div className={styles.statContainer}>
-            <span>{calcResourceMaxByResearchID(researchData.id, researchData.level).toLocaleString()}</span>
+            <span>{calcAllianceResourceMax(researchData.id, researchData.level).toLocaleString()}</span>
             <Icon iconName="arrows" width={30} height={18} />
-            <span>{calcResourceMaxByResearchID(researchData.id, researchData.level + 1).toLocaleString()}</span>
+            <span>{calcAllianceResourceMax(researchData.id, researchData.level + 1).toLocaleString()}</span>
           </div>
         </>
       )}

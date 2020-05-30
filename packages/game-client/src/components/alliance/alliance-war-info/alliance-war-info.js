@@ -7,7 +7,6 @@ import { getServerDay } from 'lib/serverTime'
 import { useUserData } from 'lib/user'
 import IncButton from 'components/UI/inc-button'
 import AskForWarAidModal from '../ask-for-war-aid-modal/ask-for-war-aid-modal'
-import ChooseWarHoodsModal from '../choose-war-hoods-modal/choose-war-hoods-modal'
 
 const warDaysArray = new Array(WAR_DAYS_DURATION).fill(null).map((_, dayIndex) => dayIndex + 1)
 
@@ -61,13 +60,6 @@ export default function WarInfo({ war }) {
     setIsAskForWarAidModalOpen(true)
   }
 
-  const canChooseWarHoods =
-    canAskForWarAid && userData.alliance.id === war.alliance2.id && war.alliance1_hoods.length === 0
-  const [isChooseWarHoodsModalOpen, setIsChooseWarHoodsModalOpen] = useState(false)
-  const openChooseWarHoodsModal = () => {
-    setIsChooseWarHoodsModalOpen(true)
-  }
-
   return (
     <div>
       <div className={styles.declaredOnText}>Comenzó día {getServerDay(war.created_at * 1000) + 1}</div>
@@ -88,18 +80,6 @@ export default function WarInfo({ war }) {
           return <AllianceLink key={aid.alliance.id} alliance={aid.alliance} />
         })}
       </div>
-      {canChooseWarHoods && (
-        <>
-          <IncButton onClick={openChooseWarHoodsModal}>Escoger barrios</IncButton>
-          <ChooseWarHoodsModal
-            war={war}
-            isOpen={isChooseWarHoodsModalOpen}
-            onRequestClose={() => {
-              setIsChooseWarHoodsModalOpen(false)
-            }}
-          />
-        </>
-      )}
       {canAskForWarAid && (
         <>
           <IncButton onClick={openAskForWarAidModal}>Pedir ayuda</IncButton>

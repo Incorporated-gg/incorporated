@@ -2,7 +2,7 @@ import { parseBadgeJSONFromDB } from './badge'
 import mysql from '../../mysql'
 import { getUserData } from '../users'
 import { ALLIANCE_RESEARCHS, ALLIANCE_RESOURCES_LIST, calcResearchPrice } from 'shared-lib/allianceUtils'
-import { getHoodData } from '../hoods'
+import { getHoodData, getAllianceResearchBonusFromHoods } from '../hoods'
 
 export const MAX_MEMBERS = 10
 
@@ -76,6 +76,7 @@ export async function getAllianceMembers(allianceID) {
 }
 
 export async function getAllianceResearchs(allianceID) {
+  const hoodBonuses = await getAllianceResearchBonusFromHoods(allianceID)
   const rawResearchs = await mysql.query(
     'SELECT id, level, progress_money FROM alliances_research WHERE alliance_id=?',
     [allianceID]
@@ -83,10 +84,19 @@ export async function getAllianceResearchs(allianceID) {
   const researchs = Object.values(ALLIANCE_RESEARCHS)
     .map(research => {
       const data = rawResearchs.find(raw => raw.id === research.id)
+      const bonusLvlsFromHoods =
+        research.id === 2
+          ? hoodBonuses.guards
+          : research.id === 3
+          ? hoodBonuses.sabots
+          : research.id === 4
+          ? hoodBonuses.thieves
+          : 0
       const level = data ? data.level : 0
       return {
         id: research.id,
-        level,
+        level: level + bonusLvlsFromHoods,
+        bonusLvlsFromHoods,
         price: calcResearchPrice(research.id, level),
         progress_money: data ? data.progress_money : 0,
       }
@@ -95,6 +105,7 @@ export async function getAllianceResearchs(allianceID) {
       prev[curr.id] = curr
       return prev
     }, {})
+
   return researchs
 }
 
@@ -191,8 +202,8 @@ export async function getAllianceBuffsData(allianceID) {
 export async function getAllianceResearchBonusFromBuffs(allianceID) {
   if (!allianceID) {
     return {
-      2: 0,
-      3: 0,
+      attack: 0,
+      defense: 0,
     }
   }
   const [buffsData, researchs] = await Promise.all([getAllianceBuffsData(allianceID), getAllianceResearchs(allianceID)])
@@ -201,8 +212,8 @@ export async function getAllianceResearchBonusFromBuffs(allianceID) {
   const bonusDefenseLvls = buffsData.defense.active ? researchs[6].level + 1 : 0
 
   return {
-    2: bonusAttackLvls,
-    3: bonusDefenseLvls,
+    attack: bonusAttackLvls,
+    defense: bonusDefenseLvls,
   }
 }
 

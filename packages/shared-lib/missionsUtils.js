@@ -38,7 +38,7 @@ export function calcGuardsPower(securityResearchLvl) {
 export function calcSpiesPower(spyResearchLvl) {
   return 2 * spyResearchLvl
 }
-function calcSpionageDefensePower(spyResearchLvl) {
+function calcEspionageDefensePower(spyResearchLvl) {
   return 5 * Math.pow(spyResearchLvl, 2.2)
 }
 
@@ -57,7 +57,7 @@ export function calcSpyFailProbabilities({ resLvlAttacker, resLvLDefender, spies
 }
 
 export function calcSpyInformationPercentageRange({ resLvlAttacker, resLvLDefender, spiesRemaining }) {
-  const defensePower = calcSpionageDefensePower(resLvLDefender)
+  const defensePower = calcEspionageDefensePower(resLvLDefender)
   const attackPower = calcSpiesPower(resLvlAttacker) * spiesRemaining
 
   const randomPercentage = { min: -10, max: 10 }

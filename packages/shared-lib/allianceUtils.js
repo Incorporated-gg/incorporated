@@ -66,11 +66,6 @@ export function calcResearchPrice(researchID, researchLevel) {
   return data.pricePerLvl * (researchLevel + 1)
 }
 
-const mapResourceIDToResearchID = {
-  guards: 2,
-  sabots: 3,
-  thieves: 4,
-}
 const mapResearchIDToResourceID = {
   2: 'guards',
   3: 'sabots',
@@ -84,15 +79,9 @@ const maxResourcesPerLevel = {
   thieves: 2500,
 }
 
-export function calcResourceMax(resourceID, researchs) {
-  const researchID = mapResourceIDToResearchID[resourceID]
-  const researchLevel = researchs[researchID].level
-  return maxResourcesPerLevel[resourceID] * (1 + researchLevel)
-}
-
-export function calcResourceMaxByResearchID(researchID, researchLevel) {
+export function calcAllianceResourceMax(researchID, researchLevel) {
   const resourceID = mapResearchIDToResourceID[researchID]
-  return calcResourceMax(resourceID, { [researchID]: { level: researchLevel } })
+  return maxResourcesPerLevel[resourceID] * (1 + researchLevel)
 }
 
 // Resource generation
@@ -103,19 +92,7 @@ const genResourcesPerLevel = {
   thieves: 100,
 }
 
-export function calcResourceGeneration(resourceID, researchs) {
-  const researchID = mapResourceIDToResearchID[resourceID]
-  const researchLevel = researchs[researchID].level
-  return genResourcesPerLevel[resourceID] * (1 + researchLevel)
-}
-
-export function calcResourceGenerationByResearchID(researchID, researchLevel) {
+export function calcAllianceResourceGeneration(researchID, researchLevel) {
   const resourceID = mapResearchIDToResourceID[researchID]
-  return calcResourceGeneration(resourceID, { [researchID]: { level: researchLevel } })
-}
-
-export function getMaxHoodsAttackedPerWar(dayID) {
-  if (dayID < 30) return 1
-  if (dayID < 60) return 2
-  return 3
+  return genResourcesPerLevel[resourceID] * (1 + researchLevel)
 }

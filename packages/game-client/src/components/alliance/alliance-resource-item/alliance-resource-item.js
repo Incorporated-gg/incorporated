@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { calcResourceMax } from 'shared-lib/allianceUtils'
+import { calcAllianceResourceMax } from 'shared-lib/allianceUtils'
 import PropTypes from 'prop-types'
 import { reloadUserData } from 'lib/user'
 import api from 'lib/api'
@@ -14,7 +14,8 @@ import { PERSONNEL_OBJ } from 'shared-lib/personnelUtils'
 AllianceResourceItem.propTypes = {
   resourceID: PropTypes.string.isRequired,
   resourceAmount: PropTypes.number.isRequired,
-  researchs: PropTypes.object.isRequired,
+  researchLevel: PropTypes.number.isRequired,
+  researchID: PropTypes.number.isRequired,
   reloadAllianceData: PropTypes.func.isRequired,
   userResourceAmount: PropTypes.number.isRequired,
 }
@@ -22,12 +23,13 @@ export default function AllianceResourceItem({
   resourceID,
   resourceAmount,
   reloadAllianceData,
-  researchs,
+  researchID,
+  researchLevel,
   userResourceAmount,
 }) {
   const [insertAmount, setInsertAmount] = useState('')
   const [extractAmount, setExtractAmount] = useState('')
-  const max = calcResourceMax(resourceID, researchs)
+  const max = calcAllianceResourceMax(researchID, researchLevel)
 
   const doResources = isExtracting => e => {
     e.preventDefault()

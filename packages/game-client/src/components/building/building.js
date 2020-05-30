@@ -34,12 +34,12 @@ export default function Building({ buildingID }) {
   const buildingInfo = buildingsList.find(b => b.id === buildingID)
   const buildingCount = userData.buildings[buildingID].quantity
   const coste = calcBuildingPrice(buildingID, buildingCount)
-  const income = calcBuildingDailyIncome(buildingID, 1, userData.researchs[5])
+  const dailyIncome = calcBuildingDailyIncome(buildingID, 1, userData.researchs[5]) * userData.incomeMultiplier
 
   const currentOptimizeLvl = userData.researchs[5]
   const hasEnoughOptimizeLvl = currentOptimizeLvl >= buildingInfo.requiredOptimizeResearchLevel
 
-  const timeToRecoverInvestment = Math.round((coste / income) * 10) / 10
+  const timeToRecoverInvestment = Math.round((coste / dailyIncome) * 10) / 10
 
   return (
     <Card
@@ -63,7 +63,7 @@ export default function Building({ buildingID }) {
           <div className={styles.statContainer}>
             <span className={styles.statTitle}>Beneficios por día:</span>
             <span className={styles.statValue}>
-              {numberToAbbreviation(income * buildingCount)}{' '}
+              {numberToAbbreviation(dailyIncome * buildingCount)}{' '}
               <Icon iconName="money" style={{ marginLeft: 3 }} size={22} />
             </span>
           </div>

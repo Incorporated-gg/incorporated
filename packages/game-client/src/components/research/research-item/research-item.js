@@ -78,9 +78,23 @@ export default function ResearchItem({ researchID }) {
     : secondsLeft <= MANUALLY_FINISH_RESEARCH_UPGRADES_SECONDS
     ? 'PULSA PARA COMPLETAR'
     : 'INVESTIGANDO...'
+  const bonusIdToNameMap = {
+    1: 'espionage',
+    2: 'attack',
+    3: 'defense',
+    6: 'security',
+  }
+  const bonusName = bonusIdToNameMap[researchID]
+  let lvlStr = `Lvl. ${level.toLocaleString()}`
+  if (userData.hoodResearchBonuses[bonusName]) {
+    lvlStr += ` +${userData.hoodResearchBonuses[bonusName]}`
+  }
+  if (userData.allianceBuffBonuses[bonusName]) {
+    lvlStr += ` +${userData.allianceBuffBonuses[bonusName]}`
+  }
 
   return (
-    <Card image={researchImages[researchID]} ribbon={`Lvl. ${level.toLocaleString()}`} title={researchInfo.name}>
+    <Card image={researchImages[researchID]} ribbon={lvlStr} title={researchInfo.name}>
       <ResearchEffectsInfo researchID={researchID} currentLevel={level} price={cost} />
       <IncButton onClick={buttonClicked} disabled={!isUpgrading && !canAfford}>
         <div className={styles.rowsContainer}>

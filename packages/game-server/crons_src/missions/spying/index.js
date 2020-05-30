@@ -7,6 +7,8 @@ import {
   runUserMoneyUpdate,
   getUserTodaysMissionsLimits,
 } from '../../../src/lib/db/users'
+import { getUserResearchBonusFromHoods } from '../../../src/lib/db/hoods'
+import { getAllianceResearchBonusFromBuffs, getUserAllianceID } from '../../../src/lib/db/alliances'
 
 export async function doSpyMissions() {
   const tsNow = Math.floor(Date.now() / 1000)
@@ -32,21 +34,29 @@ async function completeSpyMission(mission) {
     return
   }
 
-  const [defensorResearchs, attackerResearchs] = await Promise.all([
+  const defenderAllianceID = await getUserAllianceID(defender.id)
+  const attackerAllianceID = await getUserAllianceID(attacker.id)
+
+  const [defensorResearchs, attackerResearchs, defensorBonusesFromHoods, attackerBonusesFromHoods] = await Promise.all([
     getUserResearchs(defender.id),
     getUserResearchs(attacker.id),
+    getUserResearchBonusFromHoods(defenderAllianceID),
+    getUserResearchBonusFromHoods(attackerAllianceID),
   ])
 
   const spiesSent = data.spies
+  const attackerEspionageLvl = attackerResearchs[1] + attackerBonusesFromHoods.espionage
+  const defensorEspionageLvl = defensorResearchs[1] + defensorBonusesFromHoods.espionage
+
   const spiesCaptured = calcSpiesCaptured({
-    resLvlAttacker: attackerResearchs[1],
-    resLvLDefender: defensorResearchs[1],
+    resLvlAttacker: attackerEspionageLvl,
+    resLvLDefender: defensorEspionageLvl,
     spiesSent,
   })
   const spiesRemaining = spiesSent - spiesCaptured
   const informationPercentageObtained = calcInformationPercentageObtained({
-    resLvlAttacker: attackerResearchs[1],
-    resLvLDefender: defensorResearchs[1],
+    resLvlAttacker: attackerEspionageLvl,
+    resLvLDefender: defensorEspionageLvl,
     spiesRemaining,
   })
 
@@ -61,6 +71,13 @@ async function completeSpyMission(mission) {
 
   // Run money update for defender, so buildings money info is correct
   await runUserMoneyUpdate(defender.id)
+
+  // Add bonuses
+  const allianceBonuses = await getAllianceResearchBonusFromBuffs(defenderAllianceID)
+  defensorResearchs[1] = defensorResearchs[1] + defensorBonusesFromHoods.espionage
+  defensorResearchs[2] = defensorResearchs[2] + allianceBonuses.attack
+  defensorResearchs[3] = defensorResearchs[3] + allianceBonuses.defense + defensorBonusesFromHoods.defense
+  defensorResearchs[6] = defensorResearchs[6] + defensorBonusesFromHoods.security
 
   // Generate report
   const intelReport = await getIntelReport({

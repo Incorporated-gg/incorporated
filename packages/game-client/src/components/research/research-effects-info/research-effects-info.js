@@ -46,10 +46,10 @@ export default function ResearchEffectsInfo({ researchID, currentLevel, price })
       break
     }
     case 5: {
-      const incomes = calculateIncomeAfterResearch(userData.buildings, currentLevel)
-      powerNow = numberToAbbreviation(incomes.oldIncome)
-      powerThen = numberToAbbreviation(incomes.newIncome)
-      const diff = incomes.newIncome - incomes.oldIncome
+      const newIncome = calculateIncomeAfterResearch()
+      powerNow = numberToAbbreviation(userData.dailyIncome)
+      powerThen = numberToAbbreviation(newIncome)
+      const diff = newIncome - userData.dailyIncome
       const pri = Math.round((price / diff) * 10) / 10
       desc = (
         <>
@@ -104,35 +104,20 @@ function getBuildingsTimeUntilFull(researchLevel) {
     )
     .reduce((a, b) => a + b, 0)
 
-  const optimizeResearchLevel = userData.researchs[5]
-  const dailyIncomeTotal = userBuildings
-    .map(({ buildingID, buildingAmount }) => calcBuildingDailyIncome(buildingID, buildingAmount, optimizeResearchLevel))
-    .reduce((a, b) => a + b, 0)
-
-  const secondsUntilFull = (maxMoneyTotal / dailyIncomeTotal) * 60 * 60 * 24
+  const secondsUntilFull = (maxMoneyTotal / userData.dailyIncome) * 60 * 60 * 24
   const timeWhenFull = Math.floor(secondsUntilFull + Date.now() / 1000)
   const timeUntil = getTimeUntil(timeWhenFull)
 
   return `${timeUntil.hours}h\xA0${timeUntil.minutes}m`
 }
 
-function calculateIncomeAfterResearch(buildings, currentOptimizeLvl) {
-  let oldIncome = 0
-  let newIncome = 0
-  if (buildings) {
-    oldIncome = Object.entries(buildings).reduce(
-      (prev, [buildingID, { quantity }]) =>
-        prev + calcBuildingDailyIncome(parseInt(buildingID), quantity, currentOptimizeLvl),
-      0
-    )
-    newIncome = Object.entries(buildings).reduce(
+function calculateIncomeAfterResearch() {
+  const currentOptimizeLvl = userData.researchs[5]
+  const newIncome =
+    Object.entries(userData.buildings).reduce(
       (prev, [buildingID, { quantity }]) =>
         prev + calcBuildingDailyIncome(parseInt(buildingID), quantity, currentOptimizeLvl + 1),
       0
-    )
-  }
-  return {
-    newIncome,
-    oldIncome,
-  }
+    ) * userData.incomeMultiplier
+  return newIncome
 }

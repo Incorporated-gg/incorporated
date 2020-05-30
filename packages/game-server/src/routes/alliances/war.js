@@ -1,5 +1,3 @@
-import { getMaxHoodsAttackedPerWar } from 'shared-lib/allianceUtils'
-import { getServerDay } from '../../lib/serverTime'
 import mysql from '../../lib/mysql'
 import {
   getAllianceBasicData,
@@ -7,10 +5,8 @@ import {
   getActiveWarBetweenAlliances,
   getAllianceRankData,
   getAllianceMembers,
-  getWarData,
 } from '../../lib/db/alliances'
 import { sendMessage } from '../../lib/db/users'
-import { getHoodData } from '../../lib/db/hoods'
 
 module.exports = app => {
   app.post('/v1/alliance/declare_war', async function(req, res) {
@@ -81,81 +77,6 @@ module.exports = app => {
 
     res.json({ success: true })
   })
-
-  app.post('/v1/alliance/choose_war_hoods', async function(req, res) {
-    if (!req.userData) {
-      res.status(401).json({ error: 'Necesitas estar conectado', error_code: 'not_logged_in' })
-      return
-    }
-
-    const warID = parseInt(req.body.war_id)
-    const attackedHoods = req.body.hoods.map(n => parseInt(n))
-
-    const userRank = await getUserAllianceRank(req.userData.id)
-    if (!userRank || !userRank.permission_admin) {
-      res.status(401).json({ error: 'No tienes permiso para hacer esto' })
-      return
-    }
-
-    const warData = await getWarData(warID)
-    if (!warData) {
-      res.status(401).json({ error: 'Guerra no encontrada' })
-      return
-    }
-
-    if (warData.alliance1.id === userRank.alliance_id) {
-      res.status(401).json({ error: 'Solo pueden elegir barrios los defensores' })
-      return
-    }
-
-    if (warData.alliance1_hoods.length > 0) {
-      res.status(401).json({ error: 'Ya has elegido barrios' })
-      return
-    }
-
-    try {
-      await checkHoodsAreValidForWar(attackedHoods, warData.alliance1.id)
-    } catch (err) {
-      res.status(401).json({ error: err.message })
-      return
-    }
-
-    const alliance1Hoods = attackedHoods.join(',')
-    await mysql.query('UPDATE alliances_wars SET alliance1_hoods=? WHERE id=?', [alliance1Hoods, warID])
-
-    res.json({ success: true })
-  })
-}
-
-async function checkHoodsAreValidForWar(attackedHoods, enemyAllianceID) {
-  // Check hoods param is valid and hoods exist
-  if (!Array.isArray(attackedHoods) || attackedHoods.length === 0) {
-    throw new Error('Barrios inválidos')
-  }
-
-  const areHoodsFromAlliance = (
-    await Promise.all(
-      attackedHoods.map(async hoodID => {
-        const hoodData = await getHoodData(hoodID)
-        return hoodData && hoodData.owner && hoodData.owner.id === enemyAllianceID
-      })
-    )
-  ).every(Boolean)
-  if (!areHoodsFromAlliance) {
-    throw new Error('Barrios inválidos')
-  }
-
-  // Check if hoods are already in war
-  const anyHoodInWar = (await Promise.all(attackedHoods.map(isHoodInWar))).some(Boolean)
-  if (anyHoodInWar) {
-    throw new Error('Algún barrio ya está en guerra')
-  }
-
-  // Check if it's equal or less to hoods limit per war
-  const maxHoods = getMaxHoodsAttackedPerWar(getServerDay())
-  if (attackedHoods.length > maxHoods) {
-    throw new Error(`Has seleccionado más barrios de los permitidos (${maxHoods})`)
-  }
 }
 
 export async function isHoodInWar(hoodID) {

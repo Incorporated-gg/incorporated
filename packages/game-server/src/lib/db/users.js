@@ -7,6 +7,7 @@ import { researchList } from 'shared-lib/researchUtils'
 import { PERSONNEL_OBJ } from 'shared-lib/personnelUtils'
 import { getInitialUnixTimestampOfServerDay } from '../../lib/serverTime'
 import { calcBuildingDailyIncome, buildingsList, calcBuildingMaxMoney } from 'shared-lib/buildingsUtils'
+import { getUserResearchBonusFromHoods, getHoodBonusIncomeMultiplier } from './hoods'
 
 export async function getUserData(userID) {
   const userDataPromise = mysql.selectOne('SELECT username FROM users WHERE id=?', [userID])
@@ -24,6 +25,8 @@ export async function getUserData(userID) {
   ])
   if (!userData || !accountData) return null
 
+  const hoodResearchBonuses = await getUserResearchBonusFromHoods(allianceData.id)
+
   return {
     id: userID,
     username: userData.username,
@@ -31,7 +34,7 @@ export async function getUserData(userID) {
     rank_position: rankingData ? rankingData.rank : 0,
     income: rankingData ? rankingData.points : 0,
     alliance: allianceData,
-    spy_research_level: researchs[1],
+    spy_research_level: researchs[1] + hoodResearchBonuses.espionage,
   }
 }
 
@@ -53,9 +56,11 @@ export async function getUserPersonnelCosts(userID) {
 }
 
 export async function getUserDailyIncome(userID) {
-  let [buildingsRaw, researchs] = await Promise.all([
+  const allianceID = await getUserAllianceID(userID)
+  let [buildingsRaw, researchs, incomeMultiplier] = await Promise.all([
     mysql.query('SELECT id, quantity FROM buildings WHERE user_id=?', [userID]),
     getUserResearchs(userID),
+    getHoodBonusIncomeMultiplier(allianceID),
   ])
   const optimizeResearchLevel = researchs[5]
 
@@ -64,7 +69,7 @@ export async function getUserDailyIncome(userID) {
     0
   )
 
-  return totalBuildingsIncome
+  return totalBuildingsIncome * incomeMultiplier
 }
 
 export async function getUserResearchs(userID, { includeResearchsInProgress = false } = {}) {

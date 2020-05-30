@@ -7,7 +7,6 @@ import {
   getAlliancePastWars,
 } from '../lib/db/alliances'
 import { getUserData, getUserIDFromUsername } from '../lib/db/users'
-import { getAllianceHoods } from '../lib/db/hoods'
 
 const entriesPerPage = 50
 
@@ -114,19 +113,17 @@ module.exports = app => {
       return
     }
 
-    const [basicData, members, activeWars, pastWars, allianceHoods] = await Promise.all([
+    const [basicData, members, activeWars, pastWars] = await Promise.all([
       getAllianceBasicData(allianceID),
       getAllianceMembers(allianceID),
       getAllianceActiveWars(allianceID),
       getAlliancePastWars(allianceID),
-      getAllianceHoods(allianceID),
     ])
 
     const alliance = Object.assign(basicData, {
       members,
       active_wars: activeWars,
       past_wars: pastWars,
-      hoods: allianceHoods,
     })
 
     res.json({

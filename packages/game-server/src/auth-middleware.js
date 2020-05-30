@@ -11,7 +11,9 @@ import {
   getActiveMission,
 } from './lib/db/users'
 import { getUserIDFromSessionID } from './lib/db/sessions'
-import { getAllianceResources, getUserAllianceID } from './lib/db/alliances'
+import { getAllianceResources, getUserAllianceID, getAllianceResearchBonusFromBuffs } from './lib/db/alliances'
+import { getUserResearchBonusFromHoods, getHoodBonusIncomeMultiplier } from './lib/db/hoods'
+import { calcBuildingDailyIncome } from 'shared-lib/buildingsUtils'
 
 module.exports = app => {
   app.use(authMiddleware)
@@ -68,6 +70,9 @@ function modifyResponseBody(req, res, next) {
         activeTasks,
         accountData,
         allianceResources,
+        allianceBuffBonuses,
+        hoodResearchBonuses,
+        incomeMultiplier,
       ] = await Promise.all([
         getUnreadMessagesCount(req.userData.id),
         getUnreadReportsCount(req.userData.id),
@@ -75,12 +80,24 @@ function modifyResponseBody(req, res, next) {
         getUserActiveTasks(req.userData.id),
         getAccountData(req.userData.id),
         getAllianceResources(allianceID),
+        getAllianceResearchBonusFromBuffs(allianceID),
+        getUserResearchBonusFromHoods(allianceID),
+        getHoodBonusIncomeMultiplier(allianceID),
       ])
       const extraData = {
         money: req.userData.money,
         personnel: req.userData.personnel,
         researchs: req.userData.researchs,
+        allianceBuffBonuses,
+        hoodResearchBonuses,
         buildings: req.userData.buildings,
+        incomeMultiplier,
+        dailyIncome:
+          Object.entries(req.userData.buildings).reduce(
+            (prev, [buildingID, { quantity }]) =>
+              prev + (calcBuildingDailyIncome(parseInt(buildingID), quantity, req.userData.researchs[5]) || 0),
+            0
+          ) * incomeMultiplier,
         unread_messages_count: unreadMessagesCount,
         unread_reports_count: unreadReportsCount.total,
         active_mission: activeMission,
