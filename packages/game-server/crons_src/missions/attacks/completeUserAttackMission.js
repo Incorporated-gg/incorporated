@@ -75,7 +75,7 @@ export async function completeUserAttackMission(mission) {
     getAllianceResearchBonusFromBuffs(defenderAllianceID),
     getUserResearchBonusFromHoods(defenderAllianceID),
   ])
-  const attackerSabotageLevel = attackerResearchs[2] + attackerResearchBonusFromBuffs.attack
+  const attackerSabotageLvl = attackerResearchs[2] + attackerResearchBonusFromBuffs.attack
   const defensorDefenseLvl =
     defenderResearchs[3] + defenderResearchBonusFromBuffs.defense + defenderBonusFromHoods.defense
   const defensorSecurityLvl = defenderResearchs[6] + defenderBonusFromHoods.security
@@ -107,9 +107,9 @@ export async function completeUserAttackMission(mission) {
     attackerSabots: data.sabots,
     attackerThieves: data.thieves,
     defensorSecurityLvl,
-    attackerSabotageLevel,
-    buildingID: data.building,
+    attackerSabotageLvl,
     defensorDefenseLvl,
+    buildingID: data.building,
     buildingAmount,
     unprotectedMoney,
   })

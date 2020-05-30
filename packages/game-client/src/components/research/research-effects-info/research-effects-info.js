@@ -40,7 +40,8 @@ export default function ResearchEffectsInfo({ researchID, currentLevel, price })
       powerThen = getBuildingsTimeUntilFull(currentLevel + 1)
       desc = (
         <>
-          Tiempo medio desde 0 <Icon iconName="money" size={16} /> hasta almacén lleno
+          <p>Aumenta la capacidad de almacenamiento de tus edificios</p>
+          <p>Tiempo medio para llenar el almacén</p>
         </>
       )
       break
@@ -53,11 +54,8 @@ export default function ResearchEffectsInfo({ researchID, currentLevel, price })
       const pri = Math.round((price / diff) * 10) / 10
       desc = (
         <>
-          <p>
-            Ingresos diarios ganados: {numberToAbbreviation(diff)}
-            <Icon iconName="money" size={16} />
-          </p>
-          <p>PRI: {pri} días</p>
+          <p>Hace tus edificios generar más dinero</p>
+          <p>Retorno de Inversión: {pri} días</p>
         </>
       )
       break

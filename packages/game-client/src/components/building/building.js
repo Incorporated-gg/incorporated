@@ -58,7 +58,7 @@ export default function Building({ buildingID }) {
         <>
           <div className={styles.statContainer}>
             <span className={styles.statTitle}>Retorno de Inversión:</span>
-            <span className={styles.statValue}>{numberToAbbreviation(timeToRecoverInvestment)} DÍAS</span>
+            <span className={styles.statValue}>{timeToRecoverInvestment} DÍAS</span>
           </div>
           <div className={styles.statContainer}>
             <span className={styles.statTitle}>Beneficios por día:</span>

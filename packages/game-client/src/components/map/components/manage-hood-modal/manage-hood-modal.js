@@ -86,7 +86,7 @@ function ManageHood({ hood, onRequestClose }) {
           </IncProgressBar>
         </IncContainer>
 
-        <IncButton outerClassName={styles.button} disabled={upgradePrice > userData.money} onClick={addGuards}>
+        <IncButton outerClassName={styles.button} onClick={addGuards}>
           <IncInput
             style={{ width: '100%' }}
             onClick={e => e.stopPropagation()}

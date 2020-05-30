@@ -9,9 +9,8 @@ TimerButtonNumber.propTypes = {
   researchID: PropTypes.number.isRequired,
   level: PropTypes.number.isRequired,
   isUpgrading: PropTypes.bool.isRequired,
-  skipResearchDuration: PropTypes.bool.isRequired,
 }
-export default function TimerButtonNumber({ finishesAt, researchID, level, isUpgrading, skipResearchDuration }) {
+export default function TimerButtonNumber({ finishesAt, researchID, level, isUpgrading }) {
   const [, _reload] = useState()
 
   useEffect(() => {
@@ -24,9 +23,6 @@ export default function TimerButtonNumber({ finishesAt, researchID, level, isUpg
   const tsNow = Math.floor(Date.now() / 1000)
   const researchSeconds = calcResearchSecondsDuration(researchID, level)
 
-  if (skipResearchDuration) {
-    return '00:00' // Hack needed since getTimeUntil will return Completando... if <= 0
-  }
   if (!isUpgrading) {
     const researchTimeParsed = getTimeUntil(tsNow + researchSeconds, true)
     return researchTimeParsed

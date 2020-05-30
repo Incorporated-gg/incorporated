@@ -68,7 +68,6 @@ export default function ResearchItem({ researchID }) {
 
   // UI texts
   const remainingTimeText = getRemainingTimeText({
-    skipResearchDuration: researchInfo.skipResearchDuration,
     researchSeconds,
     isUpgrading,
     finishesAt: upgrade && upgrade.finishes_at,
