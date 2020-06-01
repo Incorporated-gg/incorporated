@@ -9,9 +9,9 @@ import { sendAccountHook } from '../../../src/lib/accountInternalApi'
 const contestsList = ['income', 'destruction', 'research', 'robbing']
 
 export default async function runJustAfterNewDay(finishedServerDay) {
-  const dayInitialTimestamp = getInitialUnixTimestampOfServerDay(finishedServerDay) / 1000
+  const dayInitialTimestamp = getInitialUnixTimestampOfServerDay(finishedServerDay + 1) / 1000
   const serverDate = getServerDate(dayInitialTimestamp * 1000)
-  const hasMondayJustStarted = serverDate.day_of_the_week === 0
+  const hasMondayJustStarted = serverDate.day_of_the_week === 1
   if (!hasMondayJustStarted) return
 
   // Finish current contest

@@ -7,6 +7,7 @@ import Footer from 'components/footer'
 import styles from '../style.module.scss'
 import ScrollToTop from 'lib/scrollToTop'
 import ChatBubble from 'components/UI/chat-bubble'
+import ErrorBoundary from 'components/UI/ErrorBoundary'
 
 import Home from 'routes/home'
 import Buildings from 'routes/Buildings/Buildings'
@@ -33,56 +34,58 @@ export default function LoggedInRouter() {
         <div className={`${styles.pageContainer} ${styles.loggedIn}`}>
           <Header />
           <div className={styles.contentContainer}>
-            <Switch>
-              <Route path="/buildings">
-                <Buildings />
-              </Route>
-              <Route path="/research">
-                <Research />
-              </Route>
-              <Route path="/ranking">
-                <Ranking />
-              </Route>
-              <Route path="/monopolies">
-                <Monopolies />
-              </Route>
-              <Route path="/contest">
-                <Contest />
-              </Route>
-              <Route path="/alliance">
-                <Alliance />
-              </Route>
-              <Route path="/personnel">
-                <Personnel />
-              </Route>
-              <Route path="/messages">
-                <Messages />
-              </Route>
-              <Route path="/finances">
-                <Finances />
-              </Route>
-              <Route path="/loans">
-                <Loans />
-              </Route>
-              <Route path="/map">
-                <Map />
-              </Route>
-              <Route path="/newspaper">
-                <Newspaper />
-              </Route>
-              <Route path="/reports">
-                <Reports />
-              </Route>
-              <Route path="/settings">
-                <Settings />
-              </Route>
-              <Route path="/shop">
-                <Shop />
-              </Route>
-              <Route path="/">
-                <Home />
-              </Route>
-            </Switch>
+            <ErrorBoundary>
+              <Switch>
+                <Route path="/buildings">
+                  <Buildings />
+                </Route>
+                <Route path="/research">
+                  <Research />
+                </Route>
+                <Route path="/ranking">
+                  <Ranking />
+                </Route>
+                <Route path="/monopolies">
+                  <Monopolies />
+                </Route>
+                <Route path="/contest">
+                  <Contest />
+                </Route>
+                <Route path="/alliance">
+                  <Alliance />
+                </Route>
+                <Route path="/personnel">
+                  <Personnel />
+                </Route>
+                <Route path="/messages">
+                  <Messages />
+                </Route>
+                <Route path="/finances">
+                  <Finances />
+                </Route>
+                <Route path="/loans">
+                  <Loans />
+                </Route>
+                <Route path="/map">
+                  <Map />
+                </Route>
+                <Route path="/newspaper">
+                  <Newspaper />
+                </Route>
+                <Route path="/reports">
+                  <Reports />
+                </Route>
+                <Route path="/settings">
+                  <Settings />
+                </Route>
+                <Route path="/shop">
+                  <Shop />
+                </Route>
+                <Route path="/">
+                  <Home />
+                </Route>
+              </Switch>
+            </ErrorBoundary>
           </div>
           <Footer />
         </div>

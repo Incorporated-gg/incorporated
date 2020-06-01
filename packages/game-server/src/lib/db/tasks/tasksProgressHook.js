@@ -65,7 +65,7 @@ export default async function tasksProgressHook(userID, hookType, hookData) {
       if (hookData.researchID === undefined) throw new Error('Invalid hookData')
 
       if (hookData.researchID === CENTRAL_OFFICE_RESEARCH_ID) {
-        // Central Office: affects cyclic_income tasks, but doesn't count for cyclic_research
+        // Central Office: affects cyclic_income tasks too
         const incomeTasks = userActiveTasks.filter(task => task.type === 'cyclic_income')
         if (incomeTasks.length) {
           const userBuildings = await getUserBuildings(userID)
@@ -81,7 +81,6 @@ export default async function tasksProgressHook(userID, hookType, hookData) {
             newUserTaskData[`task${activeTask.id}`] = taskData
           })
         }
-        break
       }
 
       const researchTasks = userActiveTasks.filter(task => task.type === 'cyclic_research')

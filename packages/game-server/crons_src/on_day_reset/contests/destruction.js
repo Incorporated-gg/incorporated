@@ -24,8 +24,8 @@ export async function getDestructionScoreboard(weekFirstServerDay) {
       const gained = incomeFromBuildings - lostOnTroops
       if (gained <= 0) return
 
-      if (!usersMoneyGained[userID]) usersMoneyGained[userID] = gained
-      else usersMoneyGained[userID] += gained
+      if (!usersMoneyGained[userID]) usersMoneyGained[userID] = 0
+      usersMoneyGained[userID] += gained
     } catch (e) {
       console.error('[getDestructionScoreboard]', e.message)
     }
@@ -38,6 +38,6 @@ export async function getDestructionScoreboard(weekFirstServerDay) {
     .slice(0, 100)
     .map(([userID, gainedMoney]) => ({
       user_id: userID,
-      score: gainedMoney,
+      score: Math.floor(gainedMoney / 1000),
     }))
 }

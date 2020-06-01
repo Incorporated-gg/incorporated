@@ -8,10 +8,6 @@ export function calcHoodMaxGuards(hoodLevel) {
   return 3000 + 200 * (hoodLevel + 0.5 * hoodLevel * (hoodLevel + 1))
 }
 
-export function calcHoodGuardsRegenerationPerDay(hoodLevel) {
-  return calcHoodMaxGuards(hoodLevel)
-}
-
 export function calcHoodDailyServerPoints(hoodTier) {
   const map = {
     1: 10,

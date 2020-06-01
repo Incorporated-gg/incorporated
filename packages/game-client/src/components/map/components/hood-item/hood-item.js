@@ -8,6 +8,7 @@ import { userData } from 'lib/user'
 import Icon from 'components/icon'
 import PropTypes from 'prop-types'
 import { getHoodBenefitValue, HOOD_ATTACK_PROTECTION_TIME, calcHoodDailyServerPoints } from 'shared-lib/hoodUtils'
+import { ALLIANCE_RESEARCHS } from 'shared-lib/allianceUtils'
 
 HoodItem.propTypes = {
   hood: PropTypes.object,
@@ -23,16 +24,16 @@ export default function HoodItem({ hood, setAttackModalHood, setIsManageHoodModa
   const benefitValue = getHoodBenefitValue(hood.benefit, hood.tier)
 
   switch (hood.benefit) {
-    case 'alliance_research_sabots': {
-      benefitElm = `Barracones de Gángsters: +${benefitValue}`
+    case 'alliance_research_guards': {
+      benefitElm = `${ALLIANCE_RESEARCHS[2].name}: +${benefitValue}`
       break
     }
-    case 'alliance_research_guards': {
-      benefitElm = `Cabinas de Guardias: +${benefitValue}`
+    case 'alliance_research_sabots': {
+      benefitElm = `${ALLIANCE_RESEARCHS[3].name}: +${benefitValue}`
       break
     }
     case 'alliance_research_thieves': {
-      benefitElm = `Academias de Ladrones: +${benefitValue}`
+      benefitElm = `${ALLIANCE_RESEARCHS[4].name}: +${benefitValue}`
       break
     }
     case 'extra_income': {

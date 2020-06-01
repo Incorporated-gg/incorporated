@@ -1,14 +1,20 @@
 import { PERSONNEL_OBJ } from './personnelUtils'
 
-export const CREATE_ALLIANCE_PRICE = 500000
+export const CREATE_ALLIANCE_PRICE = 100000
 export const MAX_ALLIANCE_MEMBERS = 8
 export const WAR_DAYS_DURATION = 5
 
 export const ALLIANCE_RESEARCHS = {
-  2: { id: 2, name: 'Cabinas de guardias', resourceGeneratedName: 'Guardias', pricePerLvl: 200000, type: 'resource' },
+  2: {
+    id: 2,
+    name: 'Barracones de guardias',
+    resourceGeneratedName: 'Guardias',
+    pricePerLvl: 200000,
+    type: 'resource',
+  },
   3: {
     id: 3,
-    name: 'Barracones de gángsters',
+    name: 'Cabinas de gángsters',
     resourceGeneratedName: 'Gángsters',
     pricePerLvl: 200000,
     type: 'resource',
