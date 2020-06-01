@@ -21,9 +21,10 @@ Icon.propTypes = {
   height: PropTypes.number,
   size: PropTypes.number,
   className: PropTypes.string,
+  style: PropTypes.object,
 }
 
-function Icon({ iconName, svg, size, className = '', width, height, ...props }) {
+function Icon({ iconName, svg, size, style = {}, className = '', width, height, ...props }) {
   if (size) {
     width = size
     height = size
@@ -42,12 +43,27 @@ function Icon({ iconName, svg, size, className = '', width, height, ...props }) 
     return null
   }
 
+  try {
+    if (require(`./img/${iconName}.png`)) {
+      return (
+        <img
+          alt=""
+          className={`${styles.svg} ${className}`}
+          src={require(`./img/${iconName}.png`)}
+          style={{ ...style, width, height }}
+          {...props}
+        />
+      )
+    }
+  } catch (err) {}
+
   return (
     <ReactSVG
       wrapper="span"
       className={`${styles.svg} ${className}`}
       src={svg || require(`./img/${iconName}.svg`)}
       beforeInjection={beforeInjection}
+      style={style}
       {...props}
     />
   )

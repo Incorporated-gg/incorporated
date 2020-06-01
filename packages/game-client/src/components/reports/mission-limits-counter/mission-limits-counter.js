@@ -13,7 +13,7 @@ MissionLimitsCounter.propTypes = {
 export default function MissionLimitsCounter({ title, iconName, maxMissions, currentMissions }) {
   return (
     <DiamondShapeIncContainer>
-      <Icon className={styles.icon} iconName={iconName} />
+      <Icon className={styles.icon} iconName={iconName} size={16} />
       {new Array(maxMissions).fill(null).map((_, index) => {
         const isFilled = index < currentMissions
         return <div key={index} className={isFilled ? styles.greenArrow : styles.greyArrow} />

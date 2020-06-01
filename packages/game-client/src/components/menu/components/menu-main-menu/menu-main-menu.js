@@ -31,7 +31,7 @@ export default function MainMenu({ menuItems, getActiveGroup }) {
 
         return (
           <Link key={group.mainPath} to={link} className={isActive ? styles.active : ''}>
-            <Icon svg={group.svgIcon} className={styles.svgIcon} alt={mainPathAlt} />
+            <Icon width={34} height={40} svg={group.svgIcon} className={styles.svgIcon} alt={mainPathAlt} />
             <div className={styles.titleContainer}>
               <span className={styles.title}>{group.title}</span>
               {extra.includes('unread_messages') && <UnreadCountBubble type="messages" />}

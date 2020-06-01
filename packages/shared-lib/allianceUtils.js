@@ -1,6 +1,6 @@
 import { PERSONNEL_OBJ } from './personnelUtils'
 
-export const CREATE_ALLIANCE_PRICE = 100000
+export const CREATE_ALLIANCE_PRICE = 50000
 export const MAX_ALLIANCE_MEMBERS = 8
 export const WAR_DAYS_DURATION = 5
 

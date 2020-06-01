@@ -40,7 +40,7 @@ export default function RankItem({ user, rank, children, pointsType, points }) {
       <div className={styles.points}>
         <IncContainer className={styles.pointsContainer}>
           <span style={{ color: '#000' }}>{numberToAbbreviation(points)}</span>{' '}
-          <Icon className={styles.icon} {...iconProps} />
+          <Icon size={41} className={styles.icon} {...iconProps} />
         </IncContainer>
       </div>
     </div>

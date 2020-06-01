@@ -48,15 +48,4 @@
       margin-left: 5px;
     }
   }
-
-  .headerStatIcon svg {
-    margin-left: 3px;
-    vertical-align: middle;
-    width: auto;
-    height: 14px;
-
-    @media (max-width: 450px) {
-      height: 12px;
-    }
-  }
 }

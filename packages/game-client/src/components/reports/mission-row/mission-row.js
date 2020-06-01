@@ -79,6 +79,7 @@ export default function MissionRow({ mission, showcaseUser = 'target' }) {
                   <span style={{ color: resultColor, fontWeight: 700 }}>{resultText}</span>
                   <Icon
                     {...iconProps}
+                    size={40}
                     className={styles.missionTypeIcon}
                     alt={mission.mission_type === 'attack' ? 'Ataque' : 'Espionaje'}
                   />

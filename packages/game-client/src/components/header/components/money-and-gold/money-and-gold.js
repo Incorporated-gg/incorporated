@@ -12,14 +12,14 @@ export default function MoneyAndGold() {
       <Link className={styles.linkButtonContainer} to="/shop">
         <IncButton borderSize={3} withHairline darkBg outerClassName={styles.statContainer}>
           <div className={styles.stat}>
-            <MyGold /> <Icon iconName="gold" className={styles.headerStatIcon} />
+            <MyGold /> <Icon iconName="gold" width={26} height={16} />
           </div>
         </IncButton>
       </Link>
       <Link className={styles.linkButtonContainer} to="/finances">
         <IncButton borderSize={3} withHairline darkBg outerClassName={styles.statContainer}>
           <div className={styles.stat}>
-            <MyMoney /> <Icon iconName="money" className={styles.headerStatIcon} />
+            <MyMoney /> <Icon iconName="money" width={26} height={16} />
           </div>
         </IncButton>
       </Link>

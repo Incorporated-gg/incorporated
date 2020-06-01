@@ -96,7 +96,7 @@ function setupPersonnelSalaryMoneyUpdater() {
   }
   function tick() {
     if (userData) update()
-    setTimeout(tick, 3000)
+    setTimeout(tick, 5000)
   }
   tick()
 }
