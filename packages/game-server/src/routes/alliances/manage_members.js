@@ -115,16 +115,13 @@ module.exports = app => {
     await mysql.query('DELETE FROM alliances_members WHERE user_id=?', [userBeingKickedID])
 
     // Sync alliance chat users
-    const allianceMembers = await getAllianceMembers(memberBeingKicked.alliance_id)
-    const allianceUserIDs = allianceMembers.map(u => u.user.id)
     const roomName = `alliance${memberBeingKicked.alliance_id}`
     const allianceConversation = new Conversation({
       id: roomName,
       type: 'alliance',
-      userIds: allianceUserIDs,
     })
     await allianceConversation.init()
-    await allianceConversation.syncUsers()
+    await allianceConversation.removeUser(userBeingKickedID)
     chatEvents.emit('kickUser', { room: roomName, userId: userBeingKickedID })
 
     res.json({ success: true })
@@ -236,17 +233,15 @@ function memberRequestAction(action) {
       )
 
       // Sync alliance chat users
-      const allianceUserIDs = allianceMembers.map(u => u.user.id)
       const allianceData = await getAllianceBasicData(userRank.alliance_id)
       const roomName = `alliance${allianceData.id}`
       const allianceConversation = new Conversation({
         id: roomName,
         type: 'alliance',
-        userIds: allianceUserIDs,
         name: `${allianceData.long_name} [${allianceData.short_name}]`,
       })
       await allianceConversation.init()
-      await allianceConversation.syncUsers()
+      await allianceConversation.addUser(userID)
       chatEvents.emit('addUser', { room: roomName, userId: userID })
     }
 

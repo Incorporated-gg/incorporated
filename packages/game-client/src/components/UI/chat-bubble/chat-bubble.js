@@ -46,7 +46,9 @@ export default function ChatBubble() {
         })
         return newState
       case 'removeRoom':
-        return state.filter(r => r.id !== action.roomName)
+        const updatedState = state.filter(r => r.id !== action.roomName)
+        if (currentRoom.id === action.roomName) setCurrentRoom(state[0])
+        return updatedState
       case 'markRoomAsRead':
         return state.map(r => {
           if (r.id === action.room.id) {

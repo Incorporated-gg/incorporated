@@ -9,6 +9,7 @@ const client = redis.createClient(
 )
 const hGetAllAsync = promisify(client.hgetall).bind(client)
 const sAddAsync = promisify(client.sadd).bind(client)
+const sRemAsync = promisify(client.srem).bind(client)
 const sMembersAsync = promisify(client.smembers).bind(client)
 const hmSetAsync = promisify(client.hmset).bind(client)
 const hDelAsync = promisify(client.hdel).bind(client)
@@ -66,7 +67,7 @@ class Conversation {
         }
         this.name = conver.name
         this.messages = conver.messages || []
-        this.userIds = userIds
+        this.userIds = userIds.map(uid => parseInt(uid))
         this.type = conver.type
         this.readonly = conver.readonly
       }
@@ -90,6 +91,12 @@ class Conversation {
   }
   async saveConversation() {
     await hmSetAsync(`conversations:${this.id}`, 'name', this.name, 'readonly', this.readonly, 'type', this.type)
+  }
+  async removeUser(userId) {
+    await sRemAsync(`conversations:${this.id}:userIds`, userId)
+  }
+  async addUser(userId) {
+    await sAddAsync(`conversations:${this.id}:userIds`, userId)
   }
   async addMessage(messageData) {
     await sAddAsync(`conversations:${this.id}:messages`, JSON.stringify(messageData))

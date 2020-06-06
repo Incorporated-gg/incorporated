@@ -80,16 +80,13 @@ module.exports = app => {
     )
 
     // Sync alliance chat users
-    const allianceMembers = await getAllianceMembers(newAllianceID)
-    const allianceUserIDs = allianceMembers.map(u => u.user.id)
     const roomName = `alliance${newAllianceID}`
     const allianceConversation = new Conversation({
       id: roomName,
       type: 'alliance',
-      userIds: allianceUserIDs,
     })
     await allianceConversation.init()
-    await allianceConversation.syncUsers()
+    await allianceConversation.addUser(req.userData.id)
     chatEvents.emit('addUser', { room: roomName, userId: req.userData.id })
 
     res.json({ success: true, new_alliance_id: newAllianceID })
@@ -107,8 +104,6 @@ module.exports = app => {
       return
     }
 
-    await deleteAlliance(userRank.alliance_id)
-
     // Sync alliance chat users
     const allianceMembers = await getAllianceMembers(userRank.alliance_id)
     const allianceUserIDs = allianceMembers.map(u => u.user.id)
@@ -116,11 +111,16 @@ module.exports = app => {
     const allianceConversation = new Conversation({
       id: roomName,
       type: 'alliance',
-      userIds: allianceUserIDs,
     })
     await allianceConversation.init()
-    await allianceConversation.syncUsers()
-    chatEvents.emit('kickUser', { room: roomName, userId: req.userData.id })
+    await Promise.all(
+      allianceUserIDs.map(async userId => {
+        await allianceConversation.removeUser(userId)
+        chatEvents.emit('kickUser', { room: roomName, userId })
+      })
+    )
+
+    await deleteAlliance(userRank.alliance_id)
 
     res.json({ success: true })
   })
@@ -147,16 +147,13 @@ module.exports = app => {
     ])
 
     // Sync alliance chat users
-    const allianceMembers = await getAllianceMembers(userRank.alliance_id)
-    const allianceUserIDs = allianceMembers.map(u => u.user.id)
     const roomName = `alliance${userRank.alliance_id}`
     const allianceConversation = new Conversation({
       id: roomName,
       type: 'alliance',
-      userIds: allianceUserIDs,
     })
     await allianceConversation.init()
-    await allianceConversation.syncUsers()
+    await allianceConversation.removeUser(req.userData.id)
     chatEvents.emit('kickUser', { room: roomName, userId: req.userData.id })
 
     res.json({ success: true })
