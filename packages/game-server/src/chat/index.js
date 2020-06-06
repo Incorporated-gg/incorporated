@@ -134,16 +134,27 @@ export const setupChat = io => {
         })
       )
       if (socket.user.alliance && !user.conversations.find(c => c.id === `alliance${socket.user.alliance.id}`)) {
+        const conv = new Conversation({ id: `alliance${socket.user.alliance.id}` })
+        await conv.init()
+        await conv.addUser(socket.user.id)
         await user.joinAllianceConversation(`alliance${socket.user.alliance.id}`)
       }
       if (user.conversations.length) {
-        user.conversations.forEach(conversation => {
-          socket.join(conversation.id)
-          socket.emit('messages', {
-            room: conversation.id,
-            messagesArray: conversation.messages,
+        await Promise.all(
+          user.conversations.map(async conversation => {
+            const conv = new Conversation({ id: conversation.id })
+            await conv.init()
+            if (!conv.userIds.includes(socket.user.id)) {
+              await user.leaveConversation(conversation.id)
+              return
+            }
+            socket.join(conversation.id)
+            socket.emit('messages', {
+              room: conversation.id,
+              messagesArray: conversation.messages,
+            })
           })
-        })
+        )
       }
 
       socket.emit('chatRoomList', user.conversations.concat(publicRooms))

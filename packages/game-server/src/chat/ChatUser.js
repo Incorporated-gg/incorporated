@@ -6,6 +6,7 @@ const client = redis.createClient(
   `redis://root:${process.env.REDIS_PASS}@${process.env.NODE_ENV === 'development' ? 'redis' : 'localhost'}:6379`
 )
 const sAddAsync = promisify(client.sadd).bind(client)
+const sRemAsync = promisify(client.srem).bind(client)
 const hGetAsync = promisify(client.hget).bind(client)
 const hSetAsync = promisify(client.hset).bind(client)
 const sMembersAsync = promisify(client.smembers).bind(client)
@@ -44,6 +45,11 @@ class ChatUser {
     await instance.init()
     const convJSON = await instance.toJSON()
     this.conversations.push({ ...convJSON, lastReadMessagesDate: lastReadMessagesDate || 0 })
+  }
+  async leaveConversation(conversationId) {
+    await sRemAsync(`users:${this.id}:conversations`, conversationId)
+    const existingConvIndex = this.conversations.findIndex(c => c.id === conversationId)
+    if (existingConvIndex > -1) this.conversations.splice(existingConvIndex, 1)
   }
   async joinIndividualConversation(conversationId) {
     await this.joinConversation(conversationId, 'individual')
