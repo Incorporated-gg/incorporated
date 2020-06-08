@@ -160,26 +160,6 @@ function getMessage(message) {
       )
       break
     }
-    case 'loan_started': {
-      messageElm = (
-        <div>
-          <UserLink user={message.data.borrower} /> ha pedido un préstamo a <UserLink user={message.data.lender} /> de{' '}
-          <i>{message.data.money_amount.toLocaleString()}€</i> con un{' '}
-          <i>{message.data.interest_rate.toLocaleString()}%</i> de interés
-        </div>
-      )
-      break
-    }
-    case 'loan_ended': {
-      messageElm = (
-        <div>
-          Ha finalizado el préstamo que <UserLink user={message.data.borrower} /> pidió a{' '}
-          <UserLink user={message.data.lender} /> de <i>{message.data.money_amount.toLocaleString()}€</i> con un{' '}
-          <i>{message.data.interest_rate.toLocaleString()}%</i> de interés
-        </div>
-      )
-      break
-    }
     case 'attack_cancelled': {
       messageElm = (
         <div>

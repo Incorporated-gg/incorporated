@@ -2,20 +2,14 @@ import mysql from '../../lib/mysql'
 import {
   getAllianceBasicData,
   getUserAllianceRank,
-  getActiveWarBetweenAlliances,
   getAllianceRankData,
   getAllianceMembers,
 } from '../../lib/db/alliances'
 import { sendMessage } from '../../lib/db/users'
+import { getActiveWarIDBetweenAlliances } from '../../lib/db/alliances/war'
 
 module.exports = app => {
   app.post('/v1/alliance/declare_war', async function(req, res) {
-    const disabled = true
-    if (disabled) {
-      res.status(401).json({ error: 'Guerras desactivadas (por ahora)' })
-      return
-    }
-
     if (!req.userData) {
       res.status(401).json({ error: 'Necesitas estar conectado', error_code: 'not_logged_in' })
       return
@@ -46,7 +40,7 @@ module.exports = app => {
       return
     }
 
-    const activeWarBetweenBoth = await getActiveWarBetweenAlliances(userRank.alliance_id, attackedAllianceID)
+    const activeWarBetweenBoth = await getActiveWarIDBetweenAlliances(userRank.alliance_id, attackedAllianceID)
     if (activeWarBetweenBoth) {
       res.status(401).json({ error: 'Ya tenéis una guerra activa' })
       return
@@ -77,23 +71,4 @@ module.exports = app => {
 
     res.json({ success: true })
   })
-}
-
-export async function isHoodInWar(hoodID) {
-  const likeStr = `%${hoodID}%`
-  const wars = await mysql.query(
-    'SELECT alliance1_hoods, alliance2_hoods FROM alliances_wars WHERE completed=0 AND (alliance1_hoods LIKE ? OR alliance2_hoods LIKE ?)',
-    [likeStr, likeStr]
-  )
-
-  for (const war of wars) {
-    const warHoods = [...(war.alliance1_hoods || '').split(','), ...(war.alliance2_hoods || '').split(',')]
-      .filter(str => str.length > 0)
-      .map(hood => parseInt(hood))
-
-    if (warHoods.some(h => h === hoodID)) {
-      return true
-    }
-  }
-  return false
 }

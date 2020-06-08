@@ -8,8 +8,6 @@ import {
   getAllianceResourcesLog,
   getAllianceResearchShares,
   getAllianceBuffsData,
-  getAllianceActiveWars,
-  getAlliancePastWars,
   getUserAllianceRank,
   getAllianceResearchLog,
 } from '../../lib/db/alliances'
@@ -17,6 +15,7 @@ import { getActiveMission, getUserPersonnel } from '../../lib/db/users'
 import { updatePersonnelAmount } from '../../lib/db/personnel'
 import { calcResearchPrice, calcAllianceResourceMax } from 'shared-lib/allianceUtils'
 import { allianceUpdateResource } from '../../lib/db/alliances/resources'
+import { getAllianceActiveWars, getAlliancePastWars } from '../../lib/db/alliances/war'
 
 module.exports = app => {
   app.get('/v1/alliance', async function(req, res) {

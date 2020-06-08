@@ -68,18 +68,23 @@ export default function WarInfo({ war }) {
         <span>{' VS '}</span>
         <AllianceLink type="bigBadge" alliance={war.alliance2} />
       </h2>
-      <div>
-        Ayudando a <AllianceLink alliance={war.alliance1} />:
-        {war.alliance1_aids.map(aid => {
-          return <AllianceLink key={aid.alliance.id} alliance={aid.alliance} />
-        })}
-      </div>
-      <div>
-        Ayudando a <AllianceLink alliance={war.alliance2} />:
-        {war.alliance2_aids.map(aid => {
-          return <AllianceLink key={aid.alliance.id} alliance={aid.alliance} />
-        })}
-      </div>
+      <br />
+      {war.alliance1_aids.length ? (
+        <div>
+          Ayudando a <AllianceLink alliance={war.alliance1} />:
+          {war.alliance1_aids.map(aid => {
+            return <AllianceLink key={aid.alliance.id} alliance={aid.alliance} />
+          })}
+        </div>
+      ) : null}
+      {war.alliance2_aids.length ? (
+        <div>
+          Ayudando a <AllianceLink alliance={war.alliance2} />:
+          {war.alliance2_aids.map(aid => {
+            return <AllianceLink key={aid.alliance.id} alliance={aid.alliance} />
+          })}
+        </div>
+      ) : null}
       {canAskForWarAid && (
         <>
           <IncButton onClick={openAskForWarAidModal}>Pedir ayuda</IncButton>
@@ -93,10 +98,6 @@ export default function WarInfo({ war }) {
         </>
       )}
       {!hasStarted && <div>La guerra se ha declarado hoy y comenzará mañana</div>}
-      <br />
-      <div>Barrios que se juega atacante: {war.alliance1_hoods.map(hood => hood.name).join(', ')}</div>
-      <br />
-      <div>Barrios que se juega defensor: {war.alliance2_hoods.map(hood => hood.name).join(', ')}</div>
       <br />
       {hasStarted && (
         <>

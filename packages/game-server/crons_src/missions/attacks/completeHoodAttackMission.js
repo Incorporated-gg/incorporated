@@ -4,7 +4,7 @@ import mysql from '../../../src/lib/mysql'
 import { getUserAllianceID, getAllianceResearchBonusFromBuffs } from '../../../src/lib/db/alliances'
 import { simulateAttack } from 'shared-lib/simulateAttack'
 import { getUserResearchs } from '../../../src/lib/db/users'
-import { getHoodData, changeHoodGuards } from '../../../src/lib/db/hoods'
+import { getHoodData } from '../../../src/lib/db/hoods'
 import { PERSONNEL_OBJ } from 'shared-lib/personnelUtils'
 import { calcHoodMaxGuards } from 'shared-lib/hoodUtils'
 
@@ -81,7 +81,9 @@ export async function completeHoodAttackMission(mission) {
   await mysql.query('UPDATE users SET attacks_left=attacks_left-1 WHERE id=?', [attacker.id])
 
   // Update troops
-  await changeHoodGuards(hoodData.id, -killedGuards)
+  if (killedGuards > 0) {
+    await mysql.query('UPDATE hoods SET guards=guards-? WHERE id=?', [killedGuards, hoodData.id])
+  }
 
   if (killedSabots > 0) {
     await mysql.query('UPDATE users_resources SET quantity=quantity-? WHERE user_id=? AND resource_id=?', [

@@ -3,6 +3,7 @@ import { getUserAllianceID } from '../lib/db/alliances'
 import { calcHoodMaxGuards, calcHoodUpgradePrice } from 'shared-lib/hoodUtils'
 import { getUserPersonnel } from '../lib/db/users'
 import mysql from '../lib/mysql'
+import { updatePersonnelAmount } from '../lib/db/personnel'
 
 module.exports = app => {
   app.get('/v1/city', async function(req, res) {
@@ -63,10 +64,7 @@ module.exports = app => {
       return false
     }
 
-    await mysql.query('UPDATE users_resources SET quantity=quantity-? WHERE user_id=? AND resource_id="guards"', [
-      addedGuards,
-      req.userData.id,
-    ])
+    await updatePersonnelAmount(req, 'guards', -addedGuards)
     await mysql.query('UPDATE hoods SET guards=guards+? WHERE id=?', [addedGuards, hoodID])
 
     res.json({ success: true })

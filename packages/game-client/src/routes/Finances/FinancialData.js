@@ -1,34 +1,11 @@
-import React, { useCallback, useState, useEffect } from 'react'
+import React from 'react'
 import { buildingsList, calcBuildingDailyIncome } from 'shared-lib/buildingsUtils'
 import { useUserData } from '../../lib/user'
-import api from '../../lib/api'
 import { PERSONNEL_OBJ } from 'shared-lib/personnelUtils'
 import styles from './Finances.module.scss'
-import { LOAN_DAYS_DURATION } from 'shared-lib/loansUtils'
 
 export default function FinancialData() {
   const userData = useUserData()
-  const [givenLoan, setGivenLoan] = useState()
-  const [takenLoan, setTakenLoan] = useState()
-
-  // Loans
-  const refreshLoansList = useCallback(() => {
-    api.get('/v1/loans').then(res => {
-      setGivenLoan(res.given_loan)
-      setTakenLoan(res.taken_loan)
-    })
-  }, [])
-  useEffect(() => {
-    refreshLoansList()
-  }, [refreshLoansList])
-
-  const gainedFromLoans =
-    givenLoan && givenLoan.borrower
-      ? Math.round((givenLoan.money_amount * (givenLoan.interest_rate / 100 + 1)) / LOAN_DAYS_DURATION)
-      : 0
-  const lostFromLoans = takenLoan
-    ? Math.round((takenLoan.money_amount * (takenLoan.interest_rate / 100 + 1)) / LOAN_DAYS_DURATION)
-    : 0
 
   if (!userData) return null
 
@@ -50,7 +27,7 @@ export default function FinancialData() {
   })
 
   // Total
-  const totalTotal = totalBuildingsIncome - totalPersonnel - lostFromLoans + gainedFromLoans
+  const totalTotal = totalBuildingsIncome - totalPersonnel
 
   return (
     <div>
@@ -74,11 +51,6 @@ export default function FinancialData() {
         <div></div>
         <div>{totalBuildingsIncome.toLocaleString()}</div>
         <div></div>
-
-        <div>Préstamos</div>
-        <div></div>
-        <div>{gainedFromLoans.toLocaleString()}</div>
-        <div>{lostFromLoans.toLocaleString()}</div>
 
         <div>Personal</div>
         <div></div>

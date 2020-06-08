@@ -163,12 +163,3 @@ async function getAllianceHoodsData(allianceID) {
 export async function getAllHoodsData() {
   return await Promise.all(hoodsList.map(h => getHoodData(h.id)))
 }
-
-export async function changeHoodsOwner(hoodIDs, newOwnerID) {
-  await mysql.query('UPDATE hoods SET owner=? WHERE id IN (?)', [newOwnerID, hoodIDs])
-}
-
-export async function changeHoodGuards(hoodID, guardsChange) {
-  if (guardsChange === 0) return
-  await mysql.query('UPDATE hoods SET guards=guards+? WHERE id=?', [guardsChange, hoodID])
-}

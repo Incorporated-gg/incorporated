@@ -18,7 +18,7 @@ const incrAsync = promisify(client.incr).bind(client)
 class Conversation {
   constructor({ id, name, userIds, readonly, type }) {
     this.id = id
-    this.name = name
+    this.name = name || ''
     this.messages = []
     this.userIds = userIds ? userIds.sort((a, b) => (a > b ? 1 : -1)) : []
     this.readonly = readonly || false

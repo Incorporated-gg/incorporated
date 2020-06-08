@@ -1,7 +1,7 @@
 {
   "name": "incorporated-game-server",
   "scripts": {
-    "start": "NODE_ENV=development nodemon http-server.js & nodemon crons.js",
+    "start": "NODE_ENV=development nodemon http-server.js & NODE_ENV=development nodemon crons.js",
     "migrate_prod": "npx db-migrate up --config migrations/database_prod.json",
     "migrate_dev_docker": "npx db-migrate up --config migrations/database_dev_docker.json",
     "undo_migration_dev_docker": "npx db-migrate down --config migrations/database_dev_docker.json",

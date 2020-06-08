@@ -1,12 +1,7 @@
 import mysql from '../lib/mysql'
-import {
-  getAllianceBasicData,
-  getAllianceIDFromShortName,
-  getAllianceMembers,
-  getAllianceActiveWars,
-  getAlliancePastWars,
-} from '../lib/db/alliances'
+import { getAllianceBasicData, getAllianceIDFromShortName, getAllianceMembers } from '../lib/db/alliances'
 import { getUserData, getUserIDFromUsername } from '../lib/db/users'
+import { getAllianceActiveWars, getAlliancePastWars } from '../lib/db/alliances/war'
 
 const entriesPerPage = 50
 

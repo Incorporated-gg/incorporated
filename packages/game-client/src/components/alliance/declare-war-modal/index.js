@@ -4,6 +4,7 @@ import Modal from 'react-modal'
 import IncContainer from 'components/UI/inc-container'
 import { reloadUserData } from 'lib/user'
 import api from 'lib/api'
+import IncButton from 'components/UI/inc-button'
 
 DeclareWarModal.propTypes = {
   alliance: PropTypes.oneOfType([PropTypes.object, PropTypes.bool]).isRequired,
@@ -42,7 +43,7 @@ function DeclareWar({ alliance, onRequestClose }) {
     <IncContainer withHairline darkBg borderSize={20}>
       <div style={{ padding: 10 }}>
         <h1>Declarar guerra a {alliance.short_name}</h1>
-        <button onClick={declareWar}>Declarar guerra</button>
+        <IncButton onClick={declareWar}>Declarar guerra</IncButton>
       </div>
     </IncContainer>
   )

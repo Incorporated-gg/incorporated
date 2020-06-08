@@ -1,7 +1,9 @@
 import mysql from '../src/lib/mysql'
-import { LOAN_DAYS_DURATION } from 'shared-lib/loansUtils'
 import { sendMessage } from '../src/lib/db/users'
 const frequencyMs = 60 * 1000
+const LOAN_DAYS_DURATION = 7
+
+// Legacy loans cron. Remove this file by Jun 15
 
 const run = async () => {
   const tsNow = Math.floor(Date.now() / 1000)
