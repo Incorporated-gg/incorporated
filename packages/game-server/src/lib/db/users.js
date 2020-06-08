@@ -25,7 +25,7 @@ export async function getUserData(userID) {
   ])
   if (!userData || !accountData) return null
 
-  const hoodResearchBonuses = await getUserResearchBonusFromHoods(allianceData.id)
+  const hoodResearchBonuses = await getUserResearchBonusFromHoods(allianceData && allianceData.id)
 
   return {
     id: userID,

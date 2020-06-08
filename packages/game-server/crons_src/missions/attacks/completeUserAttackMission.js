@@ -9,11 +9,8 @@ import {
   runUserMoneyUpdate,
   getUserTodaysMissionsLimits,
 } from '../../../src/lib/db/users'
-import {
-  getUserAllianceID,
-  getAllianceResearchBonusFromBuffs,
-  getActiveWarBetweenAlliances,
-} from '../../../src/lib/db/alliances'
+import { getUserAllianceID, getAllianceResearchBonusFromBuffs } from '../../../src/lib/db/alliances'
+import { getActiveWarIDBetweenAlliances } from '../../../src/lib/db/alliances/war'
 import { calcBuildingMaxMoney } from 'shared-lib/buildingsUtils'
 import { simulateAttack } from 'shared-lib/simulateAttack'
 import { onNewWarAttack } from '../../on_day_reset/alliance_wars'
@@ -179,8 +176,8 @@ export async function completeUserAttackMission(mission) {
 }
 
 async function checkAndUpdateActiveWar(attackerAllianceID, defenderAllianceID) {
-  const activeWar = await getActiveWarBetweenAlliances(attackerAllianceID, defenderAllianceID)
-  if (activeWar) onNewWarAttack(activeWar.id)
+  const activeWarID = await getActiveWarIDBetweenAlliances(attackerAllianceID, defenderAllianceID)
+  if (activeWarID) onNewWarAttack(activeWarID)
 }
 
 async function updateTroops({

@@ -2,7 +2,7 @@ import { parseBadgeJSONFromDB } from './badge'
 import mysql from '../../mysql'
 import { getUserData } from '../users'
 import { ALLIANCE_RESEARCHS, ALLIANCE_RESOURCES_LIST, calcResearchPrice } from 'shared-lib/allianceUtils'
-import { getHoodData, getAllianceResearchBonusFromHoods } from '../hoods'
+import { getAllianceResearchBonusFromHoods } from '../hoods'
 
 export const MAX_MEMBERS = 10
 
@@ -33,14 +33,14 @@ export async function getUserAllianceRank(userID) {
 }
 
 export async function getAllianceBasicData(allianceID) {
-  if (!allianceID) return false
+  if (!allianceID) return null
   // Get basic alliance data
   const allianceData = await mysql.selectOne(
     'SELECT created_at, picture_url, long_name, short_name, description, badge_json, server_points FROM alliances WHERE id=?',
     [allianceID]
   )
 
-  if (!allianceData) return false
+  if (!allianceData) return null
 
   return {
     id: allianceID,
@@ -71,7 +71,7 @@ export async function getAllianceMembers(allianceID) {
       permission_admin: Boolean(member.permission_admin),
     }))
   )
-  members = members.sort((a, b) => (a.user.income > b.user.income ? -1 : 1))
+  members.sort((a, b) => (a.user.income > b.user.income ? -1 : 1))
   return members
 }
 
@@ -215,95 +215,6 @@ export async function getAllianceResearchBonusFromBuffs(allianceID) {
     attack: bonusAttackLvls,
     defense: bonusDefenseLvls,
   }
-}
-
-export async function getActiveWarBetweenAlliances(allianceID1, allianceID2) {
-  const [
-    war,
-  ] = await mysql.query(
-    'SELECT id FROM alliances_wars WHERE completed=0 AND ((alliance1_id=? AND alliance2_id=?) OR (alliance2_id=? AND alliance1_id=?))',
-    [allianceID1, allianceID2, allianceID1, allianceID2]
-  )
-  if (!war) return null
-
-  return {
-    id: war.id,
-  }
-}
-
-export async function getAllianceActiveWars(allianceID) {
-  let activeWars = await mysql.query(
-    'SELECT id FROM alliances_wars WHERE completed=0 AND (alliance1_id=? OR alliance2_id=?) ORDER BY created_at DESC',
-    [allianceID, allianceID]
-  )
-  activeWars = await Promise.all(activeWars.map(war => getWarData(war.id)))
-
-  return activeWars
-}
-
-export async function getAlliancePastWars(allianceID) {
-  let pastWars = await mysql.query(
-    'SELECT id FROM alliances_wars WHERE completed=1 AND (alliance1_id=? OR alliance2_id=?) ORDER BY created_at DESC LIMIT 10',
-    [allianceID, allianceID]
-  )
-  pastWars = await Promise.all(pastWars.map(war => getWarData(war.id)))
-
-  return pastWars
-}
-
-export async function getWarData(warID, { includeRawData = false } = {}) {
-  const war = await mysql.selectOne(
-    'SELECT id, created_at, alliance1_id, alliance2_id, data, alliance1_hoods, alliance2_hoods FROM alliances_wars WHERE id=?',
-    [warID]
-  )
-
-  const alliance1 = await getAllianceBasicData(war.alliance1_id)
-  const alliance2 = await getAllianceBasicData(war.alliance2_id)
-
-  // alliance2_hoods is set when war is declared, but alliance1_hoods might take up to 24h
-  let alliance1Hoods = []
-  let alliance2Hoods = []
-  if (war.alliance1_hoods) {
-    alliance1Hoods = await Promise.all(war.alliance1_hoods.split(',').map(getHoodData))
-  }
-  alliance2Hoods = await Promise.all(war.alliance2_hoods.split(',').map(getHoodData))
-
-  const data = JSON.parse(war.data)
-  const days = data.days
-  const winner = data.winner
-
-  const alliance1Aids = []
-  const alliance2Aids = []
-  const warAids = await mysql.query(
-    'SELECT aided_alliance_id, aiding_alliance_id, accepted_at FROM alliances_wars_aid WHERE war_id=? AND accepted=1',
-    [warID]
-  )
-  await Promise.all(
-    warAids.map(async aid => {
-      const aidingAlliance = await getAllianceBasicData(aid.aiding_alliance_id)
-      const arrayToAppend = aid.aided_alliance_id === alliance1.id ? alliance1Aids : alliance2Aids
-      arrayToAppend.push({
-        alliance: aidingAlliance,
-        accepted_at: aid.accepted_at,
-      })
-    })
-  )
-
-  const result = {
-    id: war.id,
-    created_at: war.created_at,
-    days,
-    winner,
-    alliance1_hoods: alliance1Hoods,
-    alliance2_hoods: alliance2Hoods,
-    alliance1_aids: alliance1Aids,
-    alliance2_aids: alliance2Aids,
-    alliance1: alliance1,
-    alliance2: alliance2,
-    _data: data,
-  }
-  if (!includeRawData) delete result._data
-  return result
 }
 
 export async function deleteAlliance(allianceID) {

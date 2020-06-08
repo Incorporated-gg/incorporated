@@ -1,12 +1,14 @@
 import mysql from '../../../src/lib/mysql'
-import { getAllianceMembers, getWarData } from '../../../src/lib/db/alliances'
+import { getAllianceMembers } from '../../../src/lib/db/alliances'
 import { getServerDay, getInitialUnixTimestampOfServerDay } from '../../../src/lib/serverTime'
 import { PERSONNEL_OBJ } from 'shared-lib/personnelUtils'
 import { WAR_DAYS_DURATION } from 'shared-lib/allianceUtils'
 import { endWar } from './endWar'
+import { getWarData } from '../../../src/lib/db/alliances/war'
 
 const EXTRA_POINTS_PER_OBJECTIVE = 40
 const WAR_POINTS_LIMIT_FOR_AUTOFINISH = WAR_DAYS_DURATION * 50 + 1 + EXTRA_POINTS_PER_OBJECTIVE * 3
+const AID_MULTIPLIER = 0.3
 
 export default async function runJustAfterNewDay(finishedServerDay) {
   const activeWars = await getAllActiveWars()
@@ -29,7 +31,6 @@ async function getAllActiveWars() {
 
 async function updateWarDayData(serverDay, warData, isRunningAtEndOfDay) {
   const warDay = serverDay - getServerDay(warData.created_at * 1000)
-
   if (warDay <= 0) return // War hasn't started yet
   if (warDay > WAR_DAYS_DURATION) {
     await endWar(warData)
@@ -38,7 +39,6 @@ async function updateWarDayData(serverDay, warData, isRunningAtEndOfDay) {
 
   // Get day war data
   const firstTsOfDay = getInitialUnixTimestampOfServerDay(getServerDay(warData.created_at * 1000) + warDay) / 1000
-
   const membersAlliance1 = (await getAllianceMembers(warData.alliance1.id)).map(m => m.user.id)
   const membersAlliance2 = (await getAllianceMembers(warData.alliance2.id)).map(m => m.user.id)
 
@@ -57,6 +57,7 @@ async function updateWarDayData(serverDay, warData, isRunningAtEndOfDay) {
 
   const [alliance1Day, alliance2Day] = await Promise.all([
     getAllianceDayData({
+      allianceID: warData.alliance1.id,
       firstTsOfDay,
       attacksSent: attacksAlliance1,
       attacksReceived: attacksAlliance2,
@@ -64,6 +65,7 @@ async function updateWarDayData(serverDay, warData, isRunningAtEndOfDay) {
       ownAids: warData.alliance1_aids,
     }),
     getAllianceDayData({
+      allianceID: warData.alliance2.id,
       firstTsOfDay,
       attacksSent: attacksAlliance2,
       attacksReceived: attacksAlliance1,
@@ -129,50 +131,51 @@ function calcDayWarPoints(alliance1Day, alliance2Day) {
   return { warPointsAlliance1, warPointsAlliance2 }
 }
 
-async function getAllianceDayData({ firstTsOfDay, attacksSent, attacksReceived, enemyMembers, ownAids }) {
+async function getAllianceDayData({ allianceID, firstTsOfDay, attacksSent, attacksReceived, enemyMembers, ownAids }) {
   // Calc daily points from own attacks
-  let dailyPoints = attacksSent.map(attackToPoints).reduce((prev, curr) => prev + curr, 0)
+  const dailyPointsByAlliance = {
+    [allianceID]: attacksSent.map(attackToPoints).reduce((prev, curr) => prev + curr, 0),
+  }
 
   // Calc daily points from aiding alliances
-  const aidingData = await getAidingAllianceData(firstTsOfDay, ownAids)
+  const aidingPlayers = (
+    await Promise.all(
+      ownAids
+        .filter(({ accepted_at: acceptedAt }) => acceptedAt >= firstTsOfDay)
+        .map(async ({ alliance }) => {
+          const alliMembers = await getAllianceMembers(alliance.id)
+          return alliMembers.map(m => ({
+            allianceID: alliance.id,
+            userID: m.user.id,
+          }))
+        })
+    )
+  ).flat()
   const aidAttacks = await getAttacksFromUsers({
-    userIDs: aidingData.userIDs,
+    userIDs: aidingPlayers.map(aid => aid.userID),
     attackedUserIDs: enemyMembers,
     minTs: firstTsOfDay,
     maxTs: firstTsOfDay + 60 * 60 * 24,
   })
-
-  const countMultipliers = { 1: 0.3, 2: 0.2, 3: 0.15 }
-  const aidMultiplier = countMultipliers[aidingData.alliancesCount] || 0
-
-  dailyPoints = dailyPoints + aidMultiplier * aidAttacks.map(attackToPoints).reduce((prev, curr) => prev + curr, 0)
+  aidAttacks.forEach(attack => {
+    const attackAllianceID = aidingPlayers.find(p => p.userID === attack.user_id)
+    if (!dailyPointsByAlliance[attackAllianceID]) dailyPointsByAlliance[attackAllianceID] = 0
+    dailyPointsByAlliance[attackAllianceID] += attackToPoints(attack) * AID_MULTIPLIER
+  })
 
   // Save misc data for end of war points
   const attackWins = attacksSent.filter(attack => attack.result === 'win').length
   const profit = attacksSent.map(attack => attack.profit).reduce((prev, curr) => prev + curr, 0)
   const attackSmacks = attacksReceived.filter(attack => attack.result === 'lose').length
 
+  const dailyPoints = Object.values(dailyPointsByAlliance).reduce((prev, curr) => prev + curr, 0)
   return {
     war_points: 0, // To be calculated later
     daily_points: dailyPoints,
+    dailyPointsByAlliance,
     attack_wins: attackWins,
     profit: profit,
     attack_smacks: attackSmacks,
-  }
-}
-
-async function getAidingAllianceData(firstTsOfDay, allianceAids) {
-  allianceAids = allianceAids.filter(({ accepted_at: acceptedAt }) => acceptedAt >= firstTsOfDay)
-
-  const members = await Promise.all(
-    allianceAids.map(async ({ alliance }) => {
-      return (await getAllianceMembers(alliance.id)).map(m => m.user.id)
-    })
-  )
-
-  return {
-    alliancesCount: allianceAids.length,
-    userIDs: members.flat(),
   }
 }
 

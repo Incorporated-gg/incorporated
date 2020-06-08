@@ -5,6 +5,7 @@ import IncContainer from 'components/UI/inc-container'
 import AllianceLink from '../alliance-link'
 import IncButton from 'components/UI/inc-button'
 import api from 'lib/api'
+import IncInput from 'components/UI/inc-input/inc-input'
 
 AskForWarAidModal.propTypes = {
   war: PropTypes.object.isRequired,
@@ -52,7 +53,7 @@ function AskForWarAid({ war, onRequestClose }) {
   return (
     <IncContainer withHairline darkBg borderSize={20}>
       <div style={{ padding: 10 }}>
-        <input value={searchTerm} onChange={e => setSearchTerm(e.target.value)} placeholder="Alianza" />
+        <IncInput showBorder value={searchTerm} onChangeText={setSearchTerm} placeholder="Alianza" />
         {searchResults.map(alliance => {
           return (
             <div key={alliance.id}>

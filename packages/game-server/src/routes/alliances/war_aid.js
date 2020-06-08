@@ -1,5 +1,6 @@
 import mysql from '../../lib/mysql'
-import { getUserAllianceRank, getWarData, getAllianceBasicData } from '../../lib/db/alliances'
+import { getUserAllianceRank, getAllianceBasicData } from '../../lib/db/alliances'
+import { getWarData } from '../../lib/db/alliances/war'
 
 module.exports = app => {
   app.post('/v1/alliance/war_aid/accept', async function(req, res) {
