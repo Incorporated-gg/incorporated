@@ -40,10 +40,6 @@ export default [
         alternativePaths: ['/personnel/fire'],
         alt: 'Personal',
       },
-      {
-        path: '/loans',
-        alt: 'Préstamos',
-      },
     ],
   },
   {

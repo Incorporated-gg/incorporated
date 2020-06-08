@@ -18,7 +18,6 @@ import Alliance from 'routes/alliance/alliance'
 import Personnel from 'routes/Personnel/Personnel'
 import Messages from 'routes/Messages/Messages'
 import Finances from 'routes/Finances/Finances'
-import Loans from 'routes/loans'
 import Map from 'routes/Map/Map'
 import Newspaper from 'routes/Newspaper/Newspaper'
 import Reports from 'routes/Reports/Reports'
@@ -62,9 +61,6 @@ export default function LoggedInRouter() {
                 </Route>
                 <Route path="/finances">
                   <Finances />
-                </Route>
-                <Route path="/loans">
-                  <Loans />
                 </Route>
                 <Route path="/map">
                   <Map />

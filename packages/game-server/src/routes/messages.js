@@ -56,14 +56,6 @@ async function parseMessage(msg) {
   }
   try {
     switch (msg.type) {
-      case 'loan_started':
-      case 'loan_ended': {
-        result.data.borrower = await getUserData(result.data.borrower_id)
-        result.data.lender = await getUserData(result.data.lender_id)
-        delete result.data.borrower_id
-        delete result.data.lender_id
-        break
-      }
       case 'attack_cancelled': {
         result.data.target_user = await getUserData(result.data.target_user_id)
         break
