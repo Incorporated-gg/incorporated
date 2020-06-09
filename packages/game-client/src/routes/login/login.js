@@ -3,6 +3,7 @@ import styles from './login.module.scss'
 import api from '../../lib/api'
 import { setNewSessionID } from '../../lib/user'
 import IncInput from 'components/UI/inc-input/inc-input'
+import { Link } from 'react-router-dom'
 
 const ACCOUNT_NAMING_REQUIREMENTS = {
   minLength: 4,
@@ -129,7 +130,7 @@ function Register() {
         CREAR CUENTA
       </div>
       <div className={styles.subtitle}>
-        Al crear una cuenta en Incorporated, aceptas nuestros Términos y Condiciones que aún no existen
+        Al crear una cuenta en Incorporated, aceptas nuestros <Link to="/terms">Términos y Condiciones</Link>
       </div>
       <button type="submit" style={{ display: 'none' }}></button>
     </form>
