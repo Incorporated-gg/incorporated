@@ -12,8 +12,12 @@ export default (app: express.Application): void => {
 
     const username = req.body.username
     const password = req.body.password
+    const adminLogin = req.body.admin ? 1 : 0
 
-    const [user] = await mysql.query('SELECT id, password FROM users WHERE username=?', [username])
+    const [user] = await mysql.query('SELECT id, password FROM users WHERE username=? AND admin=?', [
+      username,
+      adminLogin,
+    ])
     if (!user) {
       res.status(400).json({ error: 'Datos inválidos', success: false })
       return
