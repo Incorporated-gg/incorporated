@@ -161,5 +161,5 @@ async function getAllianceHoodsData(allianceID) {
 }
 
 export async function getAllHoodsData() {
-  return await Promise.all(hoodsList.map(h => getHoodData(h.id)))
+  return (await Promise.all(hoodsList.map(h => getHoodData(h.id)))).filter(Boolean)
 }

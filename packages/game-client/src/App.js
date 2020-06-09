@@ -3,6 +3,7 @@ import LoggedInRouter from 'routers/logged-in'
 import LogInPage from 'routers/log-in'
 import { userData, loadUserDataFromStorage } from 'lib/user'
 import ErrorBoundary from 'components/UI/ErrorBoundary'
+import { useTracking } from 'lib/useTracking'
 
 export function reloadApp() {
   staticReloadApp()
@@ -18,6 +19,8 @@ function App() {
     // Change when translations are introduced
     document.body.lang = 'es'
   }, [])
+
+  useTracking()
 
   useEffect(() => {
     if (!loading) return
