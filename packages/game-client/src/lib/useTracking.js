@@ -1,17 +1,13 @@
-import { useEffect } from 'react'
-import { useHistory } from 'react-router-dom'
+import {  useLocation } from 'react-router-dom'
+import { userData } from './user'
 
 const trackingId = 'UA-67731642-5'
-export const useTracking = () => {
-  const { listen } = useHistory()
+export function useTracking() {
+  const location = useLocation()
 
-  useEffect(() => {
-    const unlisten = listen((location) => {
-      if (!window.gtag) return
-
-      window.gtag('config', trackingId, { page_path: location.pathname })
-    })
-
-    return unlisten
-  }, [trackingId, listen])
+  if (!window.gtag) return
+  window.gtag('config', trackingId, {
+    page_path: location.pathname,
+    user_id: userData ? userData.id : undefined
+  })
 }
