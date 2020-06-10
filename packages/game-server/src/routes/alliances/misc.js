@@ -10,6 +10,7 @@ import {
 } from '../../lib/db/alliances'
 import Conversation from '../../chat/Conversation'
 import { chatEvents } from '../../chat'
+import { logUserActivity } from '../../lib/accountInternalApi'
 
 module.exports = app => {
   app.post('/v1/alliance/create', async function(req, res) {
@@ -89,6 +90,20 @@ module.exports = app => {
     await allianceConversation.addUser(req.userData.id)
     chatEvents.emit('addUser', { room: roomName, userId: req.userData.id })
 
+    logUserActivity({
+      userId: req.userData.id,
+      date: Date.now(),
+      ip: req.ip,
+      message: '',
+      type: 'corpCreate',
+      extra: {
+        longName,
+        shortName,
+        description,
+        allianceCreatedAt,
+      },
+    })
+
     res.json({ success: true, new_alliance_id: newAllianceID })
   })
 
@@ -121,6 +136,18 @@ module.exports = app => {
     )
 
     await deleteAlliance(userRank.alliance_id)
+
+    logUserActivity({
+      userId: req.userData.id,
+      date: Date.now(),
+      ip: req.ip,
+      message: '',
+      type: 'corpDelete',
+      extra: {
+        allianceID: userRank.alliance_id,
+        allianceUserIDs,
+      },
+    })
 
     res.json({ success: true })
   })
@@ -155,6 +182,17 @@ module.exports = app => {
     await allianceConversation.init()
     await allianceConversation.removeUser(req.userData.id)
     chatEvents.emit('kickUser', { room: roomName, userId: req.userData.id })
+
+    logUserActivity({
+      userId: req.userData.id,
+      date: Date.now(),
+      ip: req.ip,
+      message: '',
+      type: 'corpLeave',
+      extra: {
+        allianceID: userRank.alliance_id,
+      },
+    })
 
     res.json({ success: true })
   })
@@ -196,6 +234,19 @@ module.exports = app => {
 
     const msNow = Math.floor(Date.now() / 1000)
     await mysql.query('UPDATE alliances SET ??=? WHERE id=?', [`buff_${buffID}_last_used`, msNow, userRank.alliance_id])
+
+    logUserActivity({
+      userId: req.userData.id,
+      date: Date.now(),
+      ip: req.ip,
+      message: '',
+      type: 'corpBuff',
+      extra: {
+        allianceID: userRank.alliance_id,
+        buffID,
+        buff,
+      },
+    })
 
     res.json({ success: true })
   })

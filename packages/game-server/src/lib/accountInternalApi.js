@@ -34,6 +34,10 @@ export async function sendAccountHook(eventID, eventData) {
   await accountInternalApiFetch('POST', '/game_event_hook', params)
 }
 
+export async function logUserActivity(activityData) {
+  await accountInternalApiFetch('POST', '/log_activity', activityData)
+}
+
 function accountInternalApiFetch(method, url, payload = {}) {
   const ACCOUNT_API_BASE =
     process.env.NODE_ENV === 'development'

@@ -6,7 +6,7 @@
         <router-link to="/search"><span class="icon">🔎</span></router-link>
       </div>
       <div class="bottomLinks">
-        <button v-if="sessionId" type="button" @click="logout()"><span class="icon">🚫</span></button>
+        <button v-if="sessionId" type="button" @click="localLogout()"><span class="icon">🚫</span></button>
       </div>
     </nav>
     <main class="content">
@@ -17,7 +17,7 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { mapState, mapMutations } from 'vuex'
+import { mapState, mapMutations, mapActions } from 'vuex'
 
 export default Vue.extend({
   computed: {
@@ -25,8 +25,9 @@ export default Vue.extend({
   },
   methods: {
     ...mapMutations(['setSessionId']),
-    logout() {
-      this.setSessionId(false)
+    ...mapActions(['logout']),
+    localLogout() {
+      this.logout()
       this.$router.push('/login')
     }
   }
@@ -46,7 +47,6 @@ html, body {
   font-family: 'Muli', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
   color: #2c3e50;
   display: flex;
   height: 100%;
@@ -54,6 +54,14 @@ html, body {
 
 .content {
   flex-grow: 1;
+}
+.heading {
+  font-size: 30px;
+  font-weight: bold;
+  margin-bottom: 40px;
+}
+.table {
+  border: 1px solid #333;
 }
 
 #nav {

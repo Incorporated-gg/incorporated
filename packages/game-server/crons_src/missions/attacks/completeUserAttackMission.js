@@ -1,5 +1,5 @@
 import tasksProgressHook from '../../../src/lib/db/tasks/tasksProgressHook'
-import { sendAccountHook } from '../../../src/lib/accountInternalApi'
+import { sendAccountHook, logUserActivity } from '../../../src/lib/accountInternalApi'
 import mysql from '../../../src/lib/mysql'
 import {
   getUserResearchs,
@@ -172,6 +172,17 @@ export async function completeUserAttackMission(mission) {
     result,
     isHoodAttack: false,
     robbedMoney,
+  })
+  logUserActivity({
+    userId: attacker.id,
+    date: Date.now(),
+    ip: 'internal',
+    message: '',
+    type: 'attackFinish',
+    extra: {
+      sourceUserId: attacker.id,
+      targetUserId: defender.id,
+    },
   })
 }
 

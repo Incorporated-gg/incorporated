@@ -13,6 +13,7 @@ import { calculateMissionTime, calculateIsInAttackRange } from 'shared-lib/missi
 import { getHoodData } from '../../lib/db/hoods'
 import { allianceUpdateResource } from '../../lib/db/alliances/resources'
 import { updatePersonnelAmount } from '../../lib/db/personnel'
+import { logUserActivity } from '../../lib/accountInternalApi'
 
 module.exports = app => {
   app.post('/v1/missions/create', async function(req, res) {
@@ -213,6 +214,18 @@ async function createAttackMission({ req, res }) {
     'INSERT INTO missions (user_id, mission_type, data, target_user, started_at, will_finish_at) VALUES (?, ?, ?, ?, ?, ?)',
     [req.userData.id, 'attack', JSON.stringify(data), targetUserID, tsNow, tsNow + missionDuration]
   )
+  logUserActivity({
+    userId: req.userData.id,
+    date: Date.now(),
+    ip: req.ip,
+    message: '',
+    type: 'attackStart',
+    extra: {
+      sourceUserId: req.userData.id,
+      targetUserId: targetUserID,
+      missionData: data,
+    },
+  })
   res.json({
     success: true,
   })
@@ -255,6 +268,18 @@ async function createSpyMission({ req, res }) {
     'INSERT INTO missions (user_id, mission_type, data, target_user, started_at, will_finish_at) VALUES (?, ?, ?, ?, ?, ?)',
     [req.userData.id, 'spy', JSON.stringify(data), targetUserID, tsNow, tsNow + missionDuration]
   )
+  logUserActivity({
+    userId: req.userData.id,
+    date: Date.now(),
+    ip: req.ip,
+    message: '',
+    type: 'spyStart',
+    extra: {
+      sourceUserId: req.userData.id,
+      targetUserId: targetUserID,
+      missionData: data,
+    },
+  })
   res.json({
     success: true,
   })

@@ -3,21 +3,21 @@ export const ACCOUNT_API_URL = 'http://localhost:3100/account_api'
 
 import store from '../store'
 
-export function get(url, data) {
-  return apiFetch(API_URL, 'GET', url, data)
+export async function get(url, data) {
+  return await apiFetch(API_URL, 'GET', url, data)
 }
-export function post(url, data) {
-  return apiFetch(API_URL, 'POST', url, data)
-}
-
-export function accountGet(url, data) {
-  return apiFetch(ACCOUNT_API_URL, 'GET', url, data)
-}
-export function accountPost(url, data) {
-  return apiFetch(ACCOUNT_API_URL, 'POST', url, data)
+export async function post(url, data) {
+  return await apiFetch(API_URL, 'POST', url, data)
 }
 
-function apiFetch(apiUrl, method, url, payload = {}) {
+export async function accountGet(url, data) {
+  return await apiFetch(ACCOUNT_API_URL, 'GET', url, data)
+}
+export async function accountPost(url, data) {
+  return await apiFetch(ACCOUNT_API_URL, 'POST', url, data)
+}
+
+async function apiFetch(apiUrl, method, url, payload = {}) {
   let body
   let headers = {}
   headers.Accept = 'application/json, text/plain, */*'
@@ -35,13 +35,19 @@ function apiFetch(apiUrl, method, url, payload = {}) {
         .join('&')
   }
 
-  return window.fetch(`${apiUrl}${url}`, { method, headers, body }).then(parseApiResponse)
+  const response = await window.fetch(`${apiUrl}${url}`, { method, headers, body })
+  return await parseApiResponse(response)
 }
 
 async function parseApiResponse(res) {
-  const contentType = res.headers.get('content-type')
-  const jsonResponse = contentType && contentType.startsWith('application/json;') ? await res.json() : await res.text()
+  let jsonResponse = null
 
-  if (!res.ok) return false
+  try {
+    jsonResponse = await res.json()
+  } catch(e) {
+    jsonResponse = await res.text()
+  }
+
+  if (jsonResponse.error) alert(jsonResponse.error)
   return jsonResponse
 }

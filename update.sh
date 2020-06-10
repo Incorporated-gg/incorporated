@@ -1,5 +1,9 @@
 INITIAL_PATH=$(pwd)
 
+# Update shared-lib
+cd $INITIAL_PATH/packages/shared-lib
+npm i
+npm run build
 # Update account-server
 cd $INITIAL_PATH/packages/account-server
 npm i

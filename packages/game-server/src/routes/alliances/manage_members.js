@@ -9,6 +9,7 @@ import {
 import { MAX_ALLIANCE_MEMBERS, PERMISSIONS_LIST } from 'shared-lib/allianceUtils'
 import Conversation from '../../chat/Conversation'
 import { chatEvents } from '../../chat'
+import { logUserActivity } from '../../lib/accountInternalApi'
 
 module.exports = app => {
   app.get('/v1/alliance/member_request/list', async function(req, res) {
@@ -86,6 +87,17 @@ module.exports = app => {
       Math.floor(Date.now() / 1000),
     ])
 
+    logUserActivity({
+      userId: req.userData.id,
+      date: Date.now(),
+      ip: req.ip,
+      message: '',
+      type: 'corpRequest',
+      extra: {
+        allianceID,
+      },
+    })
+
     res.json({ success: true })
   })
 
@@ -123,6 +135,18 @@ module.exports = app => {
     await allianceConversation.init()
     await allianceConversation.removeUser(userBeingKickedID)
     chatEvents.emit('kickUser', { room: roomName, userId: userBeingKickedID })
+
+    logUserActivity({
+      userId: req.userData.id,
+      date: Date.now(),
+      ip: req.ip,
+      message: '',
+      type: 'corpKick',
+      extra: {
+        allianceID: memberBeingKicked.alliance_id,
+        userBeingKickedID,
+      },
+    })
 
     res.json({ success: true })
   })
@@ -220,6 +244,17 @@ function memberRequestAction(action) {
         userID,
         userRank.alliance_id,
       ])
+      logUserActivity({
+        userId: req.userData.id,
+        date: Date.now(),
+        ip: req.ip,
+        message: '',
+        type: 'corpReject',
+        extra: {
+          allianceID: userRank.alliance_id,
+          rejectedUserID: userID,
+        },
+      })
     } else if (action === 'accept') {
       if (allianceMembers.length >= MAX_ALLIANCE_MEMBERS) {
         res.status(401).json({ error: 'Esta alianza no puede tener más miembros' })
@@ -243,6 +278,18 @@ function memberRequestAction(action) {
       await allianceConversation.init()
       await allianceConversation.addUser(userID)
       chatEvents.emit('addUser', { room: roomName, userId: userID })
+
+      logUserActivity({
+        userId: req.userData.id,
+        date: Date.now(),
+        ip: req.ip,
+        message: '',
+        type: 'corpAccept',
+        extra: {
+          allianceID: userRank.alliance_id,
+          acceptedUserID: userID,
+        },
+      })
     }
 
     res.json({ success: true })

@@ -1,5 +1,5 @@
-import { calculateMissionTime } from './missionsUtils'
-import { simulateAttack } from './simulateAttack'
+import { calculateMissionTime } from '../build/missionsUtils'
+import { simulateAttack } from '../build/simulateAttack'
 
 test('Mission times', () => {
   expect(calculateMissionTime('attack')).toBe(300)

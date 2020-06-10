@@ -2,6 +2,7 @@ import mysql from '../../lib/mysql'
 import { updatePersonnelAmount } from '../../lib/db/personnel'
 import { allianceUpdateResource } from '../../lib/db/alliances/resources'
 import { getUserAllianceID } from '../../lib/db/alliances'
+import { logUserActivity } from '../../lib/accountInternalApi'
 
 module.exports = app => {
   app.post('/v1/missions/cancel', async function(req, res) {
@@ -11,7 +12,7 @@ module.exports = app => {
     }
 
     const mission = await mysql.selectOne(
-      'SELECT id, mission_type, data FROM missions WHERE user_id=? AND completed=? AND started_at=?',
+      'SELECT id, mission_type, data, target_user FROM missions WHERE user_id=? AND completed=? AND started_at=?',
       [req.userData.id, false, req.body.started_at]
     )
     if (!mission) {
@@ -48,6 +49,31 @@ module.exports = app => {
         })
         await updatePersonnelAmount(req, 'sabots', -data.sabotsExtractedFromCorp)
       }
+      logUserActivity({
+        userId: req.userData.id,
+        date: Date.now(),
+        ip: req.ip,
+        message: '',
+        type: 'attackCancel',
+        extra: {
+          sourceUserId: req.userData.id,
+          targetUserId: mission.target_user,
+        },
+      })
+    }
+
+    if (mission.mission_type === 'spy') {
+      logUserActivity({
+        userId: req.userData.id,
+        date: Date.now(),
+        ip: req.ip,
+        message: '',
+        type: 'spyCancel',
+        extra: {
+          sourceUserId: req.userData.id,
+          targetUserId: mission.target_user,
+        },
+      })
     }
 
     res.json({

@@ -2,6 +2,7 @@ import mysql from '../lib/mysql'
 import { generateSession } from '../lib/db/sessions'
 import bcrypt from 'bcryptjs'
 import express from 'express'
+import { logUserActivity, ActivityTrailType } from '../lib/db/activity-trail'
 
 export default (app: express.Application): void => {
   app.post('/v1/login', async function(req, res) {
@@ -14,10 +15,10 @@ export default (app: express.Application): void => {
     const password = req.body.password
     const adminLogin = req.body.admin ? 1 : 0
 
-    const [user] = await mysql.query('SELECT id, password FROM users WHERE username=? AND admin=?', [
-      username,
-      adminLogin,
-    ])
+    const [user] = await mysql.query(
+      `SELECT id, password FROM users WHERE username=?${adminLogin ? ' AND admin=?' : ''}`,
+      [username, adminLogin]
+    )
     if (!user) {
       res.status(400).json({ error: 'Datos inválidos', success: false })
       return
@@ -27,6 +28,17 @@ export default (app: express.Application): void => {
       res.status(400).json({ error: 'Datos inválidos', success: false })
       return
     }
+
+    logUserActivity({
+      userId: user.id,
+      date: Date.now(),
+      ip: req.ip,
+      message: '',
+      type: ActivityTrailType.LOGIN,
+      extra: JSON.stringify({
+        adminLogin,
+      }),
+    })
 
     const sessionID = await generateSession(user.id)
     res.json({ sessionID: sessionID, success: true })

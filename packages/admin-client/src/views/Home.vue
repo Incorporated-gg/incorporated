@@ -1,24 +1,44 @@
 <template>
   <div class="home">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <UsersPanel :users="users" />
+    <ActivityPanel :activities="activities" />
   </div>
 </template>
 
-<script>
-// @ is an alias to /src
-import HelloWorld from '@/components/HelloWorld.vue'
+<script lang="ts">
+import Vue from 'vue'
+import UsersPanel from '../components/UsersPanel.vue'
+import ActivityPanel from '../components/ActivityPanel.vue'
+import { accountGet } from '../lib/api'
 
-export default {
+export default Vue.extend({
   name: 'Home',
   components: {
-    HelloWorld
+    UsersPanel, ActivityPanel
+  },
+  data() {
+    return {
+      users: [],
+      activities: [],
+    }
+  },
+  async mounted() {
+    const users = await accountGet('/v1/admin/users/list')
+    const activities = await accountGet('/v1/admin/users/activity')
+    this.users = users
+    this.activities = activities
   }
-}
+})
 </script>
 
 <style lang="scss" scoped>
 .home {
   display: flex;
-  background: red;
+  flex-direction: column;
+  padding: 40px;
+  
+  .usersPanel {
+    margin-bottom: 40px;
+  }
 }
 </style>

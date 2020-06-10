@@ -4,6 +4,7 @@
     <input type="text" v-model="username" placeholder="username">
     <input type="password" v-model="password" placeholder="pwd">
     <button type="button" @click="loginLocal()">login</button>
+    <div class="error">{{error}}</div>
   </div>
 </template>
 
@@ -15,7 +16,8 @@ export default Vue.extend({
   data() {
     return {
       username: 'damage',
-      password: 'pass1234'
+      password: 'pass1234',
+      error: ''
     }
   },
   methods: {
@@ -27,6 +29,7 @@ export default Vue.extend({
         admin: 'true',
       })
       if (success) this.$router.push('/')
+      else this.error = 'bad login'
     }
   },
 })

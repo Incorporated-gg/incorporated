@@ -8,13 +8,13 @@ const pool = mysql.createPool({
 })
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function query(sql: string, args: any | any[]): Promise<any> {
+async function query(sql: string, args?: any | any[]): Promise<any> {
   const res = await pool.query(sql, args)
   return res[0]
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function selectOne(sql: string, args: any | any[]): Promise<any> {
+async function selectOne(sql: string, args?: any | any[]): Promise<any> {
   const res = await query(sql, args)
   return res[0]
 }

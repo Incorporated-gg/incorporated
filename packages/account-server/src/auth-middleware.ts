@@ -1,16 +1,17 @@
 import express from 'express'
 import mysql from './lib/mysql'
 
-type accountData = {
+interface AccountData {
   id: number
   username: string
+  admin: boolean
 }
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace Express {
     interface Request {
-      accountData: accountData | null
+      accountData: AccountData | null
     }
   }
 }
@@ -22,7 +23,7 @@ async function authMiddleware(req: express.Request, res: express.Response, next:
     const sessionID = req.headers.authorization.replace('Basic ', '')
     const [sessionData] = await mysql.query('SELECT user_id FROM sessions WHERE id=?', [sessionID])
     if (sessionData) {
-      ;[req.accountData] = await mysql.query('SELECT id, username FROM users WHERE id=?', [sessionData.user_id])
+      ;[req.accountData] = await mysql.query('SELECT id, username, admin FROM users WHERE id=?', [sessionData.user_id])
     }
     if (!req.accountData) {
       res.status(400).json({ error: 'Sesión caducada', errorCode: 'invalid_session_id' })

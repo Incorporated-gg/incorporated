@@ -1,6 +1,6 @@
 import mysql from '../mysql'
 
-type BasicAccountData = {
+interface BasicAccountData {
   id: number
   username: string
   avatar: string
@@ -39,9 +39,9 @@ export async function getData(userID?: number): Promise<BasicAccountData | undef
   }
 }
 
-export async function getIDFromUsername(username: string): Promise<BasicAccountData | undefined> {
+export async function getIDFromUsername(username: string): Promise<number | null> {
   const accountData = await mysql.selectOne('SELECT id FROM users WHERE username=?', [username])
-  return accountData ? accountData.id : undefined
+  return accountData ? parseInt(accountData.id) : null
 }
 
 export async function giveGoldToUser(userID: number, gold: number): Promise<void> {
@@ -64,4 +64,9 @@ export async function giveXPToUser(userID: number, xp: number): Promise<void> {
   }
   if (levelUpGoldReward) await giveGoldToUser(userID, levelUpGoldReward)
   await mysql.query('UPDATE users SET xp=?, level=? WHERE id=?', [newXP, userData.level + levelsUp, userID])
+}
+
+export const getUserList = async (): Promise<Array<BasicAccountData>> => {
+  const userList = await mysql.query('SELECT id, username, email, ')
+  return userList
 }

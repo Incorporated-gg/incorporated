@@ -6,6 +6,7 @@ import {
   calcResearchSecondsDuration,
   MANUALLY_FINISH_RESEARCH_UPGRADES_SECONDS,
 } from 'shared-lib/researchUtils'
+import { logUserActivity } from '../lib/accountInternalApi'
 
 module.exports = app => {
   app.post('/v1/research/buy', async function(req, res) {
@@ -46,18 +47,31 @@ module.exports = app => {
     }
 
     const researchTime = calcResearchSecondsDuration(researchID, req.userData.researchs[researchID])
+    const tsNow = Math.floor(Date.now() / 1000)
+    const finishesAt = tsNow + researchTime
+
     if (researchTime === 0) {
       await upgradeUserResearch(req.userData.id, researchID)
       req.userData.researchs[researchID] += 1
     } else {
-      const tsNow = Math.floor(Date.now() / 1000)
-      const finishesAt = tsNow + researchTime
       await mysql.query('INSERT INTO research_active (user_id, research_id, finishes_at) VALUES (?, ?, ?)', [
         req.userData.id,
         researchID,
         finishesAt,
       ])
     }
+
+    logUserActivity({
+      userId: req.userData.id,
+      date: Date.now(),
+      ip: req.ip,
+      message: '',
+      type: 'researchStart',
+      extra: {
+        researchID,
+        finishesAt,
+      },
+    })
 
     res.json({
       success: true,
@@ -94,6 +108,18 @@ module.exports = app => {
     await mysql.query('DELETE FROM research_active WHERE user_id=? and research_id=?', [req.userData.id, researchID])
     await upgradeUserResearch(req.userData.id, researchID)
     req.userData.researchs[researchID] += 1
+
+    logUserActivity({
+      userId: req.userData.id,
+      date: Date.now(),
+      ip: req.ip,
+      message: '',
+      type: 'researchManuallyEnded',
+      extra: {
+        researchID,
+        secondsLeft,
+      },
+    })
 
     res.json({
       success: true,
