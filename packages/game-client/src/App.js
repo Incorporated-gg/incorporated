@@ -3,6 +3,9 @@ import LoggedInRouter from 'routers/logged-in'
 import LogInPage from 'routers/log-in'
 import { userData, loadUserDataFromStorage } from 'lib/user'
 import ErrorBoundary from 'components/UI/ErrorBoundary'
+import { useTracking } from 'lib/useTracking'
+import { BrowserRouter } from 'react-router-dom'
+import ScrollToTop from 'lib/scrollToTop'
 
 export function reloadApp() {
   staticReloadApp()
@@ -18,6 +21,8 @@ function App() {
     // Change when translations are introduced
     document.body.lang = 'es'
   }, [])
+
+  useTracking()
 
   useEffect(() => {
     if (!loading) return
@@ -39,10 +44,19 @@ function App() {
 
   if (loading) return null
 
-  return <ErrorBoundary>{loggedIn ? <LoggedInRouter /> : <LogInPage />}</ErrorBoundary>
+  return loggedIn ? <LoggedInRouter /> : <LogInPage />
 }
 
-export default App
+export default () => {
+  return (
+    <ErrorBoundary>
+      <BrowserRouter>
+        <ScrollToTop />
+        <App />
+      </BrowserRouter>
+    </ErrorBoundary>
+  )
+}
 
 function removeLoadingScreenDiv() {
   const loadingDiv = document.getElementById('loadingScreen')

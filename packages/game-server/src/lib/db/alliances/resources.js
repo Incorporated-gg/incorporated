@@ -14,7 +14,7 @@ export async function allianceUpdateResource({ type, resourceID, resourceDiff, u
   }
 
   const tsNow = Math.floor(Date.now() / 1000)
-  const tsLimit = tsNow - 60 * 15 // 15min
+  const tsLimit = tsNow - 60 * 30 // 30min
   const recentLogForResource = await mysql.selectOne(
     'SELECT type, quantity FROM alliances_resources_log WHERE alliance_id=? AND user_id=? AND created_at>? AND resource_id=? AND (type="extract" OR type="deposit")',
     [allianceID, userID, tsLimit, resourceID]
