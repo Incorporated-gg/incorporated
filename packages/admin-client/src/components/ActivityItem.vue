@@ -12,7 +12,7 @@
 import Vue from 'vue'
 
 const verb = {
-  ["attackStart"]: 'attacked',
+  ["attackStart"]: 'started an attack',
   ["attackCancel"]: 'cancelled an attack',
   ["attackFinish"]: 'finished an attack',
   ["spyStart"]: 'started spying',
