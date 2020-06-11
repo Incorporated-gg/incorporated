@@ -1,6 +1,7 @@
 import mysql from '../src/lib/mysql'
 import { upgradeUserResearch } from '../src/lib/db/researchs'
 import { logUserActivity } from '../src/lib/accountInternalApi'
+import { ActivityTrailType } from 'shared-lib/activityTrailUtils'
 export const frequencyMs = 10 * 1000
 
 export async function run() {
@@ -22,7 +23,7 @@ export async function run() {
         date: Date.now(),
         ip: 'internal',
         message: '',
-        type: 'researchEnd',
+        type: ActivityTrailType.RESEARCH_END,
         extra: {
           researchID: research.research_id,
           finishesAt: research.finishes_at,

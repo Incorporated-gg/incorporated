@@ -2,7 +2,8 @@ import mysql from '../lib/mysql'
 import * as personnel from '../lib/db/personnel'
 import { getHasActiveMission } from '../lib/db/users'
 import { PERSONNEL_OBJ } from 'shared-lib/personnelUtils'
-import { logUserActivity } from '../lib/accountInternalApi'
+import { logUserActivity, getIpFromRequest } from '../lib/accountInternalApi'
+import { ActivityTrailType } from 'shared-lib/activityTrailUtils'
 
 const handlePersonnelRequest = async (req, res, operationType) => {
   if (!req.userData) {
@@ -61,9 +62,9 @@ const handlePersonnelRequest = async (req, res, operationType) => {
     logUserActivity({
       userId: req.userData.id,
       date: Date.now(),
-      ip: req.ip,
+      ip: getIpFromRequest(req),
       message: '',
-      type: 'personnelHired',
+      type: ActivityTrailType.PERSONNEL_HIRED,
       extra: {
         resourceAmount,
         resourceID,
@@ -75,9 +76,9 @@ const handlePersonnelRequest = async (req, res, operationType) => {
     logUserActivity({
       userId: req.userData.id,
       date: Date.now(),
-      ip: req.ip,
+      ip: getIpFromRequest(req),
       message: '',
-      type: 'personnelFired',
+      type: ActivityTrailType.PERSONNEL_FIRED,
       extra: {
         resourceAmount,
         resourceID,

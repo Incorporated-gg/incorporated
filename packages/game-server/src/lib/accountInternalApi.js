@@ -38,6 +38,11 @@ export async function logUserActivity(activityData) {
   await accountInternalApiFetch('POST', '/log_activity', activityData)
 }
 
+export const getIpFromRequest = request => {
+  const cloudflareClientIp = request.headers['CF-Connecting-IP'] ? request.headers['CF-Connecting-IP'].toString() : null
+  return cloudflareClientIp || request.ip
+}
+
 function accountInternalApiFetch(method, url, payload = {}) {
   const ACCOUNT_API_BASE =
     process.env.NODE_ENV === 'development'

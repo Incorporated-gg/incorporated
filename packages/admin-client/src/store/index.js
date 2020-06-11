@@ -8,13 +8,17 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    sessionId: storage.getItem('sessionId', null)
+    sessionId: storage.getItem('sessionId', null),
+    globalFilters: [],
   },
   mutations: {
     setSessionId(state, payload) {
       state.sessionId = payload
       storage.setItem('sessionId', payload)
-    }
+    },
+    setGlobalFilters(state, filters) {
+      state.globalFilters = filters
+    },
   },
   actions: {
     async login({ state, commit }, userData) {

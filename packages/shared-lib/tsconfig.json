@@ -1,14 +1,15 @@
 {
-    "compilerOptions": {
-        "outDir": "",
-        "module": "commonjs",
-        "removeComments": true,
-        "preserveConstEnums": true,
-        "target": "es6",
-        "declaration": true,
-        "lib": [
-            "ES2020",
-            "scripthost"
-        ],
-    }
+  "include": ["src/*"],
+  "compilerOptions": {
+    "outDir": "",
+    "module": "commonjs",
+    "removeComments": true,
+    "preserveConstEnums": true,
+    "target": "es6",
+    "declaration": true,
+    "lib": [
+        "ES2020",
+        "scripthost"
+    ],
+  }
 }

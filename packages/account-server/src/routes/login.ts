@@ -2,7 +2,8 @@ import mysql from '../lib/mysql'
 import { generateSession } from '../lib/db/sessions'
 import bcrypt from 'bcryptjs'
 import express from 'express'
-import { logUserActivity, ActivityTrailType } from '../lib/db/activity-trail'
+import { logUserActivity, getIpFromRequest } from '../lib/db/activity-trail'
+import { ActivityTrailType } from 'shared-lib/activityTrailUtils'
 
 export default (app: express.Application): void => {
   app.post('/v1/login', async function(req, res) {
@@ -32,7 +33,7 @@ export default (app: express.Application): void => {
     logUserActivity({
       userId: user.id,
       date: Date.now(),
-      ip: req.ip,
+      ip: getIpFromRequest(req),
       message: '',
       type: ActivityTrailType.LOGIN,
       extra: JSON.stringify({

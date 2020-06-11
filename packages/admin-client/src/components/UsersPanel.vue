@@ -14,7 +14,7 @@
           <td>{{user.id}}</td>
           <td>{{user.username}}</td>
           <td>
-            <router-link :to="'/inspect/' + user.id">view activity</router-link>
+            <router-link :to="'/inspect/' + user.username">view activity</router-link>
           </td>
         </tr>
         <tr v-if="!usersList.length">

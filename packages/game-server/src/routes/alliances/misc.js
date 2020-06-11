@@ -10,7 +10,8 @@ import {
 } from '../../lib/db/alliances'
 import Conversation from '../../chat/Conversation'
 import { chatEvents } from '../../chat'
-import { logUserActivity } from '../../lib/accountInternalApi'
+import { logUserActivity, getIpFromRequest } from '../../lib/accountInternalApi'
+import { ActivityTrailType } from 'shared-lib/activityTrailUtils'
 
 module.exports = app => {
   app.post('/v1/alliance/create', async function(req, res) {
@@ -93,9 +94,9 @@ module.exports = app => {
     logUserActivity({
       userId: req.userData.id,
       date: Date.now(),
-      ip: req.ip,
+      ip: getIpFromRequest(req),
       message: '',
-      type: 'corpCreate',
+      type: ActivityTrailType.CORP_CREATE,
       extra: {
         longName,
         shortName,
@@ -140,9 +141,9 @@ module.exports = app => {
     logUserActivity({
       userId: req.userData.id,
       date: Date.now(),
-      ip: req.ip,
+      ip: getIpFromRequest(req),
       message: '',
-      type: 'corpDelete',
+      type: ActivityTrailType.CORP_DELETE,
       extra: {
         allianceID: userRank.alliance_id,
         allianceUserIDs,
@@ -186,9 +187,9 @@ module.exports = app => {
     logUserActivity({
       userId: req.userData.id,
       date: Date.now(),
-      ip: req.ip,
+      ip: getIpFromRequest(req),
       message: '',
-      type: 'corpLeave',
+      type: ActivityTrailType.CORP_LEAVE,
       extra: {
         allianceID: userRank.alliance_id,
       },
@@ -238,9 +239,9 @@ module.exports = app => {
     logUserActivity({
       userId: req.userData.id,
       date: Date.now(),
-      ip: req.ip,
+      ip: getIpFromRequest(req),
       message: '',
-      type: 'corpBuff',
+      type: ActivityTrailType.CORP_BUFF,
       extra: {
         allianceID: userRank.alliance_id,
         buffID,

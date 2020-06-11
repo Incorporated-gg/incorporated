@@ -16,7 +16,8 @@ import { updatePersonnelAmount } from '../../lib/db/personnel'
 import { calcResearchPrice, calcAllianceResourceMax } from 'shared-lib/allianceUtils'
 import { allianceUpdateResource } from '../../lib/db/alliances/resources'
 import { getAllianceActiveWars, getAlliancePastWars } from '../../lib/db/alliances/war'
-import { logUserActivity } from '../../lib/accountInternalApi'
+import { logUserActivity, getIpFromRequest } from '../../lib/accountInternalApi'
+import { ActivityTrailType } from 'shared-lib/activityTrailUtils'
 
 module.exports = app => {
   app.get('/v1/alliance', async function(req, res) {
@@ -149,9 +150,9 @@ module.exports = app => {
     logUserActivity({
       userId: req.userData.id,
       date: Date.now(),
-      ip: req.ip,
+      ip: getIpFromRequest(req),
       message: '',
-      type: 'corpInvest',
+      type: ActivityTrailType.CORP_INVEST,
       extra: {
         researchID,
         allianceID,
@@ -255,9 +256,9 @@ module.exports = app => {
     logUserActivity({
       userId: req.userData.id,
       date: Date.now(),
-      ip: req.ip,
+      ip: getIpFromRequest(req),
       message: '',
-      type: resourceAmount < 0 ? 'corpWithdraw' : 'corpDeposit',
+      type: resourceAmount < 0 ? ActivityTrailType.CORP_WITHDRAW : ActivityTrailType.CORP_DEPOSIT,
       extra: {
         resourceID,
         allianceID,

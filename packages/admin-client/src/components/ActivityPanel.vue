@@ -2,10 +2,7 @@
   <div class="activityPanel">
     <div class="heading">Latest activity</div>
     <div class="activityList">
-      <article class="activityItem" v-for="(activity, i) in activities" :key="i">
-        <span class="date">{{activity.date|asDate}}</span> User {{activity.userId}} did activity type {{activity.type}} from IP {{activity.ip}}.
-        <span v-if="activity.extra">Here's some extra info about it: {{activity.extra}}.</span>
-      </article>
+      <ActivityItem v-for="(activity, i) in activities" :key="i" :activity="activity" />
       <span v-if="!activities.length">No activities yet</span>
     </div>
   </div>
@@ -13,18 +10,14 @@
 
 <script lang="ts">
 import Vue from 'vue'
+import ActivityItem from './ActivityItem.vue'
 
 export default Vue.extend({
   name: 'ActivityPanel',
   props: {
     activities: Array
   },
-  filters: {
-    asDate(epoch) {
-      const date = new Date(parseInt(epoch))
-      return `[${String(date.getDate()).padStart(2, '0')}/${String(date.getMonth() + 1).padStart(2, '0')}/${String(date.getFullYear()).padStart(2, '0')}] ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}:${String(date.getSeconds()).padStart(2, '0')}.${String(date.getMilliseconds()).padStart(2, '0')}`
-    }
-  }
+  components: { ActivityItem },
 })
 </script>
 
@@ -37,12 +30,6 @@ export default Vue.extend({
   .activityList {
     display: flex;
     flex-direction: column;
-
-    .activityItem {
-      .date {
-        font-weight: bold;
-      }
-    }
   }
 }
 </style>

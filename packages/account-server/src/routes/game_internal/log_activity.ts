@@ -1,6 +1,7 @@
 import { Application, Response, Request } from 'express'
 import { validateGameServerRequest } from '.'
-import { ActivityTrailData, logUserActivity } from '../../lib/db/activity-trail'
+import { logUserActivity } from '../../lib/db/activity-trail'
+import { ActivityTrailData } from 'shared-lib/activityTrailUtils'
 
 export default (app: Application): void => {
   app.post('/v1/game_internal/log_activity', async function(req: Request, res: Response) {

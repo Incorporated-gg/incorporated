@@ -2,8 +2,8 @@
   <div id="app">
     <nav id="nav">
       <div class="topLinks">
-        <router-link to="/"><span class="icon">🏠</span></router-link>
-        <router-link to="/search"><span class="icon">🔎</span></router-link>
+        <router-link to="/home"><span class="icon">🏠</span></router-link>
+        <router-link to="/inspect"><span class="icon">🔎</span></router-link>
       </div>
       <div class="bottomLinks">
         <button v-if="sessionId" type="button" @click="localLogout()"><span class="icon">🚫</span></button>
@@ -43,6 +43,12 @@ html, body {
 
 }
 
+button {
+  outline: none;
+  border: none;
+  cursor: pointer;
+}
+
 #app {
   font-family: 'Muli', sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -50,10 +56,13 @@ html, body {
   color: #2c3e50;
   display: flex;
   height: 100%;
+  overflow: hidden;
 }
 
 .content {
   flex-grow: 1;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 .heading {
   font-size: 30px;
@@ -100,7 +109,7 @@ html, body {
     &:not(:last-child) {
       margin-bottom: 10px;
     }
-    &.router-link-exact-active {
+    &.router-link-active {
       background: #42b983;
       border: 2px solid black;
     }

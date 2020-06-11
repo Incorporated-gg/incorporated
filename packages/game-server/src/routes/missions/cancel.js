@@ -2,7 +2,8 @@ import mysql from '../../lib/mysql'
 import { updatePersonnelAmount } from '../../lib/db/personnel'
 import { allianceUpdateResource } from '../../lib/db/alliances/resources'
 import { getUserAllianceID } from '../../lib/db/alliances'
-import { logUserActivity } from '../../lib/accountInternalApi'
+import { logUserActivity, getIpFromRequest } from '../../lib/accountInternalApi'
+import { ActivityTrailType } from 'shared-lib/activityTrailUtils'
 
 module.exports = app => {
   app.post('/v1/missions/cancel', async function(req, res) {
@@ -52,9 +53,9 @@ module.exports = app => {
       logUserActivity({
         userId: req.userData.id,
         date: Date.now(),
-        ip: req.ip,
+        ip: getIpFromRequest(req),
         message: '',
-        type: 'attackCancel',
+        type: ActivityTrailType.ATTACK_CANCEL,
         extra: {
           sourceUserId: req.userData.id,
           targetUserId: mission.target_user,
@@ -66,9 +67,9 @@ module.exports = app => {
       logUserActivity({
         userId: req.userData.id,
         date: Date.now(),
-        ip: req.ip,
+        ip: getIpFromRequest(req),
         message: '',
-        type: 'spyCancel',
+        type: ActivityTrailType.SPY_CANCEL,
         extra: {
           sourceUserId: req.userData.id,
           targetUserId: mission.target_user,

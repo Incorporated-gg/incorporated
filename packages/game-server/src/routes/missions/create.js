@@ -10,10 +10,11 @@ import {
 import { getUserAllianceID, getAllianceResources } from '../../lib/db/alliances'
 import { buildingsList } from 'shared-lib/buildingsUtils'
 import { calculateMissionTime, calculateIsInAttackRange } from 'shared-lib/missionsUtils'
+import { ActivityTrailType } from 'shared-lib/activityTrailUtils'
 import { getHoodData } from '../../lib/db/hoods'
 import { allianceUpdateResource } from '../../lib/db/alliances/resources'
 import { updatePersonnelAmount } from '../../lib/db/personnel'
-import { logUserActivity } from '../../lib/accountInternalApi'
+import { logUserActivity, getIpFromRequest } from '../../lib/accountInternalApi'
 
 module.exports = app => {
   app.post('/v1/missions/create', async function(req, res) {
@@ -217,9 +218,9 @@ async function createAttackMission({ req, res }) {
   logUserActivity({
     userId: req.userData.id,
     date: Date.now(),
-    ip: req.ip,
+    ip: getIpFromRequest(req),
     message: '',
-    type: 'attackStart',
+    type: ActivityTrailType.ATTACK_START,
     extra: {
       sourceUserId: req.userData.id,
       targetUserId: targetUserID,
@@ -271,9 +272,9 @@ async function createSpyMission({ req, res }) {
   logUserActivity({
     userId: req.userData.id,
     date: Date.now(),
-    ip: req.ip,
+    ip: getIpFromRequest(req),
     message: '',
-    type: 'spyStart',
+    type: ActivityTrailType.SPY_START,
     extra: {
       sourceUserId: req.userData.id,
       targetUserId: targetUserID,

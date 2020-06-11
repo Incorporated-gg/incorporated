@@ -1,8 +1,7 @@
 {
   "name": "shared-lib",
   "private": true,
-  "main": "build/index.js",
-  "types": "build/index.d.ts",
+  "version": "1.0.0",
   "scripts": {
     "build": "tsc",
     "test": "npx jest"

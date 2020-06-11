@@ -9,7 +9,8 @@ import {
 import { MAX_ALLIANCE_MEMBERS, PERMISSIONS_LIST } from 'shared-lib/allianceUtils'
 import Conversation from '../../chat/Conversation'
 import { chatEvents } from '../../chat'
-import { logUserActivity } from '../../lib/accountInternalApi'
+import { logUserActivity, getIpFromRequest } from '../../lib/accountInternalApi'
+import { ActivityTrailType } from 'shared-lib/activityTrailUtils'
 
 module.exports = app => {
   app.get('/v1/alliance/member_request/list', async function(req, res) {
@@ -90,9 +91,9 @@ module.exports = app => {
     logUserActivity({
       userId: req.userData.id,
       date: Date.now(),
-      ip: req.ip,
+      ip: getIpFromRequest(req),
       message: '',
-      type: 'corpRequest',
+      type: ActivityTrailType.CORP_REQUEST,
       extra: {
         allianceID,
       },
@@ -139,9 +140,9 @@ module.exports = app => {
     logUserActivity({
       userId: req.userData.id,
       date: Date.now(),
-      ip: req.ip,
+      ip: getIpFromRequest(req),
       message: '',
-      type: 'corpKick',
+      type: ActivityTrailType.CORP_KICK,
       extra: {
         allianceID: memberBeingKicked.alliance_id,
         userBeingKickedID,
@@ -247,9 +248,9 @@ function memberRequestAction(action) {
       logUserActivity({
         userId: req.userData.id,
         date: Date.now(),
-        ip: req.ip,
+        ip: getIpFromRequest(req),
         message: '',
-        type: 'corpReject',
+        type: ActivityTrailType.CORP_REJECT,
         extra: {
           allianceID: userRank.alliance_id,
           rejectedUserID: userID,
@@ -282,9 +283,9 @@ function memberRequestAction(action) {
       logUserActivity({
         userId: req.userData.id,
         date: Date.now(),
-        ip: req.ip,
+        ip: getIpFromRequest(req),
         message: '',
-        type: 'corpAccept',
+        type: ActivityTrailType.CORP_ACCEPT,
         extra: {
           allianceID: userRank.alliance_id,
           acceptedUserID: userID,

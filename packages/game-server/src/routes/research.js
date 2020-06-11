@@ -6,7 +6,8 @@ import {
   calcResearchSecondsDuration,
   MANUALLY_FINISH_RESEARCH_UPGRADES_SECONDS,
 } from 'shared-lib/researchUtils'
-import { logUserActivity } from '../lib/accountInternalApi'
+import { logUserActivity, getIpFromRequest } from '../lib/accountInternalApi'
+import { ActivityTrailType } from 'shared-lib/activityTrailUtils'
 
 module.exports = app => {
   app.post('/v1/research/buy', async function(req, res) {
@@ -64,9 +65,9 @@ module.exports = app => {
     logUserActivity({
       userId: req.userData.id,
       date: Date.now(),
-      ip: req.ip,
+      ip: getIpFromRequest(req),
       message: '',
-      type: 'researchStart',
+      type: ActivityTrailType.RESEARCH_START,
       extra: {
         researchID,
         finishesAt,
@@ -112,9 +113,9 @@ module.exports = app => {
     logUserActivity({
       userId: req.userData.id,
       date: Date.now(),
-      ip: req.ip,
+      ip: getIpFromRequest(req),
       message: '',
-      type: 'researchManuallyEnded',
+      type: ActivityTrailType.RESEARCH_MANUALLY_ENDED,
       extra: {
         researchID,
         secondsLeft,

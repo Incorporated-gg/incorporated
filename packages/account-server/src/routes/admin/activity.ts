@@ -5,7 +5,7 @@ import { getIDFromUsername } from '../../lib/db/users'
 
 export default (app: Application): void => {
   app.get('/v1/admin/users/activity', validateIsAdmin, async function(req, res) {
-    const logs = await getLatestActivityLogs()
+    const logs = await getLatestActivityLogs(50)
     res.json(logs)
   })
   app.get('/v1/admin/users/:userName/activity', validateIsAdmin, async function(req, res) {

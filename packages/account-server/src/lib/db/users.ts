@@ -44,6 +44,11 @@ export async function getIDFromUsername(username: string): Promise<number | null
   return accountData ? parseInt(accountData.id) : null
 }
 
+export async function getUsernameFromID(id: number): Promise<string | null> {
+  const accountData = await mysql.selectOne('SELECT username FROM users WHERE id=?', [id])
+  return accountData ? accountData.username : null
+}
+
 export async function giveGoldToUser(userID: number, gold: number): Promise<void> {
   await mysql.query('UPDATE users SET gold=gold+? WHERE id=?', [gold, userID])
 }

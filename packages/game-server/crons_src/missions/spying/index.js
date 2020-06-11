@@ -10,6 +10,7 @@ import {
 import { getUserResearchBonusFromHoods } from '../../../src/lib/db/hoods'
 import { getAllianceResearchBonusFromBuffs, getUserAllianceID } from '../../../src/lib/db/alliances'
 import { logUserActivity } from '../../../src/lib/accountInternalApi'
+import { ActivityTrailType } from 'shared-lib/activityTrailUtils'
 
 export async function doSpyMissions() {
   const tsNow = Math.floor(Date.now() / 1000)
@@ -102,7 +103,7 @@ async function completeSpyMission(mission) {
     date: Date.now(),
     ip: 'internal',
     message: '',
-    type: 'spyFinish',
+    type: ActivityTrailType.SPY_FINISH,
     extra: {
       sourceUserId: attacker.id,
       targetUserId: defender.id,

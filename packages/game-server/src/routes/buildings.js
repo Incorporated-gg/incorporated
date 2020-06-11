@@ -1,7 +1,8 @@
 import tasksProgressHook from '../lib/db/tasks/tasksProgressHook'
 import mysql from '../lib/mysql'
 import { buildingsList, calcBuildingPrice } from 'shared-lib/buildingsUtils'
-import { logUserActivity } from '../lib/accountInternalApi'
+import { logUserActivity, getIpFromRequest } from '../lib/accountInternalApi'
+import { ActivityTrailType } from 'shared-lib/activityTrailUtils'
 
 module.exports = app => {
   app.post('/v1/buildings/buy', async function(req, res) {
@@ -64,9 +65,9 @@ module.exports = app => {
     logUserActivity({
       userId: req.userData.id,
       date: Date.now(),
-      ip: req.ip,
+      ip: getIpFromRequest(req),
       message: '',
-      type: 'buildingBought',
+      type: ActivityTrailType.BUILDING_BOUGHT,
       extra: {
         buildingID,
       },
@@ -109,9 +110,9 @@ module.exports = app => {
     logUserActivity({
       userId: req.userData.id,
       date: Date.now(),
-      ip: req.ip,
+      ip: getIpFromRequest(req),
       message: '',
-      type: 'buildingExtract',
+      type: ActivityTrailType.BUILDING_EXTRACT,
       extra: {
         buildingID,
         extractedMoney,

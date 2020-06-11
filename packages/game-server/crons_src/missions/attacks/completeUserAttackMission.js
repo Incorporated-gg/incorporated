@@ -17,6 +17,7 @@ import { onNewWarAttack } from '../../on_day_reset/alliance_wars'
 import { allianceUpdateResource } from '../../../src/lib/db/alliances/resources'
 import { PERSONNEL_OBJ } from 'shared-lib/personnelUtils'
 import { getUserResearchBonusFromHoods } from '../../../src/lib/db/hoods'
+import { ActivityTrailType } from 'shared-lib/activityTrailUtils'
 
 export async function completeUserAttackMission(mission) {
   const data = JSON.parse(mission.data)
@@ -178,7 +179,7 @@ export async function completeUserAttackMission(mission) {
     date: Date.now(),
     ip: 'internal',
     message: '',
-    type: 'attackFinish',
+    type: ActivityTrailType.ATTACK_FINISH,
     extra: {
       sourceUserId: attacker.id,
       targetUserId: defender.id,

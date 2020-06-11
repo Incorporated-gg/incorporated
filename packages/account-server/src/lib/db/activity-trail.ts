@@ -1,32 +1,7 @@
 import mysql from '../mysql'
-
-export enum ActivityTrailType {
-  ATTACK_START = 'attackStart',
-  ATTACK_CANCEL = 'attackCancel',
-  ATTACK_FINISH = 'attackFinish',
-  SPY_START = 'spyStart',
-  SPY_CANCEL = 'spyCancel',
-  SPY_FINISH = 'spyFinish',
-  LOGIN = 'login',
-  CORP_CREATE = 'corpCreate',
-  CORP_DELETE = 'corpDelete',
-  CORP_LEAVE = 'corpLeave',
-  CORP_BUFF = 'corpBuff',
-  CORP_REQUEST = 'corpRequest',
-  CORP_KICK = 'corpKick',
-  CORP_REJECT = 'corpReject',
-  CORP_ACCEPT = 'corpAccept',
-  CORP_DEPOSIT = 'corpDeposit',
-  CORP_WITHDRAW = 'corpWithdraw',
-  CORP_INVEST = 'corpInvest',
-  BUILDING_BOUGHT = 'buildingBought',
-  BUILDING_EXTRACT = 'buildingExtract',
-  RESEARCH_START = 'researchStart',
-  RESEARCH_MANUALLY_ENDED = 'researchManuallyEnded',
-  RESEARCH_END = 'researchEnd',
-  PERSONNEL_HIRED = 'personnelHired',
-  PERSONNEL_FIRED = 'personnelFired',
-}
+import { Request } from 'express'
+import { getUsernameFromID } from './users'
+import { ActivityTrailType, ActivityTrailData, ActivityTrailDataForFrontend } from 'shared-lib/activityTrailUtils'
 
 export interface DBActivityTrailData {
   user_id: number
@@ -37,68 +12,77 @@ export interface DBActivityTrailData {
   extra?: string
 }
 
-export interface ActivityTrailData {
-  userId: number
-  date: number
-  ip: string
-  type: ActivityTrailType
-  message?: string
-  extra?: string
+function getRandomColor(): string {
+  const letters = '0123456789ABCDEF'
+  let color = '#'
+  for (let i = 0; i < 6; i++) {
+    color += letters[Math.floor(Math.random() * 16)]
+  }
+  return color
 }
 
-export const getUserActivityForPeriod = (
-  userId: number,
-  periodStart: number,
-  periodEnd: number
-): Array<ActivityTrailData> => {
-  return [
-    {
-      date: Date.now(),
-      ip: '0.0.0.0',
-      message: 'Test message',
-      userId,
-      type: ActivityTrailType.CORP_DEPOSIT,
-    },
-  ]
-}
+const userColors = new Map()
 
-export const getLatestActivityLogs = async (limit = 10): Promise<Array<ActivityTrailData>> => {
-  const activities: Array<DBActivityTrailData> = await mysql.query('SELECT * FROM users_activity_log LIMIT ?', [limit])
-  const mappedActivities: Array<ActivityTrailData> = activities
-    .map(activity => {
-      const newActivity: ActivityTrailData = {
+export const getLatestActivityLogs = async (limit = 10): Promise<Array<ActivityTrailDataForFrontend>> => {
+  const activities: Array<DBActivityTrailData> = await mysql.query(
+    'SELECT * FROM users_activity_log ORDER BY date DESC LIMIT ?',
+    [limit]
+  )
+  const mappedActivities: Array<ActivityTrailDataForFrontend> = await Promise.all(
+    await activities.map(async activity => {
+      let username = await getUsernameFromID(activity.user_id)
+      if (!username) username = '<Username Desconocido>'
+      const newActivity: ActivityTrailDataForFrontend = {
         date: parseInt(activity.date),
         ip: activity.ip,
         type: activity.type,
         userId: activity.user_id,
         extra: activity.extra ? JSON.parse(activity.extra) : null,
         message: activity.message,
+        username,
+        userColor:
+          userColors.get(username) ||
+          ((): string => {
+            const c = getRandomColor()
+            userColors.set(username, c)
+            return c
+          })(),
       }
       return newActivity
     })
-    .sort((act1, act2) => act2.date - act1.date)
-  return mappedActivities
+  )
+  return mappedActivities.sort((act1, act2) => act2.date - act1.date)
 }
 
 export const getUserActivityLogs = async (userId: number): Promise<Array<ActivityTrailData>> => {
   const activities: Array<DBActivityTrailData> = await mysql.query(
-    'SELECT * FROM users_activity_log WHERE user_id = ?',
+    'SELECT * FROM users_activity_log WHERE user_id = ? ORDER BY date DESC',
     [userId]
   )
-  const mappedActivities: Array<ActivityTrailData> = activities
-    .map(activity => {
-      const newActivity: ActivityTrailData = {
+  const mappedActivities: Array<ActivityTrailDataForFrontend> = await Promise.all(
+    await activities.map(async activity => {
+      let username = await getUsernameFromID(userId)
+      if (!username) username = '<Username Desconocido>'
+      const newActivity: ActivityTrailDataForFrontend = {
         date: parseInt(activity.date),
         ip: activity.ip,
         type: activity.type,
         userId: activity.user_id,
         extra: activity.extra ? JSON.parse(activity.extra) : null,
         message: activity.message,
+        username,
+        userColor:
+          userColors.get(username) ||
+          ((): string => {
+            const c = getRandomColor()
+            userColors.set(username, c)
+            return c
+          })(),
       }
       return newActivity
     })
-    .sort((act1, act2) => act2.date - act1.date)
-  return mappedActivities
+  )
+  return mappedActivities.sort((act1, act2) => act2.date - act1.date)
 }
 
 export const logUserActivity = async (activityData: ActivityTrailData): Promise<void> => {
@@ -113,4 +97,9 @@ export const logUserActivity = async (activityData: ActivityTrailData): Promise<
       activityData.extra,
     ]
   )
+}
+
+export const getIpFromRequest = (request: Request): string => {
+  const cloudflareClientIp = request.headers['CF-Connecting-IP']?.toString()
+  return cloudflareClientIp || request.ip
 }

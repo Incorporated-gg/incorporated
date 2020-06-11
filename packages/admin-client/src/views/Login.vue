@@ -28,7 +28,7 @@ export default Vue.extend({
         password: this.password,
         admin: 'true',
       })
-      if (success) this.$router.push('/')
+      if (success) this.$router.push('/home')
       else this.error = 'bad login'
     }
   },
