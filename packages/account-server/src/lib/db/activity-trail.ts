@@ -100,6 +100,6 @@ export const logUserActivity = async (activityData: ActivityTrailData): Promise<
 }
 
 export const getIpFromRequest = (request: Request): string => {
-  const cloudflareClientIp = request.headers['CF-Connecting-IP']?.toString()
+  const cloudflareClientIp = request.headers['cf-connecting-ip']?.toString()
   return cloudflareClientIp || request.ip
 }

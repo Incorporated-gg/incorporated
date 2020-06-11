@@ -39,7 +39,7 @@ export async function logUserActivity(activityData) {
 }
 
 export const getIpFromRequest = request => {
-  const cloudflareClientIp = request.headers['CF-Connecting-IP'] ? request.headers['CF-Connecting-IP'].toString() : null
+  const cloudflareClientIp = request.headers['cf-connecting-ip'] ? request.headers['cf-connecting-ip'].toString() : null
   return cloudflareClientIp || request.ip
 }
 

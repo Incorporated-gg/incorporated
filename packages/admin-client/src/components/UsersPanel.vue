@@ -39,7 +39,7 @@ export default Vue.extend({
   },
   computed: {
     usersList() {
-      return this.users.filter(u => u.username.indexOf(this.searchUser) > -1)
+      return this.users.filter(u => u.username.toLowerCase().indexOf(this.searchUser.toLowerCase()) > -1)
     }
   },
   props: {
