@@ -183,6 +183,7 @@ export async function completeUserAttackMission(mission) {
     extra: {
       sourceUserId: attacker.id,
       targetUserId: defender.id,
+      attackData,
     },
   })
 }
