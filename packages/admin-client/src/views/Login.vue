@@ -15,8 +15,8 @@ import { mapActions } from 'vuex'
 export default Vue.extend({
   data() {
     return {
-      username: 'damage',
-      password: 'pass1234',
+      username: '',
+      password: '',
       error: ''
     }
   },

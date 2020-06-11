@@ -1,5 +1,5 @@
-export const API_URL = 'http://localhost:3100/api'
-export const ACCOUNT_API_URL = 'http://localhost:3100/account_api'
+export const API_URL = process.env.NODE_ENV === 'production' ? 'https://incorporated.gg/api' : 'http://localhost:3100/api'
+export const ACCOUNT_API_URL = process.env.NODE_ENV === 'production' ? 'https://incorporated.gg/account_api' : 'http://localhost:3100/account_api'
 
 import store from '../store'
 
