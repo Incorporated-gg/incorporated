@@ -7,7 +7,7 @@
         <button type="button" @click="navigateToUser()">search</button>
       </div>
     </div>
-    <ActivityPanel :activities="this.activities" />
+    <activity-panel :activities="this.activities" v-on:refresh-activities="fetchUserActivity" :loading="loadingActivities" />
   </div>
 </template>
 
@@ -23,6 +23,7 @@ export default {
       searchUser: this.$route.params.userName,
       currentUser: '',
       activities: [],
+      loadingActivities: false,
     }
   },
   components: { ActivityPanel },
@@ -33,7 +34,9 @@ export default {
     ...mapMutations(['setGlobalFilters']),
     async fetchUserActivity() {
       this.activities = []
+      this.loadingActivities = true
       const activities = await accountGet(`/v1/admin/users/${this.currentUser}/activity`)
+      this.loadingActivities = false
       if (activities.error) return
       this.activities = activities
     },

@@ -1,32 +1,35 @@
 <template>
   <div class="home">
-    <UsersPanel :users="users" />
-    <ActivityPanel :activities="activities" />
+    <ActivityPanel :activities="activities" v-on:refresh-activities="fetchUserActivities" :loading="loadingActivities" />
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
-import UsersPanel from '../components/UsersPanel.vue'
 import ActivityPanel from '../components/ActivityPanel.vue'
 import { accountGet } from '../lib/api'
 
 export default Vue.extend({
   name: 'Home',
-  components: {
-    UsersPanel, ActivityPanel
-  },
+  components: { ActivityPanel },
   data() {
     return {
-      users: [],
       activities: [],
+      loadingActivities: false,
     }
   },
+  methods: {
+    async fetchUserActivities() {
+      this.activities = []
+      this.loadingActivities = true
+      const activities = await accountGet('/v1/admin/users/activity')
+      this.loadingActivities = false
+      if (activities.error) return
+      this.activities = activities
+    },
+  },
   async mounted() {
-    const users = await accountGet('/v1/admin/users/list')
-    const activities = await accountGet('/v1/admin/users/activity')
-    this.users = users
-    this.activities = activities
+    await this.fetchUserActivities()
   }
 })
 </script>
