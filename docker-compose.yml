@@ -20,6 +20,20 @@ services:
       - game-client
       - account-server
 
+  admin-nginx-proxy:
+    image: jwilder/nginx-proxy:alpine
+    ports:
+      - "8080:80"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - ./nginx-conf/logs:/var/log/nginx:rw
+      - ./nginx-conf/vhost.d:/etc/nginx/vhost.d
+      - ./nginx-conf/conf.d/admin-dev/proxy.conf:/etc/nginx/conf.d/my_proxy.conf:rw
+      - ./nginx-conf/certs:/etc/nginx/certs:rw
+    depends_on:
+      - admin-client
+      - account-server
+
   game-client:
     build: ./packages/game-client
     networks:
@@ -28,6 +42,16 @@ services:
       - CHOKIDAR_USEPOLLING=true
     volumes:
       - ./packages/game-client:/usr/src/client:rw
+      - ./packages/shared-lib:/usr/src/shared-lib
+
+  admin-client:
+    build: ./packages/admin-client
+    networks:
+      - default
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    volumes:
+      - ./packages/admin-client:/usr/src/client:rw
       - ./packages/shared-lib:/usr/src/shared-lib
 
   game-server:

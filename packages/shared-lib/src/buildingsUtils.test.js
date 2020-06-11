@@ -1,4 +1,4 @@
-import { calcBuildingResistance } from './buildingsUtils'
+import { calcBuildingResistance } from '../build/buildingsUtils'
 
 test('Infra', () => {
   expect(calcBuildingResistance(1, 1)).toBe(25)

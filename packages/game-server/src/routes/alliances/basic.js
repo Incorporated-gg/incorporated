@@ -16,6 +16,8 @@ import { updatePersonnelAmount } from '../../lib/db/personnel'
 import { calcResearchPrice, calcAllianceResourceMax } from 'shared-lib/allianceUtils'
 import { allianceUpdateResource } from '../../lib/db/alliances/resources'
 import { getAllianceActiveWars, getAlliancePastWars } from '../../lib/db/alliances/war'
+import { logUserActivity, getIpFromRequest } from '../../lib/accountInternalApi'
+import { ActivityTrailType } from 'shared-lib/activityTrailUtils'
 
 module.exports = app => {
   app.get('/v1/alliance', async function(req, res) {
@@ -145,6 +147,21 @@ module.exports = app => {
       ])
     }
 
+    logUserActivity({
+      userId: req.userData.id,
+      date: Date.now(),
+      ip: getIpFromRequest(req),
+      message: '',
+      type: ActivityTrailType.CORP_INVEST,
+      extra: {
+        researchID,
+        allianceID,
+        moneyAmount,
+        newLevel,
+        newProgressMoney,
+      },
+    })
+
     res.json({
       success: true,
       new_price: newPrice,
@@ -235,6 +252,19 @@ module.exports = app => {
       }),
       updatePersonnelAmount(req, resourceID, -resourceAmount),
     ])
+
+    logUserActivity({
+      userId: req.userData.id,
+      date: Date.now(),
+      ip: getIpFromRequest(req),
+      message: '',
+      type: resourceAmount < 0 ? ActivityTrailType.CORP_WITHDRAW : ActivityTrailType.CORP_DEPOSIT,
+      extra: {
+        resourceID,
+        allianceID,
+        resourceAmount,
+      },
+    })
 
     res.json({
       success: true,

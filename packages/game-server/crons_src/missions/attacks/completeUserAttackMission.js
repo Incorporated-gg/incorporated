@@ -1,5 +1,5 @@
 import tasksProgressHook from '../../../src/lib/db/tasks/tasksProgressHook'
-import { sendAccountHook } from '../../../src/lib/accountInternalApi'
+import { sendAccountHook, logUserActivity } from '../../../src/lib/accountInternalApi'
 import mysql from '../../../src/lib/mysql'
 import {
   getUserResearchs,
@@ -17,6 +17,7 @@ import { onNewWarAttack } from '../../on_day_reset/alliance_wars'
 import { allianceUpdateResource } from '../../../src/lib/db/alliances/resources'
 import { PERSONNEL_OBJ } from 'shared-lib/personnelUtils'
 import { getUserResearchBonusFromHoods } from '../../../src/lib/db/hoods'
+import { ActivityTrailType } from 'shared-lib/activityTrailUtils'
 
 export async function completeUserAttackMission(mission) {
   const data = JSON.parse(mission.data)
@@ -172,6 +173,17 @@ export async function completeUserAttackMission(mission) {
     result,
     isHoodAttack: false,
     robbedMoney,
+  })
+  logUserActivity({
+    userId: attacker.id,
+    date: Date.now(),
+    ip: 'internal',
+    message: '',
+    type: ActivityTrailType.ATTACK_FINISH,
+    extra: {
+      sourceUserId: attacker.id,
+      targetUserId: defender.id,
+    },
   })
 }
 
