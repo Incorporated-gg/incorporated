@@ -48,7 +48,6 @@ export const getLatestActivityLogs = async (limit = 10): Promise<Array<ActivityT
       let username = usernames.get(activity.user_id)
       if (!username) {
         username = await getUsernameFromID(activity.user_id)
-
         usernames.set(activity.user_id, username)
       }
       if (!username) username = '<Username Desconocido>'
@@ -82,14 +81,14 @@ export const getUserActivityLogs = async (userId: number): Promise<Array<Activit
     'SELECT * FROM users_activity_log WHERE user_id = ? ORDER BY date DESC',
     [userId]
   )
+  let username = usernames.get(userId)
+  if (!username) {
+    username = await getUsernameFromID(userId)
+    usernames.set(userId, username)
+  }
+  if (!username) username = '<Username Desconocido>'
   const mappedActivities: Array<ActivityTrailDataForFrontend> = await Promise.all(
     await activities.map(async activity => {
-      let username = usernames.get(activity.user_id)
-      if (!username) {
-        username = await getUsernameFromID(activity.user_id)
-        usernames.set(activity.user_id, username)
-      }
-      if (!username) username = '<Username Desconocido>'
       const newActivity: ActivityTrailDataForFrontend = {
         date: parseInt(activity.date),
         ip: activity.ip,
