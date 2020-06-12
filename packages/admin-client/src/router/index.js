@@ -39,6 +39,7 @@ const router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
   if (!store.state.sessionId && to.path !== '/login') return next('/login')
+  if (to.path === '/') return next('/home')
   next()
 })
 

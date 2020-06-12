@@ -73,6 +73,23 @@ button {
   border: 1px solid #333;
 }
 
+.usernameLink {
+  font-weight: bold;
+  text-decoration: none;
+  &:hover {
+    text-decoration: underline;
+  }
+  &:after {
+    content: ' ↗️';
+    font-size: 9px;
+  }
+}
+
+.ip {
+  font-weight: bold;
+  color: #2c3e50;
+}
+
 #nav {
   padding: 10px;
   display: flex;

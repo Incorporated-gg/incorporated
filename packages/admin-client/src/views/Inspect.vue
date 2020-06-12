@@ -35,7 +35,7 @@ export default {
     async fetchUserActivity() {
       this.activities = []
       this.loadingActivities = true
-      const activities = await accountGet(`/v1/admin/users/${this.currentUser}/activity`)
+      const activities = await accountGet(`/v1/admin/activity/${this.currentUser}`)
       this.loadingActivities = false
       if (activities.error) return
       this.activities = activities

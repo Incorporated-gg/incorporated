@@ -27,6 +27,12 @@ export enum ActivityTrailType {
   PERSONNEL_FIRED = 'personnelFired',
 }
 
+export interface UserDataForFrontend {
+  userId: number,
+  username: string,
+  userColor: string
+}
+
 export interface ActivityTrailData {
   userId: number
   date: number
@@ -37,6 +43,5 @@ export interface ActivityTrailData {
 }
 
 export interface ActivityTrailDataForFrontend extends ActivityTrailData {
-  username: string
-  userColor: string
+  user: UserDataForFrontend
 }

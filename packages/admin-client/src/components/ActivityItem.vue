@@ -1,6 +1,6 @@
 <template>
   <article class="activityItem">
-    <span class="date">{{activity.date|asDate}}</span>&nbsp;<router-link class="username" :style="`color: ${activity.userColor}`" :to="'/inspect/' + activity.username">{{activity.username}}</router-link> {{activity.type|asActivity}} from IP {{activity.ip}}.
+    <span class="date">{{activity.date|asDate}}</span>&nbsp;<router-link class="usernameLink" :style="`color: ${activity.user.userColor}`" :to="'/inspect/' + activity.user.username">{{activity.user.username}}</router-link> {{activity.type|asActivity}} from IP {{activity.ip}}.
     <span v-if="activity.extra">
       <button type="button" class="extraButton" @click="showExtra = !showExtra">➕ extra info</button>
       <pre class="extraInfo" v-show="showExtra">{{activity.extra|asExtra}}</pre>
@@ -71,10 +71,6 @@ export default Vue.extend({
   margin: 2px 0;
   .date {
     font-weight: bold;
-  }
-  .username {
-    font-weight: bold;
-    text-decoration: none;
   }
   .extraButton {
     font-size: 11px;

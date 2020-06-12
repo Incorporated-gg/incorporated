@@ -1,15 +1,29 @@
 import mysql from '../mysql'
 import { Request } from 'express'
 import { getUsernameFromID } from './users'
-import { ActivityTrailType, ActivityTrailData, ActivityTrailDataForFrontend } from 'shared-lib/activityTrailUtils'
+import {
+  ActivityTrailType,
+  ActivityTrailData,
+  ActivityTrailDataForFrontend,
+  UserDataForFrontend,
+} from 'shared-lib/activityTrailUtils'
 
-export interface DBActivityTrailData {
+interface DBActivityTrailData {
   user_id: number
   date: string
   ip: string
   type: ActivityTrailType
   message?: string
   extra?: string
+}
+
+interface DBMultiAccountData {
+  user_id: number
+  ip: string
+}
+
+interface MultiAccountDataForFrontend extends UserDataForFrontend {
+  ip: string
 }
 
 function getRandomColor(): string {
@@ -22,6 +36,7 @@ function getRandomColor(): string {
 }
 
 const userColors = new Map()
+const usernames = new Map()
 
 export const getLatestActivityLogs = async (limit = 10): Promise<Array<ActivityTrailDataForFrontend>> => {
   const activities: Array<DBActivityTrailData> = await mysql.query(
@@ -30,7 +45,12 @@ export const getLatestActivityLogs = async (limit = 10): Promise<Array<ActivityT
   )
   const mappedActivities: Array<ActivityTrailDataForFrontend> = await Promise.all(
     await activities.map(async activity => {
-      let username = await getUsernameFromID(activity.user_id)
+      let username = usernames.get(activity.user_id)
+      if (!username) {
+        username = await getUsernameFromID(activity.user_id)
+
+        usernames.set(activity.user_id, username)
+      }
       if (!username) username = '<Username Desconocido>'
       const newActivity: ActivityTrailDataForFrontend = {
         date: parseInt(activity.date),
@@ -39,14 +59,17 @@ export const getLatestActivityLogs = async (limit = 10): Promise<Array<ActivityT
         userId: activity.user_id,
         extra: activity.extra ? JSON.parse(activity.extra) : null,
         message: activity.message,
-        username,
-        userColor:
-          userColors.get(username) ||
-          ((): string => {
-            const c = getRandomColor()
-            userColors.set(username, c)
-            return c
-          })(),
+        user: {
+          username,
+          userColor:
+            userColors.get(username) ||
+            ((): string => {
+              const c = getRandomColor()
+              userColors.set(username, c)
+              return c
+            })(),
+          userId: activity.user_id,
+        },
       }
       return newActivity
     })
@@ -61,7 +84,11 @@ export const getUserActivityLogs = async (userId: number): Promise<Array<Activit
   )
   const mappedActivities: Array<ActivityTrailDataForFrontend> = await Promise.all(
     await activities.map(async activity => {
-      let username = await getUsernameFromID(userId)
+      let username = usernames.get(activity.user_id)
+      if (!username) {
+        username = await getUsernameFromID(activity.user_id)
+        usernames.set(activity.user_id, username)
+      }
       if (!username) username = '<Username Desconocido>'
       const newActivity: ActivityTrailDataForFrontend = {
         date: parseInt(activity.date),
@@ -70,7 +97,57 @@ export const getUserActivityLogs = async (userId: number): Promise<Array<Activit
         userId: activity.user_id,
         extra: activity.extra ? JSON.parse(activity.extra) : null,
         message: activity.message,
-        username,
+        user: {
+          username,
+          userColor:
+            userColors.get(username) ||
+            ((): string => {
+              const c = getRandomColor()
+              userColors.set(username, c)
+              return c
+            })(),
+          userId: activity.user_id,
+        },
+      }
+      return newActivity
+    })
+  )
+  return mappedActivities.sort((act1, act2) => act2.date - act1.date)
+}
+
+export const getActiveUsersForLastDaysCount = async (days = 30): Promise<number> => {
+  const targetDate = Date.now() - days * 1000 * 60 * 60 * 24
+  const [
+    { activeUsers },
+  ] = await mysql.query('SELECT COUNT(DISTINCT user_id) AS activeUsers FROM users_activity_log WHERE date >= ?', [
+    targetDate,
+  ])
+  return activeUsers
+}
+
+export const getMultiAccounts = async (): Promise<Array<MultiAccountDataForFrontend>> => {
+  const ipUserList: Array<DBMultiAccountData> = await mysql.query(
+    'SELECT user_id, ip FROM users_activity_log WHERE ip != "internal" GROUP BY ip, user_id HAVING COUNT(user_id) > 2 ORDER BY user_id'
+  )
+  // Data should already pass this filter below straight from the DB
+  // Remove if necessary
+  const multis = ipUserList
+    .map(user => {
+      const hasMulti = ipUserList.find(u => u.ip === user.ip && u.user_id !== user.user_id)
+      if (hasMulti) return user
+      return null
+    })
+    .filter(Boolean) as DBMultiAccountData[]
+
+  const mappedMultis: Array<MultiAccountDataForFrontend> = await Promise.all(
+    await multis.map(async multiAccount => {
+      let username = usernames.get(multiAccount.user_id)
+      if (!username) {
+        username = await getUsernameFromID(multiAccount.user_id)
+        usernames.set(multiAccount.user_id, username)
+      }
+      if (!username) username = '<Username Desconocido>'
+      const mappedMulti: MultiAccountDataForFrontend = {
         userColor:
           userColors.get(username) ||
           ((): string => {
@@ -78,11 +155,35 @@ export const getUserActivityLogs = async (userId: number): Promise<Array<Activit
             userColors.set(username, c)
             return c
           })(),
+        userId: multiAccount.user_id,
+        username,
+        ip: multiAccount.ip,
       }
-      return newActivity
+      return mappedMulti
     })
   )
-  return mappedActivities.sort((act1, act2) => act2.date - act1.date)
+  return mappedMultis
+}
+
+export const getTopActiveUsersForLastDays = async (days = 30): Promise<number> => {
+  const targetDate = Date.now() - days * 1000 * 60 * 60 * 24
+  const [
+    { activeUsers },
+  ] = await mysql.query('SELECT COUNT(DISTINCT user_id) AS activeUsers FROM users_activity_log WHERE date >= ?', [
+    targetDate,
+  ])
+  return activeUsers
+}
+
+export const getUniqueUserIpsForLastDays = async (days = 30): Promise<number> => {
+  const targetDate = Date.now() - days * 1000 * 60 * 60 * 24
+  const [
+    { uniqueIps },
+  ] = await mysql.query(
+    'SELECT COUNT(DISTINCT ip) AS uniqueIps FROM users_activity_log WHERE ip != "internal" AND date >= ?',
+    [targetDate]
+  )
+  return uniqueIps
 }
 
 export const logUserActivity = async (activityData: ActivityTrailData): Promise<void> => {
