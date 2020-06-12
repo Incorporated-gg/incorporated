@@ -38,41 +38,51 @@ function getRandomColor(): string {
 const userColors = new Map()
 const usernames = new Map()
 
+const getUniqueUserIds = (activities: Array<{ user_id: number }>): Array<number> => {
+  return activities.filter((a, i, array) => array.findIndex(el => el.user_id === a.user_id) === i).map(u => u.user_id)
+}
+
+const prefetchUsernamesForIds = async (ids: Array<number>): Promise<void> => {
+  await Promise.all(
+    ids.map(async uid => {
+      let un = usernames.get(uid)
+      if (!un) {
+        un = await getUsernameFromID(uid)
+        usernames.set(uid, un)
+      }
+      if (!un) un = '<Username Desconocido>'
+      return un
+    })
+  )
+}
+
 export const getLatestActivityLogs = async (limit = 10): Promise<Array<ActivityTrailDataForFrontend>> => {
   const activities: Array<DBActivityTrailData> = await mysql.query(
     'SELECT * FROM users_activity_log ORDER BY date DESC LIMIT ?',
     [limit]
   )
-  const mappedActivities: Array<ActivityTrailDataForFrontend> = await Promise.all(
-    await activities.map(async activity => {
-      let username = usernames.get(activity.user_id)
-      if (!username) {
-        username = await getUsernameFromID(activity.user_id)
-        usernames.set(activity.user_id, username)
-      }
-      if (!username) username = '<Username Desconocido>'
-      const newActivity: ActivityTrailDataForFrontend = {
-        date: parseInt(activity.date),
-        ip: activity.ip,
-        type: activity.type,
+  await prefetchUsernamesForIds(getUniqueUserIds(activities))
+  const mappedActivities: Array<ActivityTrailDataForFrontend> = activities.map(activity => {
+    return {
+      date: parseInt(activity.date),
+      ip: activity.ip,
+      type: activity.type,
+      userId: activity.user_id,
+      extra: activity.extra ? JSON.parse(activity.extra) : null,
+      message: activity.message,
+      user: {
+        username: usernames.get(activity.user_id),
+        userColor:
+          userColors.get(activity.user_id) ||
+          ((): string => {
+            const c = getRandomColor()
+            userColors.set(activity.user_id, c)
+            return c
+          })(),
         userId: activity.user_id,
-        extra: activity.extra ? JSON.parse(activity.extra) : null,
-        message: activity.message,
-        user: {
-          username,
-          userColor:
-            userColors.get(username) ||
-            ((): string => {
-              const c = getRandomColor()
-              userColors.set(username, c)
-              return c
-            })(),
-          userId: activity.user_id,
-        },
-      }
-      return newActivity
-    })
-  )
+      },
+    }
+  })
   return mappedActivities.sort((act1, act2) => act2.date - act1.date)
 }
 
@@ -81,36 +91,28 @@ export const getUserActivityLogs = async (userId: number): Promise<Array<Activit
     'SELECT * FROM users_activity_log WHERE user_id = ? ORDER BY date DESC',
     [userId]
   )
-  let username = usernames.get(userId)
-  if (!username) {
-    username = await getUsernameFromID(userId)
-    usernames.set(userId, username)
-  }
-  if (!username) username = '<Username Desconocido>'
-  const mappedActivities: Array<ActivityTrailDataForFrontend> = await Promise.all(
-    await activities.map(async activity => {
-      const newActivity: ActivityTrailDataForFrontend = {
-        date: parseInt(activity.date),
-        ip: activity.ip,
-        type: activity.type,
+  await prefetchUsernamesForIds(getUniqueUserIds(activities))
+  const mappedActivities: Array<ActivityTrailDataForFrontend> = activities.map(activity => {
+    return {
+      date: parseInt(activity.date),
+      ip: activity.ip,
+      type: activity.type,
+      userId: activity.user_id,
+      extra: activity.extra ? JSON.parse(activity.extra) : null,
+      message: activity.message,
+      user: {
+        username: usernames.get(activity.user_id),
+        userColor:
+          userColors.get(activity.user_id) ||
+          ((): string => {
+            const c = getRandomColor()
+            userColors.set(activity.user_id, c)
+            return c
+          })(),
         userId: activity.user_id,
-        extra: activity.extra ? JSON.parse(activity.extra) : null,
-        message: activity.message,
-        user: {
-          username,
-          userColor:
-            userColors.get(username) ||
-            ((): string => {
-              const c = getRandomColor()
-              userColors.set(username, c)
-              return c
-            })(),
-          userId: activity.user_id,
-        },
-      }
-      return newActivity
-    })
-  )
+      },
+    }
+  })
   return mappedActivities.sort((act1, act2) => act2.date - act1.date)
 }
 
@@ -128,6 +130,7 @@ export const getMultiAccounts = async (): Promise<Array<MultiAccountDataForFront
   const ipUserList: Array<DBMultiAccountData> = await mysql.query(
     'SELECT user_id, ip FROM users_activity_log WHERE ip != "internal" AND ip != "::ffff:127.0.0.1" GROUP BY ip, user_id HAVING COUNT(user_id) > 2 ORDER BY ip'
   )
+  await prefetchUsernamesForIds(getUniqueUserIds(ipUserList))
   // Data should already pass this filter below straight from the DB
   // Remove if necessary
   const multis = ipUserList
@@ -138,30 +141,20 @@ export const getMultiAccounts = async (): Promise<Array<MultiAccountDataForFront
     })
     .filter(Boolean) as DBMultiAccountData[]
 
-  const mappedMultis: Array<MultiAccountDataForFrontend> = await Promise.all(
-    await multis.map(async multiAccount => {
-      let username = usernames.get(multiAccount.user_id)
-      if (!username) {
-        username = await getUsernameFromID(multiAccount.user_id)
-        usernames.set(multiAccount.user_id, username)
-      }
-      if (!username) username = '<Username Desconocido>'
-      const mappedMulti: MultiAccountDataForFrontend = {
-        userColor:
-          userColors.get(username) ||
-          ((): string => {
-            const c = getRandomColor()
-            userColors.set(username, c)
-            return c
-          })(),
-        userId: multiAccount.user_id,
-        username,
-        ip: multiAccount.ip,
-      }
-      return mappedMulti
-    })
-  )
-  return mappedMultis
+  return multis.map(multiAccount => {
+    return {
+      userColor:
+        userColors.get(multiAccount.user_id) ||
+        ((): string => {
+          const c = getRandomColor()
+          userColors.set(multiAccount.user_id, c)
+          return c
+        })(),
+      userId: multiAccount.user_id,
+      username: usernames.get(multiAccount.user_id),
+      ip: multiAccount.ip,
+    }
+  })
 }
 
 export const getTopActiveUsersForLastDays = async (days = 30): Promise<number> => {
