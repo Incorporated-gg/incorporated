@@ -2,6 +2,8 @@ import mysql from '../lib/mysql'
 import * as personnel from '../lib/db/personnel'
 import { getHasActiveMission } from '../lib/db/users'
 import { PERSONNEL_OBJ } from 'shared-lib/personnelUtils'
+import { logUserActivity, getIpFromRequest } from '../lib/accountInternalApi'
+import { ActivityTrailType } from 'shared-lib/activityTrailUtils'
 
 const handlePersonnelRequest = async (req, res, operationType) => {
   if (!req.userData) {
@@ -55,6 +57,34 @@ const handlePersonnelRequest = async (req, res, operationType) => {
   req.userData.money -= price
   await mysql.query('UPDATE users SET money=money-? WHERE id=?', [price, req.userData.id])
   await personnel.updatePersonnelAmount(req, resourceID, resourceAmount * (operationType === 'fire' ? -1 : 1))
+
+  if (operationType === 'hire') {
+    logUserActivity({
+      userId: req.userData.id,
+      date: Date.now(),
+      ip: getIpFromRequest(req),
+      message: '',
+      type: ActivityTrailType.PERSONNEL_HIRED,
+      extra: {
+        resourceAmount,
+        resourceID,
+      },
+    })
+  }
+
+  if (operationType === 'fire') {
+    logUserActivity({
+      userId: req.userData.id,
+      date: Date.now(),
+      ip: getIpFromRequest(req),
+      message: '',
+      type: ActivityTrailType.PERSONNEL_FIRED,
+      extra: {
+        resourceAmount,
+        resourceID,
+      },
+    })
+  }
 
   res.json({
     success: true,

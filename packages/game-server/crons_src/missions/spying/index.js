@@ -9,6 +9,8 @@ import {
 } from '../../../src/lib/db/users'
 import { getUserResearchBonusFromHoods } from '../../../src/lib/db/hoods'
 import { getAllianceResearchBonusFromBuffs, getUserAllianceID } from '../../../src/lib/db/alliances'
+import { logUserActivity } from '../../../src/lib/accountInternalApi'
+import { ActivityTrailType } from 'shared-lib/activityTrailUtils'
 
 export async function doSpyMissions() {
   const tsNow = Math.floor(Date.now() / 1000)
@@ -95,6 +97,19 @@ async function completeSpyMission(mission) {
     report: intelReport,
   })
   await mysql.query('UPDATE missions SET completed=1, result=?, data=? WHERE id=?', [result, newData, mission.id])
+
+  logUserActivity({
+    userId: attacker.id,
+    date: Date.now(),
+    ip: 'internal',
+    message: '',
+    type: ActivityTrailType.SPY_FINISH,
+    extra: {
+      sourceUserId: attacker.id,
+      targetUserId: defender.id,
+      result,
+    },
+  })
 }
 
 async function getIntelReport({

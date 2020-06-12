@@ -1,7 +1,7 @@
-import express from 'express'
+import { Application, Request } from 'express'
 import fs from 'fs'
 
-export default function(app: express.Application): void {
+export default function(app: Application): void {
   const files = fs.readdirSync(__dirname).filter((f: string) => f !== 'index.ts')
 
   if (!files.length) {
@@ -14,7 +14,7 @@ export default function(app: express.Application): void {
   })
 }
 
-export function validateGameServerRequest(req: express.Request): boolean {
+export function validateGameServerRequest(req: Request): boolean {
   const secret = req.headers.authorization?.replace('Bearer ', '')
   if (!secret) return false
   return secret === process.env.ACCOUNT_CLIENT_SHARED_SECRET

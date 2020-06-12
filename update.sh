@@ -1,5 +1,9 @@
 INITIAL_PATH=$(pwd)
 
+# Update shared-lib
+cd $INITIAL_PATH/packages/shared-lib
+npm i
+npm run build
 # Update account-server
 cd $INITIAL_PATH/packages/account-server
 npm i
@@ -16,3 +20,9 @@ npm i
 npm run build
 mkdir -p build_nginx
 cp -r build/* build_nginx/
+# Update admin-client
+cd $INITIAL_PATH/packages/admin-client
+npm i
+npm run build
+mkdir -p build_nginx
+cp -r dist/* build_nginx/
