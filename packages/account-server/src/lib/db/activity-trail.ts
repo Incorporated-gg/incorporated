@@ -127,7 +127,7 @@ export const getActiveUsersForLastDaysCount = async (days = 30): Promise<number>
 
 export const getMultiAccounts = async (): Promise<Array<MultiAccountDataForFrontend>> => {
   const ipUserList: Array<DBMultiAccountData> = await mysql.query(
-    'SELECT user_id, ip FROM users_activity_log WHERE ip != "internal" GROUP BY ip, user_id HAVING COUNT(user_id) > 2 ORDER BY user_id'
+    'SELECT user_id, ip FROM users_activity_log WHERE ip != "internal" AND ip != "::ffff:127.0.0.1" GROUP BY ip, user_id HAVING COUNT(user_id) > 2 ORDER BY ip'
   )
   // Data should already pass this filter below straight from the DB
   // Remove if necessary
