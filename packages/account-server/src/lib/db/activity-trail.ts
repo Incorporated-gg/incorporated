@@ -94,7 +94,7 @@ export const getLatestActivityLogs = async (limit = 10): Promise<Array<ActivityT
 
 export const getUserActivityLogs = async (userId: number): Promise<Array<ActivityTrailData>> => {
   const activities: Array<DBActivityTrailData> = await mysql.query(
-    'SELECT * FROM users_activity_log WHERE user_id = ? ORDER BY date DESC',
+    'SELECT * FROM users_activity_log WHERE user_id = ? ORDER BY date DESC LIMIT 200',
     [userId]
   )
   await prefetchUsernamesForIds(getUniqueUserIds(activities))
