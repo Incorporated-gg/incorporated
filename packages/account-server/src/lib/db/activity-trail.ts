@@ -63,18 +63,12 @@ export const getLatestActivityLogs = async (limit = 10): Promise<Array<ActivityT
   )
   await prefetchUsernamesForIds(getUniqueUserIds(activities))
   const mappedActivities: Array<ActivityTrailDataForFrontend> = activities.map(activity => {
-    let extra = activity.extra
-    try {
-      extra = activity.extra ? JSON.parse(activity.extra) : activity.extra
-    } catch (error) {
-      console.error(error)
-    }
     return {
       date: parseInt(activity.date),
       ip: activity.ip,
       type: activity.type,
       userId: activity.user_id,
-      extra,
+      extra: activity.extra,
       message: activity.message,
       user: {
         username: usernames.get(activity.user_id),
