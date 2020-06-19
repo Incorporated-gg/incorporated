@@ -15,7 +15,7 @@ exports.PERSONNEL_OBJ = {
         resource_id: 'spies',
         price: 2500,
         firingCost: 500,
-        dailyMaintenanceCost: 1000,
+        dailyMaintenanceCost: 500,
     },
     guards: {
         name: 'Guardias',
@@ -31,7 +31,7 @@ exports.PERSONNEL_OBJ = {
         price: 200,
         firingCost: 250,
         combatPower: 0.4,
-        robbingPower: 50,
+        robbingPower: 100,
         dailyMaintenanceCost: 500,
     },
 };
